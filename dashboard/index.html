@@ -8,41 +8,963 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --black: #0A0A0A;
-    --white: #FFFFFF;
-    --silver: #C8C8C8;
-    --silver-light: #E8E8E8;
-    --silver-dark: #888888;
-    --accent: #4A90D9;
-    --accent-dim: rgba(74,144,217,0.12);
-    --surface: #111111;
-    --surface-2: #181818;
-    --surface-3: #222222;
-    --border: rgba(255,255,255,0.08);
-    --border-strong: rgba(255,255,255,0.15);
-    --text-primary: #F0F0F0;
-    --text-secondary: #999999;
-    --text-muted: #555555;
-    --radius: 12px;
-    --font-display: 'Syne', sans-serif;
-    --font-body: 'Inter', sans-serif;
-    --green: #34C759;
-    --red: #FF3B30;
-    --yellow: #FFD60A;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--black); color: var(--text-primary); font-family: var(--font-body); min-height: 100vh; }
-  .loading { display: flex; align-items: center; justify-content: center; height: 100vh; color: var(--text-muted); font-size: 14px; letter-spacing: 0.1em; }
+:root {
+  --black: #0A0A0A; --white: #FFFFFF;
+  --silver: #C8C8C8; --silver-light: #E8E8E8; --silver-dark: #888888;
+  --accent: #4A90D9; --accent-dim: rgba(74,144,217,0.12);
+  --surface: #111111; --surface-2: #181818; --surface-3: #222222;
+  --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.15);
+  --text-primary: #F0F0F0; --text-secondary: #999999; --text-muted: #555555;
+  --radius: 12px; --font-display: 'Syne', sans-serif; --font-body: 'Inter', sans-serif;
+  --green: #34C759; --red: #FF3B30; --yellow: #FFD60A;
+  --sidebar: 220px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--black); color: var(--text-primary); font-family: var(--font-body); font-size: 14px; min-height: 100vh; }
+
+/* ── LOGIN ── */
+#login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:32px; }
+.login-logo { font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--white); letter-spacing:-0.03em; }
+.login-logo span { color:var(--accent); }
+.login-card { background:var(--surface); border:0.5px solid var(--border-strong); border-radius:var(--radius); padding:40px; width:360px; }
+.login-card h2 { font-family:var(--font-display); font-size:20px; font-weight:700; color:var(--white); margin-bottom:6px; }
+.login-card p { color:var(--text-secondary); font-size:13px; margin-bottom:28px; }
+#login-error { color:var(--red); font-size:13px; margin-top:8px; display:none; }
+
+/* ── FORMS ── */
+.form-group { margin-bottom:16px; }
+.form-group label { display:block; font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:7px; }
+.form-group input, .form-group select, .form-group textarea {
+  width:100%; background:var(--surface-3); border:0.5px solid var(--border-strong);
+  border-radius:8px; color:var(--text-primary); font-family:var(--font-body); font-size:14px;
+  padding:10px 14px; outline:none; transition:border-color 0.15s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--accent); }
+.form-group select option { background:var(--surface-3); }
+.form-group textarea { resize:vertical; min-height:72px; }
+
+/* ── BUTTONS ── */
+.btn { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; border:none; transition:all 0.15s; text-decoration:none; }
+.btn-primary { background:var(--accent); color:var(--white); }
+.btn-primary:hover { opacity:0.88; }
+.btn-secondary { background:transparent; color:var(--text-secondary); border:0.5px solid var(--border-strong); }
+.btn-secondary:hover { color:var(--white); border-color:rgba(255,255,255,0.3); }
+.btn-ghost { background:none; border:none; color:var(--text-muted); cursor:pointer; font-family:var(--font-body); font-size:13px; }
+.btn-sm { padding:6px 14px; font-size:12px; }
+.btn-full { width:100%; justify-content:center; }
+.btn-danger { background:rgba(255,59,48,0.12); color:var(--red); border:0.5px solid rgba(255,59,48,0.25); }
+
+/* ── APP LAYOUT ── */
+#app { display:none; }
+#sidebar {
+  position:fixed; top:0; left:0; width:var(--sidebar); height:100vh;
+  background:var(--surface); border-right:0.5px solid var(--border);
+  display:flex; flex-direction:column; z-index:100;
+}
+.sidebar-logo { font-family:var(--font-display); font-size:15px; font-weight:800; color:var(--white); letter-spacing:-0.02em; padding:22px 20px 20px; border-bottom:0.5px solid var(--border); }
+.sidebar-logo span { color:var(--accent); }
+.sidebar-nav { flex:1; display:flex; flex-direction:column; gap:2px; padding:16px 10px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px; color:var(--text-secondary); font-size:13px; font-weight:500; cursor:pointer; border:none; background:none; width:100%; text-align:left; transition:all 0.15s; }
+.nav-item:hover { background:var(--surface-3); color:var(--text-primary); }
+.nav-item.active { background:var(--accent-dim); color:var(--accent); }
+.nav-icon { font-size:15px; width:18px; text-align:center; flex-shrink:0; }
+.sidebar-footer { padding:12px 10px; border-top:0.5px solid var(--border); }
+.user-pill { display:flex; align-items:center; gap:10px; padding:8px 10px; margin-bottom:8px; }
+.user-avatar { width:30px; height:30px; border-radius:50%; background:var(--accent-dim); border:1px solid rgba(74,144,217,0.4); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--accent); flex-shrink:0; }
+.user-name { font-size:13px; font-weight:500; color:var(--text-primary); }
+.user-role { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; }
+
+#main { margin-left:var(--sidebar); min-height:100vh; }
+.page-header { padding:28px 32px 0; margin-bottom:24px; display:flex; align-items:flex-start; justify-content:space-between; }
+.page-title { font-family:var(--font-display); font-size:24px; font-weight:800; color:var(--white); letter-spacing:-0.03em; }
+.page-sub { color:var(--text-muted); font-size:13px; margin-top:4px; }
+.page-content { padding:0 32px 48px; }
+
+.tab-section { display:none; }
+.tab-section.active { display:block; }
+
+/* ── STATS GRID ── */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.stat-card { background:var(--surface); border:0.5px solid var(--border); border-radius:var(--radius); padding:20px 22px; }
+.stat-label { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; }
+.stat-value { font-family:var(--font-display); font-size:26px; font-weight:800; color:var(--white); letter-spacing:-0.03em; line-height:1; }
+.stat-value.blue { color:var(--accent); }
+.stat-value.green { color:var(--green); }
+.stat-sub { font-size:11px; color:var(--text-muted); margin-top:5px; }
+
+/* ── CARD ── */
+.card { background:var(--surface); border:0.5px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.card-header { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-bottom:0.5px solid var(--border); }
+.card-title { font-family:var(--font-display); font-size:13px; font-weight:700; color:var(--white); }
+
+/* ── TABLE ── */
+.data-table { width:100%; border-collapse:collapse; }
+.data-table th { text-align:left; padding:9px 16px; font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; border-bottom:0.5px solid var(--border); white-space:nowrap; }
+.data-table td { padding:11px 16px; font-size:13px; color:var(--text-primary); border-bottom:0.5px solid var(--border); vertical-align:middle; }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tbody tr:hover td { background:var(--surface-2); }
+
+/* ── BADGES ── */
+.badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:600; white-space:nowrap; }
+.badge-retained { background:rgba(52,199,89,0.12); color:var(--green); border:0.5px solid rgba(52,199,89,0.25); }
+.badge-new      { background:var(--accent-dim); color:var(--accent); border:0.5px solid rgba(74,144,217,0.25); }
+.badge-nofee    { background:rgba(255,214,10,0.1); color:var(--yellow); border:0.5px solid rgba(255,214,10,0.25); }
+.badge-active   { background:rgba(52,199,89,0.1); color:var(--green); }
+.badge-lost     { background:rgba(255,59,48,0.1); color:var(--red); }
+.badge-prospect { background:var(--surface-3); color:var(--text-muted); }
+.badge-call_booked   { background:rgba(255,214,10,0.1); color:var(--yellow); }
+.badge-call_happened { background:var(--accent-dim); color:var(--accent); }
+
+/* ── PIPELINE ── */
+.pipeline-board { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:24px; }
+.pipeline-col { background:var(--surface); border:0.5px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.pipeline-col-hd { padding:10px 14px; border-bottom:0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.pipeline-col-title { font-size:11px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.08em; display:flex; align-items:center; gap:6px; }
+.pipeline-count { background:var(--surface-3); border-radius:10px; padding:1px 7px; font-size:10px; color:var(--text-muted); }
+.pipeline-cards { padding:10px; display:flex; flex-direction:column; gap:8px; min-height:180px; }
+.pipeline-card { background:var(--surface-2); border:0.5px solid var(--border); border-radius:8px; padding:11px 12px; }
+.pipeline-card-name { font-size:13px; font-weight:600; color:var(--white); margin-bottom:3px; }
+.pipeline-card-meta { font-size:11px; color:var(--text-muted); margin-bottom:8px; }
+.pipeline-actions { display:flex; gap:4px; flex-wrap:wrap; }
+.pill-btn { background:var(--surface-3); border:none; border-radius:4px; color:var(--text-muted); font-size:10px; font-weight:600; padding:3px 8px; cursor:pointer; text-transform:uppercase; letter-spacing:0.04em; transition:all 0.12s; font-family:var(--font-body); }
+.pill-btn:hover { background:var(--surface-3); color:var(--text-primary); }
+.pill-btn.advance { background:var(--accent-dim); color:var(--accent); }
+.pill-btn.advance:hover { background:var(--accent); color:var(--white); }
+
+.dot { width:7px; height:7px; border-radius:50%; display:inline-block; flex-shrink:0; }
+.dot-prospect    { background:var(--text-muted); }
+.dot-call_booked { background:var(--yellow); }
+.dot-call_happened { background:var(--accent); }
+.dot-active      { background:var(--green); }
+.dot-lost        { background:var(--red); }
+
+/* ── REVENUE FORM ── */
+.form-2col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.form-2col .span-2 { grid-column:span 2; }
+
+.fee-preview { background:var(--surface-3); border:0.5px solid var(--border); border-radius:8px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.fee-preview-lbl { font-size:12px; color:var(--text-muted); }
+.fee-preview-note { font-size:11px; color:var(--text-muted); margin-top:2px; }
+.fee-preview-val { font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--green); }
+
+/* ── MONTHLY ── */
+.month-controls { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+.month-controls select, .month-controls input {
+  background:var(--surface-3); border:0.5px solid var(--border-strong); border-radius:8px;
+  color:var(--text-primary); font-family:var(--font-body); font-size:13px; padding:8px 12px; outline:none;
+}
+.fee-breakdown { display:grid; grid-template-columns:repeat(3,1fr); }
+.fee-item { padding:24px; border-right:0.5px solid var(--border); text-align:center; }
+.fee-item:last-child { border-right:none; }
+.fee-label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; }
+.fee-val { font-family:var(--font-display); font-size:30px; font-weight:800; letter-spacing:-0.03em; line-height:1; }
+.fee-val.blue { color:var(--accent); }
+.fee-val.green { color:var(--green); }
+.fee-sub { font-size:11px; color:var(--text-muted); margin-top:5px; }
+
+/* ── MODAL ── */
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.72); backdrop-filter:blur(4px); z-index:200; display:none; align-items:center; justify-content:center; }
+.modal-bg.open { display:flex; }
+.modal { background:var(--surface); border:0.5px solid var(--border-strong); border-radius:var(--radius); width:560px; max-width:92vw; max-height:90vh; overflow-y:auto; }
+.modal-hd { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:0.5px solid var(--border); }
+.modal-title { font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--white); }
+.modal-x { background:none; border:none; color:var(--text-muted); font-size:22px; cursor:pointer; line-height:1; padding:2px; }
+.modal-x:hover { color:var(--white); }
+.modal-body { padding:24px; }
+.modal-foot { display:flex; gap:12px; justify-content:flex-end; padding:0 24px 24px; }
+
+/* ── TOAST ── */
+#toast { position:fixed; bottom:24px; right:24px; background:var(--surface-3); border:0.5px solid var(--border-strong); border-radius:8px; padding:11px 18px; font-size:13px; color:var(--text-primary); z-index:9999; display:none; max-width:300px; }
+#toast.show { display:block; animation:fadeIn 0.2s; }
+#toast.ok  { border-color:var(--green); }
+#toast.err { border-color:var(--red); }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── MISC ── */
+.empty { text-align:center; padding:44px 24px; color:var(--text-muted); font-size:13px; }
+.empty-icon { font-size:28px; margin-bottom:10px; }
+.row-actions { display:flex; gap:8px; align-items:center; }
+.tr { text-align:right; }
+.mono { font-family:'SF Mono','Fira Code',monospace; }
+.bold { font-weight:600; }
+.green { color:var(--green); }
+.red { color:var(--red); }
+.muted { color:var(--text-muted); }
+.divider { height:0.5px; background:var(--border); margin:20px 0; }
+::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:var(--surface-3); border-radius:3px; }
 </style>
 </head>
 <body>
-<div class="loading" id="app-loading">LOADING DASHBOARD…</div>
+<script src="../js/env.js"></script>
 
-<!-- Dashboard UI built in Phase 2 -->
+<!-- ══════════════════════════════════════════
+     LOGIN
+══════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-logo">Evan <span>Enterprises</span> LLC</div>
+  <div class="login-card">
+    <h2>Admin Sign In</h2>
+    <p>Business operating system — restricted access.</p>
+    <form id="login-form">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="l-email" placeholder="you@example.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="l-pass" placeholder="••••••••••" required autocomplete="current-password">
+      </div>
+      <div id="login-error"></div>
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:12px" id="login-btn">Sign In</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     APP
+══════════════════════════════════════════ -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sidebar-logo">Evan <span>E.</span></div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-tab="overview">
+        <span class="nav-icon">◈</span> Overview
+      </button>
+      <button class="nav-item" data-tab="pipeline">
+        <span class="nav-icon">⊞</span> Pipeline
+      </button>
+      <button class="nav-item" data-tab="clients">
+        <span class="nav-icon">◉</span> Clients
+      </button>
+      <button class="nav-item" data-tab="revenue">
+        <span class="nav-icon">$</span> Revenue Log
+      </button>
+      <button class="nav-item" data-tab="monthly">
+        <span class="nav-icon">≡</span> Monthly
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="u-avatar">S</div>
+        <div>
+          <div class="user-name" id="u-name">Sean</div>
+          <div class="user-role">Admin</div>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-full btn-sm" id="logout-btn">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main">
+
+    <!-- ── OVERVIEW ── -->
+    <section class="tab-section active" data-section="overview">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Overview</div>
+          <div class="page-sub" id="ov-date">—</div>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Active Clients</div>
+            <div class="stat-value blue" id="s-active">—</div>
+            <div class="stat-sub">Marketing division</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Revenue This Month</div>
+            <div class="stat-value" id="s-rev">—</div>
+            <div class="stat-sub">All tracked client revenue</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">My Fees This Month</div>
+            <div class="stat-value green" id="s-fees">—</div>
+            <div class="stat-sub">Flat fees + 10% performance</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Retained Visits</div>
+            <div class="stat-value" id="s-ret">—</div>
+            <div class="stat-sub">This month — 10% applies</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Recent Visits</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th><th>Business</th><th>Customer</th>
+                <th>Service</th><th>Amount</th><th>Source</th>
+                <th>Status</th><th class="tr">My Fee</th>
+              </tr>
+            </thead>
+            <tbody id="ov-visits"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PIPELINE ── -->
+    <section class="tab-section" data-section="pipeline">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Pipeline</div>
+          <div class="page-sub">Prospect → Qualified → Active</div>
+        </div>
+        <button class="btn btn-primary" id="open-add-client">+ Add Client</button>
+      </div>
+      <div class="page-content">
+        <div class="pipeline-board" id="pipeline-board"></div>
+      </div>
+    </section>
+
+    <!-- ── CLIENTS ── -->
+    <section class="tab-section" data-section="clients">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Clients</div>
+          <div class="page-sub">All clients across divisions</div>
+        </div>
+        <button class="btn btn-primary" id="open-add-client-2">+ Add Client</button>
+      </div>
+      <div class="page-content">
+        <div class="card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Business</th><th>Owner</th><th>Division</th>
+                <th>Status</th><th>Flat Fee</th><th>Perf %</th>
+                <th>Reviews</th><th class="tr">Lifetime Value</th>
+              </tr>
+            </thead>
+            <tbody id="clients-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── REVENUE ── -->
+    <section class="tab-section" data-section="revenue">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Revenue Log</div>
+          <div class="page-sub">Log visits · auto-detect retained clients · calculate your 10%</div>
+        </div>
+      </div>
+      <div class="page-content">
+        <!-- Add Visit Form -->
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-header">
+            <div class="card-title">Log New Visit</div>
+          </div>
+          <div style="padding:20px">
+            <form id="visit-form">
+              <div class="form-2col">
+                <div class="form-group">
+                  <label>Client Business *</label>
+                  <select id="v-client" required>
+                    <option value="">Select client…</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Visit Date *</label>
+                  <input type="date" id="v-date" required>
+                </div>
+                <div class="form-group">
+                  <label>Customer Full Name *</label>
+                  <input type="text" id="v-name" placeholder="Jane Smith" required>
+                </div>
+                <div class="form-group">
+                  <label>Customer Phone *</label>
+                  <input type="tel" id="v-phone" placeholder="(555) 555-5555" required>
+                </div>
+                <div class="form-group">
+                  <label>Customer Email *</label>
+                  <input type="email" id="v-email" placeholder="jane@email.com" required>
+                </div>
+                <div class="form-group">
+                  <label>Service</label>
+                  <input type="text" id="v-service" placeholder="e.g. Swedish Massage">
+                </div>
+                <div class="form-group">
+                  <label>Amount ($) *</label>
+                  <input type="number" id="v-amount" placeholder="150.00" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                  <label>Source *</label>
+                  <select id="v-source" required>
+                    <option value="">Select source…</option>
+                    <option value="lsa">Google LSA</option>
+                    <option value="google_ads">Google Ads</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="referral">Referral</option>
+                    <option value="walk_in">Walk-In (no fee by default)</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <!-- Live fee calculator -->
+              <div class="fee-preview">
+                <div>
+                  <div class="fee-preview-lbl">My 10% Fee on This Visit</div>
+                  <div class="fee-preview-note" id="fee-note">Enter amount + source to calculate</div>
+                </div>
+                <div class="fee-preview-val" id="fee-val">$0.00</div>
+              </div>
+              <div style="display:flex;gap:12px;justify-content:flex-end">
+                <button type="button" class="btn btn-secondary" id="clear-visit">Clear</button>
+                <button type="submit" class="btn btn-primary" id="visit-submit">Log Visit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Visit log -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--white)">Visit Log</div>
+          <select id="v-filter" style="background:var(--surface-3);border:0.5px solid var(--border-strong);border-radius:8px;color:var(--text-primary);font-family:var(--font-body);font-size:13px;padding:7px 12px;outline:none">
+            <option value="">All Clients</option>
+          </select>
+        </div>
+        <div class="card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th><th>Business</th><th>Customer</th>
+                <th>Phone</th><th>Service</th><th>Source</th>
+                <th>Amount</th><th>Visit #</th><th>Status</th>
+                <th class="tr">My Fee</th>
+              </tr>
+            </thead>
+            <tbody id="visits-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MONTHLY ── -->
+    <section class="tab-section" data-section="monthly">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Monthly Summary</div>
+          <div class="page-sub">Invoice calculator — flat fee + 10% performance</div>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="month-controls">
+          <select id="m-client">
+            <option value="">Select client…</option>
+          </select>
+          <input type="month" id="m-month">
+        </div>
+        <div id="monthly-content">
+          <div class="empty"><div class="empty-icon">≡</div>Select a client and month above.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADD CLIENT MODAL
+══════════════════════════════════════════ -->
+<div class="modal-bg" id="modal-add-client">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">Add New Client</div>
+      <button class="modal-x" data-close="modal-add-client">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="client-form">
+        <div class="form-2col">
+          <div class="form-group span-2">
+            <label>Business Name *</label>
+            <input type="text" id="c-biz" placeholder="Mediterranean Spa" required>
+          </div>
+          <div class="form-group">
+            <label>Owner Name</label>
+            <input type="text" id="c-owner" placeholder="Salma Moreno">
+          </div>
+          <div class="form-group">
+            <label>Owner Email</label>
+            <input type="email" id="c-email" placeholder="owner@business.com">
+          </div>
+          <div class="form-group">
+            <label>Owner Phone</label>
+            <input type="tel" id="c-phone" placeholder="(555) 555-5555">
+          </div>
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="c-city" placeholder="Baltimore">
+          </div>
+          <div class="form-group">
+            <label>State (2-letter)</label>
+            <input type="text" id="c-state" placeholder="MD" maxlength="2">
+          </div>
+          <div class="form-group">
+            <label>Division *</label>
+            <select id="c-div" required>
+              <option value="marketing">Marketing</option>
+              <option value="distribution">Distribution</option>
+              <option value="ecommerce">Ecommerce</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pipeline Stage</label>
+            <select id="c-status">
+              <option value="prospect">Prospect</option>
+              <option value="call_booked">Call Booked</option>
+              <option value="call_happened">Call Happened</option>
+              <option value="active">Active</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Monthly Flat Fee ($)</label>
+            <input type="number" id="c-flat" value="500" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Performance % (e.g. 0.10 = 10%)</label>
+            <input type="number" id="c-pct" value="0.10" step="0.01" min="0" max="1">
+          </div>
+          <div class="form-group">
+            <label>LSA Weekly Budget ($)</label>
+            <input type="number" id="c-lsa" step="0.01" placeholder="102.00">
+          </div>
+          <div class="form-group">
+            <label>Avg Client Ticket ($)</label>
+            <input type="number" id="c-ticket" step="0.01" placeholder="150.00">
+          </div>
+          <div class="form-group">
+            <label>Google Review Count</label>
+            <input type="number" id="c-reviews" placeholder="216">
+          </div>
+          <div class="form-group">
+            <label>Notes</label>
+            <textarea id="c-notes" placeholder="Anything worth noting…"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" data-close="modal-add-client">Cancel</button>
+      <button class="btn btn-primary" id="save-client">Save Client</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     APP LOGIC
+══════════════════════════════════════════ -->
 <script type="module">
-  import '../js/supabase.js';
-  document.getElementById('app-loading').textContent = 'DASHBOARD COMING IN PHASE 2';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const sb = createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_ANON);
+
+// ── STATE ──
+let clients = [], visits = [];
+
+// ── UTILS ──
+const $ = id => document.getElementById(id);
+const fmt$ = n => n == null ? '—' : '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtDate = d => d ? new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+const sourceMap = {lsa:'LSA',google_ads:'Google Ads',instagram:'Instagram',referral:'Referral',walk_in:'Walk-In',other:'Other'};
+const statusMap = {prospect:'Prospect',call_booked:'Call Booked',call_happened:'Call Happened',active:'Active',lost:'Lost'};
+const nextStage = {prospect:'call_booked',call_booked:'call_happened',call_happened:'active'};
+
+function toast(msg, type='ok') {
+  const el = $('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className='', 3000);
+}
+
+// ── AUTH ──
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) await enterApp(session);
+
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN')  await enterApp(session);
+    if (event === 'SIGNED_OUT') { $('login-screen').style.display='flex'; $('app').style.display='none'; }
+  });
+}
+
+async function enterApp(session) {
+  $('login-screen').style.display = 'none';
+  $('app').style.display = 'block';
+  const email = session.user.email || '';
+  $('u-name').textContent    = email.split('@')[0] || 'Sean';
+  $('u-avatar').textContent  = (email[0] || 'S').toUpperCase();
+  $('ov-date').textContent   = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  $('v-date').value          = new Date().toISOString().split('T')[0];
+  $('m-month').value         = new Date().toISOString().slice(0,7);
+  await loadAll();
+  renderOverview();
+}
+
+$('login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = $('login-btn');
+  btn.textContent = 'Signing in…';
+  const { error } = await sb.auth.signInWithPassword({ email: $('l-email').value, password: $('l-pass').value });
+  btn.textContent = 'Sign In';
+  if (error) { const el=$('login-error'); el.textContent=error.message; el.style.display='block'; }
+});
+$('logout-btn').addEventListener('click', () => sb.auth.signOut());
+
+// ── DATA ──
+async function loadAll() {
+  const [{ data: c }, { data: v }] = await Promise.all([
+    sb.from('clients').select('*').order('created_at', { ascending: false }),
+    sb.from('visits').select('*, clients(business_name)').order('visit_date', { ascending: false }),
+  ]);
+  clients = c || [];
+  visits  = v || [];
+  populateSelects();
+}
+
+function populateSelects() {
+  ['v-client','v-filter','m-client'].forEach(id => {
+    const sel = $(id);
+    const val = sel.value;
+    while (sel.options.length > 1) sel.remove(1);
+    clients.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id; o.textContent = c.business_name;
+      sel.appendChild(o);
+    });
+    if (val) sel.value = val;
+  });
+}
+
+// ── RENDER: OVERVIEW ──
+function renderOverview() {
+  const now = new Date(), yr = now.getFullYear(), mo = now.getMonth()+1;
+  const active = clients.filter(c => c.status === 'active');
+  const mvs    = visits.filter(v => { const d=new Date(v.visit_date+'T12:00:00'); return d.getFullYear()===yr && d.getMonth()+1===mo; });
+
+  $('s-active').textContent = active.length;
+  $('s-rev').textContent    = fmt$(mvs.reduce((s,v)=>s+Number(v.amount),0));
+  const perfFees  = mvs.reduce((s,v)=>s+Number(v.fee_amount||0),0);
+  const flatFees  = active.reduce((s,c)=>s+Number(c.monthly_flat_fee||0),0);
+  $('s-fees').textContent   = fmt$(flatFees + perfFees);
+  $('s-ret').textContent    = mvs.filter(v=>v.is_retained).length;
+
+  const tbody = $('ov-visits');
+  const rows  = visits.slice(0,15);
+  tbody.innerHTML = rows.length ? rows.map(v=>`
+    <tr>
+      <td>${fmtDate(v.visit_date)}</td>
+      <td class="bold">${v.clients?.business_name||'—'}</td>
+      <td>${v.customer_name}</td>
+      <td>${v.service||'—'}</td>
+      <td class="mono">${fmt$(v.amount)}</td>
+      <td>${sourceMap[v.source]||v.source||'—'}</td>
+      <td>${v.is_retained?'<span class="badge badge-retained">Retained</span>':'<span class="badge badge-new">New</span>'}${!v.count_for_fee?' <span class="badge badge-nofee">No Fee</span>':''}</td>
+      <td class="tr mono ${v.count_for_fee?'green':'muted'}">${fmt$(v.fee_amount)}</td>
+    </tr>`).join('')
+    : '<tr><td colspan="8"><div class="empty"><div class="empty-icon">$</div>No visits logged yet. Use Revenue Log to add one.</div></td></tr>';
+}
+
+// ── RENDER: PIPELINE ──
+function renderPipeline() {
+  const stages = [
+    {key:'prospect',label:'Prospect'},
+    {key:'call_booked',label:'Call Booked'},
+    {key:'call_happened',label:'Call Happened'},
+    {key:'active',label:'Active'},
+    {key:'lost',label:'Lost'},
+  ];
+  const board = $('pipeline-board');
+  board.innerHTML = stages.map(st => {
+    const cols = clients.filter(c=>c.status===st.key);
+    return `<div class="pipeline-col">
+      <div class="pipeline-col-hd">
+        <span class="pipeline-col-title"><span class="dot dot-${st.key}"></span>${st.label}</span>
+        <span class="pipeline-count">${cols.length}</span>
+      </div>
+      <div class="pipeline-cards">
+        ${cols.length ? cols.map(c=>`
+          <div class="pipeline-card">
+            <div class="pipeline-card-name">${c.business_name}</div>
+            <div class="pipeline-card-meta">${[c.owner_name,c.city&&c.state?c.city+', '+c.state:c.city].filter(Boolean).join(' · ')||'No info'}</div>
+            <div class="pipeline-actions">
+              ${nextStage[st.key]?`<button class="pill-btn advance" data-id="${c.id}" data-status="${nextStage[st.key]}">→ Advance</button>`:''}
+              ${st.key!=='lost'&&st.key!=='active'?`<button class="pill-btn" data-id="${c.id}" data-status="lost">✕ Lost</button>`:''}
+              ${st.key==='lost'?`<button class="pill-btn" data-id="${c.id}" data-status="prospect">↩ Revive</button>`:''}
+            </div>
+          </div>`).join('')
+          : '<div class="muted" style="text-align:center;padding:20px;font-size:12px">Empty</div>'}
+      </div>
+    </div>`;
+  }).join('');
+
+  board.querySelectorAll('[data-id][data-status]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const {id, status} = btn.dataset;
+      const {error} = await sb.from('clients').update({status}).eq('id',id);
+      if (error) { toast('Error: '+error.message,'err'); return; }
+      await loadAll(); renderPipeline(); toast('Status updated');
+    });
+  });
+}
+
+// ── RENDER: CLIENTS TABLE ──
+function renderClients() {
+  const tbody = $('clients-tbody');
+  if (!clients.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">◉</div>No clients yet.</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = clients.map(c => {
+    const ltv = visits.filter(v=>v.client_id===c.id).reduce((s,v)=>s+Number(v.amount),0);
+    return `<tr>
+      <td class="bold">${c.business_name}</td>
+      <td>${c.owner_name||'—'}</td>
+      <td style="text-transform:capitalize">${c.division}</td>
+      <td><span class="badge badge-${c.status}">${statusMap[c.status]||c.status}</span></td>
+      <td>${fmt$(c.monthly_flat_fee)}/mo</td>
+      <td>${(c.performance_pct*100).toFixed(0)}%</td>
+      <td>${c.google_review_count||'—'}</td>
+      <td class="tr mono" style="color:var(--accent);font-weight:700">${fmt$(ltv)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── RENDER: VISITS TABLE ──
+function renderVisits(filterCid='') {
+  const tbody = $('visits-tbody');
+  const rows  = filterCid ? visits.filter(v=>v.client_id===filterCid) : visits;
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="10"><div class="empty">No visits logged yet.</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(v=>`
+    <tr>
+      <td>${fmtDate(v.visit_date)}</td>
+      <td class="bold">${v.clients?.business_name||'—'}</td>
+      <td>${v.customer_name}</td>
+      <td class="muted">${v.customer_phone||'—'}</td>
+      <td>${v.service||'—'}</td>
+      <td>${sourceMap[v.source]||v.source||'—'}</td>
+      <td class="mono">${fmt$(v.amount)}</td>
+      <td style="text-align:center">${v.visit_number||'—'}</td>
+      <td>${v.is_retained?'<span class="badge badge-retained">Retained</span>':'<span class="badge badge-new">New</span>'}${!v.count_for_fee?' <span class="badge badge-nofee">No Fee</span>':''}</td>
+      <td class="tr mono ${v.count_for_fee?'green':'muted'}">${fmt$(v.fee_amount)}</td>
+    </tr>`).join('');
+}
+
+// ── RENDER: MONTHLY ──
+function renderMonthly() {
+  const cid = $('m-client').value;
+  const mval = $('m-month').value;
+  const container = $('monthly-content');
+  if (!cid || !mval) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">≡</div>Select a client and month above.</div>';
+    return;
+  }
+  const [yr, mo] = mval.split('-').map(Number);
+  const client   = clients.find(c=>c.id===cid);
+  if (!client) return;
+
+  const mvs  = visits.filter(v => {
+    if (v.client_id !== cid) return false;
+    const d = new Date(v.visit_date+'T12:00:00');
+    return d.getFullYear()===yr && d.getMonth()+1===mo;
+  });
+
+  const totalRev  = mvs.reduce((s,v)=>s+Number(v.amount),0);
+  const billable  = mvs.filter(v=>v.count_for_fee).reduce((s,v)=>s+Number(v.amount),0);
+  const perfFee   = mvs.reduce((s,v)=>s+Number(v.fee_amount||0),0);
+  const flatFee   = Number(client.monthly_flat_fee||0);
+  const total     = flatFee + perfFee;
+  const newCount  = mvs.filter(v=>!v.is_retained).length;
+  const retCount  = mvs.filter(v=>v.is_retained).length;
+  const mnLabel   = new Date(yr,mo-1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+
+  container.innerHTML = `
+    <div class="card" style="margin-bottom:16px">
+      <div style="padding:18px 22px;border-bottom:0.5px solid var(--border)">
+        <div style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--white)">${client.business_name}</div>
+        <div style="color:var(--text-muted);font-size:13px;margin-top:4px">${mnLabel} — Performance Report</div>
+      </div>
+      <div class="fee-breakdown">
+        <div class="fee-item">
+          <div class="fee-label">Monthly Flat Fee</div>
+          <div class="fee-val blue">${fmt$(flatFee)}</div>
+          <div class="fee-sub">Auto-billed via Square on the 1st</div>
+        </div>
+        <div class="fee-item">
+          <div class="fee-label">10% Performance Fee</div>
+          <div class="fee-val blue">${fmt$(perfFee)}</div>
+          <div class="fee-sub">On ${fmt$(billable)} billable revenue</div>
+        </div>
+        <div class="fee-item">
+          <div class="fee-label">Total Owed to Me</div>
+          <div class="fee-val green">${fmt$(total)}</div>
+          <div class="fee-sub">Send Square invoice for ${fmt$(perfFee)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid" style="margin-bottom:24px">
+      <div class="stat-card"><div class="stat-label">Total Visits</div><div class="stat-value">${mvs.length}</div></div>
+      <div class="stat-card"><div class="stat-label">New Clients</div><div class="stat-value blue">${newCount}</div></div>
+      <div class="stat-card"><div class="stat-label">Retained Visits</div><div class="stat-value green">${retCount}</div></div>
+      <div class="stat-card"><div class="stat-label">Gross Revenue</div><div class="stat-value">${fmt$(totalRev)}</div><div class="stat-sub">Client's total take</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Visit Breakdown</div></div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Date</th><th>Customer</th><th>Service</th><th>Source</th><th>Amount</th><th>Visit #</th><th>Status</th><th class="tr">My Fee</th></tr>
+        </thead>
+        <tbody>
+          ${mvs.length ? [
+            ...mvs.map(v=>`
+              <tr>
+                <td>${fmtDate(v.visit_date)}</td>
+                <td class="bold">${v.customer_name}</td>
+                <td>${v.service||'—'}</td>
+                <td>${sourceMap[v.source]||v.source||'—'}</td>
+                <td class="mono">${fmt$(v.amount)}</td>
+                <td style="text-align:center">${v.visit_number||'—'}</td>
+                <td>${v.is_retained?'<span class="badge badge-retained">Retained</span>':'<span class="badge badge-new">New</span>'}${!v.count_for_fee?' <span class="badge badge-nofee">No Fee</span>':''}</td>
+                <td class="tr mono ${v.count_for_fee?'green':'muted'}">${fmt$(v.fee_amount)}</td>
+              </tr>`),
+            `<tr style="background:var(--surface-2)">
+              <td colspan="4"><strong>Totals</strong></td>
+              <td class="mono"><strong>${fmt$(totalRev)}</strong></td>
+              <td colspan="2"></td>
+              <td class="tr mono green"><strong>${fmt$(perfFee)}</strong></td>
+            </tr>`
+          ].join('') : '<tr><td colspan="8"><div class="empty">No visits this month.</div></td></tr>'}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── ADD CLIENT ──
+async function saveClient() {
+  const biz = $('c-biz').value.trim();
+  if (!biz) { toast('Business name required','err'); return; }
+  const {error} = await sb.from('clients').insert({
+    business_name:       biz,
+    owner_name:          $('c-owner').value.trim()||null,
+    owner_email:         $('c-email').value.trim()||null,
+    owner_phone:         $('c-phone').value.trim()||null,
+    city:                $('c-city').value.trim()||null,
+    state:               $('c-state').value.trim().toUpperCase()||null,
+    division:            $('c-div').value,
+    status:              $('c-status').value,
+    monthly_flat_fee:    parseFloat($('c-flat').value)||500,
+    performance_pct:     parseFloat($('c-pct').value)||0.10,
+    lsa_weekly_budget:   parseFloat($('c-lsa').value)||null,
+    avg_ticket:          parseFloat($('c-ticket').value)||null,
+    google_review_count: parseInt($('c-reviews').value)||null,
+    notes:               $('c-notes').value.trim()||null,
+  });
+  if (error) { toast('Error: '+error.message,'err'); return; }
+  closeModal('modal-add-client');
+  $('client-form').reset();
+  await loadAll();
+  renderPipeline(); renderClients();
+  toast('Client added!');
+}
+
+// ── ADD VISIT ──
+$('visit-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn    = $('visit-submit');
+  const source = $('v-source').value;
+  const amount = parseFloat($('v-amount').value);
+  btn.textContent = 'Logging…';
+  const {error} = await sb.from('visits').insert({
+    client_id:      $('v-client').value,
+    visit_date:     $('v-date').value,
+    customer_name:  $('v-name').value.trim(),
+    customer_phone: $('v-phone').value.trim(),
+    customer_email: $('v-email').value.trim(),
+    service:        $('v-service').value.trim()||null,
+    amount,
+    source,
+    fee_pct:        0.10,
+    count_for_fee:  source !== 'walk_in',
+  });
+  btn.textContent = 'Log Visit';
+  if (error) { toast('Error: '+error.message,'err'); return; }
+  $('visit-form').reset();
+  $('v-date').value = new Date().toISOString().split('T')[0];
+  $('fee-val').textContent  = '$0.00';
+  $('fee-note').textContent = 'Enter amount + source to calculate';
+  await loadAll();
+  renderOverview();
+  renderVisits($('v-filter').value);
+  toast('Visit logged — retained client check complete ✓');
+});
+
+$('clear-visit').addEventListener('click', () => {
+  $('visit-form').reset();
+  $('v-date').value         = new Date().toISOString().split('T')[0];
+  $('fee-val').textContent  = '$0.00';
+  $('fee-note').textContent = 'Enter amount + source to calculate';
+});
+
+// Live fee preview
+['v-amount','v-source'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    const amount = parseFloat($('v-amount').value)||0;
+    const src    = $('v-source').value;
+    const isFee  = src && src !== 'walk_in';
+    $('fee-val').textContent  = fmt$(isFee ? amount*0.10 : 0);
+    $('fee-note').textContent = !src
+      ? 'Select a source to calculate'
+      : src==='walk_in'
+        ? 'Walk-ins excluded from your 10% fee by default'
+        : `10% of ${fmt$(amount)} — counts toward your invoice`;
+  });
+});
+
+$('v-filter').addEventListener('change', e => renderVisits(e.target.value));
+$('m-client').addEventListener('change', renderMonthly);
+$('m-month').addEventListener('change',  renderMonthly);
+
+// ── MODALS ──
+const openModal  = id => $(id).classList.add('open');
+const closeModal = id => { $(id).classList.remove('open'); };
+
+$('open-add-client').addEventListener('click',  () => openModal('modal-add-client'));
+$('open-add-client-2').addEventListener('click', () => openModal('modal-add-client'));
+$('save-client').addEventListener('click', saveClient);
+document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeModal(b.dataset.close)));
+document.querySelectorAll('.modal-bg').forEach(bg => bg.addEventListener('click', e => { if (e.target===bg) closeModal(bg.id); }));
+
+// ── TABS ──
+document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-section').forEach(s=>s.classList.remove('active'));
+    document.querySelector(`[data-section="${tab}"]`).classList.add('active');
+    if (tab==='pipeline') renderPipeline();
+    if (tab==='clients')  renderClients();
+    if (tab==='revenue')  renderVisits($('v-filter').value);
+    if (tab==='monthly')  renderMonthly();
+  });
+});
+
+// ── BOOT ──
+init();
 </script>
 </body>
 </html>

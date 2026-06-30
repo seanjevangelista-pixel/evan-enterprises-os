@@ -794,7 +794,7 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-const sb = createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_ANON);
+const sb = createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_ANON, { auth: { storageKey: 'ee-admin-auth' } });
 
 // ── STATE ──
 let clients = [], visits = [];

@@ -253,6 +253,26 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
 .divider { height:1px; background:var(--border); margin:18px 0; }
 ::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
 
+/* ── PRINT / PDF ── */
+@media print {
+  @page { margin: 18mm 16mm; size: A4; }
+  body { background:#fff !important; color:#000 !important; font-size:11px !important; }
+  #sidebar, .page-header, .month-controls, #generate-pdf-btn, #toast, .modal-bg { display:none !important; }
+  #main { margin-left:0 !important; }
+  #app { display:block !important; }
+  .tab-section { display:none !important; }
+  .tab-section[data-section="monthly"] { display:block !important; }
+  .page-content { padding:0 !important; }
+  #print-report { display:block !important; }
+  #monthly-content { display:none !important; }
+  .card, .stat-card { box-shadow:none !important; border:1px solid #ddd !important; }
+  .fee-val, .stat-value { color:#000 !important; }
+  .fee-val.blue, .stat-value.blue { color:#1a3a8a !important; }
+  .fee-val.green, .stat-value.green { color:#15803D !important; }
+  a { text-decoration:none !important; }
+}
+#print-report { display:none; }
+
 /* ══ ANIMATIONS ══════════════════════════════════════ */
 
 /* Tab section entrance */
@@ -682,6 +702,7 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
           <div class="page-title">Monthly Summary</div>
           <div class="page-sub">Invoice calculator — flat fee + 10% performance</div>
         </div>
+        <button class="btn btn-primary" id="generate-pdf-btn" style="display:none">⬇ Export PDF</button>
       </div>
       <div class="page-content">
         <div class="month-controls">
@@ -1083,6 +1104,8 @@ function renderMonthly() {
   const retCount  = mvs.filter(v=>v.is_retained).length;
   const mnLabel   = new Date(yr,mo-1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
 
+  $('generate-pdf-btn').style.display = 'flex';
+
   container.innerHTML = `
     <div class="card" style="margin-bottom:16px">
       <div style="padding:18px 22px;border-bottom:0.5px solid var(--border)">
@@ -1145,6 +1168,177 @@ function renderMonthly() {
       </table>
     </div>`;
 }
+
+// ── PDF EXPORT ──
+function generatePDF() {
+  const cid   = $('m-client').value;
+  const mval  = $('m-month').value;
+  if (!cid || !mval) return;
+  const [yr, mo] = mval.split('-').map(Number);
+  const client   = clients.find(c=>c.id===cid);
+  if (!client) return;
+
+  const mvs      = visits.filter(v => {
+    if (v.client_id !== cid) return false;
+    const d = new Date(v.visit_date+'T12:00:00');
+    return d.getFullYear()===yr && d.getMonth()+1===mo;
+  });
+  const totalRev = mvs.reduce((s,v)=>s+Number(v.amount),0);
+  const billable = mvs.filter(v=>v.count_for_fee).reduce((s,v)=>s+Number(v.amount),0);
+  const perfFee  = mvs.reduce((s,v)=>s+Number(v.fee_amount||0),0);
+  const flatFee  = Number(client.monthly_flat_fee||0);
+  const total    = flatFee + perfFee;
+  const newCount = mvs.filter(v=>!v.is_retained).length;
+  const retCount = mvs.filter(v=>v.is_retained).length;
+  const mnLabel  = new Date(yr,mo-1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const today    = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  const rows = mvs.map(v=>`
+    <tr>
+      <td>${fmtDate(v.visit_date)}</td>
+      <td><strong>${v.customer_name}</strong></td>
+      <td>${v.service||'—'}</td>
+      <td>${sourceMap[v.source]||v.source||'—'}</td>
+      <td style="text-align:right;font-family:monospace">${fmt$(v.amount)}</td>
+      <td style="text-align:center">${v.visit_number||'—'}</td>
+      <td>${v.is_retained?'Retained':'New'}${!v.count_for_fee?' (No Fee)':''}</td>
+      <td style="text-align:right;font-family:monospace;color:${v.count_for_fee?'#15803D':'#999'}">${fmt$(v.fee_amount)}</td>
+    </tr>`).join('');
+
+  const totalsRow = `
+    <tr style="background:#f0f4f8;font-weight:700">
+      <td colspan="4">Totals</td>
+      <td style="text-align:right;font-family:monospace">${fmt$(totalRev)}</td>
+      <td colspan="2"></td>
+      <td style="text-align:right;font-family:monospace;color:#15803D">${fmt$(perfFee)}</td>
+    </tr>`;
+
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>${client.business_name} — ${mnLabel} Report</title>
+<style>
+  @page { margin:18mm 16mm; size:A4; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; font-size:11px; color:#111; background:#fff; }
+
+  .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid #0B1120; }
+  .brand { display:flex; align-items:center; gap:12px; }
+  .brand-name { font-size:18px; font-weight:900; color:#0B1120; letter-spacing:-0.5px; }
+  .brand-sub { font-size:9px; color:#666; letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; }
+  .report-meta { text-align:right; color:#444; line-height:1.6; }
+  .report-meta .month { font-size:16px; font-weight:800; color:#0B1120; }
+
+  .section-title { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#666; margin:20px 0 8px; }
+
+  .fee-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:8px; }
+  .fee-box { border:1px solid #dde; border-radius:6px; padding:12px 14px; }
+  .fee-label { font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#666; margin-bottom:4px; }
+  .fee-val { font-size:20px; font-weight:900; color:#1a3a8a; font-variant-numeric:tabular-nums; }
+  .fee-val.green { color:#15803D; }
+  .fee-sub { font-size:9px; color:#888; margin-top:3px; }
+
+  .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+  .stat-box { border:1px solid #dde; border-radius:6px; padding:10px 12px; }
+  .stat-label { font-size:9px; font-weight:600; color:#666; text-transform:uppercase; letter-spacing:.8px; margin-bottom:3px; }
+  .stat-val { font-size:18px; font-weight:800; color:#0B1120; }
+  .stat-val.blue { color:#1a3a8a; }
+  .stat-val.green { color:#15803D; }
+
+  table { width:100%; border-collapse:collapse; font-size:10px; }
+  th { background:#0B1120; color:#fff; text-align:left; padding:7px 8px; font-size:9px; letter-spacing:.8px; text-transform:uppercase; }
+  th:last-child, td:last-child { text-align:right; }
+  td { padding:6px 8px; border-bottom:1px solid #eee; vertical-align:middle; }
+  tr:nth-child(even) td { background:#f8f9fc; }
+
+  .footer { margin-top:24px; padding-top:12px; border-top:1px solid #dde; display:flex; justify-content:space-between; color:#888; font-size:9px; }
+  .footer strong { color:#0B1120; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <svg width="44" height="36" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="pg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
+        <linearGradient id="pg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
+        <linearGradient id="pg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
+      </defs>
+      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#pg1)"/>
+      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#pg2)"/>
+      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#pg3)"/>
+    </svg>
+    <div>
+      <div class="brand-name">Evan Enterprises LLC</div>
+      <div class="brand-sub">Marketing &amp; Growth Partners</div>
+    </div>
+  </div>
+  <div class="report-meta">
+    <div class="month">${mnLabel}</div>
+    <div>Client: <strong>${client.business_name}</strong></div>
+    ${client.owner_name ? `<div>Contact: ${client.owner_name}</div>` : ''}
+    <div>Generated: ${today}</div>
+  </div>
+</div>
+
+<div class="section-title">Invoice Summary</div>
+<div class="fee-grid">
+  <div class="fee-box">
+    <div class="fee-label">Monthly Flat Fee</div>
+    <div class="fee-val">${fmt$(flatFee)}</div>
+    <div class="fee-sub">Auto-billed via Square on the 1st</div>
+  </div>
+  <div class="fee-box">
+    <div class="fee-label">10% Performance Fee</div>
+    <div class="fee-val">${fmt$(perfFee)}</div>
+    <div class="fee-sub">On ${fmt$(billable)} billable revenue</div>
+  </div>
+  <div class="fee-box">
+    <div class="fee-label">Total Owed</div>
+    <div class="fee-val green">${fmt$(total)}</div>
+    <div class="fee-sub">Invoice ${fmt$(perfFee)} via Square</div>
+  </div>
+</div>
+
+<div class="section-title">Visit Summary</div>
+<div class="stats-grid">
+  <div class="stat-box"><div class="stat-label">Total Visits</div><div class="stat-val">${mvs.length}</div></div>
+  <div class="stat-box"><div class="stat-label">New Clients</div><div class="stat-val blue">${newCount}</div></div>
+  <div class="stat-box"><div class="stat-label">Retained Visits</div><div class="stat-val green">${retCount}</div></div>
+  <div class="stat-box"><div class="stat-label">Gross Revenue</div><div class="stat-val">${fmt$(totalRev)}</div></div>
+</div>
+
+<div class="section-title">Visit Breakdown</div>
+<table>
+  <thead>
+    <tr>
+      <th>Date</th><th>Customer</th><th>Service</th><th>Source</th><th style="text-align:right">Amount</th><th style="text-align:center">Visit #</th><th>Status</th><th style="text-align:right">My Fee</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${rows || '<tr><td colspan="8" style="text-align:center;color:#999;padding:16px">No visits recorded this month.</td></tr>'}
+    ${mvs.length ? totalsRow : ''}
+  </tbody>
+</table>
+
+<div class="footer">
+  <div>Confidential — Evan Enterprises LLC · seanjevangelista@gmail.com</div>
+  <div>Report for <strong>${client.business_name}</strong> · ${mnLabel}</div>
+</div>
+
+</body>
+</html>`;
+
+  const win = window.open('','_blank','width=900,height=700');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>{ win.print(); }, 400);
+}
+
+$('generate-pdf-btn').addEventListener('click', generatePDF);
 
 // ── ADD CLIENT ──
 async function saveClient() {

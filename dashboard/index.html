@@ -567,7 +567,7 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
               <tr>
                 <th>Business</th><th>Owner</th><th>Division</th>
                 <th>Status</th><th>Flat Fee</th><th>Perf %</th>
-                <th>Reviews</th><th class="tr">Lifetime Value</th>
+                <th>Reviews</th><th class="tr">Lifetime Value</th><th></th>
               </tr>
             </thead>
             <tbody id="clients-tbody"></tbody>
@@ -1016,9 +1016,19 @@ function renderClients() {
       <td>${(c.performance_pct*100).toFixed(0)}%</td>
       <td>${c.google_review_count||'—'}</td>
       <td class="tr mono" style="color:var(--accent);font-weight:700">${fmt$(ltv)}</td>
+      <td class="tr">
+        <button class="btn btn-sm btn-secondary invite-btn" data-id="${c.id}" data-name="${c.business_name}">
+          Invite to Portal
+        </button>
+      </td>
     </tr>`;
   }).join('');
   staggerRows(tbody);
+
+  // Invite button handlers
+  tbody.querySelectorAll('.invite-btn').forEach(btn => {
+    btn.addEventListener('click', () => openInviteModal(btn.dataset.id, btn.dataset.name));
+  });
 }
 
 // ── RENDER: VISITS TABLE ──
@@ -1266,6 +1276,93 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
 
 // ── BOOT ──
 init();
+</script>
+<!-- ── INVITE MODAL ── -->
+<div class="modal-bg" id="modal-invite">
+  <div class="modal" style="width:420px">
+    <div class="modal-hd">
+      <div class="modal-title">Invite to Client Portal</div>
+      <button class="modal-x" data-close="modal-invite">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;">
+        Create portal access for <strong id="invite-biz-name" style="color:var(--text-primary)"></strong>. They'll be able to log visits and view their history.
+      </p>
+      <div class="form-group">
+        <label>Their Email Address</label>
+        <input type="email" id="invite-email" placeholder="client@example.com">
+      </div>
+      <div class="form-group">
+        <label>Temporary Password</label>
+        <input type="text" id="invite-pass" placeholder="e.g. MediSpa2024!" autocomplete="off">
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Share this with them — they can change it later.</div>
+      </div>
+      <div id="invite-error" style="color:var(--red);font-size:12px;margin-top:4px;display:none;"></div>
+      <div id="invite-success" style="display:none;background:rgba(22,163,74,0.07);border:1px solid rgba(22,163,74,0.2);border-radius:4px;padding:12px 14px;font-size:12px;color:#15803D;margin-top:8px;"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" data-close="modal-invite">Cancel</button>
+      <button class="btn btn-primary" id="invite-submit">Send Invite</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── INVITE LOGIC ──
+let _inviteClientId = null;
+
+function openInviteModal(clientId, bizName) {
+  _inviteClientId = clientId;
+  $('invite-biz-name').textContent = bizName;
+  $('invite-email').value = '';
+  $('invite-pass').value = '';
+  $('invite-error').style.display = 'none';
+  $('invite-success').style.display = 'none';
+  $('invite-submit').textContent = 'Send Invite';
+  $('invite-submit').disabled = false;
+  openModal('modal-invite');
+}
+
+$('invite-submit').addEventListener('click', async () => {
+  const email = $('invite-email').value.trim();
+  const pass  = $('invite-pass').value.trim();
+  const errEl = $('invite-error');
+  const okEl  = $('invite-success');
+  errEl.style.display = 'none';
+  okEl.style.display  = 'none';
+
+  if (!email) { errEl.textContent = 'Email is required.'; errEl.style.display='block'; return; }
+  if (!pass || pass.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display='block'; return; }
+
+  const btn = $('invite-submit');
+  btn.textContent = 'Creating account…'; btn.disabled = true;
+
+  try {
+    // 1. Create auth user via signUp (auto-confirmed since email confirm is off)
+    const { data: signUpData, error: signUpErr } = await sb.auth.signUp({ email, password: pass });
+    if (signUpErr) throw new Error(signUpErr.message);
+
+    const userId = signUpData.user?.id;
+    if (!userId) throw new Error('Could not create user account.');
+
+    // 2. Insert into users table
+    const { error: insertErr } = await sb.from('users').insert({
+      id: userId, email, role: 'client', client_id: _inviteClientId
+    });
+    if (insertErr) throw new Error(insertErr.message);
+
+    okEl.innerHTML = `✓ Account created for <strong>${email}</strong>.<br>Share the portal link and password with them:<br><br>
+      <strong>URL:</strong> ${window.location.origin}/portal/<br>
+      <strong>Password:</strong> ${pass}`;
+    okEl.style.display = 'block';
+    btn.textContent = 'Done';
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+    btn.textContent = 'Send Invite';
+    btn.disabled = false;
+  }
+});
 </script>
 </body>
 </html>

@@ -5,6 +5,9 @@
     { "source": "/dashboard", "destination": "/dashboard/index.html" },
     { "source": "/portal",    "destination": "/portal/index.html" }
   ],
+  "functions": {
+    "api/*.js": { "runtime": "nodejs20.x" }
+  },
   "headers": [
     {
       "source": "/(.*)",

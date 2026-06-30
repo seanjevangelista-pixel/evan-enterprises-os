@@ -689,7 +689,7 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
                 <th>Date</th><th>Business</th><th>Customer</th>
                 <th>Phone</th><th>Service</th><th>Source</th>
                 <th>Amount</th><th>Visit #</th><th>Status</th>
-                <th class="tr">My Fee</th>
+                <th class="tr">My Fee</th><th></th>
               </tr>
             </thead>
             <tbody id="visits-tbody"></tbody>
@@ -1132,8 +1132,21 @@ function renderVisits(filterCid='') {
       <td style="text-align:center">${v.visit_number||'—'}</td>
       <td>${v.is_retained?'<span class="badge badge-retained">Retained</span>':'<span class="badge badge-new">New</span>'}${!v.count_for_fee?' <span class="badge badge-nofee">No Fee</span>':''}</td>
       <td class="tr mono ${v.count_for_fee?'green':'muted'}">${fmt$(v.fee_amount)}</td>
+      <td class="tr"><button class="btn btn-sm" style="color:var(--red);border-color:rgba(239,68,68,0.3);padding:3px 8px" data-del="${v.id}">✕</button></td>
     </tr>`).join('');
   staggerRows(tbody);
+
+  tbody.querySelectorAll('[data-del]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Delete this visit? This cannot be undone.')) return;
+      const { error } = await sb.from('visits').delete().eq('id', btn.dataset.del);
+      if (error) { toast('Error: ' + error.message, 'err'); return; }
+      await loadAll();
+      renderVisits($('v-filter').value);
+      renderOverview();
+      toast('Visit deleted');
+    });
+  });
 }
 
 // ── RENDER: MONTHLY ──

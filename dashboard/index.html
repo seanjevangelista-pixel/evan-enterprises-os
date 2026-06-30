@@ -402,7 +402,127 @@ body {
 </style>
 </head>
 <body>
-<script>window.ENV={SUPABASE_URL:'https://hzcgdnhecgewqpcnumwm.supabase.co',SUPABASE_ANON:'sb_publishable_C6qf6KSBHv07VGTDNmpvZg_H0nnLrhR'};</script>
+<script>window.ENV={SUPABASE_URL:'https://hzcgdnhecgewqpcnumwm.supabase.co',SUPABASE_ANON:'sb_publishable_C6qf6KSBHv07VGTDNmpvZg_H0nnLrhR'};
+// ── Google Ads ─────────────────────────────────────────────────────────────
+let gadsLoaded = false;
+async function loadGoogleAds() {
+  if (gadsLoaded) return;
+  const el = document.getElementById('gads-content');
+  if (!el) return;
+  el.innerHTML = '<div class="empty"><div class="empty-icon">⬡</div>Fetching campaign data…</div>';
+
+  try {
+    const res  = await fetch('/api/google-ads?metric=campaigns');
+    const data = await res.json();
+
+    if (!data.configured) {
+      el.innerHTML = `
+        <div class="card" style="padding:32px;max-width:520px">
+          <div style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:8px">Connect Google Ads</div>
+          <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px">
+            To pull live campaign data, add these four environment variables to Vercel, then redeploy.
+          </p>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-family:monospace;">
+            <div style="background:rgba(46,95,212,0.06);border:1px solid rgba(46,95,212,0.15);border-radius:6px;padding:10px 14px;color:var(--text-primary)">GOOGLE_ADS_DEVELOPER_TOKEN</div>
+            <div style="background:rgba(46,95,212,0.06);border:1px solid rgba(46,95,212,0.15);border-radius:6px;padding:10px 14px;color:var(--text-primary)">GOOGLE_ADS_CLIENT_ID</div>
+            <div style="background:rgba(46,95,212,0.06);border:1px solid rgba(46,95,212,0.15);border-radius:6px;padding:10px 14px;color:var(--text-primary)">GOOGLE_ADS_CLIENT_SECRET</div>
+            <div style="background:rgba(46,95,212,0.06);border:1px solid rgba(46,95,212,0.15);border-radius:6px;padding:10px 14px;color:var(--text-primary)">GOOGLE_ADS_REFRESH_TOKEN</div>
+            <div style="background:rgba(46,95,212,0.06);border:1px solid rgba(46,95,212,0.15);border-radius:6px;padding:10px 14px;color:var(--text-primary)">GOOGLE_ADS_CUSTOMER_ID &nbsp;<span style="color:var(--text-muted);font-family:var(--font-body)">(e.g. 8314281049)</span></div>
+          </div>
+        </div>`;
+      return;
+    }
+
+    if (data.error) {
+      el.innerHTML = `<div class="empty"><div class="empty-icon">⬡</div>${data.error}</div>`;
+      return;
+    }
+
+    const rows = data.results || [];
+    if (!rows.length) {
+      el.innerHTML = '<div class="empty"><div class="empty-icon">⬡</div>No campaign data for this period.</div>';
+      return;
+    }
+
+    // Summary stats
+    let totalSpend = 0, totalClicks = 0, totalImpressions = 0, totalConversions = 0;
+    rows.forEach(r => {
+      const m = r.metrics || {};
+      totalSpend       += (m.costMicros || 0) / 1e6;
+      totalClicks      += m.clicks || 0;
+      totalImpressions += m.impressions || 0;
+      totalConversions += m.conversions || 0;
+    });
+    const avgCPC = totalClicks ? totalSpend / totalClicks : 0;
+
+    el.innerHTML = `
+      <div class="stats-grid" style="margin-bottom:20px">
+        <div class="stat-card">
+          <div class="stat-label">Total Spend</div>
+          <div class="stat-value" style="color:var(--red)">$${totalSpend.toFixed(2)}</div>
+          <div class="stat-sub">Client's card · 30 days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Clicks</div>
+          <div class="stat-value">${totalClicks.toLocaleString()}</div>
+          <div class="stat-sub">Last 30 days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Impressions</div>
+          <div class="stat-value">${totalImpressions.toLocaleString()}</div>
+          <div class="stat-sub">Last 30 days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Conversions</div>
+          <div class="stat-value" style="color:var(--green)">${totalConversions.toFixed(1)}</div>
+          <div class="stat-sub">Avg CPC $${avgCPC.toFixed(2)}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Campaigns</div></div>
+        <table class="data-table">
+          <thead><tr>
+            <th>Campaign</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th class="tr">Impressions</th>
+            <th class="tr">Clicks</th>
+            <th class="tr">CTR</th>
+            <th class="tr">Spend</th>
+            <th class="tr">Conversions</th>
+          </tr></thead>
+          <tbody>
+            ${rows.map(r => {
+              const c = r.campaign || {};
+              const m = r.metrics  || {};
+              const spend = ((m.costMicros||0)/1e6).toFixed(2);
+              const ctr   = ((m.ctr||0)*100).toFixed(2);
+              const status = c.status === 'ENABLED'
+                ? '<span class="badge" style="background:rgba(22,163,74,0.1);color:#16A34A">Active</span>'
+                : '<span class="badge" style="background:rgba(180,83,9,0.1);color:#B45309">' + (c.status||'—') + '</span>';
+              const type = (c.advertisingChannelType||'').replace('_',' ');
+              return `<tr>
+                <td style="font-weight:500">${c.name||'—'}</td>
+                <td style="font-size:11px;color:var(--text-secondary)">${type}</td>
+                <td>${status}</td>
+                <td class="tr">${(m.impressions||0).toLocaleString()}</td>
+                <td class="tr">${(m.clicks||0).toLocaleString()}</td>
+                <td class="tr">${ctr}%</td>
+                <td class="tr" style="color:var(--red)">$${spend}</td>
+                <td class="tr" style="color:var(--green)">${(m.conversions||0).toFixed(1)}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+
+    gadsLoaded = true;
+  } catch(e) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">⬡</div>Error: ${e.message}</div>`;
+  }
+}
+
+</script>
 
 <!-- ══════════════════════════════════════════
      LOGIN
@@ -511,6 +631,9 @@ body {
       </button>
       <button class="nav-item" data-tab="payments">
         <span class="nav-icon">◈</span> Payments
+      </button>
+      <button class="nav-item" data-tab="google-ads">
+        <span class="nav-icon">⬡</span> Google Ads
       </button>
     </nav>
     <div class="sidebar-footer">
@@ -750,6 +873,21 @@ body {
       </div>
       <div id="payments-content">
         <div class="empty"><div class="empty-icon">◈</div>Select a month and click Load.</div>
+      </div>
+    </section>
+
+    <section class="tab-section" data-section="google-ads">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Google Ads</div>
+          <div class="page-sub" id="gads-sub">Mediterranean Spa · Last 30 days</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn btn-primary" id="load-gads-btn" onclick="loadGoogleAds()">Refresh</button>
+        </div>
+      </div>
+      <div id="gads-content">
+        <div class="empty"><div class="empty-icon">⬡</div>Loading campaign data…</div>
       </div>
     </section>
 
@@ -1586,6 +1724,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='revenue')  renderVisits($('v-filter').value);
       if (tab==='monthly')  renderMonthly();
       if (tab==='payments') initPaymentsTab();
+      if (tab==='google-ads') loadGoogleAds();
     }, 150);
   });
 });

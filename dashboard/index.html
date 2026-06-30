@@ -856,6 +856,22 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
   </div>
 </div>
 
+<!-- ── CONFIRM MODAL ── -->
+<div class="modal-bg" id="modal-confirm">
+  <div class="modal" style="width:360px">
+    <div class="modal-hd">
+      <div class="modal-title" id="confirm-title">Confirm</div>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-msg" style="font-size:13px;color:var(--text-secondary);margin:0"></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+      <button class="btn" id="confirm-ok" style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3)">Delete</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <!-- ══════════════════════════════════════════
@@ -1137,14 +1153,15 @@ function renderVisits(filterCid='') {
   staggerRows(tbody);
 
   tbody.querySelectorAll('[data-del]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      if (!confirm('Delete this visit? This cannot be undone.')) return;
-      const { error } = await sb.from('visits').delete().eq('id', btn.dataset.del);
-      if (error) { toast('Error: ' + error.message, 'err'); return; }
-      await loadAll();
-      renderVisits($('v-filter').value);
-      renderOverview();
-      toast('Visit deleted');
+    btn.addEventListener('click', () => {
+      showConfirm('Delete Visit', 'Remove this visit? This cannot be undone.', async () => {
+        const { error } = await sb.from('visits').delete().eq('id', btn.dataset.del);
+        if (error) { toast('Error: ' + error.message, 'err'); return; }
+        await loadAll();
+        renderVisits($('v-filter').value);
+        renderOverview();
+        toast('Visit deleted');
+      });
     });
   });
 }
@@ -1501,6 +1518,20 @@ $('m-month').addEventListener('change',  renderMonthly);
 // ── MODALS ──
 const openModal  = id => $(id).classList.add('open');
 const closeModal = id => { $(id).classList.remove('open'); };
+
+let _confirmCallback = null;
+function showConfirm(title, msg, onOk) {
+  $('confirm-title').textContent = title;
+  $('confirm-msg').textContent   = msg;
+  _confirmCallback = onOk;
+  openModal('modal-confirm');
+}
+$('confirm-ok').addEventListener('click', async () => {
+  closeModal('modal-confirm');
+  if (_confirmCallback) await _confirmCallback();
+  _confirmCallback = null;
+});
+$('confirm-cancel').addEventListener('click', () => closeModal('modal-confirm'));
 
 $('open-add-client').addEventListener('click',  () => openModal('modal-add-client'));
 $('open-add-client-2').addEventListener('click', () => openModal('modal-add-client'));

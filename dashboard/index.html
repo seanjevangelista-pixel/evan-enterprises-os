@@ -1065,8 +1065,8 @@ function renderClients() {
     const pu  = portalUsers.find(u=>u.client_id===c.id);
     const portalBadge = pu
       ? pu.confirmed_at
-        ? `<span class="badge" style="background:rgba(22,163,74,0.12);color:#15803D;border:1px solid rgba(22,163,74,0.25)">✓ Confirmed</span>`
-        : `<span class="badge" style="background:rgba(234,179,8,0.12);color:#a16207;border:1px solid rgba(234,179,8,0.3)">Invited</span>`
+        ? `<span class="badge" style="background:rgba(22,163,74,0.12);color:#15803D;border:1px solid rgba(22,163,74,0.25)">✓ Active</span>`
+        : `<span class="badge" style="background:rgba(234,179,8,0.12);color:#a16207;border:1px solid rgba(234,179,8,0.3)">Pending</span>`
       : `<span style="color:var(--text-muted);font-size:11px">—</span>`;
     return `<tr>
       <td class="bold">${c.business_name}</td>

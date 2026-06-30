@@ -222,19 +222,32 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
     <div class="login-logo-word">EVAN</div>
     <div class="login-logo-sub">ENTERPRISES LLC</div>
   </div>
-  <div class="login-card">
+  <!-- Step 1: Email -->
+  <div class="login-card" id="step-email">
     <h2>Client Portal</h2>
-    <p>Log in to track your visits and revenue.</p>
+    <p>Enter your email to continue.</p>
     <div class="form-group">
       <label>Email</label>
       <input type="email" id="l-email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div id="email-error" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
+    <button class="btn btn-primary" id="continue-btn">Continue</button>
+  </div>
+
+  <!-- Step 2: Welcome back + password -->
+  <div class="login-card" id="step-pass" style="display:none;">
+    <div id="welcome-block" style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:500;color:#4A6FA8;letter-spacing:0.08em;margin-bottom:6px;">WELCOME BACK</div>
+      <div id="welcome-biz" style="font-size:20px;font-weight:700;color:#E2E8F0;letter-spacing:-0.01em;"></div>
+      <div id="welcome-email" style="font-size:12px;color:#64748B;margin-top:3px;"></div>
     </div>
     <div class="form-group">
       <label>Password</label>
       <input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password">
     </div>
-    <div id="login-error"></div>
+    <div id="login-error" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
     <button class="btn btn-primary" id="login-btn">Sign In</button>
+    <button id="back-btn" style="background:none;border:none;color:#64748B;font-size:12px;cursor:pointer;margin-top:10px;width:100%;text-align:center;font-family:var(--font-body);">← Use a different email</button>
   </div>
 </div>
 
@@ -452,11 +465,39 @@ $('setpass-btn').addEventListener('click', async () => {
   else $('login-screen').classList.add('show');
 });
 
+// ── STEP 1: EMAIL CONTINUE ──
+$('continue-btn').addEventListener('click', async () => {
+  const btn = $('continue-btn');
+  const email = $('l-email').value.trim();
+  const errEl = $('email-error');
+  errEl.style.display = 'none';
+  if (!email) { errEl.textContent = 'Please enter your email.'; errEl.style.display='block'; return; }
+  btn.textContent = 'Looking you up…'; btn.disabled = true;
+  const { data, error } = await sb.from('public_client_lookup').select('business_name').eq('email', email).single();
+  btn.textContent = 'Continue'; btn.disabled = false;
+  if (error || !data) { errEl.textContent = 'No account found. Contact Evan Enterprises.'; errEl.style.display='block'; return; }
+  $('welcome-biz').textContent = data.business_name;
+  $('welcome-email').textContent = email;
+  $('step-email').style.display = 'none';
+  $('step-pass').style.display = 'block';
+  $('step-pass').style.animation = 'logoIn 0.4s cubic-bezier(0.22,1,0.36,1) both';
+  setTimeout(() => $('l-pass').focus(), 100);
+});
+$('l-email').addEventListener('keydown', e => { if (e.key === 'Enter') $('continue-btn').click(); });
+$('l-pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('login-btn').click(); });
+$('back-btn').addEventListener('click', () => {
+  $('step-pass').style.display = 'none';
+  $('step-email').style.display = 'block';
+  $('login-error').style.display = 'none';
+  $('l-pass').value = '';
+});
+
+// ── STEP 2: SIGN IN ──
 $('login-btn').addEventListener('click', async () => {
   const btn = $('login-btn');
   btn.textContent = 'Signing in…';
   const { error } = await sb.auth.signInWithPassword({
-    email: $('l-email').value, password: $('l-pass').value
+    email: $('l-email').value.trim(), password: $('l-pass').value
   });
   btn.textContent = 'Sign In';
   if (error) { const el=$('login-error'); el.textContent=error.message; el.style.display='block'; }

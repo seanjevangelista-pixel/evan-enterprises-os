@@ -1532,14 +1532,22 @@ $('invite-submit').addEventListener('click', async () => {
   btn.textContent = 'Creating account…'; btn.disabled = true;
 
   try {
-    // 1. Create auth user via signUp (auto-confirmed since email confirm is off)
+    // Save admin session — signUp auto-signs-in as the new user, kicking out the admin
+    const { data: { session: adminSession } } = await sb.auth.getSession();
+
+    // 1. Create auth user
     const { data: signUpData, error: signUpErr } = await sb.auth.signUp({ email, password: pass });
     if (signUpErr) throw new Error(signUpErr.message);
 
     const userId = signUpData.user?.id;
     if (!userId) throw new Error('Could not create user account.');
 
-    // 2. Insert into users table
+    // 2. Restore admin session immediately so INSERT runs with admin privileges
+    if (adminSession) {
+      await sb.auth.setSession({ access_token: adminSession.access_token, refresh_token: adminSession.refresh_token });
+    }
+
+    // 3. Insert into users table (now running as admin)
     const { error: insertErr } = await sb.from('users').insert({
       id: userId, email, role: 'client', client_id: _inviteClientId
     });

@@ -4,22 +4,583 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Client Portal — Evan Enterprises LLC</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --black: #0A0A0A; --white: #FFFFFF; --accent: #4A90D9;
-    --surface: #111111; --border: rgba(255,255,255,0.08);
-    --text-primary: #F0F0F0; --text-secondary: #999999; --text-muted: #555555;
-    --radius: 12px; --font-display: 'Syne', sans-serif; --font-body: 'Inter', sans-serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--black); color: var(--text-primary); font-family: var(--font-body); min-height: 100vh; }
-  .loading { display: flex; align-items: center; justify-content: center; height: 100vh; color: var(--text-muted); font-size: 14px; letter-spacing: 0.1em; }
+:root {
+  --bg: #F0F3F8;
+  --surface: #FFFFFF;
+  --surface-2: #F6F8FC;
+  --surface-3: #EDF0F7;
+  --border: rgba(30,41,80,0.08);
+  --border-strong: rgba(30,41,80,0.12);
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --text-muted: #A0AABF;
+  --sidebar-bg: #0B1120;
+  --sidebar-border: rgba(255,255,255,0.06);
+  --sidebar-text: #8898B8;
+  --sidebar-text-active: #D8E0F0;
+  --accent: #2E5FD4;
+  --accent-dim: rgba(46,95,212,0.1);
+  --green: #16A34A; --red: #DC2626;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text-primary); font-family: var(--font-body); font-size: 13px; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+/* ── SET PASSWORD ── */
+#setpass-screen { min-height:100vh; display:none; align-items:center; justify-content:center; flex-direction:column; gap:36px; background:#0B1120; position:relative; overflow:hidden; }
+#setpass-screen.show { display:flex; }
+#setpass-error { color:#EF4444; font-size:12px; margin-top:6px; display:none; }
+
+/* ── LOGIN ── */
+#login-screen { min-height:100vh; display:none; align-items:center; justify-content:center; flex-direction:column; gap:36px; background:#0B1120; position:relative; overflow:hidden; }
+#login-screen.show { display:flex; }
+/* Ghost E watermarks */
+.ghost-e { position:absolute; pointer-events:none; opacity:0.032; }
+.ghost-e-1 { top:-12%; right:-10%; width:55vw; transform:rotate(-8deg); animation:ghostDrift 18s ease-in-out infinite alternate; }
+.ghost-e-2 { bottom:-25%; left:-15%; width:48vw; transform:rotate(12deg) scaleX(-1); animation:ghostDrift 24s ease-in-out infinite alternate-reverse; }
+@keyframes ghostDrift {
+  from { transform:rotate(-8deg) translateY(0); }
+  to   { transform:rotate(-6deg) translateY(-24px); }
+}
+#login-screen::before, #setpass-screen::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 60% 50% at 50% 40%, rgba(46,95,212,0.07) 0%, transparent 70%);
+}
+/* Bar entrance animations */
+@keyframes barSlideIn {
+  from { opacity:0; transform:translateX(-28px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+.e-bar-1 { animation: barSlideIn 0.65s cubic-bezier(0.22,1,0.36,1) 0.15s both; }
+.e-bar-2 { animation: barSlideIn 0.65s cubic-bezier(0.22,1,0.36,1) 0.26s both; }
+.e-bar-3 { animation: barSlideIn 0.65s cubic-bezier(0.22,1,0.36,1) 0.37s both; }
+.login-logo { display:flex; flex-direction:column; align-items:center; gap:14px; }
+.login-e-mark { width:60px; height:auto; }
+.login-logo-word { font-family:var(--font-display); font-size:16px; font-weight:800; letter-spacing:0.22em; background:linear-gradient(160deg,#fff 0%,#c0c8d8 45%,#8090b0 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.login-logo-sub { font-family:var(--font-display); font-size:9px; font-weight:700; color:#8898B8; letter-spacing:0.28em; margin-top:-6px; }
+.login-card { background:#111827; border:1px solid rgba(255,255,255,0.08); border-radius:4px; padding:28px; width:320px; }
+.login-card h2 { font-family:var(--font-body); font-size:14px; font-weight:600; color:#E2E8F0; margin-bottom:4px; }
+.login-card p { color:#64748B; font-size:12px; margin-bottom:22px; }
+#login-error { color:#EF4444; font-size:12px; margin-top:6px; display:none; }
+.form-group { margin-bottom:13px; }
+.form-group label { display:block; font-size:12px; font-weight:500; color:#94A3B8; margin-bottom:5px; }
+.form-group input, .form-group select {
+  width:100%; background:#1E293B; border:1px solid rgba(255,255,255,0.1);
+  border-radius:3px; color:#E2E8F0; font-family:var(--font-body); font-size:13px;
+  padding:9px 12px; outline:none; transition:border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus { border-color:var(--accent); }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border-radius:3px; font-family:var(--font-body); font-size:12px; font-weight:500; cursor:pointer; border:none; transition:all 0.18s; width:100%; justify-content:center; margin-top:8px; }
+.btn-primary { background:var(--accent); color:#fff; font-weight:600; }
+.btn-primary:hover { background:#2452C0; }
+.btn-primary:active { transform:scale(0.98); }
+
+/* ── APP ── */
+#app { display:none; }
+#app.show { display:flex; min-height:100vh; }
+
+/* Sidebar */
+#sidebar { width:220px; background:var(--sidebar-bg); border-right:0.5px solid var(--sidebar-border); display:flex; flex-direction:column; flex-shrink:0; }
+.sidebar-logo { padding:18px 16px 16px; border-bottom:0.5px solid var(--sidebar-border); display:flex; align-items:center; gap:11px; }
+.sidebar-e-mark { width:26px; height:auto; flex-shrink:0; }
+.sidebar-logo-name { font-family:var(--font-display); font-size:10px; font-weight:800; letter-spacing:0.2em; background:linear-gradient(135deg,#fff 0%,#b8c0d4 50%,#7888a8 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1.2; }
+.sidebar-logo-sub { font-size:8px; font-weight:600; color:var(--sidebar-text); letter-spacing:0.14em; margin-top:2px; }
+.sidebar-client-name { flex:1; padding:16px; border-bottom:0.5px solid var(--sidebar-border); }
+.sidebar-client-label { font-size:9px; font-weight:500; color:#3A4A68; letter-spacing:0.08em; margin-bottom:4px; }
+.sidebar-client-biz { font-size:13px; font-weight:600; color:var(--sidebar-text-active); }
+.sidebar-footer { padding:14px 12px; border-top:0.5px solid var(--sidebar-border); margin-top:auto; }
+.user-pill { display:flex; align-items:center; gap:10px; padding:6px 4px; margin-bottom:10px; }
+.user-avatar { width:28px; height:28px; border-radius:50%; background:rgba(46,95,212,0.15); border:1px solid rgba(46,95,212,0.3); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--accent); flex-shrink:0; }
+.user-name { font-size:12px; font-weight:500; color:var(--sidebar-text-active); }
+.user-role { font-size:10px; color:var(--sidebar-text); margin-top:1px; }
+.btn-signout { display:flex; align-items:center; justify-content:center; width:100%; padding:7px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:3px; color:var(--sidebar-text); font-family:var(--font-body); font-size:11px; font-weight:500; cursor:pointer; transition:all 0.15s; }
+.btn-signout:hover { color:var(--sidebar-text-active); border-color:rgba(255,255,255,0.15); }
+
+/* Main */
+#main { flex:1; display:flex; flex-direction:column; background:var(--bg); }
+.page-header { padding:24px 32px 20px; border-bottom:1px solid var(--border); background:var(--surface); display:flex; align-items:flex-end; justify-content:space-between; }
+.page-title { font-size:20px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+.page-sub { font-size:11px; color:var(--text-secondary); margin-top:4px; }
+.page-content { padding:24px 32px; }
+
+/* Stats */
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+.stat-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:18px 20px; }
+.stat-label { font-size:12px; font-weight:400; color:var(--text-secondary); margin-bottom:8px; }
+.stat-value { font-size:24px; font-weight:600; color:var(--text-primary); letter-spacing:-0.02em; }
+.stat-value.green { color:var(--green); }
+.stat-value.blue { color:var(--accent); }
+
+/* Log form */
+.section-title { font-size:14px; font-weight:600; color:var(--text-primary); margin-bottom:14px; }
+.log-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:22px 24px; margin-bottom:24px; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-grid .span-2 { grid-column:span 2; }
+.form-group-light { margin-bottom:0; }
+.form-group-light label { display:block; font-size:12px; font-weight:500; color:var(--text-secondary); margin-bottom:5px; }
+.form-group-light input, .form-group-light select {
+  width:100%; background:var(--surface); border:1px solid var(--border-strong);
+  border-radius:3px; color:var(--text-primary); font-family:var(--font-body); font-size:13px;
+  padding:8px 12px; outline:none; transition:border-color 0.2s, box-shadow 0.2s;
+}
+.form-group-light input:focus, .form-group-light select:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(46,95,212,0.08); }
+.form-group-light select option { background:var(--surface); }
+.fee-preview { background:rgba(22,163,74,0.05); border:1px solid rgba(22,163,74,0.15); border-radius:3px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+.fee-preview-lbl { font-size:12px; font-weight:500; color:var(--text-primary); }
+.fee-preview-note { font-size:11px; color:var(--text-secondary); margin-top:2px; }
+.fee-preview-val { font-size:22px; font-weight:600; color:#15803D; letter-spacing:-0.02em; }
+.form-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:16px; }
+.btn-light { display:inline-flex; align-items:center; padding:8px 18px; border-radius:3px; font-family:var(--font-body); font-size:12px; font-weight:500; cursor:pointer; border:none; transition:all 0.18s; }
+.btn-light.primary { background:var(--accent); color:#fff; font-weight:600; }
+.btn-light.primary:hover { background:#2452C0; }
+.btn-light.secondary { background:var(--surface); color:var(--text-secondary); border:1px solid var(--border-strong); }
+.btn-light.secondary:hover { color:var(--text-primary); }
+.btn-light:active { transform:scale(0.97); }
+
+/* Table */
+.data-table { width:100%; border-collapse:collapse; }
+.data-table th { text-align:left; padding:9px 16px; font-size:11px; font-weight:500; color:var(--text-secondary); border-bottom:1px solid var(--border); white-space:nowrap; }
+.data-table td { padding:10px 16px; font-size:13px; color:var(--text-primary); border-bottom:1px solid var(--border); vertical-align:middle; }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tbody tr:hover td { background:var(--surface-2); }
+.badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:3px; font-size:11px; font-weight:500; }
+.badge-retained { background:rgba(22,163,74,0.1); color:#15803D; }
+.badge-new { background:rgba(46,95,212,0.1); color:#1D4ED8; }
+.badge-nofee { background:rgba(180,83,9,0.08); color:#B45309; }
+.empty { text-align:center; padding:40px 24px; color:var(--text-muted); font-size:12px; }
+
+/* Toast */
+#toast { position:fixed; bottom:20px; right:20px; background:var(--surface); border:1px solid var(--border-strong); border-radius:3px; padding:10px 16px; font-size:12px; font-weight:500; color:var(--text-primary); z-index:999; display:none; box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+#toast.show { display:block; }
+#toast.ok  { border-color:rgba(22,163,74,0.4); color:#15803D; }
+#toast.err { border-color:rgba(220,38,38,0.4); color:#DC2626; }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+#app.show { animation: fadeUp 0.3s ease both; }
 </style>
 </head>
 <body>
-<div class="loading">CLIENT PORTAL COMING IN PHASE 3</div>
+<script src="../js/env.js"></script>
+
+<!-- SET PASSWORD (invite flow) -->
+<div id="setpass-screen">
+  <div class="login-logo">
+    <svg class="login-e-mark" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="pcg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
+        <linearGradient id="pcg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
+        <linearGradient id="pcg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
+        <linearGradient id="prfade" x1="1" y1="0" x2="0.5" y2="0"><stop offset="0%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
+      </defs>
+      <g class="e-bar-1"><path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#pcg1)"/><path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#prfade)"/></g>
+      <g class="e-bar-2"><path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#pcg2)"/><path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#prfade)"/></g>
+      <g class="e-bar-3"><path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#pcg3)"/><path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#prfade)"/></g>
+    </svg>
+    <div class="login-logo-word">EVAN</div>
+    <div class="login-logo-sub">ENTERPRISES LLC</div>
+  </div>
+  <div class="login-card">
+    <h2>Set Your Password</h2>
+    <p>Welcome — choose a password to activate your portal access.</p>
+    <div class="form-group">
+      <label>New Password</label>
+      <input type="password" id="sp-pass" placeholder="At least 8 characters" autocomplete="new-password">
+    </div>
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <input type="password" id="sp-pass2" placeholder="Repeat password" autocomplete="new-password">
+    </div>
+    <div id="setpass-error"></div>
+    <button class="btn btn-primary" id="setpass-btn">Activate Account</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <svg class="ghost-e ghost-e-1" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg"><path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="white"/><path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="white"/><path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="white"/></svg>
+  <svg class="ghost-e ghost-e-2" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg"><path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="white"/><path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="white"/><path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="white"/></svg>
+  <div class="login-logo">
+    <svg class="login-e-mark" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lcg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
+        <linearGradient id="lcg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
+        <linearGradient id="lcg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
+        <linearGradient id="lrfade" x1="1" y1="0" x2="0.5" y2="0"><stop offset="0%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
+        <linearGradient id="lscan" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#fff" stop-opacity="0"/><stop offset="50%" stop-color="#fff" stop-opacity="0.55"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      </defs>
+      <g class="e-bar-1"><path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#lcg1)"/><path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#lrfade)"/></g>
+      <g class="e-bar-2"><path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#lcg2)"/><path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#lrfade)"/></g>
+      <g class="e-bar-3"><path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#lcg3)"/><path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#lrfade)"/></g>
+      <rect x="-50" y="0" width="50" height="84" fill="url(#lscan)" opacity="0.8"><animate attributeName="x" from="-50" to="154" dur="1.0s" begin="0.7s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1"/></rect>
+    </svg>
+    <div class="login-logo-word">EVAN</div>
+    <div class="login-logo-sub">ENTERPRISES LLC</div>
+  </div>
+  <div class="login-card">
+    <h2>Client Portal</h2>
+    <p>Log in to track your visits and revenue.</p>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="l-email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div id="login-error"></div>
+    <button class="btn btn-primary" id="login-btn">Sign In</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <aside id="sidebar">
+    <div class="sidebar-logo">
+      <svg class="sidebar-e-mark" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sscg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
+          <linearGradient id="sscg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
+          <linearGradient id="sscg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
+          <linearGradient id="ssrfade" x1="1" y1="0" x2="0.5" y2="0"><stop offset="0%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
+        </defs>
+        <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#sscg1)"/>
+        <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#ssrfade)"/>
+        <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#sscg2)"/>
+        <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#ssrfade)"/>
+        <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#sscg3)"/>
+        <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#ssrfade)"/>
+      </svg>
+      <div>
+        <div class="sidebar-logo-name">EVAN</div>
+        <div class="sidebar-logo-sub">ENTERPRISES LLC</div>
+      </div>
+    </div>
+    <div class="sidebar-client-name">
+      <div class="sidebar-client-label">YOUR BUSINESS</div>
+      <div class="sidebar-client-biz" id="p-biz-name">—</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="p-avatar">?</div>
+        <div>
+          <div class="user-name" id="p-user-name">—</div>
+          <div class="user-role">Client</div>
+        </div>
+      </div>
+      <button class="btn-signout" id="signout-btn">Sign Out</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div class="page-header">
+      <div>
+        <div class="page-title" id="p-page-title">Visit Log</div>
+        <div class="page-sub" id="p-date">—</div>
+      </div>
+    </div>
+    <div class="page-content">
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Visits</div>
+          <div class="stat-value blue" id="p-total">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">This Month</div>
+          <div class="stat-value" id="p-month">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Retained Clients</div>
+          <div class="stat-value green" id="p-retained">—</div>
+        </div>
+      </div>
+
+      <!-- Log a visit -->
+      <div class="section-title">Log a Visit</div>
+      <div class="log-card">
+        <form id="visit-form">
+          <div class="form-grid">
+            <div class="form-group-light">
+              <label>Customer Name *</label>
+              <input type="text" id="v-name" placeholder="Jane Smith" required>
+            </div>
+            <div class="form-group-light">
+              <label>Phone</label>
+              <input type="tel" id="v-phone" placeholder="(512) 555-0100">
+            </div>
+            <div class="form-group-light">
+              <label>Email</label>
+              <input type="email" id="v-email" placeholder="jane@email.com">
+            </div>
+            <div class="form-group-light">
+              <label>Date *</label>
+              <input type="date" id="v-date" required>
+            </div>
+            <div class="form-group-light">
+              <label>Service</label>
+              <input type="text" id="v-service" placeholder="Facial, Massage…">
+            </div>
+            <div class="form-group-light">
+              <label>Amount ($) *</label>
+              <input type="number" id="v-amount" placeholder="0.00" step="0.01" min="0" required>
+            </div>
+            <div class="form-group-light span-2">
+              <label>How did they find you?</label>
+              <select id="v-source">
+                <option value="lsa">Google LSA</option>
+                <option value="google_ads">Google Ads</option>
+                <option value="instagram">Instagram</option>
+                <option value="referral">Referral</option>
+                <option value="walk_in">Walk-In</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="fee-preview">
+            <div>
+              <div class="fee-preview-lbl">Evan Enterprises Performance Fee</div>
+              <div class="fee-preview-note" id="p-fee-note">Enter amount to calculate</div>
+            </div>
+            <div class="fee-preview-val" id="p-fee-val">$0.00</div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-light secondary" id="clear-btn">Clear</button>
+            <button type="submit" class="btn-light primary" id="submit-btn">Log Visit</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Visit history -->
+      <div class="section-title">Visit History</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th><th>Customer</th><th>Service</th>
+              <th>Source</th><th>Amount</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="p-visits-tbody"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const sb = createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_ANON);
+
+const $ = id => document.getElementById(id);
+const sourceMap = { lsa:'Google LSA', google_ads:'Google Ads', instagram:'Instagram', referral:'Referral', walk_in:'Walk-In', other:'Other' };
+
+function toast(msg, type='ok') {
+  const el = $('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className='', 3000);
+}
+
+function fmt$(n) { return n == null ? '—' : '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtDate(d) { return d ? new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; }
+
+// ── AUTH ──
+async function init() {
+  // Detect invite / password-reset token in URL hash
+  const hash = window.location.hash;
+  const params = new URLSearchParams(hash.replace('#', '?'));
+  const tokenType = params.get('type');
+
+  if (tokenType === 'invite' || tokenType === 'recovery') {
+    // Supabase v2 auto-exchanges the hash token; wait for onAuthStateChange
+    $('setpass-screen').classList.add('show');
+    sb.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
+        // session is now live; stay on set-password screen until they submit
+      }
+    });
+    return;
+  }
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    await enterPortal(session);
+  } else {
+    $('login-screen').classList.add('show');
+  }
+  sb.auth.onAuthStateChange(async (_e, session) => {
+    if (session) { await enterPortal(session); }
+    else { $('app').classList.remove('show'); $('login-screen').classList.add('show'); }
+  });
+}
+
+// ── SET PASSWORD ──
+$('setpass-btn').addEventListener('click', async () => {
+  const btn = $('setpass-btn');
+  const errEl = $('setpass-error');
+  const pass = $('sp-pass').value;
+  const pass2 = $('sp-pass2').value;
+  errEl.style.display = 'none';
+
+  if (pass.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display='block'; return; }
+  if (pass !== pass2) { errEl.textContent = 'Passwords do not match.'; errEl.style.display='block'; return; }
+
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+  const { error } = await sb.auth.updateUser({ password: pass });
+  btn.textContent = 'Activate Account';
+  btn.disabled = false;
+
+  if (error) { errEl.textContent = error.message; errEl.style.display='block'; return; }
+
+  // Password set — get session and enter portal
+  const { data: { session } } = await sb.auth.getSession();
+  $('setpass-screen').classList.remove('show');
+  window.history.replaceState(null, '', window.location.pathname);
+  if (session) await enterPortal(session);
+  else $('login-screen').classList.add('show');
+});
+
+$('login-btn').addEventListener('click', async () => {
+  const btn = $('login-btn');
+  btn.textContent = 'Signing in…';
+  const { error } = await sb.auth.signInWithPassword({
+    email: $('l-email').value, password: $('l-pass').value
+  });
+  btn.textContent = 'Sign In';
+  if (error) { const el=$('login-error'); el.textContent=error.message; el.style.display='block'; }
+});
+
+$('signout-btn').addEventListener('click', () => sb.auth.signOut());
+
+// ── ENTER PORTAL ──
+async function enterPortal(session) {
+  // Get user's client_id from users table
+  const { data: userRow } = await sb.from('users').select('client_id, role').eq('id', session.user.id).single();
+  if (!userRow?.client_id) {
+    await sb.auth.signOut();
+    const el=$('login-error'); el.textContent='No client account linked. Contact Evan Enterprises.'; el.style.display='block';
+    return;
+  }
+
+  // Get business name
+  const { data: client } = await sb.from('clients').select('business_name').eq('id', userRow.client_id).single();
+
+  $('login-screen').classList.remove('show');
+  $('app').classList.add('show');
+  $('p-biz-name').textContent = client?.business_name || '—';
+  $('p-page-title').textContent = client?.business_name || 'Visit Log';
+  $('p-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  $('p-user-name').textContent = session.user.email.split('@')[0];
+  $('p-avatar').textContent = (session.user.email[0] || '?').toUpperCase();
+  $('v-date').value = new Date().toISOString().split('T')[0];
+
+  // Store client_id for inserts
+  window._clientId = userRow.client_id;
+
+  await loadVisits();
+}
+
+// ── LOAD VISITS ──
+async function loadVisits() {
+  const { data: visits } = await sb.from('visits').select('*')
+    .eq('client_id', window._clientId)
+    .order('visit_date', { ascending: false });
+
+  const now = new Date(), yr = now.getFullYear(), mo = now.getMonth()+1;
+  const thisMonth = (visits||[]).filter(v => {
+    const d = new Date(v.visit_date+'T12:00:00');
+    return d.getFullYear()===yr && d.getMonth()+1===mo;
+  });
+  const retained = (visits||[]).filter(v => v.is_retained);
+
+  $('p-total').textContent = (visits||[]).length;
+  $('p-month').textContent = thisMonth.length;
+  $('p-retained').textContent = retained.length;
+
+  const tbody = $('p-visits-tbody');
+  if (!visits?.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty">No visits logged yet.</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = visits.map(v => `
+    <tr>
+      <td>${fmtDate(v.visit_date)}</td>
+      <td><strong>${v.customer_name}</strong></td>
+      <td>${v.service || '—'}</td>
+      <td>${sourceMap[v.source] || v.source || '—'}</td>
+      <td><strong>${fmt$(v.amount)}</strong></td>
+      <td>
+        ${v.source === 'walk_in' && !v.count_for_fee
+          ? '<span class="badge badge-nofee">Walk-in</span>'
+          : v.is_retained
+            ? '<span class="badge badge-retained">Retained</span>'
+            : '<span class="badge badge-new">New</span>'
+        }
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── FEE PREVIEW ──
+$('v-amount').addEventListener('input', () => {
+  const amt = parseFloat($('v-amount').value) || 0;
+  const fee = amt * 0.10;
+  $('p-fee-val').textContent = fmt$(fee);
+  $('p-fee-note').textContent = amt > 0 ? `10% of ${fmt$(amt)}` : 'Enter amount to calculate';
+});
+
+// ── SUBMIT VISIT ──
+$('visit-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = $('submit-btn');
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  const source = $('v-source').value;
+  const { error } = await sb.from('visits').insert({
+    client_id: window._clientId,
+    customer_name: $('v-name').value.trim(),
+    customer_phone: $('v-phone').value.trim() || null,
+    customer_email: $('v-email').value.trim() || null,
+    visit_date: $('v-date').value,
+    service: $('v-service').value.trim() || null,
+    amount: parseFloat($('v-amount').value),
+    source,
+    count_for_fee: source !== 'walk_in',
+  });
+
+  btn.textContent = 'Log Visit';
+  btn.disabled = false;
+
+  if (error) { toast('Error: ' + error.message, 'err'); return; }
+  toast('Visit logged!', 'ok');
+  $('visit-form').reset();
+  $('v-date').value = new Date().toISOString().split('T')[0];
+  $('p-fee-val').textContent = '$0.00';
+  $('p-fee-note').textContent = 'Enter amount to calculate';
+  await loadVisits();
+});
+
+$('clear-btn').addEventListener('click', () => {
+  $('visit-form').reset();
+  $('v-date').value = new Date().toISOString().split('T')[0];
+  $('p-fee-val').textContent = '$0.00';
+  $('p-fee-note').textContent = 'Enter amount to calculate';
+});
+
+init();
+</script>
 </body>
 </html>

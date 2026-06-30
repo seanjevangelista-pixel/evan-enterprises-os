@@ -1,0 +1,15 @@
+<svg viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+  <rect width="104" height="84" fill="#0B1120"/>
+  <defs>
+    <linearGradient id="f1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
+    <linearGradient id="f2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
+    <linearGradient id="f3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
+    <linearGradient id="fr" x1="1" y1="0" x2="0.5" y2="0"><stop offset="0%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
+  </defs>
+  <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#f1)"/>
+  <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#fr)"/>
+  <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#f2)"/>
+  <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#fr)"/>
+  <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#f3)"/>
+  <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#fr)"/>
+</svg>

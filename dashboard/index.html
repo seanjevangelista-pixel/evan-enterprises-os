@@ -861,6 +861,14 @@ async function init() {
 }
 
 async function enterApp(session) {
+  // Verify admin role — reject clients even if they find this URL
+  const { data: userRow } = await sb.from('users').select('role').eq('id', session.user.id).single();
+  if (!userRow || userRow.role !== 'admin') {
+    await sb.auth.signOut();
+    const el = $('login-error'); el.textContent = 'Access denied.'; el.style.display = 'block';
+    $('login-screen').style.display = 'flex';
+    return;
+  }
   $('login-screen').style.display = 'none';
   $('app').style.display = 'block';
   const email = session.user.email || '';

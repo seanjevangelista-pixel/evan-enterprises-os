@@ -807,6 +807,36 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
   </div>
 </div>
 
+<!-- ── INVITE MODAL ── -->
+<div class="modal-bg" id="modal-invite">
+  <div class="modal" style="width:420px">
+    <div class="modal-hd">
+      <div class="modal-title">Invite to Client Portal</div>
+      <button class="modal-x" data-close="modal-invite">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;">
+        Create portal access for <strong id="invite-biz-name" style="color:var(--text-primary)"></strong>. They'll be able to log visits and view their history.
+      </p>
+      <div class="form-group">
+        <label>Their Email Address</label>
+        <input type="email" id="invite-email" placeholder="client@example.com">
+      </div>
+      <div class="form-group">
+        <label>Temporary Password</label>
+        <input type="text" id="invite-pass" placeholder="e.g. MediSpa2024!" autocomplete="off">
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Share this with them — they can change it later.</div>
+      </div>
+      <div id="invite-error" style="color:var(--red);font-size:12px;margin-top:4px;display:none;"></div>
+      <div id="invite-success" style="display:none;background:rgba(22,163,74,0.07);border:1px solid rgba(22,163,74,0.2);border-radius:4px;padding:12px 14px;font-size:12px;color:#15803D;margin-top:8px;"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" data-close="modal-invite">Cancel</button>
+      <button class="btn btn-primary" id="invite-submit">Send Invite</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <!-- ══════════════════════════════════════════
@@ -1471,36 +1501,6 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
 // ── BOOT ──
 init();
 </script>
-<!-- ── INVITE MODAL ── -->
-<div class="modal-bg" id="modal-invite">
-  <div class="modal" style="width:420px">
-    <div class="modal-hd">
-      <div class="modal-title">Invite to Client Portal</div>
-      <button class="modal-x" data-close="modal-invite">×</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;">
-        Create portal access for <strong id="invite-biz-name" style="color:var(--text-primary)"></strong>. They'll be able to log visits and view their history.
-      </p>
-      <div class="form-group">
-        <label>Their Email Address</label>
-        <input type="email" id="invite-email" placeholder="client@example.com">
-      </div>
-      <div class="form-group">
-        <label>Temporary Password</label>
-        <input type="text" id="invite-pass" placeholder="e.g. MediSpa2024!" autocomplete="off">
-        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Share this with them — they can change it later.</div>
-      </div>
-      <div id="invite-error" style="color:var(--red);font-size:12px;margin-top:4px;display:none;"></div>
-      <div id="invite-success" style="display:none;background:rgba(22,163,74,0.07);border:1px solid rgba(22,163,74,0.2);border-radius:4px;padding:12px 14px;font-size:12px;color:#15803D;margin-top:8px;"></div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-secondary" data-close="modal-invite">Cancel</button>
-      <button class="btn btn-primary" id="invite-submit">Send Invite</button>
-    </div>
-  </div>
-</div>
-
 <script>
 // ── INVITE LOGIC ──
 let _inviteClientId = null;

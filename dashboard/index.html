@@ -587,7 +587,7 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
               <tr>
                 <th>Business</th><th>Owner</th><th>Division</th>
                 <th>Status</th><th>Flat Fee</th><th>Perf %</th>
-                <th>Reviews</th><th class="tr">Lifetime Value</th><th></th>
+                <th>Reviews</th><th class="tr">Lifetime Value</th><th style="text-align:center">Portal</th><th></th>
               </tr>
             </thead>
             <tbody id="clients-tbody"></tbody>
@@ -943,13 +943,17 @@ $('login-form').addEventListener('submit', async e => {
 $('logout-btn').addEventListener('click', () => sb.auth.signOut());
 
 // ── DATA ──
+let portalUsers = [];
+
 async function loadAll() {
-  const [{ data: c, error: ce }, { data: v, error: ve }] = await Promise.all([
+  const [{ data: c }, { data: v }, { data: u }] = await Promise.all([
     sb.from('clients').select('*').order('created_at', { ascending: false }),
     sb.from('visits').select('*, clients(business_name)').order('visit_date', { ascending: false }),
+    sb.from('users').select('client_id, confirmed_at').eq('role', 'client'),
   ]);
-clients = c || [];
-  visits  = v || [];
+  clients     = c || [];
+  visits      = v || [];
+  portalUsers = u || [];
   populateSelects();
 }
 
@@ -1058,6 +1062,12 @@ function renderClients() {
   }
   tbody.innerHTML = clients.map(c => {
     const ltv = visits.filter(v=>v.client_id===c.id).reduce((s,v)=>s+Number(v.amount),0);
+    const pu  = portalUsers.find(u=>u.client_id===c.id);
+    const portalBadge = pu
+      ? pu.confirmed_at
+        ? `<span class="badge" style="background:rgba(22,163,74,0.12);color:#15803D;border:1px solid rgba(22,163,74,0.25)">✓ Confirmed</span>`
+        : `<span class="badge" style="background:rgba(234,179,8,0.12);color:#a16207;border:1px solid rgba(234,179,8,0.3)">Invited</span>`
+      : `<span style="color:var(--text-muted);font-size:11px">—</span>`;
     return `<tr>
       <td class="bold">${c.business_name}</td>
       <td>${c.owner_name||'—'}</td>
@@ -1067,9 +1077,10 @@ function renderClients() {
       <td>${(c.performance_pct*100).toFixed(0)}%</td>
       <td>${c.google_review_count||'—'}</td>
       <td class="tr mono" style="color:var(--accent);font-weight:700">${fmt$(ltv)}</td>
+      <td style="text-align:center">${portalBadge}</td>
       <td class="tr">
         <button class="btn btn-sm btn-secondary invite-btn" data-id="${c.id}" data-name="${c.business_name}">
-          Invite to Portal
+          ${pu ? 'Re-invite' : 'Invite to Portal'}
         </button>
       </td>
     </tr>`;

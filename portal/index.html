@@ -518,6 +518,9 @@ async function enterPortal(session) {
   // Get business name
   const { data: client } = await sb.from('clients').select('business_name').eq('id', userRow.client_id).single();
 
+  // Mark confirmed_at so admin can see client has logged in
+  await sb.from('users').update({ confirmed_at: new Date().toISOString() }).eq('id', session.user.id);
+
   $('login-screen').classList.remove('show');
   $('app').classList.add('show');
   $('p-biz-name').textContent = client?.business_name || '—';

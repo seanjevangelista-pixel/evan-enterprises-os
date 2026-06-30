@@ -492,6 +492,9 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
       <button class="nav-item" data-tab="monthly">
         <span class="nav-icon">≡</span> Monthly
       </button>
+      <button class="nav-item" data-tab="payments">
+        <span class="nav-icon">◈</span> Payments
+      </button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-pill">
@@ -714,6 +717,22 @@ body { background: var(--bg); color: var(--text-primary); font-family: var(--fon
         <div id="monthly-content">
           <div class="empty"><div class="empty-icon">≡</div>Select a client and month above.</div>
         </div>
+      </div>
+    </section>
+
+    <section class="tab-section" data-section="payments">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Square Payments</div>
+          <div class="page-sub">Your incoming payments from clients</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <select id="pay-month" class="select-pill"></select>
+          <button class="btn btn-primary" id="load-payments-btn">Load</button>
+        </div>
+      </div>
+      <div id="payments-content">
+        <div class="empty"><div class="empty-icon">◈</div>Select a month and click Load.</div>
       </div>
     </section>
 
@@ -1505,8 +1524,79 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='clients')  renderClients();
       if (tab==='revenue')  renderVisits($('v-filter').value);
       if (tab==='monthly')  renderMonthly();
+      if (tab==='payments') initPaymentsTab();
     }, 150);
   });
+});
+
+// ── PAYMENTS TAB ──
+function initPaymentsTab() {
+  const sel = $('pay-month');
+  if (sel.options.length <= 1) {
+    const now = new Date();
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      const label = d.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+      const opt = document.createElement('option');
+      opt.value = val; opt.textContent = label;
+      sel.appendChild(opt);
+    }
+  }
+}
+
+$('load-payments-btn').addEventListener('click', async () => {
+  const mval = $('pay-month').value;
+  if (!mval) return;
+  const [yr, mo] = mval.split('-').map(Number);
+  const begin = new Date(yr, mo-1, 1).toISOString();
+  const end   = new Date(yr, mo, 1).toISOString();
+  const container = $('payments-content');
+  container.innerHTML = '<div class="empty">Loading payments…</div>';
+
+  try {
+    const params = new URLSearchParams({ endpoint:'payments', begin_time:begin, end_time:end });
+    const res  = await fetch(`/api/square?${params}`);
+    const data = await res.json();
+    const payments = data.payments || [];
+
+    if (!payments.length) {
+      container.innerHTML = '<div class="empty"><div class="empty-icon">◈</div>No payments found for this month.</div>';
+      return;
+    }
+
+    const total = payments.reduce((s,p) => s + (p.total_money?.amount||0), 0) / 100;
+    const rows  = payments.map(p => {
+      const amt    = ((p.total_money?.amount||0)/100).toFixed(2);
+      const date   = new Date(p.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+      const status = p.status === 'COMPLETED' ? '<span class="badge badge-active">Completed</span>' : `<span class="badge">${p.status}</span>`;
+      const note   = p.note || p.order_id || '—';
+      const method = p.source_type || '—';
+      return `<tr>
+        <td>${date}</td>
+        <td class="mono green"><strong>$${amt}</strong></td>
+        <td>${status}</td>
+        <td style="color:var(--text-secondary)">${method}</td>
+        <td style="color:var(--text-muted);font-size:12px">${note}</td>
+      </tr>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="stats-grid" style="margin-bottom:24px">
+        <div class="stat-card"><div class="stat-label">Total Received</div><div class="stat-value green">${fmt$(total)}</div></div>
+        <div class="stat-card"><div class="stat-label">Transactions</div><div class="stat-value">${payments.length}</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Payment</div><div class="stat-value">${fmt$(total/payments.length)}</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Transaction History</div></div>
+        <table class="data-table">
+          <thead><tr><th>Date</th><th>Amount</th><th>Status</th><th>Method</th><th>Note</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  } catch(e) {
+    container.innerHTML = `<div class="empty" style="color:var(--red)">Error: ${e.message}</div>`;
+  }
 });
 
 // ── BOOT ──

@@ -132,6 +132,61 @@ footer { border-top: 1px solid var(--border); padding: 32px 48px; display: flex;
 .footer-links a:hover { color: var(--text-2); }
 .footer-copy { font-size: 12px; color: var(--text-3); }
 
+/* INTRO ANIMATION */
+#intro-cover {
+  position: fixed; inset: 0; z-index: 9998;
+  background: #FFFFFF;
+  opacity: 1;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+#intro-cover.fade { opacity: 0; }
+#intro-cover.gone { display: none; }
+
+#intro-wrap {
+  position: fixed; z-index: 9999;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 92px;
+  pointer-events: none;
+  overflow: hidden;
+}
+#intro-wrap.fly {
+  overflow: visible;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* Silver shine sweep */
+#intro-wrap::after {
+  content: '';
+  position: absolute;
+  top: -10%; left: -130%;
+  width: 70%; height: 120%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255,255,255,0.4) 30%,
+    rgba(220,228,248,0.95) 48%,
+    rgba(255,255,255,0.85) 52%,
+    rgba(200,212,240,0.6) 65%,
+    transparent 100%
+  );
+  transform: skewX(-12deg);
+  opacity: 0;
+  animation: silver-shine 0.9s cubic-bezier(0.4,0,0.6,1) 0.55s forwards;
+}
+@keyframes silver-shine {
+  0%   { left: -130%; opacity: 1; }
+  100% { left: 150%;  opacity: 1; }
+}
+/* E bars slide in */
+#intro-wrap svg .e-bar-1 { animation: barIn 0.55s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
+#intro-wrap svg .e-bar-2 { animation: barIn 0.55s cubic-bezier(0.22,1,0.36,1) 0.15s both; }
+#intro-wrap svg .e-bar-3 { animation: barIn 0.55s cubic-bezier(0.22,1,0.36,1) 0.25s both; }
+@keyframes barIn {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 /* REVEAL */
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -159,9 +214,51 @@ footer { border-top: 1px solid var(--border); padding: 32px 48px; display: flex;
 </head>
 <body>
 
+<!-- Intro animation -->
+<div id="intro-cover"></div>
+<div id="intro-wrap">
+  <svg viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="ig1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#FFFFFF"/>
+        <stop offset="18%"  stop-color="#E8EBF5"/>
+        <stop offset="58%"  stop-color="#9AA4C0"/>
+        <stop offset="100%" stop-color="#2E3E68"/>
+      </linearGradient>
+      <linearGradient id="ig2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#E4E8F4"/>
+        <stop offset="28%"  stop-color="#C0C8DC"/>
+        <stop offset="72%"  stop-color="#7080A8"/>
+        <stop offset="100%" stop-color="#283868"/>
+      </linearGradient>
+      <linearGradient id="ig3" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#CDD2E4"/>
+        <stop offset="38%"  stop-color="#8898B8"/>
+        <stop offset="100%" stop-color="#243060"/>
+      </linearGradient>
+      <linearGradient id="igfade" x1="1" y1="0" x2="0.5" y2="0">
+        <stop offset="0%"   stop-color="#000" stop-opacity="0.22"/>
+        <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <g class="e-bar-1">
+      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#ig1)"/>
+      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#igfade)"/>
+    </g>
+    <g class="e-bar-2">
+      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#ig2)"/>
+      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#igfade)"/>
+    </g>
+    <g class="e-bar-3">
+      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#ig3)"/>
+      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#igfade)"/>
+    </g>
+  </svg>
+</div>
+
 <nav>
-  <a href="/" class="nav-logo">
-    <svg viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+  <a href="/" class="nav-logo" id="nav-logo">
+    <svg id="nav-logo-svg" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="ng1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1D4ED8"/><stop offset="100%" stop-color="#1E3A8A"/></linearGradient>
         <linearGradient id="ng2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#1D4ED8"/></linearGradient>
@@ -353,10 +450,55 @@ footer { border-top: 1px solid var(--border); padding: 32px 48px; display: flex;
 </footer>
 
 <script>
+// ── SCROLL REVEAL ──
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
 }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ── INTRO ANIMATION ──
+(function () {
+  var wrap    = document.getElementById('intro-wrap');
+  var cover   = document.getElementById('intro-cover');
+  var navLogo = document.getElementById('nav-logo');
+  var navSvg  = document.getElementById('nav-logo-svg');
+  if (!wrap || !cover || !navLogo) return;
+
+  // Hide the nav logo while animation runs
+  navLogo.style.opacity = '0';
+
+  // Wait for bars to animate in, then do shine (handled by CSS),
+  // then fly the wrap to the nav logo position
+  setTimeout(function () {
+    // Measure where the nav SVG lives
+    var navRect  = navSvg.getBoundingClientRect();
+    var wrapRect = wrap.getBoundingClientRect();
+
+    // Scale: nav SVG is 26px wide, intro-wrap is 92px wide
+    var scale = navRect.width / wrapRect.width;
+
+    // Delta: center-to-center
+    var dx = (navRect.left + navRect.width  / 2) - (wrapRect.left + wrapRect.width  / 2);
+    var dy = (navRect.top  + navRect.height / 2) - (wrapRect.top  + wrapRect.height / 2);
+
+    // Fly
+    wrap.classList.add('fly');
+    wrap.style.transform =
+      'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px)) scale(' + scale + ')';
+
+    // Fade the white cover out simultaneously
+    cover.classList.add('fade');
+
+    // Once landed: show real nav logo, hide intro
+    setTimeout(function () {
+      navLogo.style.opacity  = '1';
+      navLogo.style.transition = 'opacity 0.25s ease';
+      wrap.style.display = 'none';
+      cover.classList.add('gone');
+    }, 720);
+
+  }, 1450); // let bar-in (0–800ms) + shine (550–1450ms) finish
+})();
 </script>
 </body>
 </html>

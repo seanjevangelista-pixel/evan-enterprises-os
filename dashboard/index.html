@@ -998,6 +998,9 @@ async function loadCallLeads() {
       <button class="nav-item" data-tab="payments">
         <span class="nav-icon">◈</span> Payments
       </button>
+      <button class="nav-item" data-tab="invoices">
+        <span class="nav-icon">$</span> Invoices
+      </button>
       <button class="nav-item" data-tab="google-ads">
         <span class="nav-icon">⬡</span> Google Ads
       </button>
@@ -1038,6 +1041,7 @@ async function loadCallLeads() {
           <div class="page-title">Overview</div>
           <div class="page-sub" id="ov-date">—</div>
         </div>
+        <button class="btn btn-secondary" id="send-report-btn">⬆ Send Monthly Report</button>
       </div>
       <div class="page-content">
         <div class="stats-grid">
@@ -1110,7 +1114,7 @@ async function loadCallLeads() {
               <tr>
                 <th>Business</th><th>Owner</th><th>Division</th>
                 <th>Status</th><th>Flat Fee</th><th>Perf %</th>
-                <th>Reviews</th><th class="tr">Lifetime Value</th><th style="text-align:center">Portal</th><th></th>
+                <th>Reviews</th><th>Last Note</th><th class="tr">Lifetime Value</th><th style="text-align:center">Portal</th><th></th>
               </tr>
             </thead>
             <tbody id="clients-tbody"></tbody>
@@ -1253,6 +1257,42 @@ async function loadCallLeads() {
       </div>
       <div id="payments-content" class="page-content">
         <div class="empty"><div class="empty-icon">◈</div>Select a month and click Load.</div>
+      </div>
+    </section>
+
+    <!-- ── INVOICES ── -->
+    <section class="tab-section" data-section="invoices">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Invoices</div>
+          <div class="page-sub">Track what clients owe you — flat fees + performance</div>
+        </div>
+        <button class="btn btn-primary" id="open-add-invoice">+ Add Invoice</button>
+      </div>
+      <div class="page-content">
+        <div class="stats-grid" style="margin-bottom:20px">
+          <div class="stat-card"><div class="stat-label">Total Outstanding</div><div class="stat-value red" id="inv-s-outstanding">—</div><div class="stat-sub">Unpaid + overdue</div></div>
+          <div class="stat-card"><div class="stat-label">Collected (30d)</div><div class="stat-value green" id="inv-s-collected">—</div><div class="stat-sub">Paid this month</div></div>
+          <div class="stat-card"><div class="stat-label">Overdue</div><div class="stat-value red" id="inv-s-overdue">—</div><div class="stat-sub">Past due date</div></div>
+          <div class="stat-card"><div class="stat-label">All Time Billed</div><div class="stat-value" id="inv-s-total">—</div><div class="stat-sub">Across all clients</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">All Invoices</div>
+            <select id="inv-filter" class="select-pill" style="font-size:11px;padding:5px 10px">
+              <option value="">All Clients</option>
+            </select>
+          </div>
+          <table class="data-table">
+            <thead><tr>
+              <th>Client</th><th>Description</th><th>Amount</th>
+              <th>Due Date</th><th>Status</th><th></th>
+            </tr></thead>
+            <tbody id="invoices-tbody">
+              <tr><td colspan="6"><div class="empty"><div class="empty-icon">$</div>No invoices yet.</div></td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -1523,6 +1563,52 @@ async function loadCallLeads() {
   </div>
 </div>
 
+<!-- ── ADD INVOICE MODAL ── -->
+<div class="modal-bg" id="modal-add-invoice">
+  <div class="modal" style="width:460px">
+    <div class="modal-hd">
+      <div class="modal-title">Add Invoice</div>
+      <button class="modal-x" data-close="modal-add-invoice">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="invoice-form">
+        <div class="form-2col">
+          <div class="form-group span-2">
+            <label>Client *</label>
+            <select id="inv-client" required>
+              <option value="">Select client…</option>
+            </select>
+          </div>
+          <div class="form-group span-2">
+            <label>Description *</label>
+            <input type="text" id="inv-desc" placeholder="e.g. May flat fee + 10% performance" required>
+          </div>
+          <div class="form-group">
+            <label>Amount ($) *</label>
+            <input type="number" id="inv-amount" step="0.01" min="0" placeholder="750.00" required>
+          </div>
+          <div class="form-group">
+            <label>Due Date *</label>
+            <input type="date" id="inv-due" required>
+          </div>
+          <div class="form-group span-2">
+            <label>Status</label>
+            <select id="inv-status">
+              <option value="unpaid">Unpaid</option>
+              <option value="paid">Paid</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" data-close="modal-add-invoice">Cancel</button>
+      <button class="btn btn-primary" id="save-invoice-btn">Save Invoice</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── CONFIRM MODAL ── -->
 <div class="modal-bg" id="modal-confirm">
   <div class="modal" style="width:360px">
@@ -1551,6 +1637,7 @@ const sb = createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_ANON, { aut
 window._sb = sb; // expose for non-module scripts (invite, call leads)
 
 // ── STATE ── (clients/visits declared globally above so non-module scripts can read them)
+let invoices = [];
 
 // ── UTILS ──
 const $ = id => document.getElementById(id);
@@ -1649,15 +1736,18 @@ $('logout-btn').addEventListener('click', () => sb.auth.signOut());
 let portalUsers = [];
 
 async function loadAll() {
-  const [{ data: c }, { data: v }, { data: u }] = await Promise.all([
+  const [{ data: c }, { data: v }, { data: u }, { data: inv }] = await Promise.all([
     sb.from('clients').select('*').order('created_at', { ascending: false }),
     sb.from('visits').select('*, clients(business_name)').order('visit_date', { ascending: false }),
     sb.from('users').select('client_id, confirmed_at').eq('role', 'client'),
+    sb.from('invoices').select('*, clients(business_name)').order('due_date', { ascending: false }).catch(() => ({ data: [] })),
   ]);
-  clients     = c || [];
-  visits      = v || [];
-  portalUsers = u || [];
+  clients     = c   || [];
+  visits      = v   || [];
+  portalUsers = u   || [];
+  invoices    = inv || [];
   populateSelects();
+  populateInvoiceClientSelect();
 }
 
 function populateSelects() {
@@ -1765,7 +1855,7 @@ function renderPipeline() {
 function renderClients() {
   const tbody = $('clients-tbody');
   if (!clients.length) {
-    tbody.innerHTML = '<tr><td colspan="10"><div class="empty"><div class="empty-icon">◉</div>No clients yet. Add your first client using the button above.</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="11"><div class="empty"><div class="empty-icon">◉</div>No clients yet. Add your first client using the button above.</div></td></tr>';
     return;
   }
   tbody.innerHTML = clients.map(c => {
@@ -1776,6 +1866,7 @@ function renderClients() {
         ? `<span class="badge" style="background:rgba(22,163,74,0.12);color:#15803D;border:1px solid rgba(22,163,74,0.25)">✓ Active</span>`
         : `<span class="badge" style="background:rgba(234,179,8,0.12);color:#a16207;border:1px solid rgba(234,179,8,0.3)">Pending</span>`
       : `<span style="color:var(--text-muted);font-size:11px">—</span>`;
+    const noteText = c.notes ? c.notes.split('\n')[0].slice(0, 40) + (c.notes.length > 40 ? '…' : '') : '—';
     return `<tr>
       <td class="bold">${c.business_name}</td>
       <td>${c.owner_name||'—'}</td>
@@ -1784,6 +1875,7 @@ function renderClients() {
       <td>${fmt$(c.monthly_flat_fee)}/mo</td>
       <td>${c.performance_pct != null ? (c.performance_pct*100).toFixed(0)+'%' : '—'}</td>
       <td>${c.google_review_count||'—'}</td>
+      <td style="max-width:160px;color:var(--text-muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${(c.notes||'').replace(/"/g,'&quot;')}">${noteText}</td>
       <td class="tr mono" style="color:var(--accent);font-weight:700">${fmt$(ltv)}</td>
       <td style="text-align:center">${portalBadge}</td>
       <td class="tr" style="display:flex;gap:6px;justify-content:flex-end">
@@ -2108,6 +2200,128 @@ function generatePDF() {
 
 $('generate-pdf-btn').addEventListener('click', generatePDF);
 
+// ── INVOICES ──
+function populateInvoiceClientSelect() {
+  ['inv-client', 'inv-filter'].forEach(id => {
+    const sel = $(id);
+    if (!sel) return;
+    const prev = sel.value;
+    while (sel.options.length > 1) sel.remove(1);
+    clients.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id; o.textContent = c.business_name;
+      sel.appendChild(o);
+    });
+    if (prev) sel.value = prev;
+  });
+}
+
+function renderInvoices(filterCid = '') {
+  const tbody = $('invoices-tbody');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const rows  = filterCid ? invoices.filter(i => i.client_id === filterCid) : invoices;
+
+  // Stats
+  const outstanding = invoices.filter(i => i.status !== 'paid').reduce((s,i) => s + Number(i.amount||0), 0);
+  const now = new Date();
+  const moStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const collected30 = invoices.filter(i => i.status === 'paid' && new Date(i.updated_at||i.created_at) >= moStart).reduce((s,i) => s + Number(i.amount||0), 0);
+  const overdue = invoices.filter(i => i.status !== 'paid' && i.due_date && new Date(i.due_date) < today).reduce((s,i) => s + Number(i.amount||0), 0);
+  const allTime = invoices.reduce((s,i) => s + Number(i.amount||0), 0);
+
+  countUp($('inv-s-outstanding'), outstanding, '$', '', 600);
+  countUp($('inv-s-collected'),   collected30, '$', '', 600);
+  countUp($('inv-s-overdue'),     overdue,     '$', '', 600);
+  countUp($('inv-s-total'),       allTime,     '$', '', 600);
+
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">$</div>No invoices yet. Add one above.</div></td></tr>';
+    return;
+  }
+
+  const statusBadge = inv => {
+    const due = inv.due_date ? new Date(inv.due_date) : null;
+    const isOverdue = inv.status !== 'paid' && due && due < today;
+    const s = isOverdue ? 'overdue' : inv.status;
+    const map = {
+      paid:    ['rgba(22,163,74,0.1)',  '#15803D', 'Paid'],
+      unpaid:  ['rgba(29,78,216,0.08)', '#1D4ED8', 'Unpaid'],
+      overdue: ['rgba(220,38,38,0.1)',  '#DC2626', 'Overdue'],
+    };
+    const [bg, color, label] = map[s] || map.unpaid;
+    return `<span class="badge" style="background:${bg};color:${color}">${label}</span>`;
+  };
+
+  tbody.innerHTML = rows.map(inv => `<tr>
+    <td class="bold">${inv.clients?.business_name || '—'}</td>
+    <td style="color:var(--text-secondary)">${inv.description || '—'}</td>
+    <td class="mono">${fmt$(inv.amount)}</td>
+    <td class="mono">${inv.due_date ? fmtDate(inv.due_date) : '—'}</td>
+    <td>${statusBadge(inv)}</td>
+    <td class="tr" style="display:flex;gap:6px;justify-content:flex-end">
+      ${inv.status !== 'paid' ? `<button class="btn btn-sm btn-secondary mark-paid-btn" data-id="${inv.id}" style="color:var(--green);border-color:rgba(22,163,74,0.3)">✓ Mark Paid</button>` : ''}
+      <button class="btn btn-sm" data-del-inv="${inv.id}" style="color:var(--red);border-color:rgba(239,68,68,0.3);padding:3px 8px">✕</button>
+    </td>
+  </tr>`).join('');
+  staggerRows(tbody);
+
+  tbody.querySelectorAll('.mark-paid-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const { error } = await sb.from('invoices').update({ status: 'paid' }).eq('id', btn.dataset.id);
+      if (error) { toast('Error: ' + error.message, 'err'); return; }
+      await loadAll(); renderInvoices($('inv-filter').value); toast('Marked as paid');
+    });
+  });
+  tbody.querySelectorAll('[data-del-inv]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      showConfirm('Delete Invoice', 'Remove this invoice? This cannot be undone.', async () => {
+        const { error } = await sb.from('invoices').delete().eq('id', btn.dataset['del-inv']);
+        if (error) { toast('Error: ' + error.message, 'err'); return; }
+        await loadAll(); renderInvoices($('inv-filter').value); toast('Invoice deleted');
+      });
+    });
+  });
+}
+
+async function saveInvoice() {
+  const clientId = $('inv-client').value;
+  const desc     = $('inv-desc').value.trim();
+  const amount   = parseFloat($('inv-amount').value);
+  const due      = $('inv-due').value;
+  const status   = $('inv-status').value;
+  if (!clientId || !desc || !amount || !due) { toast('Fill in all required fields', 'err'); return; }
+  const { error } = await sb.from('invoices').insert({ client_id: clientId, description: desc, amount, due_date: due, status });
+  if (error) { toast('Error: ' + error.message, 'err'); return; }
+  closeModal('modal-add-invoice');
+  $('invoice-form').reset();
+  await loadAll(); renderInvoices(); toast('Invoice added!');
+}
+
+$('open-add-invoice').addEventListener('click', () => openModal('modal-add-invoice'));
+$('save-invoice-btn').addEventListener('click', saveInvoice);
+$('inv-filter').addEventListener('change', e => renderInvoices(e.target.value));
+
+// ── MONTHLY REPORT EMAIL ──
+$('send-report-btn').addEventListener('click', async () => {
+  const btn = $('send-report-btn');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/api/monthly-report', { method: 'POST', headers: { 'x-internal-key': 'dashboard' } });
+    const data = await res.json();
+    if (data.configured === false) {
+      toast('RESEND_API_KEY not configured in Vercel', 'err');
+    } else if (data.ok) {
+      toast('Monthly report sent to your email!');
+    } else {
+      toast('Error: ' + (data.error || 'Unknown error'), 'err');
+    }
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+  } finally {
+    btn.textContent = '⬆ Send Monthly Report'; btn.disabled = false;
+  }
+});
+
 // ── ADD CLIENT ──
 async function saveClient() {
   const biz = $('c-biz').value.trim();
@@ -2307,6 +2521,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='revenue')    renderVisits($('v-filter').value);
       if (tab==='monthly')    renderMonthly();
       if (tab==='payments')   initPaymentsTab();
+      if (tab==='invoices')   { populateInvoiceClientSelect(); renderInvoices($('inv-filter').value); }
       if (tab==='google-ads') { if (gadsCustomerId) loadGoogleAds(); }
       if (tab==='jobber')     { populateJobberClientSelect(); if (jobberClientId) loadJobber(); loadCallLeads(); }
     }, 150);

@@ -617,7 +617,11 @@ async function loadGoogleAds() {
 
   try {
     const res  = await fetch(`/api/google-ads?metric=campaigns&customer_id=${gadsCustomerId}`);
-    const data = await res.json();
+    let data;
+    try { data = await res.json(); } catch(_) {
+      el.innerHTML = `<div class="empty"><div class="empty-icon">⬡</div>Google Ads API returned an unexpected response (status ${res.status}). Check your Vercel deployment.</div>`;
+      return;
+    }
 
     if (!data.configured) {
       el.innerHTML = `
@@ -763,7 +767,11 @@ async function loadJobber() {
   el.innerHTML = `<div class="empty"><div class="empty-icon" style="animation:gSpin 1s linear infinite;display:inline-block">◉</div> Loading Jobber data…</div>`;
   try {
     const res  = await fetch(`/api/jobber?account_id=${jobberClientId}`);
-    const data = await res.json();
+    let data;
+    try { data = await res.json(); } catch(_) {
+      el.innerHTML = `<div class="empty"><div class="empty-icon">◉</div>Jobber API returned an unexpected response (status ${res.status}). Check your Vercel deployment.</div>`;
+      return;
+    }
 
     if (!data.configured) {
       el.innerHTML = `
@@ -887,7 +895,14 @@ async function loadCallLeads() {
       .select('*, clients(business_name)')
       .order('tapped_at', { ascending: false })
       .limit(50);
-    if (error) throw new Error(error.message);
+    if (error) {
+      // Permission denied or other Supabase error — show friendly empty state
+      // To fix: run in Supabase SQL editor:
+      //   grant all on table call_leads to anon;
+      //   grant all on table call_leads to authenticated;
+      el.innerHTML = `<div class="empty"><div class="empty-icon">📞</div>Call leads unavailable (${error.message}). Ask your admin to grant table permissions.</div>`;
+      return;
+    }
     if (!data || !data.length) {
       el.innerHTML = '<div class="empty"><div class="empty-icon">📞</div>No call taps recorded yet.</div>';
       return;

@@ -23,9 +23,12 @@ export default async function handler(req, res) {
         grant_type:    'refresh_token',
       }),
     });
-    const tokenData = await tokenRes.json();
+    let tokenData;
+    try { tokenData = await tokenRes.json(); } catch(_) {
+      return res.status(401).json({ configured: true, error: 'OAuth failed: Jobber returned a non-JSON response (status ' + tokenRes.status + ')' });
+    }
     if (!tokenRes.ok || !tokenData.access_token) {
-      return res.status(401).json({ configured: true, error: 'OAuth failed: ' + (tokenData.error_description || tokenData.error) });
+      return res.status(401).json({ configured: true, error: 'OAuth failed: ' + (tokenData.error_description || tokenData.error || 'unknown') });
     }
     const accessToken = tokenData.access_token;
 

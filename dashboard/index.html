@@ -392,6 +392,24 @@ body {
 .nav-item { min-height: 40px; }
 .btn { min-height: 36px; }
 
+/* ── SETUP CARD (integration not configured) ── */
+.setup-card { background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius); padding:36px 40px; max-width:520px; }
+.setup-card-icon { font-size:24px; margin-bottom:14px; opacity:0.4; }
+.setup-card-title { font-size:16px; font-weight:600; color:var(--text-primary); margin-bottom:8px; }
+.setup-card-body  { font-size:13px; color:var(--text-secondary); line-height:1.6; margin-bottom:18px; }
+.setup-card-note  { font-size:12px; color:var(--text-muted); margin-top:14px; }
+.setup-vars { display:flex; flex-direction:column; gap:7px; }
+.setup-var  { background:rgba(29,78,216,0.05); border:1px solid rgba(29,78,216,0.14); border-radius:6px; padding:9px 14px; font-size:12px; font-family:'SF Mono','Fira Code',monospace; color:var(--text-primary); letter-spacing:0.02em; }
+.setup-link { display:inline-block; margin-top:16px; font-size:13px; color:var(--accent); text-decoration:none; font-weight:500; }
+.setup-link:hover { text-decoration:underline; }
+
+/* ── Spinner ── */
+@keyframes gSpin { to { transform:rotate(360deg); } }
+
+/* ── Color utility classes ── */
+.red  { color:var(--red); }
+.blue { color:var(--accent); }
+
 /* ── PRINT / PDF ── */
 @media print {
   @page { margin: 18mm 16mm; size: A4; }
@@ -507,27 +525,24 @@ body {
 </style>
 </head>
 <body>
-<script>window.ENV={SUPABASE_URL:'https://hzcgdnhecgewqpcnumwm.supabase.co',SUPABASE_ANON:'sb_publishable_C6qf6KSBHv07VGTDNmpvZg_H0nnLrhR'};
-// Shared state — written by module, read by non-module functions
-var clients = [], visits = [];
-// ── Google Ads ─────────────────────────────────────────────────────────────
-let gadsLoaded = false;
-let gadsCustomerId = null;
+<script>
+window.ENV = {
+  SUPABASE_URL:  'https://hzcgdnhecgewqpcnumwm.supabase.co',
+  SUPABASE_ANON: 'sb_publishable_C6qf6KSBHv07VGTDNmpvZg_H0nnLrhR'
+};
 
-function onGadsClientChange() {
-  const sel = document.getElementById('gads-client-select');
-  const clientId = sel.value;
-  const client = clients.find(c => c.id === clientId);
-  gadsCustomerId = client?.google_ads_customer_id || null;
-  const sub = document.getElementById('gads-sub');
-  if (sub) sub.textContent = (client?.business_name || 'Select a client') + ' · Last 30 days';
-  gadsLoaded = false;
-  if (gadsCustomerId) loadGoogleAds();
-  else {
-    const el = document.getElementById('gads-content');
-    if (el) el.innerHTML = '<div class="empty"><div class="empty-icon">⬡</div>Select a client above to load campaign data.</div>';
-  }
-}
+// ── Shared state (written by module, read by global functions) ──
+var clients = [], visits = [];
+
+// ── Global helpers exposed for non-module scripts ──
+// These are set by the module after it boots.
+window._sb          = null;   // Supabase client reference
+window._openModal   = null;   // fn(id)
+window._closeModal  = null;   // fn(id)
+
+// ── Google Ads global state ──
+var gadsLoaded     = false;
+var gadsCustomerId = null;
 
 function populateGadsClientSelect() {
   const sel = document.getElementById('gads-client-select');
@@ -536,11 +551,27 @@ function populateGadsClientSelect() {
   sel.innerHTML = '<option value="">Select client…</option>';
   clients.forEach(c => {
     const opt = document.createElement('option');
-    opt.value = c.id;
+    opt.value       = c.id;
     opt.textContent = c.business_name + (c.google_ads_customer_id ? '' : ' (no ID)');
     sel.appendChild(opt);
   });
   if (prev) sel.value = prev;
+}
+
+function onGadsClientChange() {
+  const sel    = document.getElementById('gads-client-select');
+  const client = clients.find(c => c.id === sel.value);
+  gadsCustomerId = client?.google_ads_customer_id || null;
+  const sub = document.getElementById('gads-sub');
+  if (sub) sub.textContent = (client?.business_name || 'Select a client') + ' · Last 30 days';
+  gadsLoaded = false;
+  const el = document.getElementById('gads-content');
+  if (!el) return;
+  if (gadsCustomerId) {
+    loadGoogleAds();
+  } else {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">⬡</div>Select a client above to load campaign data.</div>';
+  }
 }
 
 async function loadGoogleAds() {
@@ -551,7 +582,7 @@ async function loadGoogleAds() {
     el.innerHTML = '<div class="empty"><div class="empty-icon">⬡</div>Select a client above to load campaign data.</div>';
     return;
   }
-  el.innerHTML = '<div class="empty"><div class="empty-icon">⬡</div>Fetching campaign data…</div>';
+  el.innerHTML = '<div class="empty"><div class="empty-icon" style="animation:gSpin 1s linear infinite;display:inline-block">⬡</div> Fetching campaign data…</div>';
 
   try {
     const res  = await fetch(`/api/google-ads?metric=campaigns&customer_id=${gadsCustomerId}`);
@@ -559,18 +590,17 @@ async function loadGoogleAds() {
 
     if (!data.configured) {
       el.innerHTML = `
-        <div class="card" style="padding:32px;max-width:520px">
-          <div style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:8px">Connect Google Ads</div>
-          <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px">
-            To pull live campaign data, add these four environment variables to Vercel, then redeploy.
-          </p>
-          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-family:monospace;">
-            <div style="background:rgba(46,95,212,0.06);border:1px solid rgba(46,95,212,0.15);border-radius:6px;padding:10px 14px;color:var(--text-primary)">GOOGLE_ADS_DEVELOPER_TOKEN</div>
-            <div style="background:rgba(46,95,212,0.06);border:1px solid rgba(46,95,212,0.15);border-radius:6px;padding:10px 14px;color:var(--text-primary)">GOOGLE_ADS_CLIENT_ID</div>
-            <div style="background:rgba(46,95,212,0.06);border:1px solid rgba(46,95,212,0.15);border-radius:6px;padding:10px 14px;color:var(--text-primary)">GOOGLE_ADS_CLIENT_SECRET</div>
-            <div style="background:rgba(46,95,212,0.06);border:1px solid rgba(46,95,212,0.15);border-radius:6px;padding:10px 14px;color:var(--text-primary)">GOOGLE_ADS_REFRESH_TOKEN</div>
-            <div style="background:rgba(46,95,212,0.06);border:1px solid rgba(46,95,212,0.15);border-radius:6px;padding:10px 14px;color:var(--text-primary)">GOOGLE_ADS_CUSTOMER_ID &nbsp;<span style="color:var(--text-muted);font-family:var(--font-body)">(e.g. 8314281049)</span></div>
+        <div class="setup-card">
+          <div class="setup-card-icon">⬡</div>
+          <div class="setup-card-title">Connect Google Ads</div>
+          <p class="setup-card-body">Add these environment variables to Vercel and redeploy to pull live campaign data.</p>
+          <div class="setup-vars">
+            <div class="setup-var">GOOGLE_ADS_DEVELOPER_TOKEN</div>
+            <div class="setup-var">GOOGLE_ADS_CLIENT_ID</div>
+            <div class="setup-var">GOOGLE_ADS_CLIENT_SECRET</div>
+            <div class="setup-var">GOOGLE_ADS_REFRESH_TOKEN</div>
           </div>
+          <p class="setup-card-note">Each client's Google Ads Customer ID is stored in their Edit Client panel.</p>
         </div>`;
       return;
     }
@@ -586,7 +616,6 @@ async function loadGoogleAds() {
       return;
     }
 
-    // Summary stats
     let totalSpend = 0, totalClicks = 0, totalImpressions = 0, totalConversions = 0;
     rows.forEach(r => {
       const m = r.metrics || {};
@@ -596,18 +625,19 @@ async function loadGoogleAds() {
       totalConversions += m.conversions || 0;
     });
     const avgCPC = totalClicks ? totalSpend / totalClicks : 0;
+    const convRate = totalClicks ? (totalConversions / totalClicks * 100) : 0;
 
     el.innerHTML = `
       <div class="stats-grid" style="margin-bottom:20px">
         <div class="stat-card">
           <div class="stat-label">Total Spend</div>
-          <div class="stat-value" style="color:var(--red)">$${totalSpend.toFixed(2)}</div>
+          <div class="stat-value red">$${totalSpend.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
           <div class="stat-sub">Client's card · 30 days</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Clicks</div>
           <div class="stat-value">${totalClicks.toLocaleString()}</div>
-          <div class="stat-sub">Last 30 days</div>
+          <div class="stat-sub">Avg CPC $${avgCPC.toFixed(2)}</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Impressions</div>
@@ -616,42 +646,37 @@ async function loadGoogleAds() {
         </div>
         <div class="stat-card">
           <div class="stat-label">Conversions</div>
-          <div class="stat-value" style="color:var(--green)">${totalConversions.toFixed(1)}</div>
-          <div class="stat-sub">Avg CPC $${avgCPC.toFixed(2)}</div>
+          <div class="stat-value green">${totalConversions.toFixed(1)}</div>
+          <div class="stat-sub">Conv. rate ${convRate.toFixed(2)}%</div>
         </div>
       </div>
       <div class="card">
         <div class="card-header"><div class="card-title">Campaigns</div></div>
         <table class="data-table">
           <thead><tr>
-            <th>Campaign</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th class="tr">Impressions</th>
-            <th class="tr">Clicks</th>
-            <th class="tr">CTR</th>
-            <th class="tr">Spend</th>
-            <th class="tr">Conversions</th>
+            <th>Campaign</th><th>Type</th><th>Status</th>
+            <th class="tr">Impressions</th><th class="tr">Clicks</th>
+            <th class="tr">CTR</th><th class="tr">Spend</th><th class="tr">Conversions</th>
           </tr></thead>
           <tbody>
             ${rows.map(r => {
               const c = r.campaign || {};
               const m = r.metrics  || {};
-              const spend = ((m.costMicros||0)/1e6).toFixed(2);
-              const ctr   = ((m.ctr||0)*100).toFixed(2);
+              const spend  = ((m.costMicros||0)/1e6).toFixed(2);
+              const ctr    = ((m.ctr||0)*100).toFixed(2);
               const status = c.status === 'ENABLED'
-                ? '<span class="badge" style="background:rgba(22,163,74,0.1);color:#16A34A">Active</span>'
-                : '<span class="badge" style="background:rgba(180,83,9,0.1);color:#B45309">' + (c.status||'—') + '</span>';
-              const type = (c.advertisingChannelType||'').replace('_',' ');
+                ? '<span class="badge badge-active">Active</span>'
+                : `<span class="badge">${c.status||'—'}</span>`;
+              const type = (c.advertisingChannelType||'').replace(/_/g,' ');
               return `<tr>
                 <td style="font-weight:500">${c.name||'—'}</td>
-                <td style="font-size:11px;color:var(--text-secondary)">${type}</td>
+                <td style="font-size:11px;color:var(--text-secondary);text-transform:capitalize">${type.toLowerCase()}</td>
                 <td>${status}</td>
                 <td class="tr">${(m.impressions||0).toLocaleString()}</td>
                 <td class="tr">${(m.clicks||0).toLocaleString()}</td>
                 <td class="tr">${ctr}%</td>
-                <td class="tr" style="color:var(--red)">$${spend}</td>
-                <td class="tr" style="color:var(--green)">${(m.conversions||0).toFixed(1)}</td>
+                <td class="tr red">$${spend}</td>
+                <td class="tr green">${(m.conversions||0).toFixed(1)}</td>
               </tr>`;
             }).join('')}
           </tbody>
@@ -660,13 +685,13 @@ async function loadGoogleAds() {
 
     gadsLoaded = true;
   } catch(e) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">⬡</div>Error: ${e.message}</div>`;
+    el.innerHTML = `<div class="empty"><div class="empty-icon">⬡</div>Error loading campaign data: ${e.message}</div>`;
   }
 }
 
-// ── JOBBER ──
-let jobberClientId = null;
-let jobberLoaded = false;
+// ── Jobber global state ──
+var jobberClientId = null;
+var jobberLoaded   = false;
 
 function populateJobberClientSelect() {
   const sel = document.getElementById('jobber-client-select');
@@ -675,7 +700,7 @@ function populateJobberClientSelect() {
   sel.innerHTML = '<option value="">Select client…</option>';
   clients.forEach(c => {
     const opt = document.createElement('option');
-    opt.value = c.id;
+    opt.value       = c.id;
     opt.textContent = c.business_name + (c.jobber_account_id ? '' : ' (not connected)');
     sel.appendChild(opt);
   });
@@ -683,18 +708,19 @@ function populateJobberClientSelect() {
 }
 
 function onJobberClientChange() {
-  const sel = document.getElementById('jobber-client-select');
+  const sel    = document.getElementById('jobber-client-select');
   const client = clients.find(c => c.id === sel.value);
   jobberClientId = client?.jobber_account_id || null;
-  jobberLoaded = false;
+  jobberLoaded   = false;
   const sub = document.getElementById('jobber-sub');
-  if (client) sub.textContent = `${client.business_name} · Jobs & Revenue · Last 30 days`;
+  if (sub && client) sub.textContent = `${client.business_name} · Jobs & Revenue · Last 30 days`;
+  const el = document.getElementById('jobber-content');
+  if (!el) return;
   if (jobberClientId) {
     loadJobber();
   } else {
-    const el = document.getElementById('jobber-content');
     el.innerHTML = client
-      ? `<div class="empty"><div class="empty-icon">◉</div><strong>${client.business_name}</strong> isn't connected to Jobber yet.<br><span style="font-size:13px;color:var(--text-muted)">Add their Jobber account ID in Edit Client to connect.</span></div>`
+      ? `<div class="empty"><div class="empty-icon">◉</div><strong>${client.business_name}</strong> isn't connected to Jobber yet.<br><span style="color:var(--text-muted)">Add their Jobber account ID in Edit Client to connect.</span></div>`
       : `<div class="empty"><div class="empty-icon">◉</div>Select a client to load Jobber data.</div>`;
   }
 }
@@ -702,94 +728,120 @@ function onJobberClientChange() {
 async function loadJobber() {
   if (jobberLoaded) return;
   const el = document.getElementById('jobber-content');
-  if (!jobberClientId) return;
-  el.innerHTML = `<div class="empty"><div class="empty-icon" style="animation:spin 1s linear infinite">◉</div>Loading Jobber data…</div>`;
+  if (!el || !jobberClientId) return;
+  el.innerHTML = `<div class="empty"><div class="empty-icon" style="animation:gSpin 1s linear infinite;display:inline-block">◉</div> Loading Jobber data…</div>`;
   try {
-    const res = await fetch(`/api/jobber?account_id=${jobberClientId}`);
+    const res  = await fetch(`/api/jobber?account_id=${jobberClientId}`);
     const data = await res.json();
 
     if (!data.configured) {
-      el.innerHTML = `<div class="empty"><div class="empty-icon">◉</div>Jobber API not configured.<br>
-        <span style="font-size:13px;color:var(--text-muted)">Add <code>JOBBER_CLIENT_ID</code>, <code>JOBBER_CLIENT_SECRET</code>, and <code>JOBBER_REFRESH_TOKEN</code> to your environment variables.</span>
-        <br><br><a href="https://developer.getjobber.com" target="_blank" style="color:var(--accent);font-size:13px">→ Get Jobber API credentials</a></div>`;
+      el.innerHTML = `
+        <div class="setup-card">
+          <div class="setup-card-icon">◉</div>
+          <div class="setup-card-title">Connect Jobber</div>
+          <p class="setup-card-body">Add these environment variables to Vercel and redeploy.</p>
+          <div class="setup-vars">
+            <div class="setup-var">JOBBER_CLIENT_ID</div>
+            <div class="setup-var">JOBBER_CLIENT_SECRET</div>
+            <div class="setup-var">JOBBER_REFRESH_TOKEN</div>
+          </div>
+          <a href="https://developer.getjobber.com" target="_blank" class="setup-link">→ Get Jobber API credentials</a>
+        </div>`;
       return;
     }
 
     if (data.error) throw new Error(data.error);
 
-    const jobs      = data.jobs      || [];
-    const quotes    = data.quotes    || [];
-    const invoices  = data.invoices  || [];
-    const revenue   = invoices.reduce((sum, inv) => sum + (inv.total || 0), 0);
-    const collected = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total || 0), 0);
+    const jobs     = data.jobs     || [];
+    const quotes   = data.quotes   || [];
+    const invoices = data.invoices || [];
+
+    const revenue   = invoices.reduce((s, i) => s + (i.total || 0), 0);
+    const collected = invoices.filter(i => i.status === 'paid').reduce((s, i) => s + (i.total || 0), 0);
+    const pending   = invoices.filter(i => i.status !== 'paid').reduce((s, i) => s + (i.total || 0), 0);
     const myFee     = collected * 0.10;
-    const pending   = invoices.filter(i => i.status !== 'paid').reduce((sum, i) => sum + (i.total || 0), 0);
+
+    // Quote totals
+    const quoteSent     = quotes.filter(q => q.status === 'sent').length;
+    const quoteApproved = quotes.filter(q => q.status === 'approved').length;
+    const quoteValue    = quotes.filter(q => q.status === 'sent' || q.status === 'approved')
+                                .reduce((s, q) => s + (q.total || 0), 0);
+
+    const fmt = n => '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const kpiCard = (label, val, color) => `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${label}</div>
+        <div style="font-size:26px;font-weight:700;color:${color};letter-spacing:-.5px">${val}</div>
+      </div>`;
 
     el.innerHTML = `
-      <!-- KPI row -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px">
+        ${kpiCard('Revenue (30d)', fmt(revenue),   'var(--green)')}
+        ${kpiCard('Collected',     fmt(collected), 'var(--green)')}
+        ${kpiCard('Outstanding',   fmt(pending),   pending > 0 ? 'var(--yellow)' : 'var(--text-primary)')}
+        ${kpiCard('My 10% Fee',    fmt(myFee),     'var(--accent)')}
+      </div>
+
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
-        ${[
-          { label: 'Revenue (30d)', val: '$' + revenue.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}), color: 'var(--green)' },
-          { label: 'Collected',     val: '$' + collected.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}), color: 'var(--green)' },
-          { label: 'Outstanding',   val: '$' + pending.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),   color: pending > 0 ? 'var(--yellow)' : 'var(--text-primary)' },
-          { label: 'My 10% Fee',    val: '$' + myFee.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),     color: 'var(--accent)' },
-        ].map(k => `
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px">
-            <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${k.label}</div>
-            <div style="font-size:26px;font-weight:700;color:${k.color};letter-spacing:-.5px">${k.val}</div>
-          </div>`).join('')}
+        ${kpiCard('Jobs Completed', jobs.filter(j=>j.jobStatus==='completed').length, 'var(--text-primary)')}
+        ${kpiCard('Jobs Scheduled', jobs.filter(j=>j.jobStatus==='scheduled'||j.jobStatus==='active').length, 'var(--text-primary)')}
+        ${kpiCard('Quotes Out', `${quoteSent} <span style="font-size:14px;color:var(--text-muted)">/ ${quoteValue>0?fmt(quoteValue)+' value':'$0'}`, 'var(--text-primary)')}
+        ${kpiCard('Quotes Won', quoteApproved, 'var(--green)')}
       </div>
 
-      <!-- Stats row -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px">
-        ${[
-          { label: 'Jobs Completed', val: jobs.filter(j=>j.jobStatus==='completed').length },
-          { label: 'Jobs Scheduled', val: jobs.filter(j=>j.jobStatus==='scheduled'||j.jobStatus==='active').length },
-          { label: 'Open Quotes',    val: quotes.filter(q=>q.status==='draft'||q.status==='sent').length },
-        ].map(s => `
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:13px;color:var(--text-secondary)">${s.label}</span>
-            <span style="font-size:22px;font-weight:700;color:var(--text-primary)">${s.val}</span>
-          </div>`).join('')}
-      </div>
-
-      <!-- Recent jobs -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px">
-        <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text-primary)">Recent Jobs</div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><div class="card-title">Recent Jobs</div></div>
         ${jobs.length ? `<table class="data-table"><thead><tr>
-          <th>Client</th><th>Title</th><th>Date</th><th>Status</th><th>Total</th>
+          <th>Client</th><th>Title</th><th>Date</th><th>Status</th><th class="tr">Total</th>
         </tr></thead><tbody>
           ${jobs.slice(0,10).map(j => `<tr>
             <td>${j.client?.name || '—'}</td>
             <td>${j.title || '—'}</td>
-            <td>${j.startAt ? new Date(j.startAt).toLocaleDateString() : '—'}</td>
-            <td><span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;background:${j.jobStatus==='completed'?'rgba(5,150,105,.1)':j.jobStatus==='scheduled'?'rgba(29,78,216,.08)':'rgba(148,163,184,.1)'};color:${j.jobStatus==='completed'?'var(--green)':j.jobStatus==='scheduled'?'var(--accent)':'var(--text-muted)'}">${j.jobStatus||'—'}</span></td>
-            <td>${j.total != null ? '$'+Number(j.total).toFixed(2) : '—'}</td>
+            <td>${j.startAt ? new Date(j.startAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}</td>
+            <td><span class="badge" style="background:${j.jobStatus==='completed'?'rgba(5,150,105,.1)':j.jobStatus==='scheduled'?'rgba(29,78,216,.08)':'rgba(148,163,184,.1)'};color:${j.jobStatus==='completed'?'var(--green)':j.jobStatus==='scheduled'?'var(--accent)':'var(--text-muted)'}">${j.jobStatus||'—'}</span></td>
+            <td class="tr">${j.total != null ? fmt(j.total) : '—'}</td>
           </tr>`).join('')}
         </tbody></table>`
-        : '<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:13px">No jobs found in the last 30 days</div>'}
+        : '<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:13px">No jobs in the last 30 days.</div>'}
       </div>
 
-      <!-- Recent invoices -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
-        <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text-primary)">Recent Invoices</div>
-        ${invoices.length ? `<table class="data-table"><thead><tr>
-          <th>Invoice #</th><th>Client</th><th>Issued</th><th>Status</th><th>Total</th>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><div class="card-title">Open Quotes</div></div>
+        ${quotes.filter(q=>q.status==='sent'||q.status==='draft').length ? `<table class="data-table"><thead><tr>
+          <th>Client</th><th>Title</th><th>Sent</th><th>Status</th><th class="tr">Value</th>
         </tr></thead><tbody>
-          ${invoices.slice(0,10).map(inv => `<tr>
-            <td>#${inv.invoiceNumber || '—'}</td>
-            <td>${inv.client?.name || '—'}</td>
-            <td>${inv.issuedDate ? new Date(inv.issuedDate).toLocaleDateString() : '—'}</td>
-            <td><span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;background:${inv.status==='paid'?'rgba(5,150,105,.1)':'rgba(217,119,6,.1)'};color:${inv.status==='paid'?'var(--green)':'var(--yellow)'}">${inv.status||'—'}</span></td>
-            <td style="font-weight:600">$${Number(inv.total||0).toFixed(2)}</td>
+          ${quotes.filter(q=>q.status==='sent'||q.status==='draft').slice(0,10).map(q => `<tr>
+            <td>${q.client?.name || '—'}</td>
+            <td>${q.title || '—'}</td>
+            <td>${q.sentAt ? new Date(q.sentAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—'}</td>
+            <td><span class="badge" style="background:${q.status==='sent'?'rgba(29,78,216,.08)':'rgba(148,163,184,.1)'};color:${q.status==='sent'?'var(--accent)':'var(--text-secondary)'}">${q.status||'—'}</span></td>
+            <td class="tr">${q.total != null ? fmt(q.total) : '—'}</td>
           </tr>`).join('')}
         </tbody></table>`
-        : '<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:13px">No invoices found</div>'}
+        : '<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:13px">No open quotes.</div>'}
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Recent Invoices</div></div>
+        ${invoices.length ? `<table class="data-table"><thead><tr>
+          <th>Invoice #</th><th>Client</th><th>Issued</th><th>Due</th><th>Status</th><th class="tr">Total</th>
+        </tr></thead><tbody>
+          ${invoices.slice(0,10).map(inv => `<tr>
+            <td class="mono">#${inv.invoiceNumber || '—'}</td>
+            <td>${inv.client?.name || '—'}</td>
+            <td>${inv.issuedDate  ? new Date(inv.issuedDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—'}</td>
+            <td>${inv.dueDate     ? new Date(inv.dueDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—'}</td>
+            <td><span class="badge" style="background:${inv.status==='paid'?'rgba(5,150,105,.1)':'rgba(217,119,6,.1)'};color:${inv.status==='paid'?'var(--green)':'var(--yellow)'}">${inv.status||'—'}</span></td>
+            <td class="tr" style="font-weight:600">${fmt(inv.total||0)}</td>
+          </tr>`).join('')}
+        </tbody></table>`
+        : '<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:13px">No invoices found.</div>'}
       </div>`;
 
     jobberLoaded = true;
   } catch(e) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">◉</div>Error: ${e.message}</div>`;
+    el.innerHTML = `<div class="empty"><div class="empty-icon">◉</div>Error loading Jobber data: ${e.message}</div>`;
   }
 }
 
@@ -798,6 +850,8 @@ async function loadCallLeads() {
   if (!el) return;
   el.innerHTML = '<div class="empty"><div class="empty-icon">📞</div>Loading…</div>';
   try {
+    const sb = window._sb;
+    if (!sb) { el.innerHTML = '<div class="empty"><div class="empty-icon">📞</div>Not ready yet — try again in a moment.</div>'; return; }
     const { data, error } = await sb.from('call_leads')
       .select('*, clients(business_name)')
       .order('tapped_at', { ascending: false })
@@ -808,26 +862,29 @@ async function loadCallLeads() {
       return;
     }
     el.innerHTML = `
-      <table class="data-table">
-        <thead><tr>
-          <th>Time (CT)</th><th>Client</th><th>Source</th>
-        </tr></thead>
-        <tbody>
-          ${data.map(r => {
-            const t = r.tapped_at ? new Date(r.tapped_at).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—';
-            return `<tr>
-              <td class="mono">${t}</td>
-              <td class="bold">${r.clients?.business_name || '—'}</td>
-              <td>${r.source || '—'}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>`;
+      <div class="card">
+        <table class="data-table">
+          <thead><tr>
+            <th>Time (CT)</th><th>Client</th><th>Source</th>
+          </tr></thead>
+          <tbody>
+            ${data.map(r => {
+              const t = r.tapped_at
+                ? new Date(r.tapped_at).toLocaleString('en-US', { timeZone:'America/Chicago', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })
+                : '—';
+              return `<tr>
+                <td class="mono">${t}</td>
+                <td class="bold">${r.clients?.business_name || '—'}</td>
+                <td>${r.source || '—'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
   } catch(e) {
     el.innerHTML = `<div class="empty"><div class="empty-icon">📞</div>Error: ${e.message}</div>`;
   }
 }
-
 </script>
 
 <!-- ══════════════════════════════════════════
@@ -1491,6 +1548,7 @@ async function loadCallLeads() {
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 const sb = createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_ANON, { auth: { storageKey: 'ee-admin-auth' } });
+window._sb = sb; // expose for non-module scripts (invite, call leads)
 
 // ── STATE ── (clients/visits declared globally above so non-module scripts can read them)
 
@@ -1675,6 +1733,7 @@ function renderPipeline() {
               ${nextStage[st.key]?`<button class="pill-btn advance" data-id="${c.id}" data-status="${nextStage[st.key]}">→ Advance</button>`:''}
               ${st.key!=='lost'&&st.key!=='active'?`<button class="pill-btn" data-id="${c.id}" data-status="lost">✕ Lost</button>`:''}
               ${st.key==='lost'?`<button class="pill-btn" data-id="${c.id}" data-status="prospect">↩ Revive</button>`:''}
+              <button class="pill-btn pipeline-edit-btn" data-id="${c.id}">Edit</button>
             </div>
           </div>`).join('')
           : '<div class="muted" style="text-align:center;padding:20px;font-size:12px">Empty</div>'}
@@ -1686,6 +1745,10 @@ function renderPipeline() {
   board.querySelectorAll('.pipeline-card').forEach((card, i) => {
     card.classList.add('card-anim');
     card.style.animationDelay = `${i * 0.05}s`;
+  });
+
+  board.querySelectorAll('.pipeline-edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => openEditClient(btn.dataset.id));
   });
 
   board.querySelectorAll('[data-id][data-status]').forEach(btn => {
@@ -1702,7 +1765,7 @@ function renderPipeline() {
 function renderClients() {
   const tbody = $('clients-tbody');
   if (!clients.length) {
-    tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">◉</div>No clients yet.</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10"><div class="empty"><div class="empty-icon">◉</div>No clients yet. Add your first client using the button above.</div></td></tr>';
     return;
   }
   tbody.innerHTML = clients.map(c => {
@@ -1719,7 +1782,7 @@ function renderClients() {
       <td style="text-transform:capitalize">${c.division}</td>
       <td><span class="badge badge-${c.status}">${statusMap[c.status]||c.status}</span></td>
       <td>${fmt$(c.monthly_flat_fee)}/mo</td>
-      <td>${(c.performance_pct*100).toFixed(0)}%</td>
+      <td>${c.performance_pct != null ? (c.performance_pct*100).toFixed(0)+'%' : '—'}</td>
       <td>${c.google_review_count||'—'}</td>
       <td class="tr mono" style="color:var(--accent);font-weight:700">${fmt$(ltv)}</td>
       <td style="text-align:center">${portalBadge}</td>
@@ -1814,7 +1877,7 @@ function renderMonthly() {
   container.innerHTML = `
     <div class="card" style="margin-bottom:16px">
       <div style="padding:18px 22px;border-bottom:0.5px solid var(--border)">
-        <div style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--white)">${client.business_name}</div>
+        <div style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--text-primary)">${client.business_name}</div>
         <div style="color:var(--text-muted);font-size:13px;margin-top:4px">${mnLabel} — Performance Report</div>
       </div>
       <div class="fee-breakdown">
@@ -2190,7 +2253,9 @@ $('m-month').addEventListener('change',  renderMonthly);
 
 // ── MODALS ──
 const openModal  = id => $(id).classList.add('open');
-const closeModal = id => { $(id).classList.remove('open'); };
+const closeModal = id => $(id).classList.remove('open');
+window._openModal  = openModal;
+window._closeModal = closeModal;
 
 let _confirmCallback = null;
 function showConfirm(title, msg, onOk) {
@@ -2237,13 +2302,13 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       current.style.transform = '';
       next.classList.add('active');
       tabSwitching = false;
-      if (tab==='pipeline') renderPipeline();
-      if (tab==='clients')  renderClients();
-      if (tab==='revenue')  renderVisits($('v-filter').value);
-      if (tab==='monthly')  renderMonthly();
-      if (tab==='payments') initPaymentsTab();
-      if (tab==='google-ads') loadGoogleAds();
-      if (tab==='jobber') { populateJobberClientSelect(); loadJobber(); loadCallLeads(); }
+      if (tab==='pipeline')   renderPipeline();
+      if (tab==='clients')    renderClients();
+      if (tab==='revenue')    renderVisits($('v-filter').value);
+      if (tab==='monthly')    renderMonthly();
+      if (tab==='payments')   initPaymentsTab();
+      if (tab==='google-ads') { if (gadsCustomerId) loadGoogleAds(); }
+      if (tab==='jobber')     { populateJobberClientSelect(); if (jobberClientId) loadJobber(); loadCallLeads(); }
     }, 150);
   });
 });
@@ -2323,59 +2388,61 @@ init();
 </script>
 <script>
 // ── INVITE LOGIC ──
-let _inviteClientId = null;
+// Uses window._sb and window._openModal/_closeModal set by the ES module above.
+var _inviteClientId = null;
 
 function openInviteModal(clientId, bizName) {
   _inviteClientId = clientId;
-  $('invite-biz-name').textContent = bizName;
-  $('invite-email').value = '';
-  $('invite-pass').value = '';
-  $('invite-error').style.display = 'none';
-  $('invite-success').style.display = 'none';
-  $('invite-submit').textContent = 'Send Invite';
-  $('invite-submit').disabled = false;
-  openModal('modal-invite');
+  document.getElementById('invite-biz-name').textContent = bizName;
+  document.getElementById('invite-email').value = '';
+  document.getElementById('invite-pass').value  = '';
+  document.getElementById('invite-error').style.display   = 'none';
+  document.getElementById('invite-success').style.display = 'none';
+  document.getElementById('invite-submit').textContent    = 'Send Invite';
+  document.getElementById('invite-submit').disabled       = false;
+  window._openModal('modal-invite');
 }
 
-$('invite-submit').addEventListener('click', async () => {
-  const email = $('invite-email').value.trim();
-  const pass  = $('invite-pass').value.trim();
-  const errEl = $('invite-error');
-  const okEl  = $('invite-success');
+document.getElementById('invite-submit').addEventListener('click', async () => {
+  const email = document.getElementById('invite-email').value.trim();
+  const pass  = document.getElementById('invite-pass').value.trim();
+  const errEl = document.getElementById('invite-error');
+  const okEl  = document.getElementById('invite-success');
   errEl.style.display = 'none';
   okEl.style.display  = 'none';
 
-  if (!email) { errEl.textContent = 'Email is required.'; errEl.style.display='block'; return; }
-  if (!pass || pass.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display='block'; return; }
+  if (!email) { errEl.textContent = 'Email is required.'; errEl.style.display = 'block'; return; }
+  if (!pass || pass.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display = 'block'; return; }
 
-  const btn = $('invite-submit');
+  const btn = document.getElementById('invite-submit');
   btn.textContent = 'Creating account…'; btn.disabled = true;
 
   try {
-    // Save admin session — signUp auto-signs-in as the new user, kicking out the admin
+    const sb = window._sb;
+    if (!sb) throw new Error('App not ready. Please refresh and try again.');
+
+    // Preserve admin session — signUp auto-signs-in as the new user
     const { data: { session: adminSession } } = await sb.auth.getSession();
 
-    // 1. Create auth user
     const { data: signUpData, error: signUpErr } = await sb.auth.signUp({ email, password: pass });
     if (signUpErr) throw new Error(signUpErr.message);
 
     const userId = signUpData.user?.id;
     if (!userId) throw new Error('Could not create user account.');
 
-    // 2. Restore admin session immediately so INSERT runs with admin privileges
+    // Restore admin session so INSERT runs with admin privileges
     if (adminSession) {
       await sb.auth.setSession({ access_token: adminSession.access_token, refresh_token: adminSession.refresh_token });
     }
 
-    // 3. Insert into users table (now running as admin)
     const { error: insertErr } = await sb.from('users').insert({
       id: userId, email, role: 'client', client_id: _inviteClientId
     });
     if (insertErr) throw new Error(insertErr.message);
 
-    okEl.innerHTML = `✓ Account created for <strong>${email}</strong>.<br>Share the portal link and password with them:<br><br>
+    okEl.innerHTML = `✓ Account created for <strong>${email}</strong>.<br>Share the portal link and temporary password:<br><br>
       <strong>URL:</strong> ${window.location.origin}/portal/<br>
-      <strong>Password:</strong> ${pass}`;
+      <strong>Password:</strong> <code style="background:var(--surface-2);padding:2px 6px;border-radius:4px">${pass}</code>`;
     okEl.style.display = 'block';
     btn.textContent = 'Done';
   } catch(e) {

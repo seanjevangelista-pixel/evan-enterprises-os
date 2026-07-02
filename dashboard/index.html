@@ -508,6 +508,8 @@ body {
 </head>
 <body>
 <script>window.ENV={SUPABASE_URL:'https://hzcgdnhecgewqpcnumwm.supabase.co',SUPABASE_ANON:'sb_publishable_C6qf6KSBHv07VGTDNmpvZg_H0nnLrhR'};
+// Shared state — written by module, read by non-module functions
+var clients = [], visits = [];
 // ── Google Ads ─────────────────────────────────────────────────────────────
 let gadsLoaded = false;
 let gadsCustomerId = null;
@@ -1439,8 +1441,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const sb = createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_ANON, { auth: { storageKey: 'ee-admin-auth' } });
 
-// ── STATE ──
-let clients = [], visits = [];
+// ── STATE ── (clients/visits declared globally above so non-module scripts can read them)
 
 // ── UTILS ──
 const $ = id => document.getElementById(id);

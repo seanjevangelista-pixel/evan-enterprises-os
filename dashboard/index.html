@@ -662,6 +662,135 @@ async function loadGoogleAds() {
   }
 }
 
+// ── JOBBER ──
+let jobberClientId = null;
+let jobberLoaded = false;
+
+function populateJobberClientSelect() {
+  const sel = document.getElementById('jobber-client-select');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">Select client…</option>';
+  clients.filter(c => c.status === 'active').forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.business_name + (c.jobber_account_id ? '' : ' (not connected)');
+    sel.appendChild(opt);
+  });
+  if (prev) sel.value = prev;
+}
+
+function onJobberClientChange() {
+  const sel = document.getElementById('jobber-client-select');
+  const client = clients.find(c => c.id === sel.value);
+  jobberClientId = client?.jobber_account_id || null;
+  jobberLoaded = false;
+  const sub = document.getElementById('jobber-sub');
+  if (client) sub.textContent = `${client.business_name} · Jobs & Revenue · Last 30 days`;
+  if (jobberClientId) {
+    loadJobber();
+  } else {
+    const el = document.getElementById('jobber-content');
+    el.innerHTML = client
+      ? `<div class="empty"><div class="empty-icon">◉</div><strong>${client.business_name}</strong> isn't connected to Jobber yet.<br><span style="font-size:13px;color:var(--text-muted)">Add their Jobber account ID in Edit Client to connect.</span></div>`
+      : `<div class="empty"><div class="empty-icon">◉</div>Select a client to load Jobber data.</div>`;
+  }
+}
+
+async function loadJobber() {
+  if (jobberLoaded) return;
+  const el = document.getElementById('jobber-content');
+  if (!jobberClientId) return;
+  el.innerHTML = `<div class="empty"><div class="empty-icon" style="animation:spin 1s linear infinite">◉</div>Loading Jobber data…</div>`;
+  try {
+    const res = await fetch(`/api/jobber?account_id=${jobberClientId}`);
+    const data = await res.json();
+
+    if (!data.configured) {
+      el.innerHTML = `<div class="empty"><div class="empty-icon">◉</div>Jobber API not configured.<br>
+        <span style="font-size:13px;color:var(--text-muted)">Add <code>JOBBER_CLIENT_ID</code>, <code>JOBBER_CLIENT_SECRET</code>, and <code>JOBBER_REFRESH_TOKEN</code> to your environment variables.</span>
+        <br><br><a href="https://developer.getjobber.com" target="_blank" style="color:var(--accent);font-size:13px">→ Get Jobber API credentials</a></div>`;
+      return;
+    }
+
+    if (data.error) throw new Error(data.error);
+
+    const jobs      = data.jobs      || [];
+    const quotes    = data.quotes    || [];
+    const invoices  = data.invoices  || [];
+    const revenue   = invoices.reduce((sum, inv) => sum + (inv.total || 0), 0);
+    const collected = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total || 0), 0);
+    const myFee     = collected * 0.10;
+    const pending   = invoices.filter(i => i.status !== 'paid').reduce((sum, i) => sum + (i.total || 0), 0);
+
+    el.innerHTML = `
+      <!-- KPI row -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
+        ${[
+          { label: 'Revenue (30d)', val: '$' + revenue.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}), color: 'var(--green)' },
+          { label: 'Collected',     val: '$' + collected.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}), color: 'var(--green)' },
+          { label: 'Outstanding',   val: '$' + pending.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),   color: pending > 0 ? 'var(--yellow)' : 'var(--text-primary)' },
+          { label: 'My 10% Fee',    val: '$' + myFee.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),     color: 'var(--accent)' },
+        ].map(k => `
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px">
+            <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${k.label}</div>
+            <div style="font-size:26px;font-weight:700;color:${k.color};letter-spacing:-.5px">${k.val}</div>
+          </div>`).join('')}
+      </div>
+
+      <!-- Stats row -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px">
+        ${[
+          { label: 'Jobs Completed', val: jobs.filter(j=>j.jobStatus==='completed').length },
+          { label: 'Jobs Scheduled', val: jobs.filter(j=>j.jobStatus==='scheduled'||j.jobStatus==='active').length },
+          { label: 'Open Quotes',    val: quotes.filter(q=>q.status==='draft'||q.status==='sent').length },
+        ].map(s => `
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:13px;color:var(--text-secondary)">${s.label}</span>
+            <span style="font-size:22px;font-weight:700;color:var(--text-primary)">${s.val}</span>
+          </div>`).join('')}
+      </div>
+
+      <!-- Recent jobs -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text-primary)">Recent Jobs</div>
+        ${jobs.length ? `<table class="data-table"><thead><tr>
+          <th>Client</th><th>Title</th><th>Date</th><th>Status</th><th>Total</th>
+        </tr></thead><tbody>
+          ${jobs.slice(0,10).map(j => `<tr>
+            <td>${j.client?.name || '—'}</td>
+            <td>${j.title || '—'}</td>
+            <td>${j.startAt ? new Date(j.startAt).toLocaleDateString() : '—'}</td>
+            <td><span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;background:${j.jobStatus==='completed'?'rgba(5,150,105,.1)':j.jobStatus==='scheduled'?'rgba(29,78,216,.08)':'rgba(148,163,184,.1)'};color:${j.jobStatus==='completed'?'var(--green)':j.jobStatus==='scheduled'?'var(--accent)':'var(--text-muted)'}">${j.jobStatus||'—'}</span></td>
+            <td>${j.total != null ? '$'+Number(j.total).toFixed(2) : '—'}</td>
+          </tr>`).join('')}
+        </tbody></table>`
+        : '<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:13px">No jobs found in the last 30 days</div>'}
+      </div>
+
+      <!-- Recent invoices -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text-primary)">Recent Invoices</div>
+        ${invoices.length ? `<table class="data-table"><thead><tr>
+          <th>Invoice #</th><th>Client</th><th>Issued</th><th>Status</th><th>Total</th>
+        </tr></thead><tbody>
+          ${invoices.slice(0,10).map(inv => `<tr>
+            <td>#${inv.invoiceNumber || '—'}</td>
+            <td>${inv.client?.name || '—'}</td>
+            <td>${inv.issuedDate ? new Date(inv.issuedDate).toLocaleDateString() : '—'}</td>
+            <td><span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;background:${inv.status==='paid'?'rgba(5,150,105,.1)':'rgba(217,119,6,.1)'};color:${inv.status==='paid'?'var(--green)':'var(--yellow)'}">${inv.status||'—'}</span></td>
+            <td style="font-weight:600">$${Number(inv.total||0).toFixed(2)}</td>
+          </tr>`).join('')}
+        </tbody></table>`
+        : '<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:13px">No invoices found</div>'}
+      </div>`;
+
+    jobberLoaded = true;
+  } catch(e) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">◉</div>Error: ${e.message}</div>`;
+  }
+}
+
 </script>
 
 <!-- ══════════════════════════════════════════
@@ -777,6 +906,9 @@ async function loadGoogleAds() {
       </button>
       <button class="nav-item" data-tab="google-ads">
         <span class="nav-icon">⬡</span> Google Ads
+      </button>
+      <button class="nav-item" data-tab="jobber">
+        <span class="nav-icon">◉</span> Jobber
       </button>
     </nav>
     <div class="sidebar-footer">
@@ -1045,6 +1177,25 @@ async function loadGoogleAds() {
       </div>
       <div id="gads-content" class="page-content">
         <div class="empty"><div class="empty-icon">⬡</div>Select a client above to load campaign data.</div>
+      </div>
+    </section>
+
+    <!-- ── JOBBER TAB ── -->
+    <section class="tab-section" data-section="jobber">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Jobber</div>
+          <div class="page-sub" id="jobber-sub">Jobs & Revenue · Last 30 days</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <select id="jobber-client-select" class="select-pill" onchange="onJobberClientChange()">
+            <option value="">Select client…</option>
+          </select>
+          <button class="btn btn-primary" onclick="loadJobber()">Refresh</button>
+        </div>
+      </div>
+      <div id="jobber-content" class="page-content">
+        <div class="empty"><div class="empty-icon">◉</div>Select a client to load Jobber data.</div>
       </div>
     </section>
 
@@ -1371,7 +1522,7 @@ async function enterApp(session) {
   $('m-month').value         = new Date().toISOString().slice(0,7);
   await loadAll();
   renderOverview();
-  populateGadsClientSelect();
+  populateGadsClientSelect(); populateJobberClientSelect();
 }
 
 $('login-form').addEventListener('submit', async e => {
@@ -1868,7 +2019,7 @@ async function saveClient() {
   $('client-form').reset();
   await loadAll();
   renderPipeline(); renderClients();
-  populateGadsClientSelect();
+  populateGadsClientSelect(); populateJobberClientSelect();
   toast('Client added!');
 }
 
@@ -1920,7 +2071,7 @@ async function updateClient() {
   closeModal('modal-edit-client');
   await loadAll();
   renderPipeline(); renderClients();
-  populateGadsClientSelect();
+  populateGadsClientSelect(); populateJobberClientSelect();
   toast('Client updated!');
 }
 
@@ -2038,6 +2189,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='monthly')  renderMonthly();
       if (tab==='payments') initPaymentsTab();
       if (tab==='google-ads') loadGoogleAds();
+      if (tab==='jobber') { populateJobberClientSelect(); loadJobber(); }
     }, 150);
   });
 });

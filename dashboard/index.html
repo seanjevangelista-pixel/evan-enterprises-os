@@ -1402,70 +1402,79 @@ async function loadCallLeads() {
       </div>
       <div class="page-content" style="max-width:640px">
 
-        <!-- Google Ads Credentials -->
+        <!-- Google Ads Connection -->
         <div class="card" style="margin-bottom:24px">
           <div class="card-header">
-            <div class="card-title">Google Ads API Credentials</div>
+            <div class="card-title">Google Ads Connection</div>
+            <!-- Connection status badge -->
+            <span id="gads-connect-badge" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(148,163,184,0.15);color:var(--text-muted)">
+              <span style="width:6px;height:6px;border-radius:50%;background:var(--text-muted);flex-shrink:0"></span>
+              Not connected
+            </span>
           </div>
           <div style="padding:20px">
+
+            <!-- Connected state (hidden until OAuth completes) -->
+            <div id="gads-connected-state" style="display:none;background:rgba(5,150,105,0.07);border:1px solid rgba(5,150,105,0.2);border-radius:8px;padding:14px 16px;margin-bottom:18px;display:none;align-items:center;justify-content:space-between;gap:12px">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#059669">Google Ads Connected</div>
+                <div id="gads-connected-email" style="font-size:12px;color:var(--text-secondary);margin-top:2px"></div>
+              </div>
+              <button class="btn btn-danger btn-sm" id="gads-disconnect-btn">Disconnect</button>
+            </div>
+
             <p style="font-size:12px;color:var(--text-secondary);margin-bottom:18px;line-height:1.6">
-              These credentials connect the Google Ads tab to real campaign data. They are stored securely in your Supabase database.
-              See the setup guide at the bottom of this page.
+              Paste your OAuth2 credentials below, then click <strong>Connect Google Ads</strong>. You'll be redirected to Google to authorize — no OAuth playground needed.
             </p>
+
+            <div class="form-group">
+              <label>Client ID</label>
+              <input type="text" id="s-gads-client-id" placeholder="e.g. 123456789-abc.apps.googleusercontent.com">
+            </div>
+            <div class="form-group">
+              <label>Client Secret</label>
+              <input type="password" id="s-gads-client-secret" placeholder="e.g. GOCSPX-…">
+            </div>
             <div class="form-group">
               <label>Developer Token</label>
               <input type="text" id="s-gads-dev-token" placeholder="e.g. ABcDeFgHiJkLmN_opqrst">
             </div>
             <div class="form-group">
-              <label>OAuth2 Client ID</label>
-              <input type="text" id="s-gads-client-id" placeholder="e.g. 123456789-abc.apps.googleusercontent.com">
-            </div>
-            <div class="form-group">
-              <label>OAuth2 Client Secret</label>
-              <input type="password" id="s-gads-client-secret" placeholder="e.g. GOCSPX-…">
-            </div>
-            <div class="form-group">
-              <label>Refresh Token</label>
-              <input type="password" id="s-gads-refresh-token" placeholder="e.g. 1//0g…">
-            </div>
-            <div class="form-group">
               <label>Manager Account ID (MCC) — optional</label>
               <input type="text" id="s-gads-mcc-id" placeholder="e.g. 123-456-7890">
             </div>
-            <div style="display:flex;gap:10px;align-items:center">
+
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
               <button class="btn btn-primary" id="save-gads-creds-btn">Save Credentials</button>
+              <button class="btn" id="gads-oauth-btn" style="background:rgba(29,78,216,0.08);color:var(--accent);border:1px solid rgba(29,78,216,0.25);font-weight:600">
+                Connect Google Ads →
+              </button>
               <span id="gads-creds-status" style="font-size:12px;color:var(--text-muted)"></span>
             </div>
+
+            <p style="font-size:11px;color:var(--text-muted);margin-top:14px;line-height:1.6">
+              After clicking Connect, Google will ask you to sign in and grant access to your Ads account. You'll be redirected back here automatically.
+            </p>
           </div>
         </div>
 
         <!-- Setup Guide -->
         <div class="card">
-          <div class="card-header"><div class="card-title">Google Ads Setup Guide</div></div>
+          <div class="card-header"><div class="card-title">Setup Guide</div></div>
           <div style="padding:20px;font-size:13px;color:var(--text-secondary);line-height:1.8">
             <p style="margin-bottom:12px"><strong style="color:var(--text-primary)">Step 1 — Get a Developer Token</strong><br>
-              1. Go to <a href="https://ads.google.com" target="_blank" style="color:var(--accent)">ads.google.com</a> and sign in.<br>
-              2. Click the wrench icon (Tools) → API Center.<br>
-              3. Apply for a Developer Token. Copy it and paste it above.<br>
-              <em style="font-size:11px">Note: You start with a Test token. To get real data, apply for Basic Access.</em>
+              1. Go to <a href="https://ads.google.com" target="_blank" style="color:var(--accent)">ads.google.com</a> → Tools → API Center.<br>
+              2. Copy your Developer Token and paste it in the field above.
             </p>
-            <p style="margin-bottom:12px"><strong style="color:var(--text-primary)">Step 2 — Create OAuth2 Credentials (Client ID + Secret)</strong><br>
+            <p style="margin-bottom:12px"><strong style="color:var(--text-primary)">Step 2 — Create OAuth2 Credentials</strong><br>
               1. Go to <a href="https://console.cloud.google.com" target="_blank" style="color:var(--accent)">console.cloud.google.com</a>.<br>
-              2. Create a new project (or select an existing one).<br>
-              3. Go to APIs &amp; Services → Enable APIs → search "Google Ads API" → Enable it.<br>
-              4. Go to APIs &amp; Services → Credentials → Create Credentials → OAuth Client ID.<br>
-              5. Choose "Web application". Add <code style="background:var(--surface-2);padding:1px 5px;border-radius:3px">https://developers.google.com/oauthplayground</code> as an authorized redirect URI.<br>
-              6. Copy the Client ID and Client Secret and paste them above.
+              2. APIs &amp; Services → Credentials → Create Credentials → OAuth Client ID → Web application.<br>
+              3. Under <strong>Authorized redirect URIs</strong>, add:<br>
+              <code style="background:var(--surface-2);padding:2px 7px;border-radius:3px;font-size:12px">https://evan-enterprises-os.vercel.app/dashboard</code><br>
+              4. Copy the Client ID and Client Secret and paste them above.
             </p>
-            <p style="margin-bottom:12px"><strong style="color:var(--text-primary)">Step 3 — Generate a Refresh Token</strong><br>
-              1. Go to <a href="https://developers.google.com/oauthplayground" target="_blank" style="color:var(--accent)">developers.google.com/oauthplayground</a>.<br>
-              2. Click the gear icon (top right) → check "Use your own OAuth credentials" → paste your Client ID and Secret.<br>
-              3. In the left panel, find "Google Ads API v17" and select the <code style="background:var(--surface-2);padding:1px 5px;border-radius:3px">https://www.googleapis.com/auth/adwords</code> scope. Click Authorize.<br>
-              4. Sign in with your Google account (the one that has access to the Ads account).<br>
-              5. Click "Exchange authorization code for tokens". Copy the <strong>Refresh Token</strong> and paste it above.
-            </p>
-            <p><strong style="color:var(--text-primary)">Step 4 — Save and Test</strong><br>
-              Paste all four values above, click <strong>Save Credentials</strong>, then go to the Google Ads tab, select a client, and click Refresh.
+            <p><strong style="color:var(--text-primary)">Step 3 — Connect</strong><br>
+              Click <strong>Save Credentials</strong> first, then click <strong>Connect Google Ads →</strong>. Sign in with the Google account that has access to your Ads accounts. Done.
             </p>
           </div>
         </div>
@@ -1891,6 +1900,8 @@ async function enterApp(session) {
   await loadAll();
   renderOverview();
   populateGadsClientSelect(); populateJobberClientSelect();
+  // Handle Google OAuth callback (?code=XXX) after the app is ready
+  await handleOAuthCallback();
 }
 
 $('login-form').addEventListener('submit', async e => {
@@ -2916,7 +2927,29 @@ $('load-payments-btn').addEventListener('click', async () => {
 });
 
 // ── SETTINGS ──
-const GADS_KEYS = ['gads_dev_token','gads_client_id','gads_client_secret','gads_refresh_token','gads_mcc_id'];
+const GADS_KEYS = [
+  'google_ads_client_id','google_ads_client_secret',
+  'google_ads_developer_token','google_ads_mcc_id',
+  'google_ads_refresh_token','google_ads_connected_email',
+];
+
+function setGadsConnectionBadge(connected, email) {
+  const badge = $('gads-connect-badge');
+  const connState = $('gads-connected-state');
+  const connEmail = $('gads-connected-email');
+  if (connected) {
+    badge.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:#059669;flex-shrink:0"></span> Connected ✓';
+    badge.style.background = 'rgba(5,150,105,0.12)';
+    badge.style.color = '#059669';
+    connState.style.display = 'flex';
+    if (email) connEmail.textContent = 'Authorized as ' + email;
+  } else {
+    badge.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:var(--text-muted);flex-shrink:0"></span> Not connected';
+    badge.style.background = 'rgba(148,163,184,0.15)';
+    badge.style.color = 'var(--text-muted)';
+    connState.style.display = 'none';
+  }
+}
 
 async function loadSettingsTab() {
   const safe = q => q.then(r => r).catch(() => ({ data: [] }));
@@ -2924,31 +2957,87 @@ async function loadSettingsTab() {
   if (!data) return;
   const map = {};
   data.forEach(r => { map[r.key] = r.value; });
-  $('s-gads-dev-token').value      = map['gads_dev_token']      || '';
-  $('s-gads-client-id').value      = map['gads_client_id']      || '';
-  $('s-gads-client-secret').value  = map['gads_client_secret']  || '';
-  $('s-gads-refresh-token').value  = map['gads_refresh_token']  || '';
-  $('s-gads-mcc-id').value         = map['gads_mcc_id']         || '';
+  $('s-gads-client-id').value     = map['google_ads_client_id']       || '';
+  $('s-gads-client-secret').value = map['google_ads_client_secret']   || '';
+  $('s-gads-dev-token').value     = map['google_ads_developer_token'] || '';
+  $('s-gads-mcc-id').value        = map['google_ads_mcc_id']          || '';
+  const connected = !!map['google_ads_refresh_token'];
+  setGadsConnectionBadge(connected, map['google_ads_connected_email'] || null);
 }
 
+// Save credentials button
 $('save-gads-creds-btn').addEventListener('click', async () => {
   const btn = $('save-gads-creds-btn');
   const status = $('gads-creds-status');
   btn.textContent = 'Saving…'; btn.disabled = true; status.textContent = '';
   const rows = [
-    { key:'gads_dev_token',     value: $('s-gads-dev-token').value.trim()     || null },
-    { key:'gads_client_id',     value: $('s-gads-client-id').value.trim()     || null },
-    { key:'gads_client_secret', value: $('s-gads-client-secret').value.trim() || null },
-    { key:'gads_refresh_token', value: $('s-gads-refresh-token').value.trim() || null },
-    { key:'gads_mcc_id',        value: $('s-gads-mcc-id').value.trim()        || null },
-  ];
+    { key:'google_ads_client_id',       value: $('s-gads-client-id').value.trim()     || null },
+    { key:'google_ads_client_secret',   value: $('s-gads-client-secret').value.trim() || null },
+    { key:'google_ads_developer_token', value: $('s-gads-dev-token').value.trim()     || null },
+    { key:'google_ads_mcc_id',          value: $('s-gads-mcc-id').value.trim()        || null },
+  ].filter(r => r.value !== null);
   const { error } = await sb.from('settings').upsert(rows, { onConflict: 'key' });
   btn.textContent = 'Save Credentials'; btn.disabled = false;
   if (error) { status.textContent = 'Error: ' + error.message; status.style.color = 'var(--red)'; toast('Error saving: ' + error.message, 'err'); return; }
   status.textContent = 'Saved ✓'; status.style.color = 'var(--green)';
-  toast('Google Ads credentials saved!');
-  setTimeout(() => { status.textContent = ''; }, 3000);
+  toast('Credentials saved — now click Connect Google Ads →');
+  setTimeout(() => { status.textContent = ''; }, 3500);
 });
+
+// Connect Google Ads button — triggers OAuth redirect
+$('gads-oauth-btn').addEventListener('click', async () => {
+  const btn = $('gads-oauth-btn');
+  btn.textContent = 'Redirecting…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/api/google-ads-auth?action=url');
+    const data = await res.json();
+    if (data.error) { toast('Error: ' + data.error, 'err'); btn.textContent = 'Connect Google Ads →'; btn.disabled = false; return; }
+    window.location.href = data.url;
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+    btn.textContent = 'Connect Google Ads →'; btn.disabled = false;
+  }
+});
+
+// Disconnect button — clears refresh token from Supabase
+$('gads-disconnect-btn').addEventListener('click', async () => {
+  if (!confirm('Disconnect Google Ads? You can reconnect anytime.')) return;
+  await sb.from('settings').delete().in('key', ['google_ads_refresh_token','google_ads_connected_email']);
+  setGadsConnectionBadge(false, null);
+  toast('Google Ads disconnected.');
+});
+
+// ── On page load: handle OAuth callback (?code=XXX in URL) ──
+async function handleOAuthCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code   = params.get('code');
+  if (!code) return;
+
+  // Clean the URL immediately so it doesn't confuse on reload
+  const cleanUrl = window.location.pathname;
+  window.history.replaceState({}, document.title, cleanUrl);
+
+  // Show a toast while we exchange the code
+  toast('Connecting Google Ads…');
+
+  try {
+    const res  = await fetch(`/api/google-ads-auth?action=token&code=${encodeURIComponent(code)}`);
+    const data = await res.json();
+    if (data.error) { toast('OAuth error: ' + data.error, 'err'); return; }
+    setGadsConnectionBadge(true, data.email || null);
+    // Switch to Settings tab so the user sees the Connected badge
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+    const settingsNav = document.querySelector('[data-tab="settings"]');
+    const settingsSec = document.querySelector('[data-section="settings"]');
+    if (settingsNav) settingsNav.classList.add('active');
+    if (settingsSec) settingsSec.classList.add('active');
+    await loadSettingsTab();
+    toast('Google Ads connected! ✓', 'ok');
+  } catch(e) {
+    toast('OAuth exchange failed: ' + e.message, 'err');
+  }
+}
 
 // ── BOOT ──
 init();

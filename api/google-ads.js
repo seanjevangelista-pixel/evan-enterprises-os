@@ -19,18 +19,18 @@ export default async function handler(req, res) {
     const sbAnon = process.env.SUPABASE_ANON || 'sb_publishable_C6qf6KSBHv07VGTDNmpvZg_H0nnLrhR';
     try {
       const r = await fetch(
-        `${sbUrl}/rest/v1/settings?key=in.(gads_dev_token,gads_client_id,gads_client_secret,gads_refresh_token,gads_mcc_id)&select=key,value`,
+        `${sbUrl}/rest/v1/settings?key=in.(google_ads_developer_token,google_ads_client_id,google_ads_client_secret,google_ads_refresh_token,google_ads_mcc_id)&select=key,value`,
         { headers: { apikey: sbAnon, Authorization: `Bearer ${sbAnon}` } }
       );
       const rows = await r.json();
       if (Array.isArray(rows)) {
         const map = {};
         rows.forEach(row => { map[row.key] = row.value; });
-        devToken     = devToken     || map['gads_dev_token']      || '';
-        clientId     = clientId     || map['gads_client_id']      || '';
-        clientSec    = clientSec    || map['gads_client_secret']  || '';
-        refreshToken = refreshToken || map['gads_refresh_token']  || '';
-        mccId        = mccId        || map['gads_mcc_id']         || '';
+        devToken     = devToken     || map['google_ads_developer_token'] || '';
+        clientId     = clientId     || map['google_ads_client_id']       || '';
+        clientSec    = clientSec    || map['google_ads_client_secret']   || '';
+        refreshToken = refreshToken || map['google_ads_refresh_token']   || '';
+        mccId        = mccId        || map['google_ads_mcc_id']          || '';
       }
     } catch (_) { /* ignore — fall through to configured:false */ }
   }

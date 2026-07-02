@@ -532,10 +532,10 @@ function populateGadsClientSelect() {
   if (!sel) return;
   const prev = sel.value;
   sel.innerHTML = '<option value="">Select client…</option>';
-  clients.filter(c => c.google_ads_customer_id).forEach(c => {
+  clients.filter(c => c.status === 'active').forEach(c => {
     const opt = document.createElement('option');
     opt.value = c.id;
-    opt.textContent = c.business_name;
+    opt.textContent = c.business_name + (c.google_ads_customer_id ? '' : ' (no ID)');
     sel.appendChild(opt);
   });
   if (prev) sel.value = prev;

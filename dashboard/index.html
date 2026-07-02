@@ -1736,11 +1736,12 @@ $('logout-btn').addEventListener('click', () => sb.auth.signOut());
 let portalUsers = [];
 
 async function loadAll() {
+  const safe = q => q.then(r => r).catch(() => ({ data: [] }));
   const [{ data: c }, { data: v }, { data: u }, { data: inv }] = await Promise.all([
-    sb.from('clients').select('*').order('created_at', { ascending: false }),
-    sb.from('visits').select('*, clients(business_name)').order('visit_date', { ascending: false }),
-    sb.from('users').select('client_id, confirmed_at').eq('role', 'client'),
-    sb.from('invoices').select('*, clients(business_name)').order('due_date', { ascending: false }).catch(() => ({ data: [] })),
+    safe(sb.from('clients').select('*').order('created_at', { ascending: false })),
+    safe(sb.from('visits').select('*, clients(business_name)').order('visit_date', { ascending: false })),
+    safe(sb.from('users').select('client_id, confirmed_at').eq('role', 'client')),
+    safe(sb.from('invoices').select('*, clients(business_name)').order('due_date', { ascending: false })),
   ]);
   clients     = c   || [];
   visits      = v   || [];

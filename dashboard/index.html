@@ -1050,6 +1050,9 @@ async function loadCallLeads() {
       <button class="nav-item" data-tab="google-ads">
         <span class="nav-icon">⬡</span> Google Ads
       </button>
+      <button class="nav-item" data-tab="lsa-leads">
+        <span class="nav-icon">★</span> LSA Leads
+      </button>
       <button class="nav-item" data-tab="jobber">
         <span class="nav-icon">◉</span> Jobber
       </button>
@@ -1113,6 +1116,19 @@ async function loadCallLeads() {
             <div class="stat-label">Retained Visits</div>
             <div class="stat-value" id="s-ret">—</div>
             <div class="stat-sub">This month — 10% applies</div>
+          </div>
+        </div>
+        <!-- LSA This Month row -->
+        <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:20px" id="lsa-overview-row">
+          <div class="stat-card">
+            <div class="stat-label">LSA Leads This Month</div>
+            <div class="stat-value blue" id="s-lsa-leads">—</div>
+            <div class="stat-sub">All clients combined</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">LSA Spend This Month</div>
+            <div class="stat-value red" id="s-lsa-spend">—</div>
+            <div class="stat-sub">Sum of cost per lead</div>
           </div>
         </div>
         <!-- Renewals Warning -->
@@ -1373,6 +1389,25 @@ async function loadCallLeads() {
       </div>
       <div id="gads-content" class="page-content">
         <div class="empty"><div class="empty-icon">⬡</div>Select a client above to load campaign data.</div>
+      </div>
+    </section>
+
+    <!-- ── LSA LEADS TAB ── -->
+    <section class="tab-section" data-section="lsa-leads">
+      <div class="page-header">
+        <div>
+          <div class="page-title">LSA Leads</div>
+          <div class="page-sub" id="lsa-sub">Local Service Ads lead tracking</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <select id="lsa-client-select" class="select-pill" onchange="onLsaClientChange()">
+            <option value="">Select client…</option>
+          </select>
+          <button class="btn btn-primary" id="open-log-lead-btn">+ Log New Lead</button>
+        </div>
+      </div>
+      <div id="lsa-content" class="page-content">
+        <div class="empty"><div class="empty-icon">★</div>Select a client above to view LSA leads.</div>
       </div>
     </section>
 
@@ -1713,6 +1748,13 @@ async function loadCallLeads() {
             <label>Monthly Value ($)</label>
             <input type="number" id="ec-monthly-value" step="0.01" placeholder="0.00">
           </div>
+          <div class="form-group">
+            <label>LSA Active</label>
+            <select id="ec-lsa-active">
+              <option value="false">No</option>
+              <option value="true">Yes — running Local Service Ads</option>
+            </select>
+          </div>
           <div class="form-group span-2">
             <label>Notes</label>
             <textarea id="ec-notes"></textarea>
@@ -1793,6 +1835,69 @@ async function loadCallLeads() {
     <div class="modal-foot">
       <button class="btn btn-secondary" data-close="modal-add-invoice">Cancel</button>
       <button class="btn btn-primary" id="save-invoice-btn">Save Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LOG NEW LEAD MODAL ── -->
+<div class="modal-bg" id="modal-log-lead">
+  <div class="modal" style="width:520px">
+    <div class="modal-hd">
+      <div class="modal-title">Log New LSA Lead</div>
+      <button class="modal-x" data-close="modal-log-lead">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="lead-form">
+        <div class="form-2col">
+          <div class="form-group span-2">
+            <label>Client *</label>
+            <select id="ll-client" required>
+              <option value="">Select client…</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date *</label>
+            <input type="date" id="ll-date" required>
+          </div>
+          <div class="form-group">
+            <label>Lead Type</label>
+            <select id="ll-type">
+              <option value="call">Call</option>
+              <option value="message">Message</option>
+              <option value="booking">Booking</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Customer Name</label>
+            <input type="text" id="ll-name" placeholder="Jane Smith">
+          </div>
+          <div class="form-group">
+            <label>Customer Phone</label>
+            <input type="tel" id="ll-phone" placeholder="(555) 555-5555">
+          </div>
+          <div class="form-group">
+            <label>Cost Per Lead ($)</label>
+            <input type="number" id="ll-cost" value="0" step="0.01" min="0">
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="ll-status">
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="booked">Booked</option>
+              <option value="lost">Lost</option>
+            </select>
+          </div>
+          <div class="form-group span-2">
+            <label>Notes</label>
+            <textarea id="ll-notes" placeholder="Any details about this lead…"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" data-close="modal-log-lead">Cancel</button>
+      <button class="btn btn-primary" id="save-lead-btn">Save Lead</button>
     </div>
   </div>
 </div>
@@ -1911,10 +2016,12 @@ async function enterApp(session) {
   $('u-avatar').textContent  = (email[0] || 'S').toUpperCase();
   $('ov-date').textContent   = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   $('v-date').value          = new Date().toISOString().split('T')[0];
+  $('ll-date').value         = new Date().toISOString().split('T')[0];
   $('m-month').value         = new Date().toISOString().slice(0,7);
   await loadAll();
   renderOverview();
-  populateGadsClientSelect(); populateJobberClientSelect();
+  populateGadsClientSelect(); populateJobberClientSelect(); populateLsaClientSelect();
+  await refreshLsaOverview();
   // Handle Google OAuth callback (?code=XXX) after the app is ready
   await handleOAuthCallback();
 }
@@ -2617,7 +2724,7 @@ async function saveClient() {
   $('client-form').reset();
   await loadAll();
   renderPipeline(); renderClients();
-  populateGadsClientSelect(); populateJobberClientSelect();
+  populateGadsClientSelect(); populateJobberClientSelect(); populateLsaClientSelect();
   toast('Client added!');
 }
 
@@ -2687,6 +2794,7 @@ function openEditClient(id) {
   $('ec-contract-end').value   = c.contract_end   || '';
   $('ec-monthly-value').value  = c.monthly_value  || '';
   $('ec-notes').value          = c.notes || '';
+  $('ec-lsa-active').value     = c.lsa_active ? 'true' : 'false';
   renderServicesGrid(_editServices);
   renderActivityLog(id);
   openModal('modal-edit-client');
@@ -2717,12 +2825,13 @@ async function updateClient() {
     monthly_value:          parseFloat($('ec-monthly-value').value) || null,
     services:               _editServices,
     notes:                  $('ec-notes').value.trim() || null,
+    lsa_active:             $('ec-lsa-active').value === 'true',
   }).eq('id', id);
   if (error) { toast('Error: ' + error.message, 'err'); return; }
   closeModal('modal-edit-client');
   await loadAll();
   renderPipeline(); renderClients(); renderOverview();
-  populateGadsClientSelect(); populateJobberClientSelect();
+  populateGadsClientSelect(); populateJobberClientSelect(); populateLsaClientSelect();
   toast('Client updated!');
 }
 
@@ -2865,6 +2974,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='payments')   initPaymentsTab();
       if (tab==='invoices')   { populateInvoiceClientSelect(); renderInvoices($('inv-filter').value); }
       if (tab==='google-ads') { if (gadsCustomerId) loadGoogleAds(); }
+      if (tab==='lsa-leads')  { populateLsaClientSelect(); if (lsaClientId) loadLsaLeads(); }
       if (tab==='jobber')     { populateJobberClientSelect(); if (jobberClientId) loadJobber(); loadCallLeads(); }
       if (tab==='settings')   { loadSettingsTab(); }
     }, 150);
@@ -3053,6 +3163,215 @@ async function handleOAuthCallback() {
     toast('OAuth exchange failed: ' + e.message, 'err');
   }
 }
+
+// ── LSA LEADS ──
+var lsaLeads = [];
+var lsaClientId = null;
+
+function populateLsaClientSelect() {
+  const sel = $('lsa-client-select');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">Select client…</option>';
+  clients.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.business_name + (c.lsa_active ? ' ★' : '');
+    sel.appendChild(opt);
+  });
+  if (prev) sel.value = prev;
+
+  // Also populate the lead form client select
+  const ll = $('ll-client');
+  if (!ll) return;
+  const lprev = ll.value;
+  ll.innerHTML = '<option value="">Select client…</option>';
+  clients.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.business_name;
+    ll.appendChild(opt);
+  });
+  if (lprev) ll.value = lprev;
+}
+
+function onLsaClientChange() {
+  const sel = $('lsa-client-select');
+  const client = clients.find(c => c.id === sel.value);
+  lsaClientId = client ? client.id : null;
+  const sub = $('lsa-sub');
+  if (sub) sub.textContent = client ? client.business_name + ' · LSA Lead Tracking' : 'Local Service Ads lead tracking';
+  loadLsaLeads();
+}
+
+async function loadLsaLeads() {
+  const el = $('lsa-content');
+  if (!el) return;
+  if (!lsaClientId) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">★</div>Select a client above to view LSA leads.</div>';
+    return;
+  }
+  el.innerHTML = '<div class="empty"><div class="empty-icon" style="animation:gSpin 1s linear infinite;display:inline-block">★</div> Loading leads…</div>';
+  const safe = q => q.then(r => r).catch(() => ({ data: [] }));
+  const { data } = await safe(sb.from('lsa_leads').select('*').eq('client_id', lsaClientId).order('lead_date', { ascending: false }));
+  lsaLeads = data || [];
+  renderLsaContent();
+}
+
+function renderLsaContent() {
+  const el = $('lsa-content');
+  if (!el) return;
+
+  const now = new Date();
+  const yr = now.getFullYear(), mo = now.getMonth() + 1;
+  const thisMonth = lsaLeads.filter(l => {
+    const d = new Date(l.lead_date + 'T12:00:00');
+    return d.getFullYear() === yr && d.getMonth() + 1 === mo;
+  });
+
+  const totalLeads = lsaLeads.length;
+  const leadsThisMonth = thisMonth.length;
+  const costThisMonth = thisMonth.reduce((s, l) => s + Number(l.cost_per_lead || 0), 0);
+  const avgCost = totalLeads ? lsaLeads.reduce((s, l) => s + Number(l.cost_per_lead || 0), 0) / totalLeads : 0;
+
+  const statusFilter = $('lsa-status-filter') ? $('lsa-status-filter').value : '';
+  const filtered = statusFilter ? lsaLeads.filter(l => l.status === statusFilter) : lsaLeads;
+
+  const leadTypeBadge = t => {
+    const map = { call: ['rgba(29,78,216,0.1)','#1D4ED8','Call'], message: ['rgba(180,83,9,0.08)','#B45309','Message'], booking: ['rgba(5,150,105,0.1)','#059669','Booking'] };
+    const [bg, color, label] = map[t] || ['rgba(148,163,184,0.1)','var(--text-muted)', t];
+    return `<span class="badge" style="background:${bg};color:${color}">${label}</span>`;
+  };
+  const statusBadge = s => {
+    const map = { new: ['rgba(29,78,216,0.1)','#1D4ED8','New'], contacted: ['rgba(180,83,9,0.08)','#B45309','Contacted'], booked: ['rgba(5,150,105,0.1)','#059669','Booked'], lost: ['rgba(220,38,38,0.1)','#DC2626','Lost'] };
+    const [bg, color, label] = map[s] || ['rgba(148,163,184,0.1)','var(--text-muted)', s];
+    return `<span class="badge" style="background:${bg};color:${color}">${label}</span>`;
+  };
+
+  el.innerHTML = `
+    <div class="stats-grid" style="margin-bottom:20px">
+      <div class="stat-card">
+        <div class="stat-label">Total Leads</div>
+        <div class="stat-value blue">${totalLeads}</div>
+        <div class="stat-sub">All time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Leads This Month</div>
+        <div class="stat-value">${leadsThisMonth}</div>
+        <div class="stat-sub">${now.toLocaleDateString('en-US',{month:'long',year:'numeric'})}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Cost This Month</div>
+        <div class="stat-value red">${fmt$(costThisMonth)}</div>
+        <div class="stat-sub">Sum of lead costs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Cost Per Lead</div>
+        <div class="stat-value">${fmt$(avgCost)}</div>
+        <div class="stat-sub">All time average</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Lead Log</div>
+        <select id="lsa-status-filter" class="select-pill" style="font-size:11px;padding:5px 10px" onchange="renderLsaContent()">
+          <option value="">All Statuses</option>
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="booked">Booked</option>
+          <option value="lost">Lost</option>
+        </select>
+      </div>
+      <table class="data-table">
+        <thead><tr>
+          <th>Date</th><th>Type</th><th>Customer</th><th>Phone</th>
+          <th>Status</th><th class="tr">Cost</th><th>Notes</th><th></th>
+        </tr></thead>
+        <tbody>
+          ${filtered.length ? filtered.map(l => `<tr>
+            <td class="mono">${fmtDate(l.lead_date)}</td>
+            <td>${leadTypeBadge(l.lead_type)}</td>
+            <td class="bold">${l.customer_name || '—'}</td>
+            <td class="muted">${l.customer_phone || '—'}</td>
+            <td>${statusBadge(l.status)}</td>
+            <td class="tr mono">${fmt$(l.cost_per_lead)}</td>
+            <td style="max-width:200px;color:var(--text-secondary);font-size:12px">${l.notes || '—'}</td>
+            <td class="tr"><button class="btn btn-sm" style="color:var(--red);border-color:rgba(239,68,68,0.3);padding:3px 8px" data-del-lead="${l.id}">✕</button></td>
+          </tr>`).join('')
+          : '<tr><td colspan="8"><div class="empty">No leads yet. Click "+ Log New Lead" to add one.</div></td></tr>'}
+        </tbody>
+      </table>
+    </div>`;
+
+  // Re-set filter value after re-render
+  if (statusFilter) {
+    const sf = $('lsa-status-filter');
+    if (sf) sf.value = statusFilter;
+  }
+
+  // Delete handlers
+  el.querySelectorAll('[data-del-lead]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      showConfirm('Delete Lead', 'Remove this lead? This cannot be undone.', async () => {
+        const safe = q => q.then(r => r).catch(() => ({ data: [] }));
+        const { error } = await sb.from('lsa_leads').delete().eq('id', btn.dataset.delLead);
+        if (error) { toast('Error: ' + error.message, 'err'); return; }
+        await loadLsaLeads();
+        await refreshLsaOverview();
+        toast('Lead deleted');
+      });
+    });
+  });
+}
+
+async function saveLead() {
+  const clientId = $('ll-client').value;
+  if (!clientId) { toast('Select a client', 'err'); return; }
+  const safe = q => q.then(r => r).catch(e => ({ error: e }));
+  const { error } = await safe(sb.from('lsa_leads').insert({
+    client_id:    clientId,
+    lead_date:    $('ll-date').value || new Date().toISOString().split('T')[0],
+    lead_type:    $('ll-type').value,
+    customer_name:  $('ll-name').value.trim() || null,
+    customer_phone: $('ll-phone').value.trim() || null,
+    cost_per_lead:  parseFloat($('ll-cost').value) || 0,
+    status:       $('ll-status').value,
+    notes:        $('ll-notes').value.trim() || null,
+  }));
+  if (error) { toast('Error: ' + error.message, 'err'); return; }
+  closeModal('modal-log-lead');
+  $('lead-form').reset();
+  $('ll-date').value = new Date().toISOString().split('T')[0];
+  // If we're viewing this client, reload
+  if (lsaClientId === clientId) await loadLsaLeads();
+  await refreshLsaOverview();
+  toast('Lead logged!');
+}
+
+async function refreshLsaOverview() {
+  const safe = q => q.then(r => r).catch(() => ({ data: [] }));
+  const { data } = await safe(sb.from('lsa_leads').select('lead_date,cost_per_lead'));
+  const now = new Date();
+  const yr = now.getFullYear(), mo = now.getMonth() + 1;
+  const thisMonth = (data || []).filter(l => {
+    const d = new Date(l.lead_date + 'T12:00:00');
+    return d.getFullYear() === yr && d.getMonth() + 1 === mo;
+  });
+  const lsaLeadsEl = $('s-lsa-leads');
+  const lsaSpendEl = $('s-lsa-spend');
+  if (lsaLeadsEl) countUp(lsaLeadsEl, thisMonth.length);
+  if (lsaSpendEl) countUp(lsaSpendEl, thisMonth.reduce((s, l) => s + Number(l.cost_per_lead || 0), 0), '$', '', 600);
+}
+
+$('open-log-lead-btn').addEventListener('click', () => {
+  // Pre-select current client in modal
+  if (lsaClientId) {
+    const ll = $('ll-client');
+    if (ll) ll.value = lsaClientId;
+  }
+  openModal('modal-log-lead');
+});
+$('save-lead-btn').addEventListener('click', saveLead);
 
 // ── BOOT ──
 init();

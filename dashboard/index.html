@@ -671,7 +671,7 @@ function populateJobberClientSelect() {
   if (!sel) return;
   const prev = sel.value;
   sel.innerHTML = '<option value="">Select client…</option>';
-  clients.filter(c => c.status === 'active').forEach(c => {
+  clients.filter(c => c.status === 'active' || c.status === 'Active' || !c.status).forEach(c => {
     const opt = document.createElement('option');
     opt.value = c.id;
     opt.textContent = c.business_name + (c.jobber_account_id ? '' : ' (not connected)');

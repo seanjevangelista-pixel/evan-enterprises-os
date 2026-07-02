@@ -3,13 +3,39 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const devToken    = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
-  const clientId    = process.env.GOOGLE_ADS_CLIENT_ID;
-  const clientSec   = process.env.GOOGLE_ADS_CLIENT_SECRET;
-  const refreshToken= process.env.GOOGLE_ADS_REFRESH_TOKEN;
-  const customerId  = (req.query.customer_id || process.env.GOOGLE_ADS_CUSTOMER_ID || '').replace(/-/g, '');
+  const customerId = (req.query.customer_id || '').replace(/-/g, '');
+  if (!customerId) return res.status(400).json({ error: 'customer_id required' });
 
-  if (!devToken || !clientId || !clientSec || !refreshToken || !customerId) {
+  // ── Read credentials: prefer env vars, fall back to Supabase settings table ──
+  let devToken     = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
+  let clientId     = process.env.GOOGLE_ADS_CLIENT_ID;
+  let clientSec    = process.env.GOOGLE_ADS_CLIENT_SECRET;
+  let refreshToken = process.env.GOOGLE_ADS_REFRESH_TOKEN;
+  let mccId        = process.env.GOOGLE_ADS_MCC_ID || '';
+
+  if (!devToken || !clientId || !clientSec || !refreshToken) {
+    // Try Supabase settings table
+    const sbUrl  = process.env.SUPABASE_URL  || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
+    const sbAnon = process.env.SUPABASE_ANON || 'sb_publishable_C6qf6KSBHv07VGTDNmpvZg_H0nnLrhR';
+    try {
+      const r = await fetch(
+        `${sbUrl}/rest/v1/settings?key=in.(gads_dev_token,gads_client_id,gads_client_secret,gads_refresh_token,gads_mcc_id)&select=key,value`,
+        { headers: { apikey: sbAnon, Authorization: `Bearer ${sbAnon}` } }
+      );
+      const rows = await r.json();
+      if (Array.isArray(rows)) {
+        const map = {};
+        rows.forEach(row => { map[row.key] = row.value; });
+        devToken     = devToken     || map['gads_dev_token']      || '';
+        clientId     = clientId     || map['gads_client_id']      || '';
+        clientSec    = clientSec    || map['gads_client_secret']  || '';
+        refreshToken = refreshToken || map['gads_refresh_token']  || '';
+        mccId        = mccId        || map['gads_mcc_id']         || '';
+      }
+    } catch (_) { /* ignore — fall through to configured:false */ }
+  }
+
+  if (!devToken || !clientId || !clientSec || !refreshToken) {
     return res.status(200).json({ configured: false });
   }
 
@@ -26,17 +52,21 @@ export default async function handler(req, res) {
       }),
     });
     const { access_token, error: tokenErr } = await tokenRes.json();
-    if (tokenErr) return res.status(401).json({ error: 'OAuth failed: ' + tokenErr });
+    if (tokenErr || !access_token) {
+      return res.status(401).json({ configured: true, error: 'OAuth failed: ' + (tokenErr || 'no access_token returned') });
+    }
 
     const headers = {
-      Authorization:             `Bearer ${access_token}`,
-      'developer-token':         devToken,
-      'Content-Type':            'application/json',
+      Authorization:     `Bearer ${access_token}`,
+      'developer-token': devToken,
+      'Content-Type':    'application/json',
     };
+    // If using a manager (MCC) account, add login-customer-id header
+    if (mccId) headers['login-customer-id'] = mccId.replace(/-/g, '');
 
-    const { metric } = req.query; // campaigns | keywords | overview
+    const { metric } = req.query; // campaigns | overview
 
-    // ── Campaign performance (last 30 days) ─────────────────────────────────
+    // ── Campaign performance (last 30 days) ──
     if (!metric || metric === 'campaigns') {
       const query = `
         SELECT
@@ -61,10 +91,11 @@ export default async function handler(req, res) {
         { method: 'POST', headers, body: JSON.stringify({ query }) }
       );
       const data = await r.json();
-      return res.status(r.status).json({ configured: true, ...data });
+      if (data.error) return res.status(200).json({ configured: true, error: data.error.message || JSON.stringify(data.error) });
+      return res.status(200).json({ configured: true, ...data });
     }
 
-    // ── Overview summary ────────────────────────────────────────────────────
+    // ── Overview summary ──
     if (metric === 'overview') {
       const query = `
         SELECT
@@ -72,7 +103,6 @@ export default async function handler(req, res) {
           metrics.clicks,
           metrics.cost_micros,
           metrics.conversions,
-          metrics.all_conversions,
           metrics.ctr,
           metrics.average_cpc
         FROM customer
@@ -83,12 +113,13 @@ export default async function handler(req, res) {
         { method: 'POST', headers, body: JSON.stringify({ query }) }
       );
       const data = await r.json();
-      return res.status(r.status).json({ configured: true, ...data });
+      if (data.error) return res.status(200).json({ configured: true, error: data.error.message || JSON.stringify(data.error) });
+      return res.status(200).json({ configured: true, ...data });
     }
 
     return res.status(400).json({ error: 'Unknown metric' });
 
   } catch (e) {
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ configured: true, error: e.message });
   }
 }

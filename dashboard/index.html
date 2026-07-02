@@ -392,6 +392,37 @@ body {
 .nav-item { min-height: 40px; }
 .btn { min-height: 36px; }
 
+/* ── SERVICE CHECKLIST ── */
+.services-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:6px; }
+.service-chip { display:flex; align-items:center; gap:6px; background:var(--surface-2); border:1px solid var(--border); border-radius:5px; padding:5px 10px; font-size:11px; color:var(--text-secondary); cursor:pointer; transition:all 0.12s; user-select:none; }
+.service-chip.active { background:rgba(29,78,216,0.07); border-color:rgba(29,78,216,0.25); color:var(--accent); }
+.service-chip-dot { width:7px; height:7px; border-radius:50%; background:var(--border-strong); flex-shrink:0; transition:background 0.12s; }
+.service-chip.active .service-chip-dot { background:var(--accent); }
+
+/* ── HEALTH SCORE BADGE ── */
+.health-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 9px; border-radius:4px; font-size:11px; font-weight:600; }
+.health-green  { background:rgba(5,150,105,0.1); color:#059669; }
+.health-yellow { background:rgba(217,119,6,0.1); color:#D97706; }
+.health-red    { background:rgba(220,38,38,0.1); color:#DC2626; }
+
+/* ── ACTIVITY LOG ── */
+.activity-log { display:flex; flex-direction:column; gap:0; }
+.activity-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+.activity-item:last-child { border-bottom:none; }
+.activity-dot-col { display:flex; flex-direction:column; align-items:center; gap:0; padding-top:3px; }
+.activity-dot-outer { width:8px; height:8px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+.activity-line { width:1px; flex:1; background:var(--border); margin-top:4px; min-height:12px; }
+.activity-body { flex:1; }
+.activity-type { font-size:11px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:0.04em; }
+.activity-note { font-size:12px; color:var(--text-primary); margin-top:2px; line-height:1.5; }
+.activity-time { font-size:10px; color:var(--text-muted); margin-top:3px; }
+
+/* ── CONTRACT / RENEWAL BADGE ── */
+.renewal-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; }
+.renewal-warn  { background:rgba(217,119,6,0.1); color:#D97706; }
+.renewal-ok    { background:rgba(5,150,105,0.08); color:#059669; }
+.renewal-exp   { background:rgba(220,38,38,0.1); color:#DC2626; }
+
 /* ── SETUP CARD (integration not configured) ── */
 .setup-card { background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius); padding:36px 40px; max-width:520px; }
 .setup-card-icon { font-size:24px; margin-bottom:14px; opacity:0.4; }
@@ -1007,6 +1038,9 @@ async function loadCallLeads() {
       <button class="nav-item" data-tab="jobber">
         <span class="nav-icon">◉</span> Jobber
       </button>
+      <button class="nav-item" data-tab="settings">
+        <span class="nav-icon">⚙</span> Settings
+      </button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-pill">
@@ -1066,6 +1100,19 @@ async function loadCallLeads() {
             <div class="stat-sub">This month — 10% applies</div>
           </div>
         </div>
+        <!-- Renewals Warning -->
+        <div id="renewals-section" style="display:none;margin-bottom:20px">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title" style="color:var(--yellow)">⚠ Upcoming Renewals</div>
+            </div>
+            <table class="data-table">
+              <thead><tr><th>Client</th><th>Contract End</th><th>Days Left</th><th>Monthly Value</th><th>Status</th></tr></thead>
+              <tbody id="renewals-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
         <div class="card">
           <div class="card-header">
             <div class="card-title">Recent Visits</div>
@@ -1113,8 +1160,8 @@ async function loadCallLeads() {
             <thead>
               <tr>
                 <th>Business</th><th>Owner</th><th>Division</th>
-                <th>Status</th><th>Flat Fee</th><th>Perf %</th>
-                <th>Reviews</th><th>Last Note</th><th class="tr">Lifetime Value</th><th style="text-align:center">Portal</th><th></th>
+                <th>Status</th><th>Health</th><th>Services</th><th>Flat Fee</th>
+                <th>Reviews</th><th class="tr">Lifetime Value</th><th style="text-align:center">Portal</th><th></th>
               </tr>
             </thead>
             <tbody id="clients-tbody"></tbody>
@@ -1333,7 +1380,7 @@ async function loadCallLeads() {
       </div>
 
       <!-- Call Leads -->
-      <div class="page-header" style="margin-top:40px;border-top:1px solid var(--border);padding-top:28px">
+      <div class="page-header" style="margin-top:40px;border-top:1px solid var(--border);padding-top:28px" id="call-leads-header">
         <div>
           <div class="page-title" style="font-size:16px">Website Call Taps</div>
           <div class="page-sub">Every time someone taps a phone button on a client website</div>
@@ -1342,6 +1389,87 @@ async function loadCallLeads() {
       </div>
       <div id="call-leads-content" class="page-content">
         <div class="empty"><div class="empty-icon">📞</div>No call taps recorded yet.</div>
+      </div>
+    </section>
+
+    <!-- ── SETTINGS ── -->
+    <section class="tab-section" data-section="settings">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Settings</div>
+          <div class="page-sub">API credentials and integrations</div>
+        </div>
+      </div>
+      <div class="page-content" style="max-width:640px">
+
+        <!-- Google Ads Credentials -->
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-header">
+            <div class="card-title">Google Ads API Credentials</div>
+          </div>
+          <div style="padding:20px">
+            <p style="font-size:12px;color:var(--text-secondary);margin-bottom:18px;line-height:1.6">
+              These credentials connect the Google Ads tab to real campaign data. They are stored securely in your Supabase database.
+              See the setup guide at the bottom of this page.
+            </p>
+            <div class="form-group">
+              <label>Developer Token</label>
+              <input type="text" id="s-gads-dev-token" placeholder="e.g. ABcDeFgHiJkLmN_opqrst">
+            </div>
+            <div class="form-group">
+              <label>OAuth2 Client ID</label>
+              <input type="text" id="s-gads-client-id" placeholder="e.g. 123456789-abc.apps.googleusercontent.com">
+            </div>
+            <div class="form-group">
+              <label>OAuth2 Client Secret</label>
+              <input type="password" id="s-gads-client-secret" placeholder="e.g. GOCSPX-…">
+            </div>
+            <div class="form-group">
+              <label>Refresh Token</label>
+              <input type="password" id="s-gads-refresh-token" placeholder="e.g. 1//0g…">
+            </div>
+            <div class="form-group">
+              <label>Manager Account ID (MCC) — optional</label>
+              <input type="text" id="s-gads-mcc-id" placeholder="e.g. 123-456-7890">
+            </div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <button class="btn btn-primary" id="save-gads-creds-btn">Save Credentials</button>
+              <span id="gads-creds-status" style="font-size:12px;color:var(--text-muted)"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Setup Guide -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Google Ads Setup Guide</div></div>
+          <div style="padding:20px;font-size:13px;color:var(--text-secondary);line-height:1.8">
+            <p style="margin-bottom:12px"><strong style="color:var(--text-primary)">Step 1 — Get a Developer Token</strong><br>
+              1. Go to <a href="https://ads.google.com" target="_blank" style="color:var(--accent)">ads.google.com</a> and sign in.<br>
+              2. Click the wrench icon (Tools) → API Center.<br>
+              3. Apply for a Developer Token. Copy it and paste it above.<br>
+              <em style="font-size:11px">Note: You start with a Test token. To get real data, apply for Basic Access.</em>
+            </p>
+            <p style="margin-bottom:12px"><strong style="color:var(--text-primary)">Step 2 — Create OAuth2 Credentials (Client ID + Secret)</strong><br>
+              1. Go to <a href="https://console.cloud.google.com" target="_blank" style="color:var(--accent)">console.cloud.google.com</a>.<br>
+              2. Create a new project (or select an existing one).<br>
+              3. Go to APIs &amp; Services → Enable APIs → search "Google Ads API" → Enable it.<br>
+              4. Go to APIs &amp; Services → Credentials → Create Credentials → OAuth Client ID.<br>
+              5. Choose "Web application". Add <code style="background:var(--surface-2);padding:1px 5px;border-radius:3px">https://developers.google.com/oauthplayground</code> as an authorized redirect URI.<br>
+              6. Copy the Client ID and Client Secret and paste them above.
+            </p>
+            <p style="margin-bottom:12px"><strong style="color:var(--text-primary)">Step 3 — Generate a Refresh Token</strong><br>
+              1. Go to <a href="https://developers.google.com/oauthplayground" target="_blank" style="color:var(--accent)">developers.google.com/oauthplayground</a>.<br>
+              2. Click the gear icon (top right) → check "Use your own OAuth credentials" → paste your Client ID and Secret.<br>
+              3. In the left panel, find "Google Ads API v17" and select the <code style="background:var(--surface-2);padding:1px 5px;border-radius:3px">https://www.googleapis.com/auth/adwords</code> scope. Click Authorize.<br>
+              4. Sign in with your Google account (the one that has access to the Ads account).<br>
+              5. Click "Exchange authorization code for tokens". Copy the <strong>Refresh Token</strong> and paste it above.
+            </p>
+            <p><strong style="color:var(--text-primary)">Step 4 — Save and Test</strong><br>
+              Paste all four values above, click <strong>Save Credentials</strong>, then go to the Google Ads tab, select a client, and click Refresh.
+            </p>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -1549,10 +1677,46 @@ async function loadCallLeads() {
             <label>Jobber Account ID</label>
             <input type="text" id="ec-jobber-id" placeholder="e.g. MjQ4NjgOMQ==">
           </div>
+          <div class="form-group">
+            <label>Contract Start</label>
+            <input type="date" id="ec-contract-start">
+          </div>
+          <div class="form-group">
+            <label>Contract End</label>
+            <input type="date" id="ec-contract-end">
+          </div>
+          <div class="form-group">
+            <label>Monthly Value ($)</label>
+            <input type="number" id="ec-monthly-value" step="0.01" placeholder="0.00">
+          </div>
           <div class="form-group span-2">
             <label>Notes</label>
             <textarea id="ec-notes"></textarea>
           </div>
+          <div class="form-group span-2">
+            <label>Services Managed</label>
+            <div class="services-grid" id="ec-services-grid">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Log Section -->
+        <div class="divider"></div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:12px">Activity Log</div>
+        <div style="display:flex;gap:10px;margin-bottom:14px">
+          <select id="log-type" style="flex:0 0 130px;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:12px;padding:8px 10px;outline:none">
+            <option value="note">Note</option>
+            <option value="call">Call</option>
+            <option value="meeting">Meeting</option>
+            <option value="email">Email</option>
+            <option value="task">Task</option>
+          </select>
+          <input type="text" id="log-note" placeholder="What happened?" style="flex:1;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:13px;padding:8px 12px;outline:none">
+          <button type="button" class="btn btn-primary btn-sm" id="log-activity-btn" style="white-space:nowrap">+ Log</button>
+        </div>
+        <div id="ec-activity-log" style="max-height:220px;overflow-y:auto">
+          <div class="empty" style="padding:20px">No activity logged yet.</div>
         </div>
       </form>
     </div>
@@ -1638,6 +1802,21 @@ window._sb = sb; // expose for non-module scripts (invite, call leads)
 
 // ── STATE ── (clients/visits declared globally above so non-module scripts can read them)
 let invoices = [];
+let activityLog = [];
+
+const SERVICE_DEFS = [
+  { key:'website',   label:'Website' },
+  { key:'google_ads',label:'Google Ads' },
+  { key:'jobber',    label:'Jobber' },
+  { key:'social',    label:'Social Media' },
+  { key:'gbp',       label:'Google Business' },
+  { key:'invoicing', label:'Invoicing' },
+  { key:'reporting', label:'Reporting' },
+];
+
+// services state for edit modal
+let _editServices = {};
+let _editClientId = null;
 
 // ── UTILS ──
 const $ = id => document.getElementById(id);
@@ -1729,16 +1908,18 @@ let portalUsers = [];
 
 async function loadAll() {
   const safe = q => q.then(r => r).catch(() => ({ data: [] }));
-  const [{ data: c }, { data: v }, { data: u }, { data: inv }] = await Promise.all([
+  const [{ data: c }, { data: v }, { data: u }, { data: inv }, { data: al }] = await Promise.all([
     safe(sb.from('clients').select('*').order('created_at', { ascending: false })),
     safe(sb.from('visits').select('*, clients(business_name)').order('visit_date', { ascending: false })),
     safe(sb.from('users').select('client_id, confirmed_at').eq('role', 'client')),
     safe(sb.from('invoices').select('*, clients(business_name)').order('due_date', { ascending: false })),
+    safe(sb.from('activity_log').select('*').order('created_at', { ascending: false })),
   ]);
   clients     = c   || [];
   visits      = v   || [];
   portalUsers = u   || [];
   invoices    = inv || [];
+  activityLog = al  || [];
   populateSelects();
   populateInvoiceClientSelect();
 }
@@ -1757,6 +1938,37 @@ function populateSelects() {
   });
 }
 
+// ── HEALTH SCORE ──
+function calcHealth(client) {
+  let score = 0;
+  // Last visit within 30 days = 30 pts
+  const lastVisit = visits.find(v => v.client_id === client.id);
+  if (lastVisit) {
+    const days = (Date.now() - new Date(lastVisit.visit_date+'T12:00:00')) / 86400000;
+    if (days <= 30) score += 30;
+    else if (days <= 60) score += 15;
+  }
+  // Has Google Ads ID = 20 pts
+  if (client.google_ads_customer_id) score += 20;
+  // Has Jobber = 20 pts
+  if (client.jobber_account_id) score += 20;
+  // Invoice not overdue = 20 pts
+  const today = new Date(); today.setHours(0,0,0,0);
+  const clientInvoices = invoices.filter(i => i.client_id === client.id && i.status !== 'paid');
+  const hasOverdue = clientInvoices.some(i => i.due_date && new Date(i.due_date) < today);
+  if (!hasOverdue) score += 20;
+  // Has services configured = 10 pts
+  const svc = client.services || {};
+  if (Object.values(svc).some(Boolean)) score += 10;
+  return Math.min(score, 100);
+}
+
+function healthBadge(score) {
+  if (score >= 70) return `<span class="health-badge health-green">${score}</span>`;
+  if (score >= 40) return `<span class="health-badge health-yellow">${score}</span>`;
+  return `<span class="health-badge health-red">${score}</span>`;
+}
+
 // ── RENDER: OVERVIEW ──
 function renderOverview() {
   const now = new Date(), yr = now.getFullYear(), mo = now.getMonth()+1;
@@ -1772,6 +1984,31 @@ function renderOverview() {
   countUp($('s-rev'),    rev,       '$', '', 800);
   countUp($('s-fees'),   flatFees + perfFees, '$', '', 900);
   countUp($('s-ret'),    ret);
+
+  // Renewals
+  const renewalsSec = $('renewals-section');
+  const renewalsTbody = $('renewals-tbody');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const in60 = new Date(today); in60.setDate(in60.getDate() + 60);
+  const expiring = clients.filter(c => c.contract_end && new Date(c.contract_end) <= in60);
+  if (expiring.length) {
+    renewalsSec.style.display = 'block';
+    renewalsTbody.innerHTML = expiring.map(c => {
+      const end = new Date(c.contract_end);
+      const daysLeft = Math.ceil((end - today) / 86400000);
+      const cls = daysLeft < 0 ? 'renewal-exp' : daysLeft <= 30 ? 'renewal-warn' : 'renewal-ok';
+      const label = daysLeft < 0 ? 'Expired' : daysLeft === 0 ? 'Today' : `${daysLeft}d`;
+      return `<tr>
+        <td class="bold">${c.business_name}</td>
+        <td>${fmtDate(c.contract_end)}</td>
+        <td><span class="renewal-badge ${cls}">${label}</span></td>
+        <td>${fmt$(c.monthly_value || c.monthly_flat_fee)}/mo</td>
+        <td><span class="badge badge-${c.status}">${statusMap[c.status]||c.status}</span></td>
+      </tr>`;
+    }).join('');
+  } else {
+    renewalsSec.style.display = 'none';
+  }
 
   const tbody = $('ov-visits');
   const rows  = visits.slice(0,15);
@@ -1859,16 +2096,29 @@ function renderClients() {
         ? `<span class="badge" style="background:rgba(22,163,74,0.12);color:#15803D;border:1px solid rgba(22,163,74,0.25)">✓ Active</span>`
         : `<span class="badge" style="background:rgba(234,179,8,0.12);color:#a16207;border:1px solid rgba(234,179,8,0.3)">Pending</span>`
       : `<span style="color:var(--text-muted);font-size:11px">—</span>`;
-    const noteText = c.notes ? c.notes.split('\n')[0].slice(0, 40) + (c.notes.length > 40 ? '…' : '') : '—';
+    const score = calcHealth(c);
+    const svc = c.services || {};
+    const activeServices = SERVICE_DEFS.filter(s => svc[s.key]);
+    const svcHtml = activeServices.length
+      ? activeServices.map(s => `<span class="badge" style="background:rgba(29,78,216,0.07);color:var(--accent);margin:1px;font-size:10px">${s.label}</span>`).join('')
+      : '<span style="color:var(--text-muted);font-size:11px">None set</span>';
+    // Contract renewal warning
+    const today = new Date(); today.setHours(0,0,0,0);
+    let contractWarn = '';
+    if (c.contract_end) {
+      const end = new Date(c.contract_end);
+      const daysLeft = Math.ceil((end - today) / 86400000);
+      if (daysLeft <= 60) contractWarn = ` <span class="renewal-badge ${daysLeft < 0 ? 'renewal-exp' : 'renewal-warn'}" style="font-size:9px">${daysLeft < 0 ? 'Expired' : daysLeft+'d'}</span>`;
+    }
     return `<tr>
-      <td class="bold">${c.business_name}</td>
+      <td class="bold">${c.business_name}${contractWarn}</td>
       <td>${c.owner_name||'—'}</td>
       <td style="text-transform:capitalize">${c.division}</td>
       <td><span class="badge badge-${c.status}">${statusMap[c.status]||c.status}</span></td>
+      <td>${healthBadge(score)}</td>
+      <td style="max-width:180px">${svcHtml}</td>
       <td>${fmt$(c.monthly_flat_fee)}/mo</td>
-      <td>${c.performance_pct != null ? (c.performance_pct*100).toFixed(0)+'%' : '—'}</td>
       <td>${c.google_review_count||'—'}</td>
-      <td style="max-width:160px;color:var(--text-muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${(c.notes||'').replace(/"/g,'&quot;')}">${noteText}</td>
       <td class="tr mono" style="color:var(--accent);font-weight:700">${fmt$(ltv)}</td>
       <td style="text-align:center">${portalBadge}</td>
       <td class="tr" style="display:flex;gap:6px;justify-content:flex-end">
@@ -2345,10 +2595,52 @@ async function saveClient() {
   toast('Client added!');
 }
 
+// ── SERVICES GRID ──
+function renderServicesGrid(services) {
+  const grid = $('ec-services-grid');
+  if (!grid) return;
+  grid.innerHTML = SERVICE_DEFS.map(s => `
+    <div class="service-chip ${services[s.key] ? 'active' : ''}" data-svc="${s.key}">
+      <span class="service-chip-dot"></span>${s.label}
+    </div>`).join('');
+  grid.querySelectorAll('.service-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('active');
+      _editServices[chip.dataset.svc] = chip.classList.contains('active');
+    });
+  });
+}
+
+// ── ACTIVITY LOG RENDER ──
+function renderActivityLog(clientId) {
+  const el = $('ec-activity-log');
+  if (!el) return;
+  const logs = activityLog.filter(l => l.client_id === clientId);
+  if (!logs.length) {
+    el.innerHTML = '<div class="empty" style="padding:16px">No activity logged yet.</div>';
+    return;
+  }
+  const typeColors = { call:'#059669', meeting:'#1D4ED8', email:'#D97706', note:'#64748B', task:'#7C3AED' };
+  el.innerHTML = `<div class="activity-log">${logs.map((l,i) => `
+    <div class="activity-item">
+      <div class="activity-dot-col">
+        <div class="activity-dot-outer" style="background:${typeColors[l.type]||'var(--accent)'}"></div>
+        ${i < logs.length-1 ? '<div class="activity-line"></div>' : ''}
+      </div>
+      <div class="activity-body">
+        <div class="activity-type" style="color:${typeColors[l.type]||'var(--accent)'}">${l.type||'note'}</div>
+        <div class="activity-note">${l.note||'—'}</div>
+        <div class="activity-time">${l.created_at ? new Date(l.created_at).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}) : '—'}</div>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
 // ── EDIT CLIENT ──
 function openEditClient(id) {
   const c = clients.find(x => x.id === id);
   if (!c) return;
+  _editClientId = id;
+  _editServices = Object.assign({}, c.services || {});
   $('ec-id').value      = c.id;
   $('ec-biz').value     = c.business_name || '';
   $('ec-owner').value   = c.owner_name || '';
@@ -2365,7 +2657,12 @@ function openEditClient(id) {
   $('ec-reviews').value = c.google_review_count || '';
   $('ec-gads-id').value    = c.google_ads_customer_id || '';
   $('ec-jobber-id').value  = c.jobber_account_id || '';
-  $('ec-notes').value      = c.notes || '';
+  $('ec-contract-start').value = c.contract_start || '';
+  $('ec-contract-end').value   = c.contract_end   || '';
+  $('ec-monthly-value').value  = c.monthly_value  || '';
+  $('ec-notes').value          = c.notes || '';
+  renderServicesGrid(_editServices);
+  renderActivityLog(id);
   openModal('modal-edit-client');
 }
 
@@ -2389,15 +2686,41 @@ async function updateClient() {
     google_review_count:    parseInt($('ec-reviews').value) || null,
     google_ads_customer_id: $('ec-gads-id').value.trim() || null,
     jobber_account_id:      $('ec-jobber-id').value.trim() || null,
+    contract_start:         $('ec-contract-start').value || null,
+    contract_end:           $('ec-contract-end').value || null,
+    monthly_value:          parseFloat($('ec-monthly-value').value) || null,
+    services:               _editServices,
     notes:                  $('ec-notes').value.trim() || null,
   }).eq('id', id);
   if (error) { toast('Error: ' + error.message, 'err'); return; }
   closeModal('modal-edit-client');
   await loadAll();
-  renderPipeline(); renderClients();
+  renderPipeline(); renderClients(); renderOverview();
   populateGadsClientSelect(); populateJobberClientSelect();
   toast('Client updated!');
 }
+
+// ── LOG ACTIVITY ──
+$('log-activity-btn').addEventListener('click', async () => {
+  const note = $('log-note').value.trim();
+  const type = $('log-type').value;
+  if (!note) { toast('Enter a note first', 'err'); return; }
+  if (!_editClientId) return;
+  const { error } = await sb.from('activity_log').insert({
+    client_id: _editClientId,
+    type,
+    note,
+  });
+  if (error) { toast('Error: ' + error.message, 'err'); return; }
+  $('log-note').value = '';
+  // reload activity log for this client
+  const safe = q => q.then(r => r).catch(() => ({ data: [] }));
+  const { data } = await safe(sb.from('activity_log').select('*').eq('client_id', _editClientId).order('created_at', { ascending: false }));
+  // update global activityLog
+  activityLog = activityLog.filter(l => l.client_id !== _editClientId).concat(data || []);
+  renderActivityLog(_editClientId);
+  toast('Activity logged');
+});
 
 $('update-client-btn').addEventListener('click', updateClient);
 
@@ -2517,6 +2840,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='invoices')   { populateInvoiceClientSelect(); renderInvoices($('inv-filter').value); }
       if (tab==='google-ads') { if (gadsCustomerId) loadGoogleAds(); }
       if (tab==='jobber')     { populateJobberClientSelect(); if (jobberClientId) loadJobber(); loadCallLeads(); }
+      if (tab==='settings')   { loadSettingsTab(); }
     }, 150);
   });
 });
@@ -2589,6 +2913,41 @@ $('load-payments-btn').addEventListener('click', async () => {
   } catch(e) {
     container.innerHTML = `<div class="empty" style="color:var(--red)">Error: ${e.message}</div>`;
   }
+});
+
+// ── SETTINGS ──
+const GADS_KEYS = ['gads_dev_token','gads_client_id','gads_client_secret','gads_refresh_token','gads_mcc_id'];
+
+async function loadSettingsTab() {
+  const safe = q => q.then(r => r).catch(() => ({ data: [] }));
+  const { data } = await safe(sb.from('settings').select('key,value').in('key', GADS_KEYS));
+  if (!data) return;
+  const map = {};
+  data.forEach(r => { map[r.key] = r.value; });
+  $('s-gads-dev-token').value      = map['gads_dev_token']      || '';
+  $('s-gads-client-id').value      = map['gads_client_id']      || '';
+  $('s-gads-client-secret').value  = map['gads_client_secret']  || '';
+  $('s-gads-refresh-token').value  = map['gads_refresh_token']  || '';
+  $('s-gads-mcc-id').value         = map['gads_mcc_id']         || '';
+}
+
+$('save-gads-creds-btn').addEventListener('click', async () => {
+  const btn = $('save-gads-creds-btn');
+  const status = $('gads-creds-status');
+  btn.textContent = 'Saving…'; btn.disabled = true; status.textContent = '';
+  const rows = [
+    { key:'gads_dev_token',     value: $('s-gads-dev-token').value.trim()     || null },
+    { key:'gads_client_id',     value: $('s-gads-client-id').value.trim()     || null },
+    { key:'gads_client_secret', value: $('s-gads-client-secret').value.trim() || null },
+    { key:'gads_refresh_token', value: $('s-gads-refresh-token').value.trim() || null },
+    { key:'gads_mcc_id',        value: $('s-gads-mcc-id').value.trim()        || null },
+  ];
+  const { error } = await sb.from('settings').upsert(rows, { onConflict: 'key' });
+  btn.textContent = 'Save Credentials'; btn.disabled = false;
+  if (error) { status.textContent = 'Error: ' + error.message; status.style.color = 'var(--red)'; toast('Error saving: ' + error.message, 'err'); return; }
+  status.textContent = 'Saved ✓'; status.style.color = 'var(--green)';
+  toast('Google Ads credentials saved!');
+  setTimeout(() => { status.textContent = ''; }, 3000);
 });
 
 // ── BOOT ──

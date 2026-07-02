@@ -510,14 +510,49 @@ body {
 <script>window.ENV={SUPABASE_URL:'https://hzcgdnhecgewqpcnumwm.supabase.co',SUPABASE_ANON:'sb_publishable_C6qf6KSBHv07VGTDNmpvZg_H0nnLrhR'};
 // ── Google Ads ─────────────────────────────────────────────────────────────
 let gadsLoaded = false;
+let gadsCustomerId = null;
+
+function onGadsClientChange() {
+  const sel = document.getElementById('gads-client-select');
+  const clientId = sel.value;
+  const client = clients.find(c => c.id === clientId);
+  gadsCustomerId = client?.google_ads_customer_id || null;
+  const sub = document.getElementById('gads-sub');
+  if (sub) sub.textContent = (client?.business_name || 'Select a client') + ' · Last 30 days';
+  gadsLoaded = false;
+  if (gadsCustomerId) loadGoogleAds();
+  else {
+    const el = document.getElementById('gads-content');
+    if (el) el.innerHTML = '<div class="empty"><div class="empty-icon">⬡</div>Select a client above to load campaign data.</div>';
+  }
+}
+
+function populateGadsClientSelect() {
+  const sel = document.getElementById('gads-client-select');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">Select client…</option>';
+  clients.filter(c => c.google_ads_customer_id).forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.business_name;
+    sel.appendChild(opt);
+  });
+  if (prev) sel.value = prev;
+}
+
 async function loadGoogleAds() {
   if (gadsLoaded) return;
   const el = document.getElementById('gads-content');
   if (!el) return;
+  if (!gadsCustomerId) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">⬡</div>Select a client above to load campaign data.</div>';
+    return;
+  }
   el.innerHTML = '<div class="empty"><div class="empty-icon">⬡</div>Fetching campaign data…</div>';
 
   try {
-    const res  = await fetch('/api/google-ads?metric=campaigns');
+    const res  = await fetch(`/api/google-ads?metric=campaigns&customer_id=${gadsCustomerId}`);
     const data = await res.json();
 
     if (!data.configured) {
@@ -999,14 +1034,17 @@ async function loadGoogleAds() {
       <div class="page-header">
         <div>
           <div class="page-title">Google Ads</div>
-          <div class="page-sub" id="gads-sub">Mediterranean Spa · Last 30 days</div>
+          <div class="page-sub" id="gads-sub">Last 30 days</div>
         </div>
         <div style="display:flex;gap:10px;align-items:center">
+          <select id="gads-client-select" class="select-pill" onchange="onGadsClientChange()">
+            <option value="">Select client…</option>
+          </select>
           <button class="btn btn-primary" id="load-gads-btn" onclick="loadGoogleAds()">Refresh</button>
         </div>
       </div>
       <div id="gads-content" class="page-content">
-        <div class="empty"><div class="empty-icon">⬡</div>Loading campaign data…</div>
+        <div class="empty"><div class="empty-icon">⬡</div>Select a client above to load campaign data.</div>
       </div>
     </section>
 
@@ -1085,6 +1123,10 @@ async function loadGoogleAds() {
           <div class="form-group">
             <label>Google Review Count</label>
             <input type="number" id="c-reviews" placeholder="216">
+          </div>
+          <div class="form-group">
+            <label>Google Ads Customer ID</label>
+            <input type="text" id="c-gads-id" placeholder="8715789095">
           </div>
           <div class="form-group">
             <label>Notes</label>
@@ -1239,6 +1281,7 @@ async function enterApp(session) {
   $('m-month').value         = new Date().toISOString().slice(0,7);
   await loadAll();
   renderOverview();
+  populateGadsClientSelect();
 }
 
 $('login-form').addEventListener('submit', async e => {
@@ -1721,14 +1764,16 @@ async function saveClient() {
     performance_pct:     parseFloat($('c-pct').value)||0.10,
     lsa_weekly_budget:   parseFloat($('c-lsa').value)||null,
     avg_ticket:          parseFloat($('c-ticket').value)||null,
-    google_review_count: parseInt($('c-reviews').value)||null,
-    notes:               $('c-notes').value.trim()||null,
+    google_review_count:      parseInt($('c-reviews').value)||null,
+    google_ads_customer_id:   $('c-gads-id').value.trim()||null,
+    notes:                    $('c-notes').value.trim()||null,
   });
   if (error) { toast('Error: '+error.message,'err'); return; }
   closeModal('modal-add-client');
   $('client-form').reset();
   await loadAll();
   renderPipeline(); renderClients();
+  populateGadsClientSelect();
   toast('Client added!');
 }
 

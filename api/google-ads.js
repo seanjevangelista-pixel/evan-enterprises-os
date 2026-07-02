@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   const clientId    = process.env.GOOGLE_ADS_CLIENT_ID;
   const clientSec   = process.env.GOOGLE_ADS_CLIENT_SECRET;
   const refreshToken= process.env.GOOGLE_ADS_REFRESH_TOKEN;
-  const customerId  = process.env.GOOGLE_ADS_CUSTOMER_ID; // no dashes, e.g. 8314281049
+  const customerId  = (req.query.customer_id || process.env.GOOGLE_ADS_CUSTOMER_ID || '').replace(/-/g, '');
 
   if (!devToken || !clientId || !clientSec || !refreshToken || !customerId) {
     return res.status(200).json({ configured: false });

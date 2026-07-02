@@ -1701,14 +1701,6 @@ async function init() {
 }
 
 async function enterApp(session) {
-  // Only Sean's account can access this dashboard
-  const allowedEmails = ['seanjevangelista@gmail.com', 'seanjayme@evanenterprise.com'];
-  if (!allowedEmails.includes(session.user.email)) {
-    await sb.auth.signOut();
-    const el = $('login-error'); el.textContent = 'Access denied.'; el.style.display = 'block';
-    $('login-screen').style.display = 'flex';
-    return;
-  }
   $('login-screen').style.display = 'none';
   $('app').style.display = 'block';
   const email = session.user.email || '';

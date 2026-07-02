@@ -1401,6 +1401,10 @@ async function loadJobber() {
             <label>Google Ads Customer ID</label>
             <input type="text" id="ec-gads-id">
           </div>
+          <div class="form-group">
+            <label>Jobber Account ID</label>
+            <input type="text" id="ec-jobber-id" placeholder="e.g. MjQ4NjgOMQ==">
+          </div>
           <div class="form-group span-2">
             <label>Notes</label>
             <textarea id="ec-notes"></textarea>
@@ -2042,8 +2046,9 @@ function openEditClient(id) {
   $('ec-lsa').value     = c.lsa_weekly_budget || '';
   $('ec-ticket').value  = c.avg_ticket || '';
   $('ec-reviews').value = c.google_review_count || '';
-  $('ec-gads-id').value = c.google_ads_customer_id || '';
-  $('ec-notes').value   = c.notes || '';
+  $('ec-gads-id').value    = c.google_ads_customer_id || '';
+  $('ec-jobber-id').value  = c.jobber_account_id || '';
+  $('ec-notes').value      = c.notes || '';
   openModal('modal-edit-client');
 }
 
@@ -2066,6 +2071,7 @@ async function updateClient() {
     avg_ticket:             parseFloat($('ec-ticket').value) || null,
     google_review_count:    parseInt($('ec-reviews').value) || null,
     google_ads_customer_id: $('ec-gads-id').value.trim() || null,
+    jobber_account_id:      $('ec-jobber-id').value.trim() || null,
     notes:                  $('ec-notes').value.trim() || null,
   }).eq('id', id);
   if (error) { toast('Error: ' + error.message, 'err'); return; }

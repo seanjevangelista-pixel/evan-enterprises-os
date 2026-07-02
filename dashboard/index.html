@@ -1172,6 +1172,96 @@ async function loadGoogleAds() {
   </div>
 </div>
 
+<!-- ── EDIT CLIENT MODAL ── -->
+<div class="modal-bg" id="modal-edit-client">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">Edit Client</div>
+      <button class="modal-x" data-close="modal-edit-client">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="edit-client-form">
+        <input type="hidden" id="ec-id">
+        <div class="form-2col">
+          <div class="form-group span-2">
+            <label>Business Name *</label>
+            <input type="text" id="ec-biz" required>
+          </div>
+          <div class="form-group">
+            <label>Owner Name</label>
+            <input type="text" id="ec-owner">
+          </div>
+          <div class="form-group">
+            <label>Owner Email</label>
+            <input type="email" id="ec-email">
+          </div>
+          <div class="form-group">
+            <label>Owner Phone</label>
+            <input type="tel" id="ec-phone">
+          </div>
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="ec-city">
+          </div>
+          <div class="form-group">
+            <label>State (2-letter)</label>
+            <input type="text" id="ec-state" maxlength="2">
+          </div>
+          <div class="form-group">
+            <label>Division *</label>
+            <select id="ec-div" required>
+              <option value="marketing">Marketing</option>
+              <option value="distribution">Distribution</option>
+              <option value="ecommerce">Ecommerce</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pipeline Stage</label>
+            <select id="ec-status">
+              <option value="prospect">Prospect</option>
+              <option value="call_booked">Call Booked</option>
+              <option value="call_happened">Call Happened</option>
+              <option value="active">Active</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Monthly Flat Fee ($)</label>
+            <input type="number" id="ec-flat" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Performance % (e.g. 0.10 = 10%)</label>
+            <input type="number" id="ec-pct" step="0.01" min="0" max="1">
+          </div>
+          <div class="form-group">
+            <label>LSA Weekly Budget ($)</label>
+            <input type="number" id="ec-lsa" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Avg Client Ticket ($)</label>
+            <input type="number" id="ec-ticket" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Google Review Count</label>
+            <input type="number" id="ec-reviews">
+          </div>
+          <div class="form-group">
+            <label>Google Ads Customer ID</label>
+            <input type="text" id="ec-gads-id">
+          </div>
+          <div class="form-group span-2">
+            <label>Notes</label>
+            <textarea id="ec-notes"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" data-close="modal-edit-client">Cancel</button>
+      <button class="btn btn-primary" id="update-client-btn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── CONFIRM MODAL ── -->
 <div class="modal-bg" id="modal-confirm">
   <div class="modal" style="width:360px">
@@ -1430,7 +1520,8 @@ function renderClients() {
       <td>${c.google_review_count||'—'}</td>
       <td class="tr mono" style="color:var(--accent);font-weight:700">${fmt$(ltv)}</td>
       <td style="text-align:center">${portalBadge}</td>
-      <td class="tr">
+      <td class="tr" style="display:flex;gap:6px;justify-content:flex-end">
+        <button class="btn btn-sm btn-secondary edit-client-btn" data-id="${c.id}">Edit</button>
         <button class="btn btn-sm btn-secondary invite-btn" data-id="${c.id}" data-name="${c.business_name}">
           ${pu ? 'Re-invite' : 'Invite to Portal'}
         </button>
@@ -1442,6 +1533,10 @@ function renderClients() {
   // Invite button handlers
   tbody.querySelectorAll('.invite-btn').forEach(btn => {
     btn.addEventListener('click', () => openInviteModal(btn.dataset.id, btn.dataset.name));
+  });
+  // Edit button handlers
+  tbody.querySelectorAll('.edit-client-btn').forEach(btn => {
+    btn.addEventListener('click', () => openEditClient(btn.dataset.id));
   });
 }
 
@@ -1776,6 +1871,60 @@ async function saveClient() {
   populateGadsClientSelect();
   toast('Client added!');
 }
+
+// ── EDIT CLIENT ──
+function openEditClient(id) {
+  const c = clients.find(x => x.id === id);
+  if (!c) return;
+  $('ec-id').value      = c.id;
+  $('ec-biz').value     = c.business_name || '';
+  $('ec-owner').value   = c.owner_name || '';
+  $('ec-email').value   = c.owner_email || '';
+  $('ec-phone').value   = c.owner_phone || '';
+  $('ec-city').value    = c.city || '';
+  $('ec-state').value   = c.state || '';
+  $('ec-div').value     = c.division || 'marketing';
+  $('ec-status').value  = c.status || 'active';
+  $('ec-flat').value    = c.monthly_flat_fee || 500;
+  $('ec-pct').value     = c.performance_pct || 0.10;
+  $('ec-lsa').value     = c.lsa_weekly_budget || '';
+  $('ec-ticket').value  = c.avg_ticket || '';
+  $('ec-reviews').value = c.google_review_count || '';
+  $('ec-gads-id').value = c.google_ads_customer_id || '';
+  $('ec-notes').value   = c.notes || '';
+  openModal('modal-edit-client');
+}
+
+async function updateClient() {
+  const id  = $('ec-id').value;
+  const biz = $('ec-biz').value.trim();
+  if (!biz) { toast('Business name required', 'err'); return; }
+  const { error } = await sb.from('clients').update({
+    business_name:          biz,
+    owner_name:             $('ec-owner').value.trim() || null,
+    owner_email:            $('ec-email').value.trim() || null,
+    owner_phone:            $('ec-phone').value.trim() || null,
+    city:                   $('ec-city').value.trim() || null,
+    state:                  $('ec-state').value.trim().toUpperCase() || null,
+    division:               $('ec-div').value,
+    status:                 $('ec-status').value,
+    monthly_flat_fee:       parseFloat($('ec-flat').value) || 500,
+    performance_pct:        parseFloat($('ec-pct').value) || 0.10,
+    lsa_weekly_budget:      parseFloat($('ec-lsa').value) || null,
+    avg_ticket:             parseFloat($('ec-ticket').value) || null,
+    google_review_count:    parseInt($('ec-reviews').value) || null,
+    google_ads_customer_id: $('ec-gads-id').value.trim() || null,
+    notes:                  $('ec-notes').value.trim() || null,
+  }).eq('id', id);
+  if (error) { toast('Error: ' + error.message, 'err'); return; }
+  closeModal('modal-edit-client');
+  await loadAll();
+  renderPipeline(); renderClients();
+  populateGadsClientSelect();
+  toast('Client updated!');
+}
+
+$('update-client-btn').addEventListener('click', updateClient);
 
 // ── ADD VISIT ──
 $('visit-form').addEventListener('submit', async e => {

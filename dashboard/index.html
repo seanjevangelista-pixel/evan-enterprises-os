@@ -793,6 +793,41 @@ async function loadJobber() {
   }
 }
 
+async function loadCallLeads() {
+  const el = document.getElementById('call-leads-content');
+  if (!el) return;
+  el.innerHTML = '<div class="empty"><div class="empty-icon">📞</div>Loading…</div>';
+  try {
+    const { data, error } = await sb.from('call_leads')
+      .select('*, clients(business_name)')
+      .order('tapped_at', { ascending: false })
+      .limit(50);
+    if (error) throw new Error(error.message);
+    if (!data || !data.length) {
+      el.innerHTML = '<div class="empty"><div class="empty-icon">📞</div>No call taps recorded yet.</div>';
+      return;
+    }
+    el.innerHTML = `
+      <table class="data-table">
+        <thead><tr>
+          <th>Time (CT)</th><th>Client</th><th>Source</th>
+        </tr></thead>
+        <tbody>
+          ${data.map(r => {
+            const t = r.tapped_at ? new Date(r.tapped_at).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—';
+            return `<tr>
+              <td class="mono">${t}</td>
+              <td class="bold">${r.clients?.business_name || '—'}</td>
+              <td>${r.source || '—'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  } catch(e) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📞</div>Error: ${e.message}</div>`;
+  }
+}
+
 </script>
 
 <!-- ══════════════════════════════════════════
@@ -1198,6 +1233,18 @@ async function loadJobber() {
       </div>
       <div id="jobber-content" class="page-content">
         <div class="empty"><div class="empty-icon">◉</div>Select a client to load Jobber data.</div>
+      </div>
+
+      <!-- Call Leads -->
+      <div class="page-header" style="margin-top:40px;border-top:1px solid var(--border);padding-top:28px">
+        <div>
+          <div class="page-title" style="font-size:16px">Website Call Taps</div>
+          <div class="page-sub">Every time someone taps a phone button on a client website</div>
+        </div>
+        <button class="btn btn-secondary" onclick="loadCallLeads()">Refresh</button>
+      </div>
+      <div id="call-leads-content" class="page-content">
+        <div class="empty"><div class="empty-icon">📞</div>No call taps recorded yet.</div>
       </div>
     </section>
 
@@ -2196,7 +2243,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='monthly')  renderMonthly();
       if (tab==='payments') initPaymentsTab();
       if (tab==='google-ads') loadGoogleAds();
-      if (tab==='jobber') { populateJobberClientSelect(); loadJobber(); }
+      if (tab==='jobber') { populateJobberClientSelect(); loadJobber(); loadCallLeads(); }
     }, 150);
   });
 });

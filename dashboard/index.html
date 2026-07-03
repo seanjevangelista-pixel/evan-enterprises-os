@@ -2051,7 +2051,6 @@ $('logout-btn').addEventListener('click', () => sb.auth.signOut());
 let portalUsers = [];
 
 async function loadAll() {
-  const safe = q => q.then(r => r).catch(() => ({ data: [] }));
   const [{ data: c }, { data: v }, { data: u }, { data: inv }, { data: al }] = await Promise.all([
     safe(sb.from('clients').select('*').order('created_at', { ascending: false })),
     safe(sb.from('visits').select('*, clients(business_name)').order('visit_date', { ascending: false })),
@@ -2911,8 +2910,6 @@ $('log-activity-btn').addEventListener('click', async () => {
   });
   if (error) { toast('Error: ' + error.message, 'err'); return; }
   $('log-note').value = '';
-  // reload activity log for this client
-  const safe = q => q.then(r => r).catch(() => ({ data: [] }));
   const { data } = await safe(sb.from('activity_log').select('*').eq('client_id', _editClientId).order('created_at', { ascending: false }));
   // update global activityLog
   activityLog = activityLog.filter(l => l.client_id !== _editClientId).concat(data || []);
@@ -3140,7 +3137,6 @@ function setGadsConnectionBadge(connected, email) {
 }
 
 async function loadSettingsTab() {
-  const safe = q => q.then(r => r).catch(() => ({ data: [] }));
   const { data } = await safe(sb.from('settings').select('key,value').in('key', GADS_KEYS));
   if (!data) return;
   const map = {};
@@ -3275,7 +3271,6 @@ async function loadLsaLeads() {
     return;
   }
   el.innerHTML = '<div class="empty"><div class="empty-icon" style="animation:gSpin 1s linear infinite;display:inline-block">★</div> Loading leads…</div>';
-  const safe = q => q.then(r => r).catch(() => ({ data: [] }));
   const { data } = await safe(sb.from('lsa_leads').select('*').eq('client_id', lsaClientId).order('lead_date', { ascending: false }));
   lsaLeads = data || [];
   renderLsaContent();
@@ -3376,7 +3371,6 @@ function renderLsaContent() {
   el.querySelectorAll('[data-del-lead]').forEach(btn => {
     btn.addEventListener('click', () => {
       showConfirm('Delete Lead', 'Remove this lead? This cannot be undone.', async () => {
-        const safe = q => q.then(r => r).catch(() => ({ data: [] }));
         const { error } = await sb.from('lsa_leads').delete().eq('id', btn.dataset.delLead);
         if (error) { toast('Error: ' + error.message, 'err'); return; }
         await loadLsaLeads();
@@ -3390,7 +3384,6 @@ function renderLsaContent() {
 async function saveLead() {
   const clientId = $('ll-client').value;
   if (!clientId) { toast('Select a client', 'err'); return; }
-  const safe = q => q.then(r => r).catch(e => ({ error: e }));
   const { error } = await safe(sb.from('lsa_leads').insert({
     client_id:    clientId,
     lead_date:    $('ll-date').value || new Date().toISOString().split('T')[0],
@@ -3412,7 +3405,6 @@ async function saveLead() {
 }
 
 async function refreshLsaOverview() {
-  const safe = q => q.then(r => r).catch(() => ({ data: [] }));
   const { data } = await safe(sb.from('lsa_leads').select('lead_date,cost_per_lead'));
   const now = new Date();
   const yr = now.getFullYear(), mo = now.getMonth() + 1;
@@ -3435,6 +3427,9 @@ $('open-log-lead-btn').addEventListener('click', () => {
   openModal('modal-log-lead');
 });
 $('save-lead-btn').addEventListener('click', saveLead);
+
+// Expose renderLsaContent globally — called from inline onchange on the status filter select
+window.renderLsaContent = renderLsaContent;
 
 // ── BOOT ──
 init();

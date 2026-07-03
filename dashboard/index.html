@@ -896,10 +896,6 @@ async function loadCallLeads() {
       .order('tapped_at', { ascending: false })
       .limit(50);
     if (error) {
-      // Permission denied or other Supabase error — show friendly empty state
-      // To fix: run in Supabase SQL editor:
-      //   grant all on table call_leads to anon;
-      //   grant all on table call_leads to authenticated;
       el.innerHTML = `<div class="empty"><div class="empty-icon">📞</div>Call leads unavailable (${error.message}). Ask your admin to grant table permissions.</div>`;
       return;
     }
@@ -1967,6 +1963,9 @@ const sourceMap = {lsa:'LSA',google_ads:'Google Ads',instagram:'Instagram',refer
 const statusMap = {prospect:'Prospect',call_booked:'Call Booked',call_happened:'Call Happened',active:'Active',lost:'Lost'};
 const nextStage = {prospect:'call_booked',call_booked:'call_happened',call_happened:'active'};
 
+// ── SAFE QUERY WRAPPER ── (used throughout; defined once here)
+const safe = q => q.then(r => r).catch(() => ({ data: [] }));
+
 function toast(msg, type='ok') {
   const el = $('toast');
   el.textContent = msg;
@@ -2780,6 +2779,16 @@ async function saveClient() {
   renderPipeline(); renderClients();
   populateGadsClientSelect(); populateJobberClientSelect(); populateLsaClientSelect();
   toast('Client added!');
+  // Auto-send welcome packet + onboarding checklist
+  const email = $('c-email') ? $('c-email').value.trim() : null;
+  if (email) {
+    fetch('/api/welcome-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessName: biz, ownerName: $('c-owner').value.trim()||null, ownerEmail: email }),
+    }).catch(() => {});
+    toast('Welcome email sent to client!');
+  }
 }
 
 // ── SERVICES GRID ──

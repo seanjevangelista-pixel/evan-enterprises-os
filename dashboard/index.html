@@ -1096,6 +1096,7 @@ async function loadCallLeads() {
         <div style="display:flex;gap:8px">
           <button class="btn btn-secondary" id="send-report-btn">⬆ My Monthly Report</button>
           <button class="btn btn-primary" id="send-client-reports-btn">📨 Email All Clients</button>
+          <button class="btn btn-secondary" id="run-reminders-btn">🔔 Invoice Reminders</button>
         </div>
       </div>
       <div class="page-content">
@@ -2729,6 +2730,25 @@ $('send-client-reports-btn').addEventListener('click', async () => {
     toast('Error: ' + e.message, 'err');
   } finally {
     btn.textContent = '📨 Email All Clients'; btn.disabled = false;
+  }
+});
+
+// ── INVOICE REMINDERS ──
+$('run-reminders-btn').addEventListener('click', async () => {
+  const btn = $('run-reminders-btn');
+  btn.textContent = 'Checking…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/api/invoice-reminders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' } });
+    const data = await res.json();
+    if (data.ok) {
+      toast(data.sent > 0 ? `${data.sent} reminder(s) sent!` : `Checked ${data.checked} invoices — no reminders due today`);
+    } else {
+      toast('Error: ' + (data.error || 'Unknown'), 'err');
+    }
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+  } finally {
+    btn.textContent = '🔔 Invoice Reminders'; btn.disabled = false;
   }
 });
 

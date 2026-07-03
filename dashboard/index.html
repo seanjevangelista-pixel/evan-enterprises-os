@@ -1093,6 +1093,7 @@ async function loadCallLeads() {
           <button class="btn btn-secondary" id="send-report-btn">⬆ My Monthly Report</button>
           <button class="btn btn-primary" id="send-client-reports-btn">📨 Email All Clients</button>
           <button class="btn btn-secondary" id="run-reminders-btn">🔔 Invoice Reminders</button>
+          <button class="btn btn-secondary" id="run-health-btn">❤️ Health Check</button>
         </div>
       </div>
       <div class="page-content">
@@ -1541,6 +1542,36 @@ async function loadCallLeads() {
     </section>
 
   </main>
+</div>
+
+<!-- ══════════════════════════════════════════
+     REVIEW REQUEST MODAL
+══════════════════════════════════════════ -->
+<div class="modal-bg" id="modal-review-request">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">Request Google Review — <span id="review-modal-client-name"></span></div>
+      <button class="modal-x" id="review-modal-close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Customer Name</label>
+        <input type="text" id="review-cust-name" placeholder="Jane Smith">
+      </div>
+      <div class="form-group">
+        <label>Customer Email *</label>
+        <input type="email" id="review-cust-email" placeholder="jane@example.com" required>
+      </div>
+      <div class="form-group">
+        <label>Job Description</label>
+        <input type="text" id="review-job-desc" placeholder="e.g. lawn care and edging">
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" id="review-modal-close-2" onclick="document.getElementById('modal-review-request').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" id="review-send-btn">Send Review Request</button>
+    </div>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -2269,6 +2300,7 @@ function renderClients() {
         <button class="btn btn-sm btn-secondary invite-btn" data-id="${c.id}" data-name="${c.business_name}">
           ${pu ? 'Re-invite' : 'Invite to Portal'}
         </button>
+        <button class="btn btn-sm btn-secondary review-req-btn" data-id="${c.id}" data-name="${c.business_name}">⭐ Review</button>
       </td>
     </tr>`;
   }).join('');
@@ -2281,6 +2313,10 @@ function renderClients() {
   // Edit button handlers
   tbody.querySelectorAll('.edit-client-btn').forEach(btn => {
     btn.addEventListener('click', () => openEditClient(btn.dataset.id));
+  });
+  // Review request button handlers
+  tbody.querySelectorAll('.review-req-btn').forEach(btn => {
+    btn.addEventListener('click', () => openReviewModal(btn.dataset.id, btn.dataset.name));
   });
 }
 
@@ -2747,6 +2783,73 @@ $('run-reminders-btn').addEventListener('click', async () => {
     toast('Error: ' + e.message, 'err');
   } finally {
     btn.textContent = '🔔 Invoice Reminders'; btn.disabled = false;
+  }
+});
+
+// ── HEALTH CHECK ──
+$('run-health-btn').addEventListener('click', async () => {
+  const btn = $('run-health-btn');
+  btn.textContent = 'Checking…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/api/health-check', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' } });
+    const data = await res.json();
+    if (data.ok) {
+      if (data.healthy) {
+        toast(`All ${data.checked} clients healthy — no alerts`);
+      } else {
+        toast(`Health alert sent — ${data.flagged} client(s) flagged`);
+      }
+    } else {
+      toast('Error: ' + (data.error || 'Unknown'), 'err');
+    }
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+  } finally {
+    btn.textContent = '❤️ Health Check'; btn.disabled = false;
+  }
+});
+
+// ── REVIEW REQUEST MODAL ──
+let _reviewClientId = null;
+
+function openReviewModal(clientId, clientName) {
+  _reviewClientId = clientId;
+  $('review-modal-client-name').textContent = clientName;
+  $('review-cust-name').value = '';
+  $('review-cust-email').value = '';
+  $('review-job-desc').value = '';
+  $('modal-review-request').classList.add('open');
+}
+
+$('modal-review-request').addEventListener('click', e => {
+  if (e.target === $('modal-review-request')) $('modal-review-request').classList.remove('open');
+});
+$('review-modal-close').addEventListener('click', () => $('modal-review-request').classList.remove('open'));
+
+$('review-send-btn').addEventListener('click', async () => {
+  const customerName  = $('review-cust-name').value.trim();
+  const customerEmail = $('review-cust-email').value.trim();
+  const jobDescription = $('review-job-desc').value.trim();
+  if (!customerEmail) { toast('Customer email required', 'err'); return; }
+  const btn = $('review-send-btn');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/api/review-request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clientId: _reviewClientId, customerName, customerEmail, jobDescription }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      toast('Review request sent!');
+      $('modal-review-request').classList.remove('open');
+    } else {
+      toast('Error: ' + (data.error || 'Unknown'), 'err');
+    }
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+  } finally {
+    btn.textContent = 'Send Review Request'; btn.disabled = false;
   }
 });
 

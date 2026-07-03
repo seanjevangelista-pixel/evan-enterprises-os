@@ -1093,7 +1093,10 @@ async function loadCallLeads() {
           <div class="page-title">Overview</div>
           <div class="page-sub" id="ov-date">—</div>
         </div>
-        <button class="btn btn-secondary" id="send-report-btn">⬆ Send Monthly Report</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" id="send-report-btn">⬆ My Monthly Report</button>
+          <button class="btn btn-primary" id="send-client-reports-btn">📨 Email All Clients</button>
+        </div>
       </div>
       <div class="page-content">
         <div class="stats-grid">
@@ -2702,7 +2705,30 @@ $('send-report-btn').addEventListener('click', async () => {
   } catch(e) {
     toast('Error: ' + e.message, 'err');
   } finally {
-    btn.textContent = '⬆ Send Monthly Report'; btn.disabled = false;
+    btn.textContent = '⬆ My Monthly Report'; btn.disabled = false;
+  }
+});
+
+// ── EMAIL ALL CLIENTS ──
+$('send-client-reports-btn').addEventListener('click', async () => {
+  const btn = $('send-client-reports-btn');
+  const activeCount = clients.filter(c => c.status === 'active' && c.owner_email).length;
+  if (!activeCount) { toast('No active clients with email addresses', 'err'); return; }
+  if (!confirm(`Send this month's report to ${activeCount} client(s)?`)) return;
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/api/client-report', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' }, body: JSON.stringify({}) });
+    const data = await res.json();
+    if (data.ok) {
+      const sent = (data.results || []).filter(r => r.ok).length;
+      toast(`Reports sent to ${sent} client(s)!`);
+    } else {
+      toast('Error: ' + (data.error || 'Unknown'), 'err');
+    }
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+  } finally {
+    btn.textContent = '📨 Email All Clients'; btn.disabled = false;
   }
 });
 

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to Evan Enterprises LLC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #F8FAFC; font-family: 'Inter', sans-serif; color: #0F172A; -webkit-font-smoothing: antialiased; }
+
+.hero {
+  background: #0A0F1E;
+  padding: 64px 24px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(29,78,216,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.logo-word {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #fff;
+  text-align: left;
+}
+.logo-sub {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  color: #64748B;
+}
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(28px, 6vw, 44px);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.hero p {
+  font-size: 16px;
+  color: #94A3B8;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+.client-name {
+  display: inline-block;
+  background: rgba(29,78,216,0.2);
+  border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #93C5FD;
+  letter-spacing: 0.06em;
+  margin-bottom: 20px;
+}
+
+.content { max-width: 720px; margin: 0 auto; padding: 56px 24px; }
+
+.section { margin-bottom: 56px; }
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #1D4ED8;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.section h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+.section p {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.service-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.service-icon { font-size: 20px; margin-bottom: 8px; }
+.service-card h3 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.service-card p { font-size: 12px; color: #64748B; line-height: 1.5; }
+
+.timeline { display: flex; flex-direction: column; gap: 0; margin-top: 20px; }
+.timeline-item {
+  display: flex;
+  gap: 20px;
+  padding-bottom: 32px;
+  position: relative;
+}
+.timeline-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  bottom: 0;
+  width: 2px;
+  background: #E2E8F0;
+}
+.timeline-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1D4ED8;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.timeline-body h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; padding-top: 8px; }
+.timeline-body p { font-size: 13px; color: #64748B; line-height: 1.6; }
+
+.contact-card {
+  background: #0A0F1E;
+  border-radius: 12px;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.contact-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+}
+.contact-info h3 { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+.contact-info p { font-size: 13px; color: #64748B; }
+.contact-links { margin-left: auto; display: flex; flex-direction: column; gap: 8px; }
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #E2E8F0;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.contact-link:hover { background: rgba(255,255,255,0.1); }
+
+.checklist {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 13px;
+}
+.checklist-item:last-child { border-bottom: none; }
+.check-icon { color: #059669; font-size: 16px; flex-shrink: 0; }
+.check-label { font-weight: 500; }
+.check-desc { color: #64748B; font-size: 12px; margin-top: 1px; }
+
+footer {
+  background: #0A0F1E;
+  padding: 32px 24px;
+  text-align: center;
+  font-size: 11px;
+  color: #475569;
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="logo-mark">
+    <svg width="38" height="31" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="#3B82F6"/>
+      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="#2563EB"/>
+      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="#1D4ED8"/>
+    </svg>
+    <div>
+      <div class="logo-word">EVAN ENTERPRISES</div>
+      <div class="logo-sub">LLC</div>
+    </div>
+  </div>
+  <div class="client-name" id="client-label">Welcome, New Client</div>
+  <h1>We handle the business.<br>You focus on your craft.</h1>
+  <p>This packet covers everything you need to know about working with Evan Enterprises — what we do, how we do it, and what to expect.</p>
+</div>
+
+<div class="content">
+
+  <!-- What We Do -->
+  <div class="section">
+    <div class="section-label">Our Role</div>
+    <h2>Your back office, fully managed.</h2>
+    <p>Evan Enterprises handles the business side so you can stay focused on doing what you're great at. We manage your digital presence, marketing, leads, operations, and reporting — all in one place.</p>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">🌐</div>
+        <h3>Website & SEO</h3>
+        <p>Professional site that ranks on Google and converts visitors into calls.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📣</div>
+        <h3>Google Ads</h3>
+        <p>Paid ads that put you in front of customers actively searching for your service.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📍</div>
+        <h3>Local Service Ads</h3>
+        <p>Google-guaranteed leads at the top of search results. Pay per lead, not per click.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📋</div>
+        <h3>Operations</h3>
+        <p>Jobber scheduling, quoting, and follow-ups so nothing falls through the cracks.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">💰</div>
+        <h3>Invoicing</h3>
+        <p>Professional invoices sent on time. We track what's paid and what's outstanding.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📊</div>
+        <h3>Monthly Reports</h3>
+        <p>Every month you get a clear snapshot of your leads, revenue, and growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- What to Expect -->
+  <div class="section">
+    <div class="section-label">Getting Started</div>
+    <h2>What happens in the first 90 days.</h2>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot">1</div>
+        <div class="timeline-body">
+          <h3>Month 1 — Foundation</h3>
+          <p>We set up everything: your website goes live, Google Business Profile is optimized, tracking is installed, and your Jobber account is configured. You'll start receiving leads immediately.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">2</div>
+        <div class="timeline-body">
+          <h3>Month 2 — Momentum</h3>
+          <p>Ads start running and we start collecting data. We refine targeting, improve ad copy, and optimize for the leads that actually convert to paying jobs.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">3</div>
+        <div class="timeline-body">
+          <h3>Month 3 — Growth</h3>
+          <p>By month 3, you have real numbers. We review performance together, identify what's working, and scale what's driving the most revenue for your business.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What We Need From You -->
+  <div class="section">
+    <div class="section-label">Your Role</div>
+    <h2>What we need from you.</h2>
+    <p style="margin-bottom:0">To get the best results, here's what we ask of you:</p>
+
+    <div class="checklist">
+      <div class="checklist-item">
+        <div class="check-icon">✓</div>
+        <div>
+          <div class="check-label">Answer your phone</div>
+          <div class="check-desc">Leads only convert if you pick up. We'll track calls so you can see how many you're getting.</div>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-icon">✓</div>
+        <div>
+          <div class="check-label">Ask for reviews</div>
+          <div class="check-desc">After every job, ask the customer for a Google review. We'll remind you and make it easy.</div>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-icon">✓</div>
+        <div>
+          <div class="check-label">Keep us updated</div>
+          <div class="check-desc">If your services, hours, or pricing change — let us know so we can keep everything current.</div>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-icon">✓</div>
+        <div>
+          <div class="check-label">Read your monthly report</div>
+          <div class="check-desc">We send it every month. It tells you exactly what's working and what we're doing for you.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact -->
+  <div class="section">
+    <div class="section-label">Your Point of Contact</div>
+    <h2>One person. Always reachable.</h2>
+    <p style="margin-bottom:20px">You work directly with Sean — no middlemen, no support tickets. Text or email anytime.</p>
+
+    <div class="contact-card">
+      <div class="contact-avatar">SE</div>
+      <div class="contact-info">
+        <h3>Sean Evangelista</h3>
+        <p>Evan Enterprises LLC</p>
+        <p style="margin-top:4px;font-size:12px">seanjevangelista@gmail.com</p>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:seanjevangelista@gmail.com" class="contact-link">✉ Email Sean</a>
+        <a href="sms:+1" class="contact-link">💬 Text Sean</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Evan Enterprises LLC · seanjevangelista@gmail.com · Confidential — prepared for our client
+</footer>
+
+<script>
+  // Read ?client= from URL to personalize
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get('client');
+  if (name) {
+    document.getElementById('client-label').textContent = `Welcome, ${decodeURIComponent(name)}`;
+    document.title = `Welcome, ${decodeURIComponent(name)} — Evan Enterprises`;
+  }
+</script>
+</body>
+</html>

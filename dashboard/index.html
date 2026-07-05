@@ -1049,6 +1049,9 @@ async function loadCallLeads() {
       <button class="nav-item" data-tab="lsa-leads">
         <span class="nav-icon">★</span> LSA Leads
       </button>
+      <button class="nav-item" data-tab="form-leads">
+        <span class="nav-icon">✉</span> Form Leads
+      </button>
       <button class="nav-item" data-tab="jobber">
         <span class="nav-icon">◉</span> Jobber
       </button>
@@ -1426,6 +1429,35 @@ async function loadCallLeads() {
     </section>
 
     <!-- ── JOBBER TAB ── -->
+    <section class="tab-section" data-section="form-leads">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Form Leads</div>
+          <div class="page-sub">Quote and booking form submissions from all client websites</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select class="form-control" id="fl-client-filter" style="width:180px">
+            <option value="">All Clients</option>
+          </select>
+          <select class="form-control" id="fl-status-filter" style="width:140px">
+            <option value="">All Statuses</option>
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="quoted">Quoted</option>
+            <option value="won">Won</option>
+            <option value="lost">Lost</option>
+          </select>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="card">
+          <div class="card-body" id="form-leads-body">
+            <div class="empty-state">Loading…</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="tab-section" data-section="jobber">
       <div class="page-header">
         <div>
@@ -1541,6 +1573,45 @@ async function loadCallLeads() {
               Click <strong>Save Credentials</strong> first, then click <strong>Connect Google Ads →</strong>. Sign in with the Google account that has access to your Ads accounts. Done.
             </p>
           </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── OUTREACH ── -->
+    <section class="tab-section" data-section="outreach">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Outreach</div>
+          <div class="page-sub">Cold email campaigns to grow your client base</div>
+        </div>
+        <button class="btn btn-primary" id="send-outreach-btn">📧 Send Emails</button>
+      </div>
+      <div class="page-content">
+
+        <!-- Add Prospect Form -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><div class="card-title">Add Prospects</div></div>
+          <div style="padding:18px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+              <div class="form-group" style="margin-bottom:0"><label class="form-group" style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Business Name</label><input class="form-group" style="width:100%;background:#FFFFFF;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:13px;padding:9px 13px;outline:none" id="ol-biz" placeholder="Austin Plumbing Co"></div>
+              <div class="form-group" style="margin-bottom:0"><label class="form-group" style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Owner Name</label><input class="form-group" style="width:100%;background:#FFFFFF;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:13px;padding:9px 13px;outline:none" id="ol-owner" placeholder="John Smith"></div>
+              <div class="form-group" style="margin-bottom:0"><label class="form-group" style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Email</label><input class="form-group" style="width:100%;background:#FFFFFF;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:13px;padding:9px 13px;outline:none" id="ol-email" type="email" placeholder="john@austinplumbing.com"></div>
+              <div class="form-group" style="margin-bottom:0"><label class="form-group" style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">City</label><input class="form-group" style="width:100%;background:#FFFFFF;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:13px;padding:9px 13px;outline:none" id="ol-city" placeholder="Austin, TX"></div>
+              <div class="form-group" style="margin-bottom:0"><label class="form-group" style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Niche</label><input class="form-group" style="width:100%;background:#FFFFFF;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:13px;padding:9px 13px;outline:none" id="ol-niche" placeholder="plumbing, landscaping, spa..."></div>
+              <div class="form-group" style="margin-bottom:0"><label class="form-group" style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Pain Point</label><input class="form-group" style="width:100%;background:#FFFFFF;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:13px;padding:9px 13px;outline:none" id="ol-pain" placeholder="no website, bad reviews, no ads..."></div>
+            </div>
+            <button class="btn btn-secondary" id="add-prospect-btn">+ Add to List</button>
+          </div>
+        </div>
+
+        <!-- Queue -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Outreach Queue</div>
+            <span id="prospect-count" style="font-size:11px;color:var(--text-muted)">0 prospects</span>
+          </div>
+          <div id="outreach-queue"><div class="empty" style="padding:32px 24px">No prospects added yet.</div></div>
         </div>
 
       </div>
@@ -3143,6 +3214,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='invoices')   { populateInvoiceClientSelect(); renderInvoices($('inv-filter').value); }
       if (tab==='google-ads') { if (gadsCustomerId) loadGoogleAds(); }
       if (tab==='lsa-leads')  { populateLsaClientSelect(); if (lsaClientId) loadLsaLeads(); }
+      if (tab==='form-leads') { populateFormLeadClientFilter(); loadFormLeads(); }
       if (tab==='jobber')     { populateJobberClientSelect(); if (jobberClientId) loadJobber(); loadCallLeads(); }
       if (tab==='settings')   { loadSettingsTab(); }
     }, 150);
@@ -3538,6 +3610,77 @@ $('save-lead-btn').addEventListener('click', saveLead);
 
 // Expose renderLsaContent globally — called from inline onchange on the status filter select
 window.renderLsaContent = renderLsaContent;
+
+// ── FORM LEADS ──
+let formLeads = [];
+
+function populateFormLeadClientFilter() {
+  const sel = $('fl-client-filter');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">All Clients</option>' +
+    clients.map(c => `<option value="${c.id}" ${c.id === current ? 'selected' : ''}>${c.business_name}</option>`).join('');
+}
+
+async function loadFormLeads() {
+  const el = $('form-leads-body');
+  if (!el) return;
+  el.innerHTML = '<div class="empty-state">Loading…</div>';
+  const { data, error } = await sb.from('form_leads')
+    .select('*, clients(business_name)')
+    .order('created_at', { ascending: false })
+    .limit(100);
+  if (error) { el.innerHTML = `<div class="empty-state">Error: ${error.message}</div>`; return; }
+  formLeads = data || [];
+  renderFormLeads();
+}
+
+function renderFormLeads() {
+  const el = $('form-leads-body');
+  if (!el) return;
+  const clientFilter = $('fl-client-filter')?.value || '';
+  const statusFilter = $('fl-status-filter')?.value || '';
+  let rows = formLeads;
+  if (clientFilter) rows = rows.filter(l => l.client_id === clientFilter);
+  if (statusFilter) rows = rows.filter(l => l.status === statusFilter);
+
+  if (!rows.length) { el.innerHTML = '<div class="empty-state">No form leads yet. Submissions from your client websites will appear here.</div>'; return; }
+
+  const statusColors = { new: 'badge-blue', contacted: 'badge-yellow', quoted: 'badge-yellow', won: 'badge-green', lost: 'badge-red' };
+
+  el.innerHTML = `<table style="width:100%;border-collapse:collapse">
+    <thead><tr>
+      <th style="text-align:left;padding:8px 0;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Date</th>
+      <th style="text-align:left;padding:8px 0;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Name</th>
+      <th style="text-align:left;padding:8px 0;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Phone</th>
+      <th style="text-align:left;padding:8px 0;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Service</th>
+      <th style="text-align:left;padding:8px 0;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Source</th>
+      <th style="text-align:left;padding:8px 0;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Status</th>
+    </tr></thead>
+    <tbody>${rows.map(l => `<tr>
+      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:12px;color:var(--text-secondary)">${new Date(l.created_at).toLocaleDateString()}</td>
+      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:13px;font-weight:500">${l.customer_name || '—'}</td>
+      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:12px"><a href="tel:${l.customer_phone}" style="color:var(--accent)">${l.customer_phone || '—'}</a></td>
+      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:12px;color:var(--text-secondary)">${l.service || '—'}</td>
+      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:11px;color:var(--text-muted)">${(l.source || '').replace('Evan Enterprises — ','').replace(' — Quote Form','').replace(' — Booking Form','')}</td>
+      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2)">
+        <select onchange="updateFormLeadStatus('${l.id}', this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);cursor:pointer">
+          ${['new','contacted','quoted','won','lost'].map(s => `<option value="${s}" ${l.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+        </select>
+      </td>
+    </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+async function updateFormLeadStatus(id, status) {
+  await sb.from('form_leads').update({ status }).eq('id', id);
+  const lead = formLeads.find(l => l.id === id);
+  if (lead) lead.status = status;
+}
+
+$('fl-client-filter')?.addEventListener('change', renderFormLeads);
+$('fl-status-filter')?.addEventListener('change', renderFormLeads);
 
 // ── BOOT ──
 init();

@@ -2804,7 +2804,7 @@ $('send-report-btn').addEventListener('click', async () => {
   const btn = $('send-report-btn');
   btn.textContent = 'Sending…'; btn.disabled = true;
   try {
-    const res  = await fetch('/api/monthly-report', { method: 'POST', headers: { 'x-internal-key': 'dashboard' } });
+    const res  = await fetch('/api/integrations?action=monthly-report', { method: 'POST', headers: { 'x-internal-key': 'dashboard' } });
     const data = await res.json();
     if (data.configured === false) {
       toast('RESEND_API_KEY not configured in Vercel', 'err');
@@ -2828,7 +2828,7 @@ $('send-client-reports-btn').addEventListener('click', async () => {
   if (!confirm(`Send this month's report to ${activeCount} client(s)?`)) return;
   btn.textContent = 'Sending…'; btn.disabled = true;
   try {
-    const res  = await fetch('/api/client-report', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' }, body: JSON.stringify({}) });
+    const res  = await fetch('/api/email?action=client-report', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' }, body: JSON.stringify({}) });
     const data = await res.json();
     if (data.ok) {
       const sent = (data.results || []).filter(r => r.ok).length;
@@ -2848,7 +2848,7 @@ $('run-reminders-btn').addEventListener('click', async () => {
   const btn = $('run-reminders-btn');
   btn.textContent = 'Checking…'; btn.disabled = true;
   try {
-    const res  = await fetch('/api/invoice-reminders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' } });
+    const res  = await fetch('/api/email?action=invoice-reminders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' } });
     const data = await res.json();
     if (data.ok) {
       toast(data.sent > 0 ? `${data.sent} reminder(s) sent!` : `Checked ${data.checked} invoices — no reminders due today`);
@@ -2867,7 +2867,7 @@ $('run-health-btn').addEventListener('click', async () => {
   const btn = $('run-health-btn');
   btn.textContent = 'Checking…'; btn.disabled = true;
   try {
-    const res  = await fetch('/api/health-check', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' } });
+    const res  = await fetch('/api/email?action=health-check', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' } });
     const data = await res.json();
     if (data.ok) {
       if (data.healthy) {
@@ -2910,7 +2910,7 @@ $('review-send-btn').addEventListener('click', async () => {
   const btn = $('review-send-btn');
   btn.textContent = 'Sending…'; btn.disabled = true;
   try {
-    const res  = await fetch('/api/review-request', {
+    const res  = await fetch('/api/email?action=review-request', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ clientId: _reviewClientId, customerName, customerEmail, jobDescription }),
@@ -2960,7 +2960,7 @@ async function saveClient() {
   // Auto-send welcome packet + onboarding checklist
   const email = $('c-email') ? $('c-email').value.trim() : null;
   if (email) {
-    fetch('/api/welcome-email', {
+    fetch('/api/email?action=welcome-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ businessName: biz, ownerName: $('c-owner').value.trim()||null, ownerEmail: email }),
@@ -3353,7 +3353,7 @@ $('gads-oauth-btn').addEventListener('click', async () => {
   const btn = $('gads-oauth-btn');
   btn.textContent = 'Redirecting…'; btn.disabled = true;
   try {
-    const res  = await fetch('/api/google-ads-auth?action=url');
+    const res  = await fetch('/api/integrations?action=google-ads-auth&sub=url');
     const data = await res.json();
     if (data.error) { toast('Error: ' + data.error, 'err'); btn.textContent = 'Connect Google Ads →'; btn.disabled = false; return; }
     window.location.href = data.url;

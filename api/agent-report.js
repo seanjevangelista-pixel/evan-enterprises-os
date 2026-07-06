@@ -1,7 +1,6 @@
 // Agent 2: Monthly Report
 // Vercel Cron: runs 1st of every month at 8am
 // Pulls Square payments + Google Ads data, emails branded PDF to client
-export const config = { maxDuration: 30 };
 
 export default async function handler(req, res) {
   // Allow manual trigger from dashboard OR cron

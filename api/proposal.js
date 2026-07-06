@@ -1,7 +1,6 @@
 // api/proposal.js
 // Generates a branded service proposal and emails it to Sean (and optionally the prospect)
 // POST { prospectName, prospectEmail?, city, niche, services[], monthlyBudget?, notes? }
-export const config = { maxDuration: 30 };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

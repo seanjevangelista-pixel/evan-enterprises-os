@@ -19,7 +19,6 @@
 // );
 // -----------------------------------------------------------------------------
 
-export const config = { maxDuration: 60 };
 
 function buildInitialEmail({ businessName, ownerName, city, niche, painPoint }) {
   const firstName = ownerName ? ownerName.split(' ')[0] : 'there';

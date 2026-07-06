@@ -2,7 +2,6 @@
 // Receives forwarded Google LSA lead notification emails via Resend inbound webhook
 // Parses lead info, logs to Supabase lsa_leads table, and emails Sean + client
 
-export const config = { maxDuration: 30 };
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

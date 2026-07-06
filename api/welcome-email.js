@@ -1,6 +1,5 @@
 // api/welcome-email.js
 // Sends welcome packet email to a new client with their portal link and onboarding checklist to Sean
-export const config = { maxDuration: 30 };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

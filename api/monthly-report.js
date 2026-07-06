@@ -1,7 +1,6 @@
 // api/monthly-report.js
 // Triggered manually from dashboard "Send Monthly Report" button
 // Pulls current-month stats from Supabase + Square, emails summary to Sean via Resend
-export const config = { maxDuration: 30 };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

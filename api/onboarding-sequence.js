@@ -4,7 +4,6 @@
 // Email 2: Week 1 check-in (call this 7 days after onboarding)
 // Email 3: Month 1 results (call this 30 days after onboarding)
 // POST { clientId, emailNumber } where emailNumber is 2 or 3
-export const config = { maxDuration: 30 };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

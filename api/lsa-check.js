@@ -18,7 +18,6 @@
 //   Forward LSA emails to leads@evanenterprise.com and Resend will
 //   POST them to https://evan-enterprises-os.vercel.app/api/lsa-webhook
 
-export const config = { maxDuration: 10 };
 
 export default async function handler(req, res) {
   return res.status(200).json({

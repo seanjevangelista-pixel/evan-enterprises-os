@@ -1,7 +1,6 @@
 // api/invoice-reminders.js
 // Checks unpaid invoices and sends reminder emails at 3 days before, due day, and 3 days overdue
 // Called by EVAN's nightly scheduled task or manually from dashboard
-export const config = { maxDuration: 60 };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

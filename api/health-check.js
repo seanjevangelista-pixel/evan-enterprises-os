@@ -1,6 +1,5 @@
 // api/health-check.js
 // Checks all active clients for warning signs and emails Sean a health alert if any are found
-export const config = { maxDuration: 60 };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

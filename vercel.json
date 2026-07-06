@@ -12,6 +12,10 @@
     {
       "source": "/portal",
       "destination": "/portal/index.html"
+    },
+    {
+      "source": "/leads",
+      "destination": "/leads/index.html"
     }
   ],
   "headers": [

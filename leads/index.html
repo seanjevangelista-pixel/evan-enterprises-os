@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distribution Leads — Evan Enterprises</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0A0F1E;
+    --surface: #111827;
+    --surface2: #1F2937;
+    --border: rgba(255,255,255,0.08);
+    --text: #F9FAFB;
+    --muted: rgba(255,255,255,0.45);
+    --accent: #3B82F6;
+    --green: #10B981;
+    --amber: #F59E0B;
+    --red: #EF4444;
+  }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; min-height: 100vh; }
+
+  /* Header */
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+  .logo-text { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 0.04em; }
+  .badge { font-size: 11px; font-weight: 600; color: var(--accent); background: rgba(59,130,246,0.12); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(59,130,246,0.25); }
+
+  /* Gate */
+  #gate { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 65px); padding: 24px; }
+  .gate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; max-width: 400px; width: 100%; text-align: center; }
+  .gate-icon { font-size: 40px; margin-bottom: 16px; }
+  .gate-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .gate-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+  input[type=email] { width: 100%; padding: 14px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; outline: none; margin-bottom: 12px; transition: border 0.2s; }
+  input[type=email]:focus { border-color: var(--accent); }
+  input[type=email]::placeholder { color: var(--muted); }
+  .btn-primary { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .gate-err { font-size: 13px; color: var(--red); margin-top: 12px; display: none; }
+
+  /* Portal */
+  #portal { display: none; }
+  .portal-header { padding: 32px 24px 16px; max-width: 1200px; margin: 0 auto; }
+  .portal-greeting { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+  .portal-sub { font-size: 14px; color: var(--muted); }
+  .stats-row { display: flex; gap: 12px; margin: 20px 24px; max-width: 1200px; margin-left: auto; margin-right: auto; flex-wrap: wrap; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; flex: 1; min-width: 140px; }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .stat-val { font-size: 22px; font-weight: 700; }
+
+  /* Grid */
+  .grid-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px 40px; }
+  .leads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+  .lead-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.15s, box-shadow 0.15s; }
+  .lead-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+  .lead-img { width: 100%; height: 180px; object-fit: cover; display: block; }
+  .lead-img-placeholder { height: 100px; display: flex; align-items: center; justify-content: center; background: var(--surface2); font-size: 36px; color: var(--muted); }
+  .lead-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .lead-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; }
+  .tag-amazon { color: #FF9900; background: rgba(255,153,0,0.12); }
+  .tag-walmart { color: #0071CE; background: rgba(0,113,206,0.12); }
+  .tag-cat { color: var(--muted); background: var(--surface2); }
+  .lead-title { font-size: 15px; font-weight: 700; line-height: 1.35; }
+  .lead-desc { font-size: 12px; color: var(--muted); line-height: 1.55; }
+  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .metric { background: var(--surface2); border-radius: 8px; padding: 10px; text-align: center; }
+  .metric-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+  .metric-val { font-size: 16px; font-weight: 700; }
+  .metric-profit .metric-val { color: var(--green); }
+  .metric-roi .metric-val { }
+  .lead-footer { font-size: 11px; color: var(--muted); margin-top: auto; }
+
+  /* Empty / loading states */
+  .empty { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--muted); font-size: 15px; }
+  .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--surface2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 500px) {
+    .gate-card { padding: 28px 20px; }
+    .leads-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <span class="logo-text">EVAN ENTERPRISES</span>
+  </div>
+  <span class="badge">Distribution Leads</span>
+</header>
+
+<!-- ACCESS GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-icon">📦</div>
+    <div class="gate-title">Members Only</div>
+    <div class="gate-sub">Enter your subscriber email to access this month's curated product leads.</div>
+    <input type="email" id="gate-email" placeholder="your@email.com" autocomplete="email">
+    <button class="btn-primary" id="gate-btn" onclick="gateSubmit()">Access My Leads</button>
+    <div class="gate-err" id="gate-err">No active subscription found for that email.</div>
+  </div>
+</div>
+
+<!-- PORTAL (shown after auth) -->
+<div id="portal">
+  <div class="portal-header">
+    <div class="portal-greeting">Hey, <span id="sub-name">there</span> 👋</div>
+    <div class="portal-sub">Here are this month's curated distribution opportunities.</div>
+  </div>
+  <div class="stats-row" id="stats-row" style="display:none"></div>
+  <div class="grid-wrap">
+    <div class="leads-grid" id="leads-grid">
+      <div class="empty"><div class="spinner"></div><br>Loading your leads…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let subToken = null;
+let subName  = '';
+
+function roiColor(roi) {
+  if (roi >= 100) return '#10B981';
+  if (roi >= 50)  return '#F59E0B';
+  return '#EF4444';
+}
+
+async function gateSubmit() {
+  const btn   = document.getElementById('gate-btn');
+  const email = document.getElementById('gate-email').value.trim();
+  const err   = document.getElementById('gate-err');
+  err.style.display = 'none';
+  if (!email) return;
+  btn.textContent = 'Verifying…'; btn.disabled = true;
+  try {
+    const r = await fetch(`/api/distribution?action=verify&email=${encodeURIComponent(email)}`);
+    const d = await r.json();
+    if (d.ok) {
+      subToken = d.subscriber.token;
+      subName  = d.subscriber.name;
+      unlockPortal();
+    } else {
+      err.style.display = 'block';
+      btn.textContent = 'Access My Leads'; btn.disabled = false;
+    }
+  } catch (e) {
+    err.textContent = 'Something went wrong. Please try again.';
+    err.style.display = 'block';
+    btn.textContent = 'Access My Leads'; btn.disabled = false;
+  }
+}
+
+document.getElementById('gate-email').addEventListener('keydown', e => {
+  if (e.key === 'Enter') gateSubmit();
+});
+
+async function unlockPortal() {
+  document.getElementById('gate').style.display    = 'none';
+  document.getElementById('portal').style.display  = '';
+  document.getElementById('sub-name').textContent  = subName.split(' ')[0];
+  // save token to session so page refreshes don't re-gate
+  sessionStorage.setItem('dist_token', subToken);
+  sessionStorage.setItem('dist_name',  subName);
+  await loadLeads();
+}
+
+async function loadLeads() {
+  const grid = document.getElementById('leads-grid');
+  try {
+    const r = await fetch('/api/distribution?action=leads');
+    const d = await r.json();
+    const leads = d.leads || [];
+    renderStats(leads);
+    renderLeads(leads, grid);
+  } catch (e) {
+    grid.innerHTML = '<div class="empty">Failed to load leads. Please refresh.</div>';
+  }
+}
+
+function renderStats(leads) {
+  const row = document.getElementById('stats-row');
+  if (!leads.length) return;
+  const avgRoi    = Math.round(leads.reduce((a,l) => a + (l.buy_price ? ((l.sell_price-l.buy_price)/l.buy_price)*100 : 0), 0) / leads.length);
+  const avgProfit = (leads.reduce((a,l) => a + (l.sell_price - l.buy_price), 0) / leads.length).toFixed(2);
+  row.style.display = 'flex';
+  row.innerHTML = `
+    <div class="stat"><div class="stat-label">Total Leads</div><div class="stat-val">${leads.length}</div></div>
+    <div class="stat"><div class="stat-label">Avg ROI</div><div class="stat-val" style="color:${roiColor(avgRoi)}">${avgRoi}%</div></div>
+    <div class="stat"><div class="stat-label">Avg Profit</div><div class="stat-val" style="color:#10B981">$${avgProfit}</div></div>
+  `;
+}
+
+function renderLeads(leads, grid) {
+  if (!leads.length) {
+    grid.innerHTML = '<div class="empty">No leads this month yet — check back soon.</div>';
+    return;
+  }
+  grid.innerHTML = leads.map(l => {
+    const profit = (l.sell_price - l.buy_price).toFixed(2);
+    const roi    = l.buy_price ? Math.round(((l.sell_price - l.buy_price) / l.buy_price) * 100) : 0;
+    const platClass = l.platform === 'Walmart' ? 'tag-walmart' : 'tag-amazon';
+    return `<div class="lead-card">
+      ${l.image_url
+        ? `<img class="lead-img" src="${l.image_url}" alt="${l.title}" loading="lazy">`
+        : `<div class="lead-img-placeholder">📦</div>`}
+      <div class="lead-body">
+        <div class="lead-tags">
+          <span class="tag ${platClass}">${l.platform || 'Amazon'}</span>
+          ${l.category ? `<span class="tag tag-cat">${l.category}</span>` : ''}
+          ${roi >= 100 ? `<span class="tag" style="color:#10B981;background:rgba(16,185,129,0.12)">🔥 High ROI</span>` : ''}
+        </div>
+        <div class="lead-title">${l.title}</div>
+        ${l.description ? `<div class="lead-desc">${l.description}</div>` : ''}
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Buy Price</div>
+            <div class="metric-val">$${Number(l.buy_price).toFixed(2)}</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Sell Price</div>
+            <div class="metric-val">$${Number(l.sell_price).toFixed(2)}</div>
+          </div>
+          <div class="metric metric-profit">
+            <div class="metric-label">Est. Profit</div>
+            <div class="metric-val">$${profit}</div>
+          </div>
+          <div class="metric metric-roi">
+            <div class="metric-label">ROI</div>
+            <div class="metric-val" style="color:${roiColor(roi)}">${roi}%</div>
+          </div>
+        </div>
+        ${l.monthly_sales ? `<div class="lead-footer">~${Number(l.monthly_sales).toLocaleString()} units/mo &nbsp;·&nbsp; Competition: <span style="color:${l.competition==='Low'?'#10B981':l.competition==='High'?'#EF4444':'#F59E0B'};font-weight:600">${l.competition}</span></div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Auto-unlock if token in URL or session
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const urlToken = params.get('token');
+  const sessToken = sessionStorage.getItem('dist_token');
+  const token = urlToken || sessToken;
+  if (token) {
+    try {
+      const r = await fetch(`/api/distribution?action=verify&token=${token}`);
+      const d = await r.json();
+      if (d.ok) {
+        subToken = d.subscriber.token;
+        subName  = d.subscriber.name;
+        sessionStorage.setItem('dist_token', subToken);
+        sessionStorage.setItem('dist_name',  subName);
+        await unlockPortal();
+        return;
+      }
+    } catch {}
+  }
+})();
+</script>
+</body>
+</html>

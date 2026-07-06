@@ -1063,6 +1063,9 @@ async function loadCallLeads() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
         </span> Outreach
       </button>
+      <button class="nav-item" data-tab="distribution">
+        <span class="nav-icon">📦</span> Distribution
+      </button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-pill">
@@ -1612,6 +1615,96 @@ async function loadCallLeads() {
             <span id="prospect-count" style="font-size:11px;color:var(--text-muted)">0 prospects</span>
           </div>
           <div id="outreach-queue"><div class="empty" style="padding:32px 24px">No prospects added yet.</div></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── DISTRIBUTION ── -->
+    <section class="tab-section" data-section="distribution">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Distribution Leads</div>
+          <div class="page-sub">Manage product leads and paying subscribers</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" id="dist-add-lead-btn">➕ Add Lead</button>
+          <button class="btn btn-primary" id="dist-blast-btn">📧 Send Monthly Blast</button>
+        </div>
+      </div>
+      <div class="page-content">
+
+        <!-- Sub-tabs -->
+        <div style="display:flex;gap:4px;margin-bottom:20px;background:var(--surface-2);border-radius:8px;padding:4px;width:fit-content">
+          <button id="dist-tab-leads" onclick="distTab('leads')" style="padding:7px 18px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;background:var(--white);color:var(--text-primary);box-shadow:0 1px 3px rgba(0,0,0,0.08)">📦 Leads</button>
+          <button id="dist-tab-subs" onclick="distTab('subs')" style="padding:7px 18px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;background:transparent;color:var(--text-secondary)">👥 Subscribers</button>
+        </div>
+
+        <!-- LEADS PANEL -->
+        <div id="dist-leads-panel">
+          <!-- Add Lead Form -->
+          <div class="card" id="dist-lead-form" style="margin-bottom:16px;display:none">
+            <div class="card-header"><div class="card-title">New Product Lead</div></div>
+            <div style="padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div style="grid-column:1/-1"><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Product Title *</label><input id="dl-title" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;box-sizing:border-box" placeholder="Stanley 40oz Quencher Tumbler"></div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Platform</label>
+                <select id="dl-platform" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none">
+                  <option>Amazon</option><option>Walmart</option><option>Both</option>
+                </select>
+              </div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Category</label><input id="dl-category" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none" placeholder="Kitchen, Electronics, Sports..."></div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Buy Price ($) *</label><input id="dl-buy" type="number" step="0.01" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none" placeholder="12.50"></div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Sell Price ($) *</label><input id="dl-sell" type="number" step="0.01" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none" placeholder="34.99"></div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Est. Monthly Sales</label><input id="dl-sales" type="number" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none" placeholder="500"></div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Competition</label>
+                <select id="dl-competition" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none">
+                  <option>Low</option><option selected>Medium</option><option>High</option>
+                </select>
+              </div>
+              <div style="grid-column:1/-1"><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Image URL</label><input id="dl-image" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;box-sizing:border-box" placeholder="https://..."></div>
+              <div style="grid-column:1/-1"><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Description</label><textarea id="dl-desc" rows="2" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;resize:vertical;box-sizing:border-box" placeholder="Why this product is a good opportunity..."></textarea></div>
+              <!-- Live ROI preview -->
+              <div style="grid-column:1/-1;background:var(--surface-2);border-radius:8px;padding:14px;display:flex;gap:24px">
+                <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">Est. Profit</div><div id="dl-preview-profit" style="font-size:20px;font-weight:700;color:#059669">—</div></div>
+                <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">ROI</div><div id="dl-preview-roi" style="font-size:20px;font-weight:700;color:#2563EB">—</div></div>
+              </div>
+              <div style="grid-column:1/-1;display:flex;gap:8px">
+                <button class="btn btn-primary" onclick="saveDistLead()">Save Lead</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('dist-lead-form').style.display='none'">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Leads Grid -->
+          <div id="dist-leads-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px"></div>
+        </div>
+
+        <!-- SUBSCRIBERS PANEL -->
+        <div id="dist-subs-panel" style="display:none">
+          <!-- Add Subscriber Form -->
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><div class="card-title">Add Subscriber</div></div>
+            <div style="padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Name *</label><input id="ds-name" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;box-sizing:border-box" placeholder="John Smith"></div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Email *</label><input id="ds-email" type="email" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;box-sizing:border-box" placeholder="john@email.com"></div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Monthly Price ($)</label><input id="ds-price" type="number" step="0.01" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none" placeholder="99"></div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Next Billing Date</label><input id="ds-billing" type="date" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none"></div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Square Customer ID</label><input id="ds-square" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;box-sizing:border-box" placeholder="optional"></div>
+              <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Notes</label><input id="ds-notes" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;box-sizing:border-box" placeholder="optional"></div>
+              <div style="grid-column:1/-1"><button class="btn btn-primary" onclick="saveDistSub()">Add Subscriber + Send Welcome Email</button></div>
+            </div>
+          </div>
+
+          <!-- Subscribers Table -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Active Subscribers</div></div>
+            <div style="overflow-x:auto">
+              <table class="data-table">
+                <thead><tr><th>Name</th><th>Email</th><th>Price/mo</th><th>Next Billing</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="dist-subs-tbody"><tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">Loading...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -3781,6 +3874,196 @@ document.querySelectorAll('.nav-item').forEach(btn => {
     const el = document.getElementById('mobile-title');
     if (el && label) el.textContent = label;
   });
+});
+
+// ── DISTRIBUTION ────────────────────────────────────────────────────────────
+let distLeads = [], distSubs = [];
+
+function distTab(tab) {
+  const isLeads = tab === 'leads';
+  document.getElementById('dist-leads-panel').style.display = isLeads ? '' : 'none';
+  document.getElementById('dist-subs-panel').style.display  = isLeads ? 'none' : '';
+  document.getElementById('dist-tab-leads').style.background = isLeads ? 'var(--white)' : 'transparent';
+  document.getElementById('dist-tab-leads').style.color      = isLeads ? 'var(--text-primary)' : 'var(--text-secondary)';
+  document.getElementById('dist-tab-leads').style.boxShadow  = isLeads ? '0 1px 3px rgba(0,0,0,0.08)' : 'none';
+  document.getElementById('dist-tab-subs').style.background  = isLeads ? 'transparent' : 'var(--white)';
+  document.getElementById('dist-tab-subs').style.color       = isLeads ? 'var(--text-secondary)' : 'var(--text-primary)';
+  document.getElementById('dist-tab-subs').style.boxShadow   = isLeads ? 'none' : '0 1px 3px rgba(0,0,0,0.08)';
+  if (!isLeads && !distSubs.length) loadDistSubs();
+}
+
+async function loadDistLeads() {
+  const r = await fetch('/api/distribution?action=leads');
+  const d = await r.json();
+  distLeads = d.leads || [];
+  renderDistLeads();
+}
+
+async function loadDistSubs() {
+  const r = await fetch('/api/distribution?action=subscribers');
+  const d = await r.json();
+  distSubs = d.subscribers || [];
+  renderDistSubs();
+}
+
+function roiColor(roi) {
+  if (roi >= 100) return '#059669';
+  if (roi >= 50)  return '#d97706';
+  return '#dc2626';
+}
+
+function renderDistLeads() {
+  const grid = document.getElementById('dist-leads-grid');
+  if (!distLeads.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:40px">No leads yet — click ➕ Add Lead to get started</div>';
+    return;
+  }
+  grid.innerHTML = distLeads.map(l => {
+    const profit = l.buy_price ? (l.sell_price - l.buy_price).toFixed(2) : '—';
+    const roi    = l.buy_price ? Math.round(((l.sell_price - l.buy_price) / l.buy_price) * 100) : 0;
+    const platColor = l.platform === 'Walmart' ? '#0071CE' : '#FF9900';
+    return `<div style="background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+      ${l.image_url
+        ? `<img src="${l.image_url}" alt="${l.title}" style="width:100%;height:180px;object-fit:cover">`
+        : `<div style="height:100px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:32px">📦</div>`}
+      <div style="padding:16px;flex:1;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:10px;font-weight:700;color:${platColor};background:${platColor}18;padding:2px 8px;border-radius:20px">${l.platform || 'Amazon'}</span>
+          ${l.category ? `<span style="font-size:10px;color:var(--text-muted);background:var(--surface-2);padding:2px 8px;border-radius:20px">${l.category}</span>` : ''}
+        </div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-primary);line-height:1.3">${l.title}</div>
+        ${l.description ? `<div style="font-size:12px;color:var(--text-secondary);line-height:1.5">${l.description}</div>` : ''}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <div style="background:var(--surface-2);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--text-muted);margin-bottom:2px">Buy</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-primary)">$${Number(l.buy_price).toFixed(2)}</div>
+          </div>
+          <div style="background:var(--surface-2);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:var(--text-muted);margin-bottom:2px">Sell</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-primary)">$${Number(l.sell_price).toFixed(2)}</div>
+          </div>
+          <div style="background:#ECFDF5;border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:#065f46;margin-bottom:2px">Profit</div>
+            <div style="font-size:16px;font-weight:700;color:#059669">$${profit}</div>
+          </div>
+          <div style="background:#EFF6FF;border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:#1e40af;margin-bottom:2px">ROI</div>
+            <div style="font-size:16px;font-weight:700;color:${roiColor(roi)}">${roi}%</div>
+          </div>
+        </div>
+        ${l.monthly_sales ? `<div style="font-size:11px;color:var(--text-muted)">~${Number(l.monthly_sales).toLocaleString()} units/mo · Competition: <span style="color:${l.competition==='Low'?'#059669':l.competition==='High'?'#dc2626':'#d97706'};font-weight:600">${l.competition}</span></div>` : ''}
+        <button onclick="archiveDistLead('${l.id}')" style="margin-top:auto;padding:6px;background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text-muted)">Remove</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDistSubs() {
+  const tbody = document.getElementById('dist-subs-tbody');
+  if (!distSubs.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">No subscribers yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = distSubs.map(s => {
+    const statusColor = s.status === 'active' ? '#059669' : s.status === 'paused' ? '#d97706' : '#dc2626';
+    const due = s.next_billing_date ? new Date(s.next_billing_date) : null;
+    const overdue = due && due < new Date();
+    return `<tr>
+      <td style="font-weight:500">${s.name}</td>
+      <td style="color:var(--text-secondary)">${s.email}</td>
+      <td style="font-weight:600;color:var(--text-primary)">$${Number(s.plan_price||99).toFixed(2)}</td>
+      <td style="color:${overdue?'#dc2626':'var(--text-secondary)'};font-weight:${overdue?'600':'400'}">${s.next_billing_date || '—'}${overdue?' ⚠️':''}</td>
+      <td><span style="font-size:11px;font-weight:600;color:${statusColor};background:${statusColor}18;padding:2px 10px;border-radius:20px">${s.status}</span></td>
+      <td>
+        <button onclick="toggleDistSubStatus('${s.id}','${s.status}')" style="font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:5px;cursor:pointer;background:none;color:var(--text-secondary);margin-right:4px">${s.status==='active'?'Pause':'Activate'}</button>
+        <a href="https://evan-enterprises-os.vercel.app/leads?token=${s.access_token}" target="_blank" style="font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:5px;cursor:pointer;background:none;color:var(--accent);text-decoration:none">Portal ↗</a>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function saveDistLead() {
+  const body = {
+    title:        document.getElementById('dl-title').value.trim(),
+    platform:     document.getElementById('dl-platform').value,
+    category:     document.getElementById('dl-category').value.trim(),
+    buy_price:    parseFloat(document.getElementById('dl-buy').value),
+    sell_price:   parseFloat(document.getElementById('dl-sell').value),
+    monthly_sales:parseInt(document.getElementById('dl-sales').value)||null,
+    competition:  document.getElementById('dl-competition').value,
+    image_url:    document.getElementById('dl-image').value.trim(),
+    description:  document.getElementById('dl-desc').value.trim(),
+  };
+  if (!body.title || !body.buy_price || !body.sell_price) return toast('Title, buy price, sell price required', 'err');
+  const r = await fetch('/api/distribution?action=add-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  const d = await r.json();
+  if (!d.ok) return toast('Error: ' + d.error, 'err');
+  toast('Lead added!');
+  document.getElementById('dist-lead-form').style.display = 'none';
+  await loadDistLeads();
+}
+
+async function archiveDistLead(id) {
+  await fetch('/api/distribution?action=delete-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id}) });
+  toast('Lead removed');
+  distLeads = distLeads.filter(l => l.id !== id);
+  renderDistLeads();
+}
+
+async function saveDistSub() {
+  const body = {
+    name:               document.getElementById('ds-name').value.trim(),
+    email:              document.getElementById('ds-email').value.trim(),
+    plan_price:         parseFloat(document.getElementById('ds-price').value)||99,
+    next_billing_date:  document.getElementById('ds-billing').value||null,
+    square_customer_id: document.getElementById('ds-square').value.trim()||null,
+    notes:              document.getElementById('ds-notes').value.trim()||null,
+  };
+  if (!body.name || !body.email) return toast('Name and email required', 'err');
+  const r = await fetch('/api/distribution?action=add-subscriber', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  const d = await r.json();
+  if (!d.ok) return toast('Error: ' + d.error, 'err');
+  toast('Subscriber added + welcome email sent!');
+  ['ds-name','ds-email','ds-price','ds-billing','ds-square','ds-notes'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  await loadDistSubs();
+}
+
+async function toggleDistSubStatus(id, current) {
+  const status = current === 'active' ? 'paused' : 'active';
+  await fetch('/api/distribution?action=update-subscriber', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id, status}) });
+  toast(`Subscriber ${status}`);
+  await loadDistSubs();
+}
+
+// Live ROI preview in add-lead form
+['dl-buy','dl-sell'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', () => {
+    const buy  = parseFloat(document.getElementById('dl-buy').value)||0;
+    const sell = parseFloat(document.getElementById('dl-sell').value)||0;
+    document.getElementById('dl-preview-profit').textContent = buy && sell ? `$${(sell-buy).toFixed(2)}` : '—';
+    document.getElementById('dl-preview-roi').textContent    = buy && sell ? `${Math.round(((sell-buy)/buy)*100)}%` : '—';
+  });
+});
+
+document.getElementById('dist-add-lead-btn').addEventListener('click', () => {
+  const form = document.getElementById('dist-lead-form');
+  form.style.display = form.style.display === 'none' ? '' : 'none';
+});
+
+document.getElementById('dist-blast-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('dist-blast-btn');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  const r = await fetch('/api/distribution?action=send-blast', { method:'POST', headers:{'Content-Type':'application/json'} });
+  const d = await r.json();
+  btn.textContent = '📧 Send Monthly Blast'; btn.disabled = false;
+  if (d.ok) toast(d.sent > 0 ? `Blast sent to ${d.sent} subscriber(s)!` : d.message || 'No subscribers');
+  else toast('Error: ' + d.error, 'err');
+});
+
+document.querySelector('[data-tab="distribution"]').addEventListener('click', () => {
+  if (!distLeads.length) loadDistLeads();
 });
 
 // Swipe-right to open, swipe-left to close sidebar

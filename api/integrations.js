@@ -339,6 +339,8 @@ async function handle_jobber(req, res) {
       return res.status(401).json({ configured: true, error: 'OAuth failed: ' + (tokenData.error_description || tokenData.error || 'unknown') });
     }
     const accessToken = tokenData.access_token;
+    // Rotation: save new refresh token if Jobber issued one
+    if (tokenData.refresh_token) await upsertSetting('jobber_refresh_token', tokenData.refresh_token);
 
     // Step 2: GraphQL query — jobs, invoices, quotes last 30 days
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();

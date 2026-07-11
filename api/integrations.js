@@ -257,6 +257,53 @@ async function handle_google_ads(req, res) {
   }
 }
 
+// ── JOBBER AUTH (generate OAuth URL) ──
+async function handle_jobber_auth(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
+  const clientId = process.env.JOBBER_CLIENT_ID;
+  if (!clientId) return res.status(400).json({ error: 'JOBBER_CLIENT_ID not set in Vercel env vars' });
+
+  const callbackUrl = 'https://evan-enterprises-os.vercel.app/api/integrations?action=jobber-callback';
+  const url = `https://api.getjobber.com/api/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(callbackUrl)}&response_type=code`;
+  return res.status(200).json({ url });
+}
+
+// ── JOBBER CALLBACK (exchange code for tokens) ──
+async function handle_jobber_callback(req, res) {
+  const { code } = req.query;
+  if (!code) return res.status(400).send('Missing code');
+
+  const clientId     = process.env.JOBBER_CLIENT_ID;
+  const clientSecret = process.env.JOBBER_CLIENT_SECRET;
+  const callbackUrl  = 'https://evan-enterprises-os.vercel.app/api/integrations?action=jobber-callback';
+
+  try {
+    const tokenRes = await fetch('https://api.getjobber.com/api/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id:     clientId,
+        client_secret: clientSecret,
+        code,
+        redirect_uri:  callbackUrl,
+        grant_type:    'authorization_code',
+      }),
+    });
+    const tokenData = await tokenRes.json();
+    if (!tokenData.refresh_token) return res.status(400).send('No refresh token returned: ' + JSON.stringify(tokenData));
+
+    await upsertSetting('jobber_refresh_token', tokenData.refresh_token);
+    if (tokenData.access_token) await upsertSetting('jobber_access_token', tokenData.access_token);
+
+    return res.redirect(302, 'https://evan-enterprises-os.vercel.app/dashboard?jobber=connected');
+  } catch (e) {
+    return res.status(500).send('Jobber OAuth error: ' + e.message);
+  }
+}
+
 // ── JOBBER ──
 async function handle_jobber(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -265,7 +312,8 @@ async function handle_jobber(req, res) {
 
   const clientId     = process.env.JOBBER_CLIENT_ID;
   const clientSecret = process.env.JOBBER_CLIENT_SECRET;
-  const refreshToken = process.env.JOBBER_REFRESH_TOKEN;
+  // Try Supabase first (set by OAuth callback), fall back to env var
+  const refreshToken = (await getSetting('jobber_refresh_token')) || process.env.JOBBER_REFRESH_TOKEN;
 
   if (!clientId || !clientSecret || !refreshToken) {
     return res.status(200).json({ configured: false });
@@ -843,6 +891,8 @@ export default async function handler(req, res) {
   if (action === 'google-ads-auth') return handle_google_ads_auth(req, res);
   if (action === 'google-ads') return handle_google_ads(req, res);
   if (action === 'jobber') return handle_jobber(req, res);
+  if (action === 'jobber-auth') return handle_jobber_auth(req, res);
+  if (action === 'jobber-callback') return handle_jobber_callback(req, res);
   if (action === 'lsa-check') return handle_lsa_check(req, res);
   if (action === 'monthly-report') return handle_monthly_report(req, res);
   if (action === 'outreach') return handle_outreach_send(req, res);

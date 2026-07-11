@@ -1557,6 +1557,26 @@ async function loadCallLeads() {
           </div>
         </div>
 
+        <!-- Jobber Connection -->
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-header">
+            <div class="card-title">Jobber Connection</div>
+            <span id="jobber-connect-badge" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(148,163,184,0.15);color:var(--text-muted)">
+              <span style="width:6px;height:6px;border-radius:50%;background:var(--text-muted);flex-shrink:0"></span>
+              Not connected
+            </span>
+          </div>
+          <div style="padding:20px">
+            <div id="jobber-connected-state" style="display:none;background:rgba(5,150,105,0.07);border:1px solid rgba(5,150,105,0.2);border-radius:8px;padding:14px 16px;margin-bottom:18px;align-items:center;justify-content:space-between;gap:12px">
+              <div style="font-size:13px;font-weight:600;color:#059669">Jobber Connected ✓</div>
+            </div>
+            <p style="font-size:12px;color:var(--text-secondary);margin-bottom:18px;line-height:1.6">
+              Click <strong>Connect Jobber</strong> to authorize access to Angel's Jobber account. You'll be redirected to Jobber to sign in and grant access — then brought back here automatically.
+            </p>
+            <button class="btn btn-primary" id="jobber-connect-btn" onclick="connectJobber()">Connect Jobber →</button>
+          </div>
+        </div>
+
         <!-- Setup Guide -->
         <div class="card">
           <div class="card-header"><div class="card-title">Setup Guide</div></div>
@@ -3474,6 +3494,31 @@ $('save-gads-creds-btn').addEventListener('click', async () => {
   toast('Credentials saved — now click Connect Google Ads →');
   setTimeout(() => { status.textContent = ''; }, 3500);
 });
+
+// Connect Jobber button
+async function connectJobber() {
+  const btn = document.getElementById('jobber-connect-btn');
+  btn.textContent = 'Redirecting…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/api/integrations?action=jobber-auth');
+    const data = await res.json();
+    if (data.error) { toast('Error: ' + data.error, 'err'); btn.textContent = 'Connect Jobber →'; btn.disabled = false; return; }
+    window.location.href = data.url;
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+    btn.textContent = 'Connect Jobber →'; btn.disabled = false;
+  }
+}
+
+// Handle ?jobber=connected on page load
+if (new URLSearchParams(location.search).get('jobber') === 'connected') {
+  document.getElementById('jobber-connected-state').style.display = 'flex';
+  document.getElementById('jobber-connect-badge').innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:#10B981;flex-shrink:0"></span> Connected ✓';
+  document.getElementById('jobber-connect-badge').style.background = 'rgba(16,185,129,0.12)';
+  document.getElementById('jobber-connect-badge').style.color = '#10B981';
+  history.replaceState({}, '', '/dashboard');
+  toast('Jobber connected successfully!');
+}
 
 // Connect Google Ads button — triggers OAuth redirect
 $('gads-oauth-btn').addEventListener('click', async () => {

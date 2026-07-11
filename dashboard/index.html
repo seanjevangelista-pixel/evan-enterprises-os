@@ -766,7 +766,7 @@ async function loadJobber() {
   if (!el || !jobberClientId) return;
   el.innerHTML = `<div class="empty"><div class="empty-icon" style="animation:gSpin 1s linear infinite;display:inline-block">◉</div> Loading Jobber data…</div>`;
   try {
-    const res  = await fetch(`/api/jobber?account_id=${jobberClientId}`);
+    const res  = await fetch(`/api/integrations?action=jobber&account_id=${jobberClientId}`);
     let data;
     try { data = await res.json(); } catch(_) {
       el.innerHTML = `<div class="empty"><div class="empty-icon">◉</div>Jobber API returned an unexpected response (status ${res.status}). Check your Vercel deployment.</div>`;
@@ -1646,6 +1646,15 @@ async function loadCallLeads() {
           <div class="card" id="dist-lead-form" style="margin-bottom:16px;display:none">
             <div class="card-header"><div class="card-title">New Product Lead</div></div>
             <div style="padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <!-- Amazon URL fetch -->
+              <div style="grid-column:1/-1;background:#0f172a;border:1px solid #1e3a5f;border-radius:8px;padding:14px">
+                <label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Amazon Product URL <span style="color:#3B82F6">(auto-fill)</span></label>
+                <div style="display:flex;gap:8px">
+                  <input id="dl-amazon-url" style="flex:1;background:#1e293b;border:1px solid #334155;border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;box-sizing:border-box" placeholder="https://www.amazon.com/dp/B08N5WRWNW">
+                  <button id="dl-fetch-btn" onclick="fetchAmazonProduct()" style="padding:9px 16px;background:#3B82F6;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">Fetch Product</button>
+                </div>
+                <div id="dl-fetch-status" style="font-size:11px;color:var(--text-muted);margin-top:6px;display:none"></div>
+              </div>
               <div style="grid-column:1/-1"><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Product Title *</label><input id="dl-title" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;box-sizing:border-box" placeholder="Stanley 40oz Quencher Tumbler"></div>
               <div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Platform</label>
                 <select id="dl-platform" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none">
@@ -1663,10 +1672,35 @@ async function loadCallLeads() {
               </div>
               <div style="grid-column:1/-1"><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Image URL</label><input id="dl-image" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;box-sizing:border-box" placeholder="https://..."></div>
               <div style="grid-column:1/-1"><label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Description</label><textarea id="dl-desc" rows="2" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;resize:vertical;box-sizing:border-box" placeholder="Why this product is a good opportunity..."></textarea></div>
-              <!-- Live ROI preview -->
-              <div style="grid-column:1/-1;background:var(--surface-2);border-radius:8px;padding:14px;display:flex;gap:24px">
-                <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">Est. Profit</div><div id="dl-preview-profit" style="font-size:20px;font-weight:700;color:#059669">—</div></div>
-                <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">ROI</div><div id="dl-preview-roi" style="font-size:20px;font-weight:700;color:#2563EB">—</div></div>
+              <!-- FBA Profit Calculator -->
+              <div style="grid-column:1/-1;background:#0f172a;border:1px solid #1e3a5f;border-radius:8px;padding:14px">
+                <div style="font-size:12px;font-weight:600;color:#3B82F6;margin-bottom:10px;letter-spacing:0.05em">FBA PROFIT CALCULATOR</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+                  <div style="background:#1e293b;border-radius:6px;padding:10px">
+                    <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px">Referral Fee (15%)</div>
+                    <div id="dl-fba-referral" style="font-size:16px;font-weight:700;color:#f59e0b">—</div>
+                  </div>
+                  <div style="background:#1e293b;border-radius:6px;padding:10px">
+                    <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px">FBA Fee (flat)</div>
+                    <div id="dl-fba-fulfillment" style="font-size:16px;font-weight:700;color:#f59e0b">$3.22</div>
+                  </div>
+                  <div style="background:#1e293b;border-radius:6px;padding:10px">
+                    <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px">Total Fees</div>
+                    <div id="dl-fba-total-fees" style="font-size:16px;font-weight:700;color:#ef4444">—</div>
+                  </div>
+                  <div style="background:#1e293b;border-radius:6px;padding:10px">
+                    <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px">Net Profit</div>
+                    <div id="dl-preview-profit" style="font-size:18px;font-weight:700">—</div>
+                  </div>
+                  <div style="background:#1e293b;border-radius:6px;padding:10px">
+                    <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px">ROI</div>
+                    <div id="dl-preview-roi" style="font-size:18px;font-weight:700">—</div>
+                  </div>
+                  <div style="background:#1e293b;border-radius:6px;padding:10px">
+                    <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px">Margin</div>
+                    <div id="dl-fba-margin" style="font-size:18px;font-weight:700">—</div>
+                  </div>
+                </div>
               </div>
               <div style="grid-column:1/-1;display:flex;gap:8px">
                 <button class="btn btn-primary" onclick="saveDistLead()">Save Lead</button>
@@ -4036,16 +4070,64 @@ async function toggleDistSubStatus(id, current) {
 }
 
 // Live ROI preview in add-lead form
+function updateFbaCalc() {
+  const buy  = parseFloat(document.getElementById('dl-buy').value) || 0;
+  const sell = parseFloat(document.getElementById('dl-sell').value) || 0;
+  const referral    = sell * 0.15;
+  const fulfillment = 3.22;
+  const totalFees   = referral + fulfillment;
+  const netProfit   = sell - buy - totalFees;
+  const roi         = buy ? (netProfit / buy) * 100 : 0;
+  const margin      = sell ? (netProfit / sell) * 100 : 0;
+  const pos = v => v >= 0 ? '#10b981' : '#ef4444';
+  const fmt = v => (v >= 0 ? '+' : '') + v.toFixed(2);
+  document.getElementById('dl-fba-referral').textContent    = buy && sell ? `$${referral.toFixed(2)}` : '—';
+  document.getElementById('dl-fba-total-fees').textContent  = buy && sell ? `$${totalFees.toFixed(2)}` : '—';
+  const profitEl  = document.getElementById('dl-preview-profit');
+  const roiEl     = document.getElementById('dl-preview-roi');
+  const marginEl  = document.getElementById('dl-fba-margin');
+  if (buy && sell) {
+    profitEl.textContent  = `$${fmt(netProfit)}`;  profitEl.style.color  = pos(netProfit);
+    roiEl.textContent     = `${fmt(roi)}%`;         roiEl.style.color     = pos(roi);
+    marginEl.textContent  = `${fmt(margin)}%`;      marginEl.style.color  = pos(margin);
+  } else {
+    profitEl.textContent = roiEl.textContent = marginEl.textContent = '—';
+    profitEl.style.color = roiEl.style.color = marginEl.style.color = 'var(--text-muted)';
+  }
+}
+
 ['dl-buy','dl-sell'].forEach(id => {
   const el = document.getElementById(id);
-  if (!el) return;
-  el.addEventListener('input', () => {
-    const buy  = parseFloat(document.getElementById('dl-buy').value)||0;
-    const sell = parseFloat(document.getElementById('dl-sell').value)||0;
-    document.getElementById('dl-preview-profit').textContent = buy && sell ? `$${(sell-buy).toFixed(2)}` : '—';
-    document.getElementById('dl-preview-roi').textContent    = buy && sell ? `${Math.round(((sell-buy)/buy)*100)}%` : '—';
-  });
+  if (el) el.addEventListener('input', updateFbaCalc);
 });
+
+async function fetchAmazonProduct() {
+  const url = document.getElementById('dl-amazon-url').value.trim();
+  if (!url) return;
+  const btn    = document.getElementById('dl-fetch-btn');
+  const status = document.getElementById('dl-fetch-status');
+  btn.textContent = 'Fetching…'; btn.disabled = true;
+  status.textContent = 'Looking up product on Amazon…'; status.style.display = 'block'; status.style.color = '#94a3b8';
+  try {
+    const res  = await fetch('/api/distribution?action=fetch-amazon', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+    const data = await res.json();
+    if (data.ok) {
+      if (data.title)     document.getElementById('dl-title').value     = data.title;
+      if (data.image_url) document.getElementById('dl-image').value     = data.image_url;
+      if (data.price)     document.getElementById('dl-buy').value       = data.price;
+      updateFbaCalc();
+      status.textContent = data.title ? `Filled: ${data.title.slice(0,60)}…` : 'Fetched — some fields may need manual entry';
+      status.style.color = '#10b981';
+    } else {
+      status.textContent = `Could not parse page: ${data.error || 'unknown error'}. Fill fields manually.`;
+      status.style.color = '#ef4444';
+    }
+  } catch (e) {
+    status.textContent = `Request failed: ${e.message}`;
+    status.style.color = '#ef4444';
+  }
+  btn.textContent = 'Fetch Product'; btn.disabled = false;
+}
 
 document.getElementById('dist-add-lead-btn').addEventListener('click', () => {
   const form = document.getElementById('dist-lead-form');

@@ -26,6 +26,39 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, leads: Array.isArray(leads) ? leads : [] });
   }
 
+  // ── FETCH AMAZON PRODUCT ─────────────────────────────────────────────────
+  if (action === 'fetch-amazon' && req.method === 'POST') {
+    const { url } = req.body || {};
+    if (!url) return res.status(400).json({ error: 'url required' });
+
+    const asinMatch = url.match(/\/([A-Z0-9]{10})(?:[/?]|$)/);
+    const asin = asinMatch ? asinMatch[1] : null;
+
+    try {
+      const r = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+        }
+      });
+      const html = await r.text();
+
+      const titleMatch = html.match(/<span id="productTitle"[^>]*>\s*([\s\S]*?)\s*<\/span>/);
+      const title = titleMatch ? titleMatch[1].trim() : null;
+
+      const priceMatch = html.match(/class="a-price-whole">([0-9,]+)/) || html.match(/"priceAmount":"?([0-9.]+)/);
+      const price = priceMatch ? parseFloat(priceMatch[1].replace(',', '')) : null;
+
+      const imgMatch = html.match(/"hiRes":"(https:[^"]+)"/) || html.match(/id="landingImage"[^>]*src="([^"]+)"/);
+      const image_url = imgMatch ? imgMatch[1] : null;
+
+      return res.status(200).json({ ok: true, asin, title, price, image_url });
+    } catch (e) {
+      return res.status(200).json({ ok: false, error: e.message });
+    }
+  }
+
   // ── ADD LEAD ──────────────────────────────────────────────────────────────
   if (action === 'add-lead' && req.method === 'POST') {
     const { title, description, platform, category, image_url, buy_price, sell_price, monthly_sales, competition } = req.body || {};

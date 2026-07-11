@@ -616,7 +616,7 @@ async function loadGoogleAds() {
   el.innerHTML = '<div class="empty"><div class="empty-icon" style="animation:gSpin 1s linear infinite;display:inline-block">⬡</div> Fetching campaign data…</div>';
 
   try {
-    const res  = await fetch(`/api/google-ads?metric=campaigns&customer_id=${gadsCustomerId}`);
+    const res  = await fetch(`/api/integrations?action=google-ads&metric=campaigns&customer_id=${gadsCustomerId}`);
     let data;
     try { data = await res.json(); } catch(_) {
       el.innerHTML = `<div class="empty"><div class="empty-icon">⬡</div>Google Ads API returned an unexpected response (status ${res.status}). Check your Vercel deployment.</div>`;
@@ -3557,7 +3557,7 @@ async function handleOAuthCallback() {
   toast('Connecting Google Ads…');
 
   try {
-    const res  = await fetch(`/api/google-ads-auth?action=token&code=${encodeURIComponent(code)}`);
+    const res  = await fetch(`/api/integrations?action=google-ads-auth&sub=token&code=${encodeURIComponent(code)}`);
     const data = await res.json();
     if (data.error) { toast('OAuth error: ' + data.error, 'err'); return; }
     setGadsConnectionBadge(true, data.email || null);

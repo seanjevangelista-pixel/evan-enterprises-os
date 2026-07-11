@@ -3496,7 +3496,7 @@ $('save-gads-creds-btn').addEventListener('click', async () => {
 });
 
 // Connect Jobber button
-async function connectJobber() {
+window.connectJobber = async function connectJobber() {
   const btn = document.getElementById('jobber-connect-btn');
   btn.textContent = 'Redirecting…'; btn.disabled = true;
   try {

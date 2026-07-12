@@ -391,10 +391,11 @@ async function showPortal() {
   document.getElementById('greeting-text').textContent =
     h < 12 ? 'Good morning.' : h < 17 ? 'Good afternoon.' : 'Good evening.';
 
-  const { data: userRow } = await sb.from('users').select('client_id').eq('id', user.id).single();
+  const { data: userRow, error: userErr } = await sb.from('users').select('client_id').eq('id', user.id).single();
   const clientId = userRow?.client_id;
   if (!clientId) {
-    document.getElementById('loading').innerHTML = '<div class="empty-state"><strong>No account linked</strong>Contact Sean to get your portal set up.</div>';
+    const dbg = `user.id=${user.id} | userRow=${JSON.stringify(userRow)} | err=${userErr?.message}`;
+    document.getElementById('loading').innerHTML = `<div class="empty-state"><strong>No account linked</strong><br><small style="color:var(--text3);font-family:monospace;font-size:10px;word-break:break-all">${dbg}</small></div>`;
     return;
   }
 

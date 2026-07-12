@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { name, business, phone, email, service } = req.body || {};
+  const { name, business, phone, email, service, message } = req.body || {};
 
   if (!name || !email || !service) {
     return res.status(400).json({ error: 'Missing required fields: name, email, service' });
@@ -50,9 +50,14 @@ export default async function handler(req, res) {
           <td style="padding: 10px 0; border-bottom: 1px solid #E2E8F0;"><a href="mailto:${escHtml(email)}" style="color: #1D4ED8;">${escHtml(email)}</a></td>
         </tr>
         <tr>
-          <td style="padding: 10px 0; color: #64748B;">Interested in</td>
-          <td style="padding: 10px 0; font-weight: 500; color: #1D4ED8;">${escHtml(service)}</td>
+          <td style="padding: 10px 0; ${message ? 'border-bottom: 1px solid #E2E8F0;' : ''} color: #64748B;">Interested in</td>
+          <td style="padding: 10px 0; ${message ? 'border-bottom: 1px solid #E2E8F0;' : ''} font-weight: 500; color: #1D4ED8;">${escHtml(service)}</td>
         </tr>
+        ${message ? `
+        <tr>
+          <td style="padding: 10px 0; color: #64748B; vertical-align: top;">Message</td>
+          <td style="padding: 10px 0; line-height: 1.6;">${escHtml(message)}</td>
+        </tr>` : ''}
       </table>
 
       <div style="margin-top: 28px; padding: 16px 20px; background: #F8FAFC; border-radius: 8px; border: 1px solid #E2E8F0;">

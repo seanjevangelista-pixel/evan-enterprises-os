@@ -2,132 +2,268 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Distribution Leads — Evan Enterprises</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #0A0F1E;
-    --surface: #111827;
-    --surface2: #1F2937;
-    --border: rgba(255,255,255,0.08);
-    --text: #F9FAFB;
-    --muted: rgba(255,255,255,0.45);
-    --accent: #3B82F6;
-    --green: #10B981;
-    --amber: #F59E0B;
-    --red: #EF4444;
-  }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; min-height: 100vh; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0F1E;--bg2:#0D1426;--surface:#111827;--surface2:#1A2440;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.11);
+  --text:#F9FAFB;--text2:rgba(255,255,255,0.52);--text3:rgba(255,255,255,0.28);
+  --blue:#3B82F6;--blue-dim:rgba(59,130,246,0.10);--blue-mid:#2563EB;
+  --green:#10B981;--green-dim:rgba(16,185,129,0.10);
+  --red:#EF4444;--amber:#F59E0B;
+  --font-display:'Space Grotesk',sans-serif;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'DM Mono',monospace;
+  --r:12px;
+}
+html{-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;min-height:100vh}
 
-  /* Header */
-  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
-  .logo { display: flex; align-items: center; gap: 10px; }
-  .logo-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
-  .logo-text { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 0.04em; }
-  .badge { font-size: 11px; font-weight: 600; color: var(--accent); background: rgba(59,130,246,0.12); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(59,130,246,0.25); }
+/* ── NAV ── */
+.leads-nav{
+  background:rgba(10,15,30,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;height:58px;position:sticky;top:0;z-index:50;
+}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nav-mark{
+  width:30px;height:30px;border-radius:7px;
+  background:linear-gradient(135deg,var(--blue),#1D4ED8);
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-mark svg{width:16px;height:16px}
+.nav-wordmark{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.16em;color:var(--text)}
+.nav-tag{font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2);letter-spacing:0.06em}
 
-  /* Gate */
-  #gate { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 65px); padding: 24px; }
-  .gate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; max-width: 400px; width: 100%; text-align: center; }
-  .gate-icon { font-size: 40px; margin-bottom: 16px; }
-  .gate-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-  .gate-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
-  input[type=email] { width: 100%; padding: 14px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; outline: none; margin-bottom: 12px; transition: border 0.2s; }
-  input[type=email]:focus { border-color: var(--accent); }
-  input[type=email]::placeholder { color: var(--muted); }
-  .btn-primary { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
-  .btn-primary:hover { opacity: 0.88; }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-  .gate-err { font-size: 13px; color: var(--red); margin-top: 12px; display: none; }
+/* ── GATE ── */
+#gate{
+  min-height:calc(100vh - 58px);display:flex;
+  align-items:center;justify-content:center;padding:40px 20px;
+}
+.gate-card{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:20px;padding:48px 40px;max-width:420px;width:100%;
+  text-align:center;
+  box-shadow:0 32px 80px rgba(0,0,0,0.4);
+}
+.gate-icon{font-size:44px;margin-bottom:20px;display:block}
+.gate-title{font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-0.02em}
+.gate-sub{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:32px;max-width:300px;margin-left:auto;margin-right:auto}
+.gate-input{
+  width:100%;padding:14px 16px;background:var(--surface2);
+  border:1px solid var(--border2);border-radius:10px;
+  color:var(--text);font-size:14px;font-family:var(--font-body);
+  outline:none;margin-bottom:12px;transition:border-color 0.15s;
+  -webkit-appearance:none;
+}
+.gate-input:focus{border-color:rgba(59,130,246,0.4);background:rgba(255,255,255,0.04)}
+.gate-input::placeholder{color:var(--text3)}
+.btn-access{
+  width:100%;padding:14px;background:var(--blue);color:#fff;
+  border:none;border-radius:10px;font-size:14px;font-weight:700;
+  font-family:var(--font-display);cursor:pointer;
+  transition:background 0.15s,transform 0.15s,box-shadow 0.15s;
+}
+.btn-access:hover{background:var(--blue-mid);transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,0.3)}
+.btn-access:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+.gate-err{font-size:13px;color:var(--red);margin-top:14px;display:none;line-height:1.5}
+.gate-note{font-size:12px;color:var(--text3);margin-top:20px;line-height:1.6}
+.gate-note a{color:var(--blue);text-decoration:none}
+.gate-note a:hover{text-decoration:underline}
 
-  /* Portal */
-  #portal { display: none; }
-  .portal-header { padding: 32px 24px 16px; max-width: 1200px; margin: 0 auto; }
-  .portal-greeting { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-  .portal-sub { font-size: 14px; color: var(--muted); }
-  .stats-row { display: flex; gap: 12px; margin: 20px 24px; max-width: 1200px; margin-left: auto; margin-right: auto; flex-wrap: wrap; }
-  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; flex: 1; min-width: 140px; }
-  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
-  .stat-val { font-size: 22px; font-weight: 700; }
+/* ── PORTAL ── */
+#portal{display:none}
 
-  /* Grid */
-  .grid-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px 40px; }
-  .leads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-  .lead-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.15s, box-shadow 0.15s; }
-  .lead-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
-  .lead-img { width: 100%; height: 180px; object-fit: cover; display: block; }
-  .lead-img-placeholder { height: 100px; display: flex; align-items: center; justify-content: center; background: var(--surface2); font-size: 36px; color: var(--muted); }
-  .lead-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-  .lead-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; }
-  .tag-amazon { color: #FF9900; background: rgba(255,153,0,0.12); }
-  .tag-walmart { color: #0071CE; background: rgba(0,113,206,0.12); }
-  .tag-cat { color: var(--muted); background: var(--surface2); }
-  .lead-title { font-size: 15px; font-weight: 700; line-height: 1.35; }
-  .lead-desc { font-size: 12px; color: var(--muted); line-height: 1.55; }
-  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .metric { background: var(--surface2); border-radius: 8px; padding: 10px; text-align: center; }
-  .metric-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
-  .metric-val { font-size: 16px; font-weight: 700; }
-  .metric-profit .metric-val { color: var(--green); }
-  .metric-roi .metric-val { }
-  .lead-footer { font-size: 11px; color: var(--muted); margin-top: auto; }
+/* Header bar */
+.portal-top{
+  background:rgba(10,15,30,0.9);border-bottom:1px solid var(--border);
+  padding:20px 32px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.portal-greeting{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.portal-sub{font-size:13px;color:var(--text2);margin-top:4px}
+.portal-month-badge{
+  font-size:11px;font-weight:700;padding:5px 14px;border-radius:99px;
+  background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2);
+  white-space:nowrap;letter-spacing:0.06em;align-self:center;
+}
 
-  /* Empty / loading states */
-  .empty { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--muted); font-size: 15px; }
-  .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--surface2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 16px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* Stats */
+.stats-bar{
+  display:flex;gap:12px;padding:20px 32px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.stat-pill{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:10px;padding:14px 20px;flex:1;min-width:120px;
+}
+.stat-pill-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px}
+.stat-pill-val{font-family:var(--font-mono);font-size:22px;font-weight:500;color:var(--text)}
+.stat-pill-val.green{color:var(--green)}
+.stat-pill-val.amber{color:var(--amber)}
+.stat-pill-val.blue{color:var(--blue)}
 
-  @media (max-width: 500px) {
-    .gate-card { padding: 28px 20px; }
-    .leads-grid { grid-template-columns: 1fr; }
-  }
+/* Grid */
+.grid-wrap{max-width:1280px;margin:0 auto;padding:32px 32px 60px}
+.leads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+
+/* Lead card */
+.lead-card{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;
+  transition:transform 0.2s,box-shadow 0.2s,border-color 0.2s;
+}
+.lead-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 48px rgba(0,0,0,0.35);
+  border-color:rgba(59,130,246,0.25);
+}
+.lead-img{width:100%;height:180px;object-fit:cover;display:block;background:var(--surface2)}
+.lead-img-placeholder{
+  height:120px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--surface2),var(--bg2));
+  font-size:40px;
+}
+.lead-body{padding:18px;display:flex;flex-direction:column;gap:12px;flex:1}
+
+/* Tags */
+.lead-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;letter-spacing:0.04em}
+.tag-amazon{color:#FF9900;background:rgba(255,153,0,0.12);border:1px solid rgba(255,153,0,0.2)}
+.tag-walmart{color:#0071CE;background:rgba(0,113,206,0.12);border:1px solid rgba(0,113,206,0.2)}
+.tag-ebay{color:#86B817;background:rgba(134,184,23,0.12);border:1px solid rgba(134,184,23,0.2)}
+.tag-cat{color:var(--text3);background:rgba(255,255,255,0.05);border:1px solid var(--border)}
+.tag-hot{color:var(--green);background:var(--green-dim);border:1px solid rgba(16,185,129,0.2)}
+
+/* Title */
+.lead-title{font-size:14px;font-weight:600;color:var(--text);line-height:1.4}
+.lead-desc{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* Metrics */
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.metric{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:11px;text-align:center}
+.metric-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px}
+.metric-val{font-family:var(--font-mono);font-size:17px;font-weight:500;color:var(--text)}
+.metric-val.profit{color:var(--green)}
+.metric-val.roi{color:var(--blue)}
+
+/* Footer */
+.lead-footer{
+  font-size:11px;color:var(--text3);padding-top:8px;
+  border-top:1px solid var(--border);
+  display:flex;gap:12px;flex-wrap:wrap;margin-top:auto;
+}
+.lead-footer span{display:inline-flex;align-items:center;gap:4px}
+.comp-low{color:var(--green)}
+.comp-med{color:var(--amber)}
+.comp-high{color:var(--red)}
+
+/* Empty / loading */
+.grid-loading{
+  grid-column:1/-1;text-align:center;padding:80px 20px;
+}
+.spinner{
+  display:inline-block;width:24px;height:24px;
+  border:2px solid var(--surface2);border-top-color:var(--blue);
+  border-radius:50%;animation:spin 0.7s linear infinite;margin-bottom:16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.grid-empty{
+  grid-column:1/-1;text-align:center;padding:80px 20px;
+  color:var(--text3);font-size:14px;line-height:1.8;
+}
+.grid-empty strong{display:block;color:var(--text2);font-size:16px;margin-bottom:6px}
+
+/* Mobile */
+@media(max-width:640px){
+  .leads-nav,.portal-top,.stats-bar{padding-left:16px;padding-right:16px}
+  .grid-wrap{padding:20px 16px 48px}
+  .leads-grid{grid-template-columns:1fr}
+  .gate-card{padding:36px 24px}
+  .stats-bar{gap:8px}
+  .stat-pill{min-width:100px}
+}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">
-    <div class="logo-dot"></div>
-    <span class="logo-text">EVAN ENTERPRISES</span>
-  </div>
-  <span class="badge">Distribution Leads</span>
-</header>
 
-<!-- ACCESS GATE -->
+<nav class="leads-nav">
+  <a href="/" class="nav-brand">
+    <div class="nav-mark">
+      <svg viewBox="0 0 104 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,20 L14,0 L86,0 Q104,0 104,10 Q104,20 86,20 Z" fill="white" opacity="0.9"/>
+        <path d="M0,52 L14,32 L86,32 Q104,32 104,42 Q104,52 86,52 Z" fill="white" opacity="0.7"/>
+        <path d="M0,84 L14,64 L86,64 Q104,64 104,74 Q104,84 86,84 Z" fill="white" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="nav-wordmark">EVAN ENTERPRISES</div>
+  </a>
+  <span class="nav-tag">Distribution Leads</span>
+</nav>
+
+<!-- GATE -->
 <div id="gate">
   <div class="gate-card">
-    <div class="gate-icon">📦</div>
+    <span class="gate-icon">📦</span>
     <div class="gate-title">Members Only</div>
     <div class="gate-sub">Enter your subscriber email to access this month's curated product leads.</div>
-    <input type="email" id="gate-email" placeholder="your@email.com" autocomplete="email">
-    <button class="btn-primary" id="gate-btn" onclick="gateSubmit()">Access My Leads</button>
-    <div class="gate-err" id="gate-err">No active subscription found for that email.</div>
+    <input type="email" class="gate-input" id="gate-email" placeholder="your@email.com" autocomplete="email">
+    <button class="btn-access" id="gate-btn" onclick="gateSubmit()">Access My Leads →</button>
+    <div class="gate-err" id="gate-err">No active subscription found for that email. <a href="/#contact">Subscribe here →</a></div>
+    <div class="gate-note">New subscribers get an email with a direct access link. <a href="/#contact">Subscribe for $99/mo →</a></div>
   </div>
 </div>
 
-<!-- PORTAL (shown after auth) -->
+<!-- PORTAL -->
 <div id="portal">
-  <div class="portal-header">
-    <div class="portal-greeting">Hey, <span id="sub-name">there</span> 👋</div>
-    <div class="portal-sub">Here are this month's curated distribution opportunities.</div>
+  <div class="portal-top">
+    <div>
+      <div class="portal-greeting">Hey <span id="sub-name">there</span> 👋</div>
+      <div class="portal-sub">Here are this month's curated distribution leads.</div>
+    </div>
+    <div class="portal-month-badge" id="month-badge"></div>
   </div>
-  <div class="stats-row" id="stats-row" style="display:none"></div>
+
+  <div class="stats-bar" id="stats-bar" style="display:none"></div>
+
   <div class="grid-wrap">
     <div class="leads-grid" id="leads-grid">
-      <div class="empty"><div class="spinner"></div><br>Loading your leads…</div>
+      <div class="grid-loading">
+        <div class="spinner"></div><br>
+        <span style="color:var(--text3);font-size:13px">Loading your leads…</span>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
 let subToken = null;
-let subName  = '';
 
 function roiColor(roi) {
-  if (roi >= 100) return '#10B981';
-  if (roi >= 50)  return '#F59E0B';
-  return '#EF4444';
+  if (roi >= 100) return 'roi';
+  if (roi >= 50)  return '';
+  return '';
+}
+
+function compClass(c) {
+  if (!c) return '';
+  if (c.toLowerCase() === 'low')  return 'comp-low';
+  if (c.toLowerCase() === 'high') return 'comp-high';
+  return 'comp-med';
+}
+
+function platTag(p) {
+  const platform = (p || 'Amazon').toLowerCase();
+  if (platform.includes('walmart')) return 'tag-walmart';
+  if (platform.includes('ebay'))    return 'tag-ebay';
+  return 'tag-amazon';
 }
 
 async function gateSubmit() {
@@ -142,16 +278,17 @@ async function gateSubmit() {
     const d = await r.json();
     if (d.ok) {
       subToken = d.subscriber.token;
-      subName  = d.subscriber.name;
-      unlockPortal();
+      sessionStorage.setItem('dist_token', subToken);
+      sessionStorage.setItem('dist_name',  d.subscriber.name);
+      unlockPortal(d.subscriber.name);
     } else {
       err.style.display = 'block';
-      btn.textContent = 'Access My Leads'; btn.disabled = false;
+      btn.textContent = 'Access My Leads →'; btn.disabled = false;
     }
-  } catch (e) {
+  } catch {
     err.textContent = 'Something went wrong. Please try again.';
     err.style.display = 'block';
-    btn.textContent = 'Access My Leads'; btn.disabled = false;
+    btn.textContent = 'Access My Leads →'; btn.disabled = false;
   }
 }
 
@@ -159,14 +296,13 @@ document.getElementById('gate-email').addEventListener('keydown', e => {
   if (e.key === 'Enter') gateSubmit();
 });
 
-async function unlockPortal() {
+function unlockPortal(name) {
   document.getElementById('gate').style.display    = 'none';
-  document.getElementById('portal').style.display  = '';
-  document.getElementById('sub-name').textContent  = subName.split(' ')[0];
-  // save token to session so page refreshes don't re-gate
-  sessionStorage.setItem('dist_token', subToken);
-  sessionStorage.setItem('dist_name',  subName);
-  await loadLeads();
+  document.getElementById('portal').style.display  = 'block';
+  document.getElementById('sub-name').textContent  = (name || '').split(' ')[0] || 'there';
+  document.getElementById('month-badge').textContent =
+    new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  loadLeads();
 }
 
 async function loadLeads() {
@@ -175,48 +311,53 @@ async function loadLeads() {
     const r = await fetch('/api/distribution?action=leads');
     const d = await r.json();
     const leads = d.leads || [];
-    renderStats(leads);
+    if (leads.length) renderStats(leads);
     renderLeads(leads, grid);
-  } catch (e) {
-    grid.innerHTML = '<div class="empty">Failed to load leads. Please refresh.</div>';
+  } catch {
+    grid.innerHTML = '<div class="grid-empty"><strong>Failed to load</strong>Please refresh the page.</div>';
   }
 }
 
 function renderStats(leads) {
-  const row = document.getElementById('stats-row');
-  if (!leads.length) return;
-  const avgRoi    = Math.round(leads.reduce((a,l) => a + (l.buy_price ? ((l.sell_price-l.buy_price)/l.buy_price)*100 : 0), 0) / leads.length);
-  const avgProfit = (leads.reduce((a,l) => a + (l.sell_price - l.buy_price), 0) / leads.length).toFixed(2);
-  row.style.display = 'flex';
-  row.innerHTML = `
-    <div class="stat"><div class="stat-label">Total Leads</div><div class="stat-val">${leads.length}</div></div>
-    <div class="stat"><div class="stat-label">Avg ROI</div><div class="stat-val" style="color:${roiColor(avgRoi)}">${avgRoi}%</div></div>
-    <div class="stat"><div class="stat-label">Avg Profit</div><div class="stat-val" style="color:#10B981">$${avgProfit}</div></div>
+  const bar = document.getElementById('stats-bar');
+  bar.style.display = 'flex';
+  const rois    = leads.map(l => l.buy_price ? ((l.sell_price - l.buy_price) / l.buy_price) * 100 : 0);
+  const avgRoi  = Math.round(rois.reduce((a, b) => a + b, 0) / rois.length);
+  const profits = leads.map(l => l.sell_price - l.buy_price);
+  const avgProfit = (profits.reduce((a, b) => a + b, 0) / profits.length).toFixed(2);
+  const maxRoi    = Math.round(Math.max(...rois));
+
+  bar.innerHTML = `
+    <div class="stat-pill"><div class="stat-pill-label">Total Leads</div><div class="stat-pill-val blue">${leads.length}</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">Avg ROI</div><div class="stat-pill-val ${avgRoi>=100?'green':'amber'}">${avgRoi}%</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">Avg Profit</div><div class="stat-pill-val green">$${avgProfit}</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">Best ROI</div><div class="stat-pill-val green">${maxRoi}%</div></div>
   `;
 }
 
 function renderLeads(leads, grid) {
   if (!leads.length) {
-    grid.innerHTML = '<div class="empty">No leads this month yet — check back soon.</div>';
+    grid.innerHTML = '<div class="grid-empty"><strong>No leads this month yet</strong>New leads drop on the 1st. Check back soon.</div>';
     return;
   }
   grid.innerHTML = leads.map(l => {
     const profit = (l.sell_price - l.buy_price).toFixed(2);
     const roi    = l.buy_price ? Math.round(((l.sell_price - l.buy_price) / l.buy_price) * 100) : 0;
-    const platClass = l.platform === 'Walmart' ? 'tag-walmart' : 'tag-amazon';
+    const platClass = platTag(l.platform);
+    const compClass2 = compClass(l.competition);
     return `<div class="lead-card">
       ${l.image_url
-        ? `<img class="lead-img" src="${l.image_url}" alt="${l.title}" loading="lazy">`
+        ? `<img class="lead-img" src="${l.image_url}" alt="${escHtml(l.title)}" loading="lazy">`
         : `<div class="lead-img-placeholder">📦</div>`}
       <div class="lead-body">
         <div class="lead-tags">
           <span class="tag ${platClass}">${l.platform || 'Amazon'}</span>
-          ${l.category ? `<span class="tag tag-cat">${l.category}</span>` : ''}
-          ${roi >= 100 ? `<span class="tag" style="color:#10B981;background:rgba(16,185,129,0.12)">🔥 High ROI</span>` : ''}
+          ${l.category ? `<span class="tag tag-cat">${escHtml(l.category)}</span>` : ''}
+          ${roi >= 100 ? `<span class="tag tag-hot">🔥 High ROI</span>` : ''}
         </div>
-        <div class="lead-title">${l.title}</div>
-        ${l.description ? `<div class="lead-desc">${l.description}</div>` : ''}
-        <div class="metrics">
+        <div class="lead-title">${escHtml(l.title)}</div>
+        ${l.description ? `<div class="lead-desc">${escHtml(l.description)}</div>` : ''}
+        <div class="metrics-grid">
           <div class="metric">
             <div class="metric-label">Buy Price</div>
             <div class="metric-val">$${Number(l.buy_price).toFixed(2)}</div>
@@ -225,41 +366,46 @@ function renderLeads(leads, grid) {
             <div class="metric-label">Sell Price</div>
             <div class="metric-val">$${Number(l.sell_price).toFixed(2)}</div>
           </div>
-          <div class="metric metric-profit">
+          <div class="metric">
             <div class="metric-label">Est. Profit</div>
-            <div class="metric-val">$${profit}</div>
+            <div class="metric-val profit">$${profit}</div>
           </div>
-          <div class="metric metric-roi">
+          <div class="metric">
             <div class="metric-label">ROI</div>
-            <div class="metric-val" style="color:${roiColor(roi)}">${roi}%</div>
+            <div class="metric-val roi">${roi}%</div>
           </div>
         </div>
-        ${l.monthly_sales ? `<div class="lead-footer">~${Number(l.monthly_sales).toLocaleString()} units/mo &nbsp;·&nbsp; Competition: <span style="color:${l.competition==='Low'?'#10B981':l.competition==='High'?'#EF4444':'#F59E0B'};font-weight:600">${l.competition}</span></div>` : ''}
+        ${l.monthly_sales || l.competition ? `
+        <div class="lead-footer">
+          ${l.monthly_sales ? `<span>~${Number(l.monthly_sales).toLocaleString()} units/mo</span>` : ''}
+          ${l.competition ? `<span>Competition: <strong class="${compClass2}">${l.competition}</strong></span>` : ''}
+        </div>` : ''}
       </div>
     </div>`;
   }).join('');
 }
 
-// Auto-unlock if token in URL or session
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Auto-unlock from URL token or session
 (async () => {
-  const params = new URLSearchParams(location.search);
+  const params   = new URLSearchParams(location.search);
   const urlToken = params.get('token');
   const sessToken = sessionStorage.getItem('dist_token');
-  const token = urlToken || sessToken;
-  if (token) {
-    try {
-      const r = await fetch(`/api/distribution?action=verify&token=${token}`);
-      const d = await r.json();
-      if (d.ok) {
-        subToken = d.subscriber.token;
-        subName  = d.subscriber.name;
-        sessionStorage.setItem('dist_token', subToken);
-        sessionStorage.setItem('dist_name',  subName);
-        await unlockPortal();
-        return;
-      }
-    } catch {}
-  }
+  const token    = urlToken || sessToken;
+  if (!token) return;
+  try {
+    const r = await fetch(`/api/distribution?action=verify&token=${encodeURIComponent(token)}`);
+    const d = await r.json();
+    if (d.ok) {
+      subToken = d.subscriber.token;
+      sessionStorage.setItem('dist_token', subToken);
+      sessionStorage.setItem('dist_name',  d.subscriber.name);
+      unlockPortal(d.subscriber.name);
+    }
+  } catch {}
 })();
 </script>
 </body>

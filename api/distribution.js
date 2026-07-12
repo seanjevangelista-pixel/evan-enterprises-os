@@ -105,7 +105,7 @@ export default async function handler(req, res) {
     else url += `&email=eq.${encodeURIComponent(email)}`;
     const r = await fetch(url, { headers: h });
     const rows = await r.json();
-    if (!Array.isArray(rows) || !rows[0]) return res.status(403).json({ ok: false, error: 'Not an active subscriber', _debug: { status: r.status, rows } });
+    if (!Array.isArray(rows) || !rows[0]) return res.status(403).json({ ok: false, error: 'Not an active subscriber' });
     return res.status(200).json({ ok: true, subscriber: { name: rows[0].name, email: rows[0].email, token: rows[0].access_token } });
   }
 

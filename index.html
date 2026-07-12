@@ -58,11 +58,12 @@ nav {
   transition: opacity 0.2s;
 }
 .nav-logo:hover { opacity: 0.82; }
-.nav-logo-svg {
-  width: 38px; height: auto; flex-shrink: 0;
+.nav-logo-img {
+  height: 36px; width: auto; flex-shrink: 0;
+  mix-blend-mode: screen;
   transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
 }
-.nav-logo:hover .nav-logo-svg { transform: scale(1.06); }
+.nav-logo:hover .nav-logo-img { transform: scale(1.06); }
 .nav-links { display: flex; align-items: center; gap: 8px; }
 .nav-links a {
   font-size: 13px; color: var(--text2); text-decoration: none;
@@ -328,11 +329,10 @@ nav {
 .about-inner { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1fr 1.4fr; gap: 72px; align-items: center; }
 .about-left { display: flex; flex-direction: column; gap: 20px; }
 .about-avatar {
-  width: 80px; height: 80px; border-radius: 50%;
-  background: linear-gradient(135deg, #1D4ED8, #3B82F6);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 24px; font-weight: 700; color: #fff;
-  border: 2px solid rgba(99,153,255,0.3);
+  width: 88px; height: 88px; border-radius: 50%;
+  object-fit: cover; object-position: center top;
+  border: 2px solid rgba(255,255,255,0.12);
+  display: block;
 }
 .about-name { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text); }
 .about-title { font-size: 13px; color: var(--text3); margin-top: 2px; letter-spacing: 0.04em; }
@@ -443,27 +443,17 @@ footer {
 }
 #intro-overlay.fade-out { opacity: 0; }
 #intro-logo-wrap {
-  display: flex; flex-direction: column; align-items: center; gap: 18px;
-  transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.5s ease;
-  will-change: transform;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.6s ease;
+  will-change: transform, opacity;
+  opacity: 0;
+  animation: introFadeIn 0.5s ease 0.1s forwards;
 }
-#intro-logo-svg { width: 88px; height: auto; }
-#intro-logo-text {
-  font-family: var(--font-display); font-size: 13px; font-weight: 700;
-  letter-spacing: 0.2em; color: var(--text3);
-  transition: opacity 0.4s ease;
+@keyframes introFadeIn { to { opacity: 1; } }
+#intro-logo-svg {
+  width: min(420px, 80vw); height: auto;
+  mix-blend-mode: screen;
 }
-#intro-logo-line {
-  width: 1px; height: 0; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15), transparent);
-  transition: height 0.7s ease 0.2s;
-}
-#intro-logo-line.grow { height: 60px; }
-#intro-tagline {
-  font-size: 11px; color: var(--text3); letter-spacing: 0.12em;
-  text-transform: uppercase; opacity: 0;
-  transition: opacity 0.5s ease 0.5s;
-}
-#intro-tagline.show { opacity: 1; }
 nav { opacity: 0; transition: opacity 0.4s ease; }
 nav.visible { opacity: 1; }
 
@@ -596,43 +586,14 @@ nav.visible { opacity: 1; }
 <!-- INTRO OVERLAY -->
 <div id="intro-overlay">
   <div id="intro-logo-wrap">
-    <svg id="intro-logo-svg" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="il1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
-        <linearGradient id="il2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
-        <linearGradient id="il3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
-        <linearGradient id="ilr" x1="1" y1="0" x2="0.5" y2="0"><stop offset="0%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
-      </defs>
-      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#il1)"/>
-      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#ilr)"/>
-      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#il2)"/>
-      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#ilr)"/>
-      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#il3)"/>
-      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#ilr)"/>
-    </svg>
-    <div id="intro-logo-text">EVAN ENTERPRISES</div>
+    <img id="intro-logo-svg" src="logo-full.png" alt="Evan Enterprises LLC">
   </div>
-  <div id="intro-logo-line"></div>
-  <div id="intro-tagline">Distribution &amp; Marketing</div>
 </div>
 
 <!-- NAV -->
 <nav id="site-nav">
   <a href="/" class="nav-logo">
-    <svg class="nav-logo-svg" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="nl1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
-        <linearGradient id="nl2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
-        <linearGradient id="nl3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
-        <linearGradient id="nlr" x1="1" y1="0" x2="0.5" y2="0"><stop offset="0%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
-      </defs>
-      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#nl1)"/>
-      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#nlr)"/>
-      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#nl2)"/>
-      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#nlr)"/>
-      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#nl3)"/>
-      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#nlr)"/>
-    </svg>
+    <img src="logo-mark.png" alt="Evan Enterprises" class="nav-logo-img">
     EVAN ENTERPRISES
   </a>
   <div class="nav-links" id="nav-links">
@@ -1069,7 +1030,7 @@ nav.visible { opacity: 1; }
 <div class="about-section" id="about">
   <div class="about-inner">
     <div class="about-left reveal">
-      <div class="about-avatar">SE</div>
+      <img src="sean.jpg" alt="Sean Evangelista" class="about-avatar">
       <div>
         <div class="about-name">Sean Evangelista</div>
         <div class="about-title">Founder — Evan Enterprises LLC</div>
@@ -1145,20 +1106,7 @@ nav.visible { opacity: 1; }
 <!-- FOOTER -->
 <footer>
   <a href="/" class="footer-logo">
-    <svg style="width:30px;height:auto;flex-shrink:0;opacity:0.6" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="fl1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
-        <linearGradient id="fl2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
-        <linearGradient id="fl3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
-        <linearGradient id="flr" x1="1" y1="0" x2="0.5" y2="0"><stop offset="0%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
-      </defs>
-      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#fl1)"/>
-      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#flr)"/>
-      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#fl2)"/>
-      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#flr)"/>
-      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#fl3)"/>
-      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#flr)"/>
-    </svg>
+    <img src="logo-mark.png" alt="Evan Enterprises" style="height:28px;width:auto;mix-blend-mode:screen;opacity:0.7">
     EVAN ENTERPRISES LLC
   </a>
   <div class="footer-links">
@@ -1177,49 +1125,39 @@ nav.visible { opacity: 1; }
 (function() {
   var overlay = document.getElementById('intro-overlay');
   var wrap    = document.getElementById('intro-logo-wrap');
-  var line    = document.getElementById('intro-logo-line');
-  var tag     = document.getElementById('intro-tagline');
   var nav     = document.getElementById('site-nav');
   if (!overlay) return;
 
-  // Phase 1: grow line + show tagline
-  setTimeout(function() { line.classList.add('grow'); }, 100);
-  setTimeout(function() { tag.classList.add('show'); }, 300);
-
-  // Phase 2: fly logo to nav position
+  // Phase 1: hold logo centered for 1.2s, then fly to nav
   setTimeout(function() {
-    var navLogo = nav.querySelector('.nav-logo-svg');
-    var introSvg = document.getElementById('intro-logo-svg');
-    if (!navLogo || !introSvg) return;
+    var navImg   = nav.querySelector('.nav-logo-img');
+    var introImg = document.getElementById('intro-logo-svg');
+    if (!navImg || !introImg) return;
 
-    // Where the nav logo will live (nav becomes visible after fly)
-    var navRect   = nav.getBoundingClientRect();
-    var wrapRect  = wrap.getBoundingClientRect();
-    var navLogoX  = 48; // nav left padding
-    var navLogoY  = navRect.height / 2;
+    var wrapRect = wrap.getBoundingClientRect();
+    var wrapCx   = wrapRect.left + wrapRect.width / 2;
+    var wrapCy   = wrapRect.top  + wrapRect.height / 2;
 
-    var wrapCx = wrapRect.left + wrapRect.width / 2;
-    var wrapCy = wrapRect.top  + wrapRect.height / 2;
+    // Target: nav logo image position
+    var navRect  = navImg.getBoundingClientRect();
+    var navCx    = navRect.left + navRect.width / 2;
+    var navCy    = navRect.top  + navRect.height / 2;
 
-    var tx = navLogoX + 19 - wrapCx;  // 19 = half of 38px logo
-    var ty = navLogoY - wrapCy;
+    var tx    = navCx - wrapCx;
+    var ty    = navCy - wrapCy;
+    var scale = navRect.height / wrapRect.height;
 
-    var scale = 38 / introSvg.getBoundingClientRect().width;
-
-    // Hide tagline + line
-    tag.style.opacity  = '0';
-    line.style.opacity = '0';
-    document.getElementById('intro-logo-text').style.opacity = '0';
-
+    wrap.style.transformOrigin = 'center center';
     wrap.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + scale + ')';
+    wrap.style.opacity = '0';
 
-    // Phase 3: fade overlay, show nav
+    // Phase 2: fade overlay, reveal nav
     setTimeout(function() {
       overlay.classList.add('fade-out');
       nav.classList.add('visible');
       setTimeout(function() { overlay.remove(); }, 700);
-    }, 900);
-  }, 1400);
+    }, 850);
+  }, 1200);
 })();
 
 // ── REVEAL ON SCROLL ──

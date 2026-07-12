@@ -831,17 +831,17 @@ async function handle_outreach_send(req, res) {
 
 // ── BUFFER ──
 const BUFFER_TOKEN = process.env.BUFFER_ACCESS_TOKEN;
+const BUFFER_ORG_ID = '6a52f6662ab024a3a8c01a78';
 
-async function bufferRequest(path, method = 'GET', body = null) {
-  const options = {
-    method,
+async function bufferGQL(query, variables = {}) {
+  const r = await fetch('https://api.buffer.com/graphql', {
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${BUFFER_TOKEN}`,
       'Content-Type': 'application/json',
     },
-  };
-  if (body) options.body = JSON.stringify(body);
-  const r = await fetch(`https://api.buffer.com/1${path}`, options);
+    body: JSON.stringify({ query, variables }),
+  });
   return r.json();
 }
 
@@ -854,85 +854,107 @@ async function handle_buffer(req, res) {
 
   const { sub } = req.query;
 
-  // GET ?action=buffer&sub=channels — list all connected profiles
+  // GET ?action=buffer&sub=channels — list all connected channels
   if (!sub || sub === 'channels') {
     try {
-      const data = await bufferRequest('/profiles.json');
-      if (data.error) return res.status(400).json({ error: data.error });
-      const channels = (Array.isArray(data) ? data : []).map(p => ({
-        id:       p.id,
-        service:  p.service,
-        username: p.formatted_username || p.service_username,
-        avatar:   p.avatar_https || p.avatar,
-      }));
-      return res.status(200).json({ ok: true, channels });
+      const data = await bufferGQL(`{ channels(input: { organizationId: "${BUFFER_ORG_ID}" }) { id service name serviceId } }`);
+      if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
+      return res.status(200).json({ ok: true, channels: data.data?.channels || [] });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
   }
 
   // POST ?action=buffer&sub=post — create/schedule a post
-  // Body: { text, profile_ids: [], scheduled_at?: ISO string, media?: { photo: url } }
+  // Body: { text, channel_ids: [], scheduled_at?: ISO string, media_urls?: string[] }
   if (sub === 'post') {
     if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
-    const { text, profile_ids, scheduled_at, media } = req.body || {};
-    if (!text || !profile_ids?.length) return res.status(400).json({ error: 'text and profile_ids required' });
+    const { text, channel_ids, scheduled_at, media_urls } = req.body || {};
+    if (!text || !channel_ids?.length) return res.status(400).json({ error: 'text and channel_ids required' });
 
     try {
-      const payload = { text, profile_ids, shorten: false };
-      if (scheduled_at) payload.scheduled_at = scheduled_at;
-      if (media?.photo) payload.media = { photo: media.photo };
+      const media = media_urls?.length
+        ? media_urls.map(url => `{ url: "${url}", mediaType: IMAGE }`)
+        : [];
+      const scheduledAtArg = scheduled_at ? `, scheduledAt: "${scheduled_at}"` : '';
+      const mediaArg = media.length ? `, media: [${media.join(', ')}]` : '';
+      const channelIds = channel_ids.map(id => `"${id}"`).join(', ');
 
-      const data = await bufferRequest('/updates/create.json', 'POST', payload);
-      if (data.error) return res.status(400).json({ error: data.error });
-      return res.status(200).json({ ok: true, updates: data.updates || [], buffer_count: data.buffer_count });
+      const mutation = `
+        mutation {
+          createPost(input: {
+            organizationId: "${BUFFER_ORG_ID}",
+            channelIds: [${channelIds}],
+            text: ${JSON.stringify(text)}
+            ${scheduledAtArg}
+            ${mediaArg}
+          }) {
+            posts { id status scheduledAt channel { service name } }
+          }
+        }
+      `;
+      const data = await bufferGQL(mutation);
+      if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
+      return res.status(200).json({ ok: true, posts: data.data?.createPost?.posts || [] });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
   }
 
-  // GET ?action=buffer&sub=pending&profile_id=XXX — pending queue for a channel
-  if (sub === 'pending') {
-    const { profile_id } = req.query;
-    if (!profile_id) return res.status(400).json({ error: 'profile_id required' });
+  // GET ?action=buffer&sub=queue&channel_id=XXX — scheduled queue for a channel
+  if (sub === 'queue') {
+    const { channel_id } = req.query;
+    if (!channel_id) return res.status(400).json({ error: 'channel_id required' });
     try {
-      const data = await bufferRequest(`/profiles/${profile_id}/updates/pending.json`);
-      if (data.error) return res.status(400).json({ error: data.error });
-      return res.status(200).json({ ok: true, updates: data.updates || [], total: data.total });
+      const data = await bufferGQL(`{
+        posts(input: { organizationId: "${BUFFER_ORG_ID}", channelIds: ["${channel_id}"], status: [SCHEDULED] }) {
+          edges { node { id text status scheduledAt channel { service name } } }
+        }
+      }`);
+      if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
+      const posts = (data.data?.posts?.edges || []).map(e => e.node);
+      return res.status(200).json({ ok: true, posts });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
   }
 
-  // GET ?action=buffer&sub=sent&profile_id=XXX — sent posts for a channel
+  // GET ?action=buffer&sub=sent&channel_id=XXX — sent posts for a channel
   if (sub === 'sent') {
-    const { profile_id } = req.query;
-    if (!profile_id) return res.status(400).json({ error: 'profile_id required' });
+    const { channel_id } = req.query;
+    if (!channel_id) return res.status(400).json({ error: 'channel_id required' });
     try {
-      const data = await bufferRequest(`/profiles/${profile_id}/updates/sent.json`);
-      if (data.error) return res.status(400).json({ error: data.error });
-      return res.status(200).json({ ok: true, updates: data.updates || [], total: data.total });
+      const data = await bufferGQL(`{
+        posts(input: { organizationId: "${BUFFER_ORG_ID}", channelIds: ["${channel_id}"], status: [SENT] }) {
+          edges { node { id text status scheduledAt channel { service name } } }
+        }
+      }`);
+      if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
+      const posts = (data.data?.posts?.edges || []).map(e => e.node);
+      return res.status(200).json({ ok: true, posts });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
   }
 
-  // DELETE ?action=buffer&sub=delete — delete a scheduled post
-  // Body: { update_id }
+  // POST ?action=buffer&sub=delete — delete a scheduled post
+  // Body: { post_id }
   if (sub === 'delete') {
     if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
-    const { update_id } = req.body || {};
-    if (!update_id) return res.status(400).json({ error: 'update_id required' });
+    const { post_id } = req.body || {};
+    if (!post_id) return res.status(400).json({ error: 'post_id required' });
     try {
-      const data = await bufferRequest(`/updates/${update_id}/destroy.json`, 'POST');
-      if (data.error) return res.status(400).json({ error: data.error });
+      const data = await bufferGQL(`
+        mutation { deletePost(input: { postId: "${post_id}" }) { postId } }
+      `);
+      if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
       return res.status(200).json({ ok: true });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
   }
 
-  return res.status(400).json({ error: 'Unknown sub-action. Use: channels, post, pending, sent, delete' });
+  return res.status(400).json({ error: 'Unknown sub-action. Use: channels, post, queue, sent, delete' });
 }
 
 // ── SQUARE ──

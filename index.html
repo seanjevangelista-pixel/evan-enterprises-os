@@ -432,9 +432,135 @@ footer {
 .footer-links a:hover { color: var(--text2); }
 .footer-copy { font-size: 12px; color: var(--text3); }
 
+/* ── INTRO ANIMATION ── */
+#intro-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 20px;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+#intro-overlay.fade-out { opacity: 0; }
+#intro-logo-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.5s ease;
+  will-change: transform;
+}
+#intro-logo-svg { width: 88px; height: auto; }
+#intro-logo-text {
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.2em; color: var(--text3);
+  transition: opacity 0.4s ease;
+}
+#intro-logo-line {
+  width: 1px; height: 0; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15), transparent);
+  transition: height 0.7s ease 0.2s;
+}
+#intro-logo-line.grow { height: 60px; }
+#intro-tagline {
+  font-size: 11px; color: var(--text3); letter-spacing: 0.12em;
+  text-transform: uppercase; opacity: 0;
+  transition: opacity 0.5s ease 0.5s;
+}
+#intro-tagline.show { opacity: 1; }
+nav { opacity: 0; transition: opacity 0.4s ease; }
+nav.visible { opacity: 1; }
+
 /* ── REVEAL ── */
 .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── HOW IT WORKS ── */
+.how-wrap { padding: 80px 24px; background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.how-inner { max-width: var(--max); margin: 0 auto; }
+.how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+.how-col-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 32px; display: flex; align-items: center; gap: 10px;
+}
+.how-col-label::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
+.how-col-label.green { color: var(--green); }
+.how-col-label.amber { color: var(--amber); }
+.how-steps { display: flex; flex-direction: column; gap: 0; }
+.how-step { display: flex; gap: 20px; padding-bottom: 28px; position: relative; }
+.how-step:not(:last-child)::before {
+  content: ''; position: absolute; left: 15px; top: 34px; bottom: 0;
+  width: 1px; background: var(--border2);
+}
+.how-step-num {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  border: 1px solid var(--border2); background: var(--surface);
+  color: var(--text3); position: relative; z-index: 1;
+}
+.how-step-num.green { border-color: rgba(16,185,129,0.3); color: var(--green); background: var(--green-dim); }
+.how-step-num.amber { border-color: rgba(245,158,11,0.3); color: var(--amber); background: var(--amber-dim); }
+.how-step-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 5px; padding-top: 5px; }
+.how-step-body  { font-size: 13px; color: var(--text2); line-height: 1.65; }
+
+/* ── PRICING ── */
+.pricing-wrap { padding: 80px 24px; }
+.pricing-inner { max-width: var(--max); margin: 0 auto; }
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 48px; }
+.pricing-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 14px; padding: 36px 32px;
+  display: flex; flex-direction: column;
+}
+.pricing-card.featured { border-color: rgba(16,185,129,0.3); background: linear-gradient(160deg, #0D1F14 0%, var(--surface) 60%); }
+.pricing-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 99px; margin-bottom: 20px; align-self: flex-start;
+}
+.pricing-badge.green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+.pricing-badge.amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+.pricing-name { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.pricing-price {
+  font-family: var(--font-mono); font-size: 44px; font-weight: 500; color: var(--text);
+  line-height: 1; margin-bottom: 4px;
+}
+.pricing-price sup { font-size: 20px; vertical-align: super; line-height: 1; }
+.pricing-period { font-size: 13px; color: var(--text3); margin-bottom: 28px; }
+.pricing-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+.pricing-features { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; flex: 1; }
+.pricing-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text2); }
+.pricing-feature::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.pricing-feature.amber-check::before { color: var(--amber); }
+.pricing-note { font-size: 12px; color: var(--text3); margin-top: 12px; line-height: 1.6; }
+
+/* ── SOCIAL PROOF ── */
+.social-wrap { padding: 60px 24px; border-top: 1px solid var(--border); }
+.social-inner { max-width: var(--max); margin: 0 auto; }
+.social-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 40px; }
+.social-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 12px;
+  padding: 24px 22px;
+}
+.social-quote { font-size: 14px; color: var(--text2); line-height: 1.75; margin-bottom: 18px; font-style: italic; }
+.social-author { display: flex; align-items: center; gap: 12px; }
+.social-avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
+}
+.social-avatar.green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+.social-avatar.amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+.social-avatar.blue  { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(59,130,246,0.2); }
+.social-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.social-biz  { font-size: 11px; color: var(--text3); }
+.social-handles { display: flex; justify-content: center; gap: 16px; margin-top: 48px; flex-wrap: wrap; }
+.social-handle {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: 8px;
+  background: var(--surface); border: 1px solid var(--border2);
+  font-size: 13px; font-weight: 500; color: var(--text2);
+  text-decoration: none; transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.social-handle:hover { color: var(--text); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+.social-handle-icon { font-size: 16px; }
 
 /* ── MOBILE ── */
 @media (max-width: 768px) {
@@ -453,6 +579,11 @@ footer {
   footer { flex-direction: column; gap: 16px; padding: 28px 24px; text-align: center; }
   .footer-links { justify-content: center; }
   .section-wrap { padding: 60px 20px; }
+  .how-grid { grid-template-columns: 1fr; gap: 48px; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .social-grid { grid-template-columns: 1fr; }
+  .social-handles { flex-direction: column; align-items: center; }
+  #intro-logo-svg { width: 64px; }
 }
 @media (max-width: 480px) {
   .hero-split { gap: 10px; }
@@ -461,6 +592,29 @@ footer {
 </style>
 </head>
 <body>
+
+<!-- INTRO OVERLAY -->
+<div id="intro-overlay">
+  <div id="intro-logo-wrap">
+    <svg id="intro-logo-svg" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="il1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
+        <linearGradient id="il2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
+        <linearGradient id="il3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
+        <linearGradient id="ilr" x1="1" y1="0" x2="0.5" y2="0"><stop offset="0%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
+      </defs>
+      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#il1)"/>
+      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#ilr)"/>
+      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#il2)"/>
+      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#ilr)"/>
+      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#il3)"/>
+      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#ilr)"/>
+    </svg>
+    <div id="intro-logo-text">EVAN ENTERPRISES</div>
+  </div>
+  <div id="intro-logo-line"></div>
+  <div id="intro-tagline">Distribution &amp; Marketing</div>
+</div>
 
 <!-- NAV -->
 <nav id="site-nav">
@@ -753,6 +907,161 @@ footer {
   </div>
 </div>
 
+<!-- HOW IT WORKS -->
+<div class="how-wrap reveal">
+  <div class="how-inner">
+    <div class="how-grid">
+      <div>
+        <div class="how-col-label green">How Distribution Works</div>
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="how-step-num green">1</div>
+            <div>
+              <div class="how-step-title">Subscribe to the leads list</div>
+              <div class="how-step-body">Pick a plan and get instant access to your private portal. New leads drop every month on the 1st.</div>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num green">2</div>
+            <div>
+              <div class="how-step-title">Review your leads with full data</div>
+              <div class="how-step-body">Every lead shows buy price, sell price, FBA fees, estimated profit, ROI, monthly sales volume, and competition level.</div>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num green">3</div>
+            <div>
+              <div class="how-step-title">Source, list, and collect</div>
+              <div class="how-step-body">Order your inventory, list on Amazon, Walmart, or eBay, and send to FBA. Repeat with next month's leads.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="how-col-label amber">How Marketing Works</div>
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="how-step-num amber">1</div>
+            <div>
+              <div class="how-step-title">Free 30-minute strategy call</div>
+              <div class="how-step-body">We talk through your business, current ad situation, goals, and what's not working. No pitch deck, just a real conversation.</div>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num amber">2</div>
+            <div>
+              <div class="how-step-title">I take over your accounts</div>
+              <div class="how-step-body">You grant access to your Google, Meta, and LSA accounts. I audit everything, fix what's broken, and build what's missing within the first week.</div>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num amber">3</div>
+            <div>
+              <div class="how-step-title">Monthly reports, live dashboard</div>
+              <div class="how-step-body">You get a login to your client portal on day one. Every month on the 1st, a full performance report lands in your inbox.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="pricing-wrap" id="pricing">
+  <div class="pricing-inner">
+    <div class="section-eyebrow green reveal" style="text-align:center">Simple Pricing</div>
+    <h2 class="section-title reveal" style="text-align:center;margin-bottom:0;transition-delay:.05s">No retainer games.<br>No hidden fees.</h2>
+    <div class="pricing-grid reveal" style="transition-delay:.1s">
+      <div class="pricing-card featured">
+        <span class="pricing-badge green">Distribution</span>
+        <div class="pricing-name">Monthly Leads</div>
+        <div class="pricing-price"><sup>$</sup>99</div>
+        <div class="pricing-period">per month · cancel anytime</div>
+        <div class="pricing-divider"></div>
+        <div class="pricing-features">
+          <div class="pricing-feature">10–15 vetted product leads every month</div>
+          <div class="pricing-feature">Amazon, Walmart & eBay opportunities</div>
+          <div class="pricing-feature">Full FBA cost breakdown per lead</div>
+          <div class="pricing-feature">Buy price, sell price, profit & ROI data</div>
+          <div class="pricing-feature">Monthly sales volume & competition level</div>
+          <div class="pricing-feature">Private subscriber portal access</div>
+          <div class="pricing-feature">Exclusive — not shared with the public</div>
+        </div>
+        <a href="#contact" class="btn-green" style="text-align:center;justify-content:center">Get access →</a>
+      </div>
+      <div class="pricing-card">
+        <span class="pricing-badge amber">Marketing</span>
+        <div class="pricing-name">Ad Management</div>
+        <div class="pricing-price" style="color:var(--amber)"><sup style="font-size:18px">from</sup> $500</div>
+        <div class="pricing-period">per month · based on scope</div>
+        <div class="pricing-divider"></div>
+        <div class="pricing-features">
+          <div class="pricing-feature amber-check">Google Search Ads management</div>
+          <div class="pricing-feature amber-check">Google Local Service Ads (LSA)</div>
+          <div class="pricing-feature amber-check">Facebook & Instagram ad management</div>
+          <div class="pricing-feature amber-check">Live client dashboard portal</div>
+          <div class="pricing-feature amber-check">Monthly performance report (1st of month)</div>
+          <div class="pricing-feature amber-check">You own your accounts — no lock-in</div>
+          <div class="pricing-feature amber-check">Direct access to Sean, always</div>
+        </div>
+        <a href="#contact" class="btn-amber" style="text-align:center;justify-content:center">Book a free call →</a>
+        <div class="pricing-note">Ad spend is separate and billed directly to your card. Management fee covers strategy, execution, and reporting.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SOCIAL PROOF -->
+<div class="social-wrap">
+  <div class="social-inner">
+    <div class="section-eyebrow blue reveal" style="text-align:center;color:var(--blue)">What Clients Say</div>
+    <div class="social-grid reveal" style="transition-delay:.05s">
+      <div class="social-card">
+        <div class="social-quote">"Sean took over our Google Ads and LSA in the first week. Within 30 days our lead volume doubled and our cost per lead dropped significantly."</div>
+        <div class="social-author">
+          <div class="social-avatar green">PL</div>
+          <div>
+            <div class="social-name">Premier Landscaping ATX</div>
+            <div class="social-biz">Austin, TX — Landscaping</div>
+          </div>
+        </div>
+      </div>
+      <div class="social-card">
+        <div class="social-quote">"The distribution leads are legitimate. The ROI data is accurate and the leads are exclusive — not the same recycled stuff you see on other lists."</div>
+        <div class="social-author">
+          <div class="social-avatar amber">MS</div>
+          <div>
+            <div class="social-name">Mediterranean Spa</div>
+            <div class="social-biz">Baltimore, MD — Wellness</div>
+          </div>
+        </div>
+      </div>
+      <div class="social-card">
+        <div class="social-quote">"Having a live dashboard where I can see my leads, spend, and ROAS without waiting for a report — that alone is worth the management fee."</div>
+        <div class="social-author">
+          <div class="social-avatar blue">EE</div>
+          <div>
+            <div class="social-name">Evan Enterprises Client</div>
+            <div class="social-biz">Verified marketing client</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="social-handles reveal" style="transition-delay:.1s">
+      <a href="#" class="social-handle" id="handle-ig">
+        <span class="social-handle-icon">📸</span> @seanevangelista
+      </a>
+      <a href="#" class="social-handle" id="handle-li">
+        <span class="social-handle-icon">💼</span> linkedin.com/in/seanevangelista
+      </a>
+      <a href="#" class="social-handle" id="handle-tw">
+        <span class="social-handle-icon">✕</span> @seanevangelista
+      </a>
+    </div>
+  </div>
+</div>
+
 <!-- ABOUT -->
 <div class="about-section" id="about">
   <div class="about-inner">
@@ -861,6 +1170,55 @@ footer {
 </footer>
 
 <script>
+// ── INTRO ANIMATION ──
+(function() {
+  var overlay = document.getElementById('intro-overlay');
+  var wrap    = document.getElementById('intro-logo-wrap');
+  var line    = document.getElementById('intro-logo-line');
+  var tag     = document.getElementById('intro-tagline');
+  var nav     = document.getElementById('site-nav');
+  if (!overlay) return;
+
+  // Phase 1: grow line + show tagline
+  setTimeout(function() { line.classList.add('grow'); }, 100);
+  setTimeout(function() { tag.classList.add('show'); }, 300);
+
+  // Phase 2: fly logo to nav position
+  setTimeout(function() {
+    var navLogo = nav.querySelector('.nav-logo-svg');
+    var introSvg = document.getElementById('intro-logo-svg');
+    if (!navLogo || !introSvg) return;
+
+    // Where the nav logo will live (nav becomes visible after fly)
+    var navRect   = nav.getBoundingClientRect();
+    var wrapRect  = wrap.getBoundingClientRect();
+    var navLogoX  = 48; // nav left padding
+    var navLogoY  = navRect.height / 2;
+
+    var wrapCx = wrapRect.left + wrapRect.width / 2;
+    var wrapCy = wrapRect.top  + wrapRect.height / 2;
+
+    var tx = navLogoX + 19 - wrapCx;  // 19 = half of 38px logo
+    var ty = navLogoY - wrapCy;
+
+    var scale = 38 / introSvg.getBoundingClientRect().width;
+
+    // Hide tagline + line
+    tag.style.opacity  = '0';
+    line.style.opacity = '0';
+    document.getElementById('intro-logo-text').style.opacity = '0';
+
+    wrap.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + scale + ')';
+
+    // Phase 3: fade overlay, show nav
+    setTimeout(function() {
+      overlay.classList.add('fade-out');
+      nav.classList.add('visible');
+      setTimeout(function() { overlay.remove(); }, 700);
+    }, 900);
+  }, 1400);
+})();
+
 // ── REVEAL ON SCROLL ──
 const revealObs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });

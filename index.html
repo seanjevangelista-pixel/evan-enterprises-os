@@ -436,26 +436,64 @@ footer {
 #intro-overlay {
   position: fixed; inset: 0; z-index: 999;
   background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 20px;
   pointer-events: none;
-  transition: opacity 0.6s ease;
 }
-#intro-overlay.fade-out { opacity: 0; }
-#intro-logo-wrap {
-  display: flex; align-items: center; justify-content: center;
-  transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.6s ease;
-  will-change: transform, opacity;
+#intro-overlay.fade-out {
+  transition: opacity 0.55s ease;
   opacity: 0;
-  animation: introFadeIn 0.5s ease 0.1s forwards;
 }
-@keyframes introFadeIn { to { opacity: 1; } }
-#intro-logo-svg {
-  width: min(420px, 80vw); height: auto;
+#intro-el {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(90px, 14vw, 140px);
+  overflow: hidden;
+  border-radius: 6px;
+}
+#intro-e {
+  width: 100%; height: auto; display: block;
   mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  user-select: none; -webkit-user-drag: none;
+}
+#intro-e.show { opacity: 1; }
+#intro-sheen {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    108deg,
+    transparent 20%,
+    rgba(255,255,255,0.0) 35%,
+    rgba(255,255,255,0.65) 50%,
+    rgba(255,255,255,0.0) 65%,
+    transparent 80%
+  );
+  transform: translateX(-180%);
+  pointer-events: none;
+  will-change: transform;
+}
+#intro-sheen.sweep {
+  transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(180%);
+}
+#intro-el.fly {
+  will-change: transform, opacity;
+  transition:
+    transform 0.92s cubic-bezier(0.76, 0, 0.24, 1),
+    opacity   0.4s ease 0.35s;
+  /* flies toward top-left nav corner, scales to nav logo size */
+  transform: translate(
+    calc(-50% + var(--nav-cx, 66px) - 50vw),
+    calc(-50% + var(--nav-cy, 31px) - 50vh)
+  ) scale(var(--nav-sc, 0.27));
+  opacity: 0;
 }
 nav { opacity: 0; transition: opacity 0.4s ease; }
 nav.visible { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  #intro-overlay { display: none !important; }
+  nav { opacity: 1 !important; transition: none !important; }
+}
 
 /* ── REVEAL ── */
 .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
@@ -584,9 +622,10 @@ nav.visible { opacity: 1; }
 <body>
 
 <!-- INTRO OVERLAY -->
-<div id="intro-overlay">
-  <div id="intro-logo-wrap">
-    <img id="intro-logo-svg" src="logo-full.png" alt="Evan Enterprises LLC">
+<div id="intro-overlay" aria-hidden="true">
+  <div id="intro-el">
+    <img id="intro-e" src="logo-mark.png" alt="" draggable="false" fetchpriority="high">
+    <div id="intro-sheen"></div>
   </div>
 </div>
 
@@ -1123,41 +1162,44 @@ nav.visible { opacity: 1; }
 <script>
 // ── INTRO ANIMATION ──
 (function() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var overlay = document.getElementById('intro-overlay');
-  var wrap    = document.getElementById('intro-logo-wrap');
+  var el      = document.getElementById('intro-el');
+  var img     = document.getElementById('intro-e');
+  var sheen   = document.getElementById('intro-sheen');
   var nav     = document.getElementById('site-nav');
-  if (!overlay) return;
+  if (!overlay || !el || !img) return;
 
-  // Phase 1: hold logo centered for 1.2s, then fly to nav
-  setTimeout(function() {
-    var navImg   = nav.querySelector('.nav-logo-img');
-    var introImg = document.getElementById('intro-logo-svg');
-    if (!navImg || !introImg) return;
-
-    var wrapRect = wrap.getBoundingClientRect();
-    var wrapCx   = wrapRect.left + wrapRect.width / 2;
-    var wrapCy   = wrapRect.top  + wrapRect.height / 2;
-
-    // Target: nav logo image position
-    var navRect  = navImg.getBoundingClientRect();
-    var navCx    = navRect.left + navRect.width / 2;
-    var navCy    = navRect.top  + navRect.height / 2;
-
-    var tx    = navCx - wrapCx;
-    var ty    = navCy - wrapCy;
-    var scale = navRect.height / wrapRect.height;
-
-    wrap.style.transformOrigin = 'center center';
-    wrap.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + scale + ')';
-    wrap.style.opacity = '0';
-
-    // Phase 2: fade overlay, reveal nav
+  function done() {
+    overlay.classList.add('fade-out');
+    nav.classList.add('visible');
     setTimeout(function() {
-      overlay.classList.add('fade-out');
-      nav.classList.add('visible');
-      setTimeout(function() { overlay.remove(); }, 700);
-    }, 850);
-  }, 1200);
+      overlay.parentNode && overlay.parentNode.removeChild(overlay);
+      el.style.willChange = 'auto';
+    }, 600);
+  }
+
+  // Phase 1 — fade E in
+  setTimeout(function() { img.classList.add('show'); }, 80);
+
+  // Phase 2 — silver lining sweep
+  setTimeout(function() { sheen.classList.add('sweep'); }, 480);
+
+  // Phase 3 — measure nav logo, set CSS vars, fly
+  setTimeout(function() {
+    var navImg = nav.querySelector('.nav-logo-img');
+    if (navImg) {
+      var r  = navImg.getBoundingClientRect();
+      var cx = Math.round(r.left + r.width  / 2);
+      var cy = Math.round(r.top  + r.height / 2);
+      var sc = parseFloat((r.height / el.getBoundingClientRect().height).toFixed(4));
+      el.style.setProperty('--nav-cx', cx + 'px');
+      el.style.setProperty('--nav-cy', cy + 'px');
+      el.style.setProperty('--nav-sc', sc);
+    }
+    el.classList.add('fly');
+    setTimeout(done, 820);
+  }, 1380);
 })();
 
 // ── REVEAL ON SCROLL ──

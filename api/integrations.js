@@ -829,6 +829,112 @@ async function handle_outreach_send(req, res) {
   return res.status(200).json({ ok: true, sent, results });
 }
 
+// ── BUFFER ──
+const BUFFER_TOKEN = process.env.BUFFER_ACCESS_TOKEN;
+
+async function bufferRequest(path, method = 'GET', body = null) {
+  const options = {
+    method,
+    headers: {
+      Authorization: `Bearer ${BUFFER_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+  };
+  if (body) options.body = JSON.stringify(body);
+  const r = await fetch(`https://api.buffer.com/1${path}`, options);
+  return r.json();
+}
+
+async function handle_buffer(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
+  if (!BUFFER_TOKEN) return res.status(500).json({ error: 'BUFFER_ACCESS_TOKEN not set in Vercel env vars' });
+
+  const { sub } = req.query;
+
+  // GET ?action=buffer&sub=channels — list all connected profiles
+  if (!sub || sub === 'channels') {
+    try {
+      const data = await bufferRequest('/profiles.json');
+      if (data.error) return res.status(400).json({ error: data.error });
+      const channels = (Array.isArray(data) ? data : []).map(p => ({
+        id:       p.id,
+        service:  p.service,
+        username: p.formatted_username || p.service_username,
+        avatar:   p.avatar_https || p.avatar,
+      }));
+      return res.status(200).json({ ok: true, channels });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  // POST ?action=buffer&sub=post — create/schedule a post
+  // Body: { text, profile_ids: [], scheduled_at?: ISO string, media?: { photo: url } }
+  if (sub === 'post') {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
+    const { text, profile_ids, scheduled_at, media } = req.body || {};
+    if (!text || !profile_ids?.length) return res.status(400).json({ error: 'text and profile_ids required' });
+
+    try {
+      const payload = { text, profile_ids, shorten: false };
+      if (scheduled_at) payload.scheduled_at = scheduled_at;
+      if (media?.photo) payload.media = { photo: media.photo };
+
+      const data = await bufferRequest('/updates/create.json', 'POST', payload);
+      if (data.error) return res.status(400).json({ error: data.error });
+      return res.status(200).json({ ok: true, updates: data.updates || [], buffer_count: data.buffer_count });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  // GET ?action=buffer&sub=pending&profile_id=XXX — pending queue for a channel
+  if (sub === 'pending') {
+    const { profile_id } = req.query;
+    if (!profile_id) return res.status(400).json({ error: 'profile_id required' });
+    try {
+      const data = await bufferRequest(`/profiles/${profile_id}/updates/pending.json`);
+      if (data.error) return res.status(400).json({ error: data.error });
+      return res.status(200).json({ ok: true, updates: data.updates || [], total: data.total });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  // GET ?action=buffer&sub=sent&profile_id=XXX — sent posts for a channel
+  if (sub === 'sent') {
+    const { profile_id } = req.query;
+    if (!profile_id) return res.status(400).json({ error: 'profile_id required' });
+    try {
+      const data = await bufferRequest(`/profiles/${profile_id}/updates/sent.json`);
+      if (data.error) return res.status(400).json({ error: data.error });
+      return res.status(200).json({ ok: true, updates: data.updates || [], total: data.total });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  // DELETE ?action=buffer&sub=delete — delete a scheduled post
+  // Body: { update_id }
+  if (sub === 'delete') {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
+    const { update_id } = req.body || {};
+    if (!update_id) return res.status(400).json({ error: 'update_id required' });
+    try {
+      const data = await bufferRequest(`/updates/${update_id}/destroy.json`, 'POST');
+      if (data.error) return res.status(400).json({ error: data.error });
+      return res.status(200).json({ ok: true });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  return res.status(400).json({ error: 'Unknown sub-action. Use: channels, post, pending, sent, delete' });
+}
+
 // ── SQUARE ──
 async function handle_square(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -899,5 +1005,6 @@ export default async function handler(req, res) {
   if (action === 'monthly-report') return handle_monthly_report(req, res);
   if (action === 'outreach') return handle_outreach_send(req, res);
   if (action === 'square') return handle_square(req, res);
+  if (action === 'buffer') return handle_buffer(req, res);
   return res.status(400).json({ error: 'Unknown action' });
 }

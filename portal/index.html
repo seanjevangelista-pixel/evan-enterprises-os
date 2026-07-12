@@ -391,11 +391,10 @@ async function showPortal() {
   document.getElementById('greeting-text').textContent =
     h < 12 ? 'Good morning.' : h < 17 ? 'Good afternoon.' : 'Good evening.';
 
-  const { data: userRow, error: userErr } = await sb.from('users').select('client_id').eq('id', user.id).single();
+  const { data: userRow } = await sb.from('users').select('client_id').eq('id', user.id).single();
   const clientId = userRow?.client_id;
   if (!clientId) {
-    const dbg = `user.id=${user.id} | userRow=${JSON.stringify(userRow)} | err=${userErr?.message}`;
-    document.getElementById('loading').innerHTML = `<div class="empty-state"><strong>No account linked</strong><br><small style="color:var(--text3);font-family:monospace;font-size:10px;word-break:break-all">${dbg}</small></div>`;
+    document.getElementById('loading').innerHTML = '<div class="empty-state"><strong>No account linked</strong>Contact Sean to get your portal set up.</div>';
     return;
   }
 
@@ -449,7 +448,7 @@ async function showPortal() {
     lsaEl.innerHTML = `<div style="overflow-x:auto"><table class="data-table">
       <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Phone</th></tr></thead>
       <tbody>${lsaLeads.map(l => `<tr>
-        <td class="mono">${new Date(l.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td>
+        <td class="mono">${new Date(l.lead_date || l.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td>
         <td class="name">${l.customer_name || '—'}</td>
         <td><span class="status status-blue">${l.lead_type || 'Lead'}</span></td>
         <td>${l.customer_phone || '—'}</td>

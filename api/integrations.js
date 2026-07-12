@@ -3,9 +3,11 @@
 // Route via: /api/integrations?action=google-ads-auth|google-ads|jobber|...
 
 // ── GOOGLE-ADS-AUTH ──
-const SUPABASE_URL  = process.env.SUPABASE_URL  || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
-const SUPABASE_ANON = process.env.SUPABASE_ANON || 'sb_publishable_C6qf6KSBHv07VGTDNmpvZg_H0nnLrhR';
-const REDIRECT_URI  = 'https://evan-enterprises-os.vercel.app/dashboard';
+const SUPABASE_URL      = process.env.SUPABASE_URL      || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
+const SUPABASE_ANON     = process.env.SUPABASE_ANON     || 'sb_publishable_C6qf6KSBHv07VGTDNmpvZg_H0nnLrhR';
+const SUPABASE_SERVICE  = process.env.SUPABASE_SERVICE_KEY || SUPABASE_ANON;
+const REDIRECT_URI      = 'https://evan-enterprises-os.vercel.app/dashboard';
+const MEDIA_BUCKET      = 'media';
 
 // ── Supabase helpers ──
 async function getSetting(key) {
@@ -829,6 +831,96 @@ async function handle_outreach_send(req, res) {
   return res.status(200).json({ ok: true, sent, results });
 }
 
+// ── MEDIA UPLOAD ──
+// Handles images (<4.5MB via base64) and videos (signed URL for direct upload)
+async function ensureMediaBucket() {
+  // Create bucket if it doesn't exist
+  await fetch(`${SUPABASE_URL}/storage/v1/bucket`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_SERVICE,
+      Authorization: `Bearer ${SUPABASE_SERVICE}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id: MEDIA_BUCKET, name: MEDIA_BUCKET, public: true }),
+  });
+}
+
+async function handle_media(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
+  const { sub } = req.query;
+
+  // POST ?action=media&sub=upload — upload image as base64
+  // Body: { filename, contentType, data: base64string }
+  if (sub === 'upload') {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
+    const { filename, contentType, data } = req.body || {};
+    if (!filename || !contentType || !data) return res.status(400).json({ error: 'filename, contentType, and data (base64) required' });
+
+    try {
+      await ensureMediaBucket();
+      const bytes = Buffer.from(data, 'base64');
+      const path  = `${Date.now()}-${filename}`;
+      const r = await fetch(`${SUPABASE_URL}/storage/v1/object/${MEDIA_BUCKET}/${path}`, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_SERVICE,
+          Authorization: `Bearer ${SUPABASE_SERVICE}`,
+          'Content-Type': contentType,
+        },
+        body: bytes,
+      });
+      if (!r.ok) {
+        const err = await r.json();
+        return res.status(400).json({ error: err.message || 'Upload failed' });
+      }
+      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${MEDIA_BUCKET}/${path}`;
+      return res.status(200).json({ ok: true, url: publicUrl, path });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  // POST ?action=media&sub=sign — get a signed upload URL for large videos (bypass Vercel 4.5MB limit)
+  // Body: { filename, contentType }
+  if (sub === 'sign') {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
+    const { filename, contentType } = req.body || {};
+    if (!filename || !contentType) return res.status(400).json({ error: 'filename and contentType required' });
+
+    try {
+      await ensureMediaBucket();
+      const path = `${Date.now()}-${filename}`;
+      const r = await fetch(`${SUPABASE_URL}/storage/v1/object/upload/sign/${MEDIA_BUCKET}/${path}`, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_SERVICE,
+          Authorization: `Bearer ${SUPABASE_SERVICE}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ upsert: false }),
+      });
+      const result = await r.json();
+      if (!r.ok) return res.status(400).json({ error: result.message || 'Failed to create signed URL' });
+      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${MEDIA_BUCKET}/${path}`;
+      return res.status(200).json({
+        ok: true,
+        signedUrl: `${SUPABASE_URL}${result.url}`,
+        token: result.token,
+        publicUrl,
+        path,
+      });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  return res.status(400).json({ error: 'Unknown sub-action. Use: upload, sign' });
+}
+
 // ── BUFFER ──
 const BUFFER_TOKEN = process.env.BUFFER_ACCESS_TOKEN;
 const BUFFER_ORG_ID = '6a52f6662ab024a3a8c01a78';
@@ -1028,5 +1120,6 @@ export default async function handler(req, res) {
   if (action === 'outreach') return handle_outreach_send(req, res);
   if (action === 'square') return handle_square(req, res);
   if (action === 'buffer') return handle_buffer(req, res);
+  if (action === 'media') return handle_media(req, res);
   return res.status(400).json({ error: 'Unknown action' });
 }

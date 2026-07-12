@@ -3,429 +3,440 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Evan Enterprises LLC — Marketing & Business Management</title>
+<title>Evan Enterprises LLC — Distribution & Marketing</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0A0F1E">
-<meta name="description" content="Evan Enterprises LLC manages your website, marketing, leads, operations, and reporting — so you can focus on what you do best.">
+<meta name="description" content="Evan Enterprises offers two services: curated product leads for Amazon & Walmart sellers, and full-service ad management for local businesses.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ── TOKENS ── */
 :root {
-  --dark: #0A0F1E;
-  --dark-2: #0F172A;
-  --dark-card: #131929;
-  --dark-border: rgba(255,255,255,0.08);
-  --bg: #FFFFFF;
-  --bg-subtle: #F8FAFC;
-  --bg-muted: #F1F5F9;
-  --border: #E2E8F0;
-  --border-strong: #CBD5E1;
-  --text-1: #0F172A;
-  --text-2: #475569;
-  --text-3: #94A3B8;
-  --accent: #1D4ED8;
-  --accent-bright: #2563EB;
-  --accent-dim: rgba(29,78,216,0.10);
-  --accent-glow: rgba(29,78,216,0.18);
-  --green: #059669;
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --max: 1120px;
-  --radius: 10px;
+  --bg:        #0A0F1E;
+  --bg2:       #0F172A;
+  --surface:   #131929;
+  --surface2:  #1A2440;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #F9FAFB;
+  --text2:     rgba(255,255,255,0.55);
+  --text3:     rgba(255,255,255,0.3);
+  --blue:      #3B82F6;
+  --blue-dim:  rgba(59,130,246,0.12);
+  --green:     #10B981;
+  --green-dim: rgba(16,185,129,0.10);
+  --amber:     #F59E0B;
+  --amber-dim: rgba(245,158,11,0.10);
+  --red:       #EF4444;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+  --max:       1160px;
+  --r:         12px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
-body { background: var(--bg); color: var(--text-1); font-family: var(--font-body); font-size: 15px; line-height: 1.6; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.6; overflow-x: hidden; }
 
 /* ── NAV ── */
 nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(10,15,30,0.92);
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--dark-border);
+  background: rgba(10,15,30,0.88);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 48px; height: 60px;
-  transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
-}
-nav.light {
-  background: rgba(255,255,255,0.96);
-  border-bottom-color: var(--border);
-  box-shadow: 0 1px 0 0 var(--border);
+  padding: 0 48px; height: 62px;
 }
 .nav-logo {
   display: flex; align-items: center; gap: 10px;
-  text-decoration: none; color: #fff;
-  font-family: var(--font-display); font-size: 12px; font-weight: 800; letter-spacing: 0.18em;
-  transition: color 0.25s;
+  text-decoration: none;
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.16em; color: var(--text);
 }
-nav.light .nav-logo { color: var(--text-1); }
-.nav-logo svg { width: 26px; height: auto; flex-shrink: 0; }
-.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-logo-mark {
+  display: flex; flex-direction: column; gap: 3px;
+}
+.nav-logo-mark span {
+  display: block; height: 2px; border-radius: 1px; background: var(--blue);
+  transform-origin: left;
+}
+.nav-logo-mark span:nth-child(1) { width: 18px; }
+.nav-logo-mark span:nth-child(2) { width: 14px; }
+.nav-logo-mark span:nth-child(3) { width: 10px; }
+.nav-links { display: flex; align-items: center; gap: 8px; }
 .nav-links a {
-  font-size: 13px; font-weight: 450; color: rgba(255,255,255,0.7);
-  text-decoration: none; transition: color 0.12s;
+  font-size: 13px; color: var(--text2); text-decoration: none;
+  padding: 6px 14px; border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
 }
-.nav-links a:hover { color: #fff; }
-nav.light .nav-links a { color: var(--text-2); }
-nav.light .nav-links a:hover { color: var(--text-1); }
+.nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.nav-links .nav-dist { color: var(--green); }
+.nav-links .nav-dist:hover { background: var(--green-dim); }
+.nav-links .nav-mkt { color: var(--amber); }
+.nav-links .nav-mkt:hover { background: var(--amber-dim); }
 .nav-cta {
-  background: var(--accent) !important; color: #fff !important;
-  padding: 8px 18px; border-radius: 6px; font-weight: 500 !important;
-  font-size: 13px !important; transition: background 0.15s !important;
+  background: var(--blue) !important; color: #fff !important;
+  font-weight: 600 !important;
 }
-.nav-cta:hover { background: var(--accent-bright) !important; }
-nav.light .nav-cta { color: #fff !important; }
-
-/* hamburger */
-.nav-hamburger {
-  display: none; flex-direction: column; gap: 5px; cursor: pointer;
-  padding: 4px; background: none; border: none;
-}
-.nav-hamburger span {
-  display: block; width: 22px; height: 2px;
-  background: rgba(255,255,255,0.8); border-radius: 1px;
-  transition: background 0.25s, transform 0.25s, opacity 0.25s;
-}
-nav.light .nav-hamburger span { background: var(--text-2); }
+.nav-cta:hover { opacity: 0.88; }
+.nav-hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+.nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--text2); border-radius: 1px; transition: 0.25s; }
 .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav-hamburger.open span:nth-child(2) { opacity: 0; }
 .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.nav-mobile { display: none; flex-direction: column; position: fixed; top: 62px; left: 0; right: 0; background: var(--bg2); border-bottom: 1px solid var(--border); z-index: 99; padding: 12px 0 20px; }
+.nav-mobile.open { display: flex; }
+.nav-mobile a { font-size: 15px; color: var(--text2); text-decoration: none; padding: 12px 24px; transition: color 0.15s; }
+.nav-mobile a:hover { color: var(--text); }
 
-.nav-mobile-menu {
-  display: none; flex-direction: column; gap: 0;
-  position: fixed; top: 60px; left: 0; right: 0;
-  background: var(--dark); border-bottom: 1px solid var(--dark-border);
-  z-index: 99; padding: 8px 0 16px;
-}
-.nav-mobile-menu.open { display: flex; }
-.nav-mobile-menu a {
-  font-size: 15px; color: rgba(255,255,255,0.8); text-decoration: none;
-  padding: 12px 24px; transition: color 0.12s, background 0.12s;
-}
-.nav-mobile-menu a:hover { color: #fff; background: rgba(255,255,255,0.04); }
-.nav-mobile-menu .nav-cta {
-  margin: 8px 24px 0; border-radius: 7px !important;
-  text-align: center; padding: 12px 24px !important;
-}
-
-/* ── HERO (dark) ── */
-.hero-wrap {
-  background: var(--dark);
-  background-image:
-    radial-gradient(ellipse 70% 60% at 70% 50%, rgba(29,78,216,0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(29,78,216,0.06) 0%, transparent 70%);
-}
-.hero {
-  max-width: var(--max); margin: 0 auto;
-  padding: 104px 48px 88px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
-}
+/* ── HERO SPLIT ── */
+.hero-wrap { padding: 64px 24px 0; max-width: var(--max); margin: 0 auto; }
 .hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
-  color: rgba(99,153,255,0.9); text-transform: uppercase; margin-bottom: 24px;
+  text-align: center; margin-bottom: 40px;
+  font-family: var(--font-display); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--text3);
 }
-.hero-eyebrow::before { content: ''; display: block; width: 20px; height: 2px; background: var(--accent-bright); border-radius: 1px; }
-.hero h1 {
-  font-family: var(--font-body); font-size: clamp(38px, 4.5vw, 58px);
-  font-weight: 700; line-height: 1.08; letter-spacing: -0.035em;
-  color: #fff; margin-bottom: 22px;
-}
-.hero h1 em { font-style: normal; color: #6099FF; }
-.hero-sub { font-size: 16px; color: rgba(255,255,255,0.55); line-height: 1.75; max-width: 460px; margin-bottom: 38px; }
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-.btn-primary {
-  display: inline-flex; align-items: center;
-  background: var(--accent); color: #fff;
-  padding: 13px 26px; border-radius: 7px;
-  font-size: 14px; font-weight: 500; text-decoration: none;
-  border: 1px solid var(--accent); transition: background 0.15s, transform 0.15s;
-}
-.btn-primary:hover { background: var(--accent-bright); transform: translateY(-1px); }
-.btn-ghost {
-  display: inline-flex; align-items: center;
-  background: transparent; color: rgba(255,255,255,0.7);
-  padding: 13px 26px; border-radius: 7px;
-  font-size: 14px; font-weight: 500; text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.15); transition: border-color 0.15s, color 0.15s;
-}
-.btn-ghost:hover { border-color: rgba(255,255,255,0.35); color: #fff; }
+.hero-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-/* hero stat grid */
-.hero-right { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.hero-stat {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--radius); padding: 24px 20px;
-  backdrop-filter: blur(6px);
+/* ── PATH CARD ── */
+.path-card {
+  border-radius: var(--r); overflow: hidden;
+  border: 1px solid var(--border2);
+  display: flex; flex-direction: column;
+  transition: border-color 0.25s;
+  cursor: pointer;
+}
+.path-card:hover { border-color: rgba(255,255,255,0.2); }
+.path-card.dist { background: linear-gradient(160deg, #0D1F14 0%, #0A0F1E 60%); }
+.path-card.mkt  { background: linear-gradient(160deg, #1F1600 0%, #0A0F1E 60%); }
+
+.path-top { padding: 36px 32px 28px; }
+.path-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 99px; margin-bottom: 24px;
+}
+.path-tag.dist-tag { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+.path-tag.mkt-tag  { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+.path-tag-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.path-headline {
+  font-family: var(--font-display); font-size: clamp(28px, 3vw, 40px);
+  font-weight: 700; line-height: 1.1; letter-spacing: -0.03em;
+  color: var(--text); margin-bottom: 14px;
+}
+.path-headline em { font-style: normal; }
+.path-headline .dist-em { color: var(--green); }
+.path-headline .mkt-em  { color: var(--amber); }
+.path-sub { font-size: 14px; color: var(--text2); line-height: 1.75; max-width: 320px; margin-bottom: 28px; }
+.path-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 24px; border-radius: 8px; border: none; cursor: pointer;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  text-decoration: none; transition: opacity 0.15s, transform 0.15s;
+}
+.path-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+.dist-cta { background: var(--green); color: #fff; }
+.mkt-cta  { background: var(--amber); color: #0A0F1E; }
+
+/* ── DATA MOCK (inside each card) ── */
+.path-data { padding: 0 20px 24px; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; }
+.data-mock {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+
+/* Distribution product card mock */
+.product-mock-header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text3);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.product-mock-badge {
+  font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+  background: rgba(255,153,0,0.15); color: #FF9900; letter-spacing: 0.04em;
+}
+.product-mock-body { padding: 14px 16px; }
+.product-mock-name {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  margin-bottom: 14px; line-height: 1.35;
+}
+.product-mock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mock-metric {
+  background: rgba(255,255,255,0.04); border-radius: 7px; padding: 10px 12px;
+}
+.mock-metric-label { font-size: 9px; color: var(--text3); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+.mock-metric-val { font-family: var(--font-mono); font-size: 17px; font-weight: 500; color: var(--text); }
+.mock-metric-val.green { color: var(--green); }
+.mock-metric-val.blue  { color: var(--blue); }
+.mock-meta { margin-top: 10px; font-size: 11px; color: var(--text3); display: flex; gap: 12px; }
+.mock-meta span { display: flex; align-items: center; gap: 4px; }
+
+/* Marketing dashboard mock */
+.dash-mock-header {
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text3);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.dash-mock-live { display: flex; align-items: center; gap: 5px; font-size: 9px; color: var(--green); font-weight: 700; }
+.dash-mock-live::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.dash-mock-stats { display: grid; grid-template-columns: repeat(3, 1fr); padding: 14px 16px; gap: 10px; border-bottom: 1px solid var(--border); }
+.dash-stat-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.dash-stat-val { font-family: var(--font-mono); font-size: 18px; font-weight: 500; color: var(--text); }
+.dash-stat-val.amber { color: var(--amber); }
+.dash-stat-val.green { color: var(--green); }
+.dash-platforms { display: flex; gap: 8px; padding: 12px 16px; flex-wrap: wrap; }
+.dash-platform {
+  font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 5px;
+  background: rgba(255,255,255,0.05); color: var(--text2);
+  border: 1px solid var(--border);
+}
+.dash-platform.active { background: var(--amber-dim); color: var(--amber); border-color: rgba(245,158,11,0.2); }
+
+/* ── BRAND STATEMENT ── */
+.brand-wrap {
+  max-width: var(--max); margin: 64px auto; padding: 0 24px;
+  text-align: center;
+}
+.brand-rule { width: 40px; height: 2px; background: var(--blue); margin: 0 auto 28px; border-radius: 1px; }
+.brand-statement {
+  font-family: var(--font-display); font-size: clamp(22px, 2.8vw, 34px);
+  font-weight: 600; line-height: 1.35; letter-spacing: -0.02em;
+  color: var(--text); max-width: 680px; margin: 0 auto 16px;
+}
+.brand-sub { font-size: 15px; color: var(--text2); max-width: 460px; margin: 0 auto; line-height: 1.75; }
+
+/* ── SECTION SHARED ── */
+.section-wrap { padding: 80px 24px; }
+.section-inner { max-width: var(--max); margin: 0 auto; }
+.section-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.section-eyebrow.green { color: var(--green); }
+.section-eyebrow.amber { color: var(--amber); }
+.section-title {
+  font-family: var(--font-display); font-size: clamp(26px, 3vw, 40px);
+  font-weight: 700; letter-spacing: -0.025em; line-height: 1.1;
+  color: var(--text); margin-bottom: 16px;
+}
+.section-sub { font-size: 15px; color: var(--text2); max-width: 500px; line-height: 1.75; margin-bottom: 52px; }
+
+/* ── DISTRIBUTION SECTION ── */
+.dist-section { background: linear-gradient(180deg, var(--bg) 0%, #0B1A0F 50%, var(--bg) 100%); }
+.dist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.dist-features { display: flex; flex-direction: column; gap: 20px; }
+.dist-feature { display: flex; gap: 16px; align-items: flex-start; }
+.dist-feature-icon {
+  width: 36px; height: 36px; border-radius: 8px; background: var(--green-dim);
+  border: 1px solid rgba(16,185,129,0.2); display: flex; align-items: center;
+  justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+.dist-feature-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.dist-feature-body  { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.dist-sample-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--r); overflow: hidden;
+}
+.dist-sample-top {
+  background: var(--green-dim); border-bottom: 1px solid rgba(16,185,129,0.15);
+  padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;
+}
+.dist-sample-label { font-size: 11px; font-weight: 700; color: var(--green); letter-spacing: 0.08em; text-transform: uppercase; }
+.dist-sample-platform { font-size: 10px; font-weight: 700; color: #FF9900; background: rgba(255,153,0,0.12); padding: 2px 8px; border-radius: 4px; }
+.dist-sample-body { padding: 20px; }
+.dist-sample-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 16px; line-height: 1.4; }
+.dist-sample-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.dsm { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 14px; }
+.dsm-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+.dsm-val { font-family: var(--font-mono); font-size: 20px; font-weight: 500; color: var(--text); }
+.dsm-val.profit { color: var(--green); }
+.dsm-val.roi    { color: var(--blue); }
+.dist-sample-footer { font-size: 12px; color: var(--text3); display: flex; gap: 16px; }
+.dist-sample-footer span::before { content: '·'; margin-right: 6px; color: var(--text3); }
+.dist-sample-footer span:first-child::before { display: none; }
+.dist-cta-row { margin-top: 40px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.btn-green {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--green); color: #fff; padding: 13px 26px;
+  border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;
+  border: none; cursor: pointer; font-family: var(--font-body);
+  transition: opacity 0.15s, transform 0.15s;
+}
+.btn-green:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-ghost-green {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--green); padding: 13px 26px;
+  border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;
+  border: 1px solid rgba(16,185,129,0.3); cursor: pointer; font-family: var(--font-body);
+  transition: border-color 0.15s, background 0.15s;
+}
+.btn-ghost-green:hover { border-color: var(--green); background: var(--green-dim); }
+.price-note { font-size: 13px; color: var(--text3); }
+.price-note strong { color: var(--text); font-family: var(--font-mono); }
+
+/* ── MARKETING SECTION ── */
+.mkt-section { background: linear-gradient(180deg, var(--bg) 0%, #1A1200 50%, var(--bg) 100%); }
+.mkt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.platforms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.platform-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 20px 18px;
   transition: border-color 0.2s, background 0.2s;
 }
-.hero-stat:hover { background: rgba(255,255,255,0.06); border-color: rgba(99,153,255,0.2); }
-.hero-stat-num { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: #fff; line-height: 1; margin-bottom: 8px; }
-.hero-stat-num.accent { color: #6099FF; }
-.hero-stat-num.green  { color: #34D399; }
-.hero-stat-label { font-size: 12px; color: rgba(255,255,255,0.45); font-weight: 400; }
-
-/* ── TRUST BAR ── */
-.trust-bar {
-  background: var(--dark-2); border-top: 1px solid var(--dark-border); border-bottom: 1px solid var(--dark-border);
-  padding: 20px 48px;
+.platform-card:hover { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.04); }
+.platform-icon { font-size: 22px; margin-bottom: 10px; }
+.platform-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.platform-desc { font-size: 12px; color: var(--text2); line-height: 1.55; }
+.mkt-features { display: flex; flex-direction: column; gap: 0; margin-bottom: 40px; }
+.mkt-feature {
+  padding: 20px 0; border-bottom: 1px solid var(--border);
+  display: flex; gap: 16px; align-items: flex-start;
 }
-.trust-bar-inner {
-  max-width: var(--max); margin: 0 auto;
-  display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+.mkt-feature:first-child { padding-top: 0; }
+.mkt-feature:last-child  { border-bottom: none; }
+.mkt-feature-num {
+  font-family: var(--font-mono); font-size: 11px; color: var(--amber);
+  padding-top: 2px; flex-shrink: 0; width: 20px;
 }
-.trust-label { font-size: 11px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(255,255,255,0.3); white-space: nowrap; }
-.trust-divider { width: 1px; height: 20px; background: var(--dark-border); }
-.trust-badges { display: flex; gap: 20px; flex-wrap: wrap; }
-.trust-badge {
-  font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.55);
-  padding: 6px 14px; border: 1px solid var(--dark-border);
-  border-radius: 99px; letter-spacing: -0.01em;
+.mkt-feature-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.mkt-feature-body  { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.btn-amber {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--amber); color: #0A0F1E; padding: 13px 26px;
+  border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;
+  border: none; cursor: pointer; font-family: var(--font-body);
+  transition: opacity 0.15s, transform 0.15s;
 }
-
-/* ── SERVICES ── */
-.services-wrap { background: var(--dark); }
-.section { max-width: var(--max); margin: 0 auto; padding: 88px 48px; }
-.section-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6099FF; margin-bottom: 12px; }
-.section-title { font-size: clamp(26px, 3vw, 38px); font-weight: 700; letter-spacing: -0.025em; color: #fff; line-height: 1.2; margin-bottom: 14px; }
-.section-sub { font-size: 15px; color: rgba(255,255,255,0.5); max-width: 520px; line-height: 1.7; margin-bottom: 52px; }
-.section-title-dark { color: #fff; }
-.section-eyebrow-dark { color: #6099FF; }
-.section-sub-dark { color: rgba(255,255,255,0.5); }
-
-.services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
-.service-card { background: rgba(255,255,255,0.03); border: 1px solid var(--dark-border); border-radius: var(--radius); padding: 32px 28px; transition: background 0.15s, border-color 0.15s; }
-.service-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(99,153,255,0.2); }
-.service-icon { width: 40px; height: 40px; background: rgba(29,78,216,0.15); border-radius: 9px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 18px; }
-.service-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 10px; letter-spacing: -0.01em; }
-.service-body { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.65; margin-bottom: 18px; }
-.service-features { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-.service-features li { font-size: 12px; color: rgba(255,255,255,0.4); display: flex; align-items: center; gap: 8px; }
-.service-features li::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: #6099FF; flex-shrink: 0; }
-
-/* ── ABOUT (dark) ── */
-.about-wrap { background: var(--dark); }
-.about-inner {
-  max-width: var(--max); margin: 0 auto; padding: 88px 48px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start;
+.btn-amber:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-ghost-amber {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--amber); padding: 13px 26px;
+  border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;
+  border: 1px solid rgba(245,158,11,0.3); cursor: pointer; font-family: var(--font-body);
+  transition: border-color 0.15s, background 0.15s;
 }
-.about-avatar-block { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+.btn-ghost-amber:hover { border-color: var(--amber); background: var(--amber-dim); }
+
+/* ── ABOUT ── */
+.about-section { padding: 80px 24px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.about-inner { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1fr 1.4fr; gap: 72px; align-items: center; }
+.about-left { display: flex; flex-direction: column; gap: 20px; }
 .about-avatar {
-  width: 96px; height: 96px; border-radius: 50%;
-  background: linear-gradient(135deg, #1D4ED8 0%, #3B82F6 100%);
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, #1D4ED8, #3B82F6);
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 28px; font-weight: 800;
-  color: #fff; letter-spacing: -0.02em; flex-shrink: 0;
+  font-family: var(--font-display); font-size: 24px; font-weight: 700; color: #fff;
   border: 2px solid rgba(99,153,255,0.3);
 }
-.about-name { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
-.about-role { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 2px; letter-spacing: 0.04em; }
-.about-text { font-size: 15px; color: rgba(255,255,255,0.65); line-height: 1.8; }
-.about-text p + p { margin-top: 16px; }
-.about-text blockquote {
-  border-left: 3px solid var(--accent-bright); padding-left: 18px;
-  margin: 20px 0; color: rgba(255,255,255,0.8);
-  font-style: italic; font-size: 15px; line-height: 1.75;
+.about-name { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text); }
+.about-title { font-size: 13px; color: var(--text3); margin-top: 2px; letter-spacing: 0.04em; }
+.about-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.about-tag {
+  font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px;
+  background: rgba(255,255,255,0.05); color: var(--text2);
+  border: 1px solid var(--border);
 }
-.about-creds { margin-top: 8px; }
-.about-cred {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
-  font-size: 13px; color: rgba(255,255,255,0.6);
+.about-tag.green { background: var(--green-dim); color: var(--green); border-color: rgba(16,185,129,0.2); }
+.about-tag.amber { background: var(--amber-dim); color: var(--amber); border-color: rgba(245,158,11,0.2); }
+.about-right {}
+.about-quote {
+  font-family: var(--font-display); font-size: clamp(18px, 2vw, 24px);
+  font-weight: 500; line-height: 1.5; color: var(--text); margin-bottom: 24px;
+  letter-spacing: -0.02em;
 }
-.about-cred:last-child { border-bottom: none; }
-.about-cred-dot {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--accent-bright);
-  flex-shrink: 0; margin-top: 5px;
-}
-.about-cred strong { color: rgba(255,255,255,0.9); font-weight: 500; display: block; margin-bottom: 2px; }
+.about-quote span { color: var(--blue); }
+.about-body { font-size: 14px; color: var(--text2); line-height: 1.8; }
+.about-body p + p { margin-top: 14px; }
 
-/* ── HOW IT WORKS ── */
-.steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; position: relative; }
-.steps-grid::before {
-  content: ''; position: absolute; top: 17px; left: 18px; right: 18px;
-  height: 1px; background: var(--dark-border); z-index: 0;
+/* ── CONTACT ── */
+.contact-section { padding: 80px 24px; }
+.contact-inner { max-width: 700px; margin: 0 auto; }
+.contact-header { text-align: center; margin-bottom: 48px; }
+.contact-title { font-family: var(--font-display); font-size: clamp(26px, 3vw, 38px); font-weight: 700; letter-spacing: -0.025em; color: var(--text); margin-bottom: 12px; }
+.contact-sub { font-size: 15px; color: var(--text2); line-height: 1.7; }
+.contact-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 32px; }
+.contact-select-btn {
+  padding: 14px 20px; border-radius: 10px; border: 1px solid var(--border2);
+  background: var(--surface); cursor: pointer; text-align: left;
+  font-family: var(--font-body); transition: border-color 0.15s, background 0.15s;
 }
-.step { position: relative; z-index: 1; }
-.step-num {
-  width: 36px; height: 36px;
-  background: var(--dark); border: 1px solid var(--dark-border);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.4); margin-bottom: 18px;
-}
-.step.active .step-num { background: var(--accent); border-color: var(--accent); color: #fff; }
-.step-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 8px; }
-.step-body { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.65; }
-
-/* ── CLIENTS / RESULTS ── */
-.results-wrap { background: var(--dark-2); border-top: 1px solid var(--dark-border); border-bottom: 1px solid var(--dark-border); }
-.results-inner { max-width: var(--max); margin: 0 auto; padding: 88px 48px; }
-.results-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 52px; }
-.result-card {
-  background: rgba(255,255,255,0.03); border: 1px solid var(--dark-border);
-  border-radius: var(--radius); padding: 28px 24px;
-}
-.result-biz { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 4px; letter-spacing: -0.01em; }
-.result-meta { font-size: 11px; color: #6099FF; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px; }
-.result-services { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-.result-service {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 13px; color: rgba(255,255,255,0.5); padding: 8px 12px;
-  background: rgba(255,255,255,0.04); border-radius: 6px;
-}
-.result-service::before { content: '✓'; color: #34D399; font-weight: 600; font-size: 11px; }
-.result-quote-card {
-  background: rgba(99,153,255,0.05); border: 1px solid rgba(99,153,255,0.15);
-  border-radius: var(--radius); padding: 32px 28px;
-  display: flex; flex-direction: column; justify-content: center;
-}
-.quote-mark { font-size: 56px; line-height: 0.8; margin-bottom: 20px; font-family: Georgia, serif; color: rgba(99,153,255,0.3); }
-.quote-text { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.75; margin-bottom: 20px; font-style: italic; }
-.quote-author { font-size: 13px; font-weight: 600; color: #fff; }
-.quote-biz { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 2px; }
-
-/* ── FAQ ── */
-.faq-wrap { background: var(--dark); }
-.faq-list { max-width: 720px; margin-top: 48px; }
-.faq-item { border-bottom: 1px solid var(--dark-border); }
-.faq-question {
-  width: 100%; display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; padding: 20px 0; background: none; border: none; cursor: pointer;
-  text-align: left; font-size: 15px; font-weight: 600; color: #fff;
-  letter-spacing: -0.01em; font-family: var(--font-body);
-}
-.faq-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; transition: background 0.15s; font-size: 14px; color: rgba(255,255,255,0.5); user-select: none; }
-.faq-item.open .faq-icon { background: rgba(29,78,216,0.25); color: #6099FF; }
-.faq-answer { display: none; padding: 0 0 20px; font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.75; max-width: 620px; }
-.faq-item.open .faq-answer { display: block; }
-
-/* ── CONTACT (dark) ── */
-.contact-wrap { background: var(--dark); }
-.contact-inner {
-  max-width: var(--max); margin: 0 auto; padding: 88px 48px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
-}
-.contact-left {}
-.contact-left h2 { font-size: clamp(26px, 3vw, 36px); font-weight: 700; letter-spacing: -0.025em; color: #fff; line-height: 1.2; margin-bottom: 16px; }
-.contact-left p { font-size: 15px; color: rgba(255,255,255,0.5); line-height: 1.75; margin-bottom: 36px; }
-.contact-perks { display: flex; flex-direction: column; gap: 14px; }
-.contact-perk { display: flex; align-items: center; gap: 12px; font-size: 13px; color: rgba(255,255,255,0.6); }
-.contact-perk-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-bright); flex-shrink: 0; }
-
+.contact-select-btn:hover { border-color: rgba(255,255,255,0.2); }
+.contact-select-btn.selected.dist { border-color: var(--green); background: var(--green-dim); }
+.contact-select-btn.selected.mkt  { border-color: var(--amber); background: var(--amber-dim); }
+.csb-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.csb-label.green { color: var(--green); }
+.csb-label.amber { color: var(--amber); }
+.csb-desc { font-size: 13px; color: var(--text2); }
 .contact-form { display: flex; flex-direction: column; gap: 14px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .form-field { display: flex; flex-direction: column; gap: 6px; }
-.form-field label { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.5); letter-spacing: 0.03em; }
+.form-field label { font-size: 12px; font-weight: 500; color: var(--text3); letter-spacing: 0.03em; }
 .form-field input,
 .form-field select,
 .form-field textarea {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 7px; padding: 11px 14px;
-  font-size: 14px; color: #fff; font-family: var(--font-body);
-  outline: none; transition: border-color 0.15s, background 0.15s;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 11px 14px; font-size: 14px;
+  color: var(--text); font-family: var(--font-body); outline: none;
+  transition: border-color 0.15s, background 0.15s;
   -webkit-appearance: none; appearance: none;
 }
-.form-field input::placeholder,
-.form-field textarea::placeholder { color: rgba(255,255,255,0.25); }
-.form-field select { color: rgba(255,255,255,0.7); cursor: pointer; }
+.form-field input::placeholder, .form-field textarea::placeholder { color: var(--text3); }
+.form-field select { color: var(--text2); cursor: pointer; }
 .form-field select option { background: #1a2440; color: #fff; }
-.form-field input:focus,
-.form-field select:focus,
-.form-field textarea:focus {
-  border-color: rgba(99,153,255,0.5);
-  background: rgba(255,255,255,0.07);
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+  border-color: rgba(99,153,255,0.4); background: rgba(255,255,255,0.04);
 }
 .form-field textarea { resize: none; }
 .btn-submit {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: var(--accent); color: #fff;
-  padding: 14px 28px; border-radius: 7px;
-  font-size: 14px; font-weight: 500; border: none; cursor: pointer;
-  font-family: var(--font-body); transition: background 0.15s, transform 0.15s;
-  margin-top: 4px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; background: var(--blue); color: #fff;
+  padding: 14px 28px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  border: none; cursor: pointer; font-family: var(--font-body);
+  transition: background 0.15s, transform 0.15s; margin-top: 4px;
 }
-.btn-submit:hover { background: var(--accent-bright); transform: translateY(-1px); }
+.btn-submit:hover { background: #2563EB; transform: translateY(-1px); }
 .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .form-success {
-  display: none; background: rgba(5,150,105,0.12);
-  border: 1px solid rgba(5,150,105,0.25); border-radius: 8px;
-  padding: 16px 20px; text-align: center;
-  font-size: 14px; color: #34D399; line-height: 1.6;
+  display: none; background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.2); border-radius: 8px;
+  padding: 16px 20px; text-align: center; font-size: 14px;
+  color: var(--green); line-height: 1.6;
 }
 .form-success.show { display: block; }
 
 /* ── FOOTER ── */
 footer {
-  background: #06090F; border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 36px 48px;
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;
+  background: #060810; border-top: 1px solid var(--border);
+  padding: 32px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 20px;
 }
 .footer-logo {
-  font-family: var(--font-display); font-size: 11px; font-weight: 800;
-  letter-spacing: 0.18em; color: rgba(255,255,255,0.7); text-decoration: none;
-  display: flex; align-items: center; gap: 9px;
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.16em; color: var(--text3); text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
 }
-.footer-logo svg { width: 22px; }
+.footer-logo-mark { display: flex; flex-direction: column; gap: 3px; }
+.footer-logo-mark span { display: block; height: 2px; background: var(--blue); border-radius: 1px; }
+.footer-logo-mark span:nth-child(1) { width: 14px; opacity: 0.8; }
+.footer-logo-mark span:nth-child(2) { width: 10px; opacity: 0.6; }
+.footer-logo-mark span:nth-child(3) { width: 7px; opacity: 0.4; }
 .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
-.footer-links a { font-size: 12px; color: rgba(255,255,255,0.35); text-decoration: none; transition: color 0.12s; }
-.footer-links a:hover { color: rgba(255,255,255,0.7); }
-.footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
-
-/* ── INTRO ANIMATION ── */
-#intro-cover {
-  position: fixed; inset: 0; z-index: 9998;
-  background: var(--dark);
-  opacity: 1; transition: opacity 0.45s ease; pointer-events: none;
-}
-#intro-cover.fade { opacity: 0; }
-#intro-cover.gone { display: none; }
-
-#intro-wrap {
-  position: fixed; z-index: 9999;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 92px; pointer-events: none; overflow: hidden;
-}
-#intro-wrap.fly {
-  overflow: visible;
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-#intro-wrap::after {
-  content: '';
-  position: absolute; top: -10%; left: -130%;
-  width: 70%; height: 120%;
-  background: linear-gradient(
-    105deg,
-    transparent 0%,
-    rgba(99,153,255,0.15) 30%,
-    rgba(120,170,255,0.5) 48%,
-    rgba(99,153,255,0.3) 52%,
-    rgba(80,130,240,0.15) 65%,
-    transparent 100%
-  );
-  transform: skewX(-12deg); opacity: 0;
-  animation: silver-shine 0.9s cubic-bezier(0.4,0,0.6,1) 0.55s forwards;
-}
-@keyframes silver-shine {
-  0%   { left: -130%; opacity: 1; }
-  100% { left: 150%;  opacity: 1; }
-}
-#intro-wrap svg .e-bar-1 { animation: barIn 0.55s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
-#intro-wrap svg .e-bar-2 { animation: barIn 0.55s cubic-bezier(0.22,1,0.36,1) 0.15s both; }
-#intro-wrap svg .e-bar-3 { animation: barIn 0.55s cubic-bezier(0.22,1,0.36,1) 0.25s both; }
-@keyframes barIn {
-  from { opacity: 0; transform: translateX(-24px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
+.footer-links a { font-size: 12px; color: var(--text3); text-decoration: none; transition: color 0.12s; }
+.footer-links a:hover { color: var(--text2); }
+.footer-copy { font-size: 12px; color: var(--text3); }
 
 /* ── REVEAL ── */
-.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
 /* ── MOBILE ── */
@@ -433,499 +444,414 @@ footer {
   nav { padding: 0 20px; }
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
-
-  .hero { grid-template-columns: 1fr; gap: 44px; padding: 72px 24px 56px; }
-  .hero h1 { font-size: clamp(34px, 9vw, 48px); }
-  .hero-sub { font-size: 15px; max-width: 100%; }
-  .hero-right { grid-template-columns: 1fr 1fr; }
-
-  .trust-bar { padding: 16px 20px; }
-  .trust-bar-inner { gap: 16px; }
-  .trust-divider { display: none; }
-
-  .section { padding: 64px 24px; }
-  .section-sub { margin-bottom: 36px; }
-  .services-grid { grid-template-columns: 1fr 1fr; }
-  @media (max-width: 480px) { .services-grid { grid-template-columns: 1fr; } }
-
-  .about-inner { grid-template-columns: 1fr; gap: 44px; padding: 64px 24px; }
-  .about-avatar-block { flex-direction: row; align-items: center; }
-
-  .steps-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
-  .steps-grid::before { display: none; }
-
-  .results-inner { padding: 64px 24px; }
-  .results-grid { grid-template-columns: 1fr; }
-
-  .contact-inner { grid-template-columns: 1fr; gap: 44px; padding: 64px 24px; }
+  .hero-wrap { padding: 40px 16px 0; }
+  .hero-split { grid-template-columns: 1fr; gap: 12px; }
+  .path-top { padding: 28px 24px 20px; }
+  .path-data { padding: 0 16px 20px; }
+  .dist-grid, .mkt-grid { grid-template-columns: 1fr; gap: 40px; }
+  .platforms-grid { grid-template-columns: 1fr 1fr; }
+  .about-inner { grid-template-columns: 1fr; gap: 40px; }
   .form-row { grid-template-columns: 1fr; }
-
+  .contact-selector { grid-template-columns: 1fr; }
   footer { flex-direction: column; gap: 16px; padding: 28px 24px; text-align: center; }
-  .footer-links { flex-wrap: wrap; justify-content: center; }
+  .footer-links { justify-content: center; }
+  .section-wrap { padding: 60px 20px; }
 }
 @media (max-width: 480px) {
-  .hero-right { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .hero-stat { padding: 18px 14px; }
-  .hero-stat-num { font-size: 22px; }
+  .hero-split { gap: 10px; }
+  .path-headline { font-size: 26px; }
 }
 </style>
 </head>
 <body>
 
-<!-- Intro animation -->
-<div id="intro-cover"></div>
-<div id="intro-wrap">
-  <svg viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="ig1" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stop-color="#6099FF"/>
-        <stop offset="18%"  stop-color="#4A7FE8"/>
-        <stop offset="58%"  stop-color="#2563EB"/>
-        <stop offset="100%" stop-color="#1D4ED8"/>
-      </linearGradient>
-      <linearGradient id="ig2" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stop-color="#4A7FE8"/>
-        <stop offset="28%"  stop-color="#2563EB"/>
-        <stop offset="72%"  stop-color="#1D4ED8"/>
-        <stop offset="100%" stop-color="#1E3A8A"/>
-      </linearGradient>
-      <linearGradient id="ig3" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stop-color="#3B82F6"/>
-        <stop offset="38%"  stop-color="#2563EB"/>
-        <stop offset="100%" stop-color="#1E3A8A"/>
-      </linearGradient>
-      <linearGradient id="igfade" x1="1" y1="0" x2="0.5" y2="0">
-        <stop offset="0%"   stop-color="#000" stop-opacity="0.22"/>
-        <stop offset="100%" stop-color="#000" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <g class="e-bar-1">
-      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#ig1)"/>
-      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#igfade)"/>
-    </g>
-    <g class="e-bar-2">
-      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#ig2)"/>
-      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#igfade)"/>
-    </g>
-    <g class="e-bar-3">
-      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#ig3)"/>
-      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#igfade)"/>
-    </g>
-  </svg>
-</div>
-
 <!-- NAV -->
 <nav id="site-nav">
-  <a href="/" class="nav-logo" id="nav-logo">
-    <svg id="nav-logo-svg" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="ng1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6099FF"/><stop offset="100%" stop-color="#1D4ED8"/></linearGradient>
-        <linearGradient id="ng2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4A7FE8"/><stop offset="100%" stop-color="#2563EB"/></linearGradient>
-        <linearGradient id="ng3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#1E3A8A"/></linearGradient>
-      </defs>
-      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#ng1)"/>
-      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#ng2)"/>
-      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#ng3)"/>
-    </svg>
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-mark">
+      <span></span><span></span><span></span>
+    </div>
     EVAN ENTERPRISES
   </a>
   <div class="nav-links" id="nav-links">
-    <a href="#services">Services</a>
+    <a href="#distribution" class="nav-dist">Distribution</a>
+    <a href="#marketing" class="nav-mkt">Marketing</a>
     <a href="#about">About</a>
-    <a href="#how">Process</a>
-    <a href="#contact" class="nav-cta">Book a free call</a>
+    <a href="#contact" class="nav-cta">Get started</a>
   </div>
   <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
-
-<!-- MOBILE MENU -->
-<div class="nav-mobile-menu" id="nav-mobile-menu">
-  <a href="#services" class="mobile-link">Services</a>
-  <a href="#about" class="mobile-link">About</a>
-  <a href="#how" class="mobile-link">Process</a>
-  <a href="#faq" class="mobile-link">FAQ</a>
-  <a href="#contact" class="nav-cta mobile-link">Book a free call →</a>
+<div class="nav-mobile" id="nav-mobile">
+  <a href="#distribution">Distribution</a>
+  <a href="#marketing">Marketing</a>
+  <a href="#about">About</a>
+  <a href="#contact">Get started →</a>
 </div>
 
-<!-- HERO -->
+<!-- HERO SPLIT -->
 <div class="hero-wrap">
-  <div class="hero">
-    <div class="hero-left">
-      <div class="hero-eyebrow reveal">Marketing &amp; Business Management</div>
-      <h1 class="reveal" style="transition-delay:.06s">Your back office,<br><em>fully managed.</em></h1>
-      <p class="hero-sub reveal" style="transition-delay:.12s">Evan Enterprises handles your website, marketing, leads, operations, and reporting — so you can stay focused on what you do best.</p>
-      <div class="hero-actions reveal" style="transition-delay:.18s">
-        <a href="#contact" class="btn-primary">Book a free call →</a>
-        <a href="#how" class="btn-ghost">See how it works</a>
+  <div class="hero-eyebrow">EVAN ENTERPRISES LLC — TWO SERVICES, ONE OPERATOR</div>
+  <div class="hero-split">
+
+    <!-- DISTRIBUTION CARD -->
+    <div class="path-card dist reveal">
+      <div class="path-top">
+        <div class="path-tag dist-tag"><span class="path-tag-dot"></span>Distribution</div>
+        <div class="path-headline">Sell more.<br>Know your <span class="dist-em">numbers.</span></div>
+        <p class="path-sub">Monthly product leads for Amazon, Walmart, and eBay sellers — every one vetted for margin, demand, and competition level.</p>
+        <a href="#distribution" class="path-cta dist-cta">View lead plans →</a>
+      </div>
+      <div class="path-data">
+        <div class="data-mock">
+          <div class="product-mock-header">
+            This month's sample lead
+            <span class="product-mock-badge">AMAZON</span>
+          </div>
+          <div class="product-mock-body">
+            <div class="product-mock-name">Silicone Kitchen Utensil Set — 5 Piece Heat-Resistant</div>
+            <div class="product-mock-grid">
+              <div class="mock-metric">
+                <div class="mock-metric-label">Buy Price</div>
+                <div class="mock-metric-val">$8.40</div>
+              </div>
+              <div class="mock-metric">
+                <div class="mock-metric-label">Sell Price</div>
+                <div class="mock-metric-val">$34.99</div>
+              </div>
+              <div class="mock-metric">
+                <div class="mock-metric-label">Est. Profit</div>
+                <div class="mock-metric-val green">$18.37</div>
+              </div>
+              <div class="mock-metric">
+                <div class="mock-metric-label">ROI</div>
+                <div class="mock-metric-val blue">148%</div>
+              </div>
+            </div>
+            <div class="mock-meta">
+              <span>~2,400 units/mo</span>
+              <span>Competition: Low</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="hero-right reveal" style="transition-delay:.22s">
-      <div class="hero-stat">
-        <div class="hero-stat-num accent">2</div>
-        <div class="hero-stat-label">Active clients</div>
+
+    <!-- MARKETING CARD -->
+    <div class="path-card mkt reveal" style="transition-delay:.1s">
+      <div class="path-top">
+        <div class="path-tag mkt-tag"><span class="path-tag-dot"></span>Marketing</div>
+        <div class="path-headline">Run ads.<br>Track <span class="mkt-em">everything.</span></div>
+        <p class="path-sub">Full-service ad management across Google, Meta, and LSA — with a live dashboard so you always know where your money's going.</p>
+        <a href="#marketing" class="path-cta mkt-cta">See what's managed →</a>
       </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num green">100%</div>
-        <div class="hero-stat-label">Monthly reports sent</div>
+      <div class="path-data">
+        <div class="data-mock">
+          <div class="dash-mock-header">
+            Client dashboard — Premier Landscaping ATX
+            <span class="dash-mock-live">LIVE</span>
+          </div>
+          <div class="dash-mock-stats">
+            <div>
+              <div class="dash-stat-label">Monthly Leads</div>
+              <div class="dash-stat-val green">47</div>
+            </div>
+            <div>
+              <div class="dash-stat-label">Ad Spend</div>
+              <div class="dash-stat-val amber">$1,240</div>
+            </div>
+            <div>
+              <div class="dash-stat-label">ROAS</div>
+              <div class="dash-stat-val">4.2×</div>
+            </div>
+          </div>
+          <div class="dash-platforms">
+            <span class="dash-platform active">Google Ads</span>
+            <span class="dash-platform active">LSA</span>
+            <span class="dash-platform active">Meta</span>
+            <span class="dash-platform">Instagram</span>
+            <span class="dash-platform">eBay Ads</span>
+          </div>
+        </div>
       </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num">7</div>
-        <div class="hero-stat-label">Days to launch</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BRAND STATEMENT -->
+<div class="brand-wrap reveal">
+  <div class="brand-rule"></div>
+  <p class="brand-statement">One operator. Two businesses. Every client gets direct access to Sean — not an account team, not a junior rep.</p>
+  <p class="brand-sub">Whether you're scaling an ecommerce store or growing a local service business, the standard is the same: full transparency, real numbers, no fluff.</p>
+</div>
+
+<!-- DISTRIBUTION SECTION -->
+<div class="dist-section section-wrap" id="distribution">
+  <div class="section-inner">
+    <div class="dist-grid">
+      <div>
+        <div class="section-eyebrow green reveal">Distribution Leads</div>
+        <h2 class="section-title reveal" style="transition-delay:.05s">Product research,<br>done for you.</h2>
+        <p class="section-sub reveal" style="transition-delay:.1s">Every month you get a curated list of products ready to flip on Amazon, Walmart, or eBay. Each lead includes full sourcing data, estimated fees, and profit projections.</p>
+        <div class="dist-features reveal" style="transition-delay:.15s">
+          <div class="dist-feature">
+            <div class="dist-feature-icon">📦</div>
+            <div>
+              <div class="dist-feature-title">Vetted leads every month</div>
+              <div class="dist-feature-body">Every product is checked for demand, competition level, and real margin — not just sell price vs buy price.</div>
+            </div>
+          </div>
+          <div class="dist-feature">
+            <div class="dist-feature-icon">📊</div>
+            <div>
+              <div class="dist-feature-title">Full FBA cost breakdown</div>
+              <div class="dist-feature-body">See referral fees, fulfillment costs, and net profit before you spend a dollar. Know your ROI upfront.</div>
+            </div>
+          </div>
+          <div class="dist-feature">
+            <div class="dist-feature-icon">🔑</div>
+            <div>
+              <div class="dist-feature-title">Private subscriber portal</div>
+              <div class="dist-feature-body">Access your leads through a private portal with your unique link. Leads are exclusive to subscribers.</div>
+            </div>
+          </div>
+          <div class="dist-feature">
+            <div class="dist-feature-icon">🛒</div>
+            <div>
+              <div class="dist-feature-title">Amazon, Walmart & eBay</div>
+              <div class="dist-feature-body">Leads tagged by platform so you know exactly where to list. Multi-platform opportunities flagged.</div>
+            </div>
+          </div>
+        </div>
+        <div class="dist-cta-row reveal" style="transition-delay:.2s">
+          <a href="/leads" class="btn-green">Access leads portal →</a>
+          <a href="#contact" class="btn-ghost-green">Subscribe — </a>
+          <span class="price-note"><strong>$99</strong>/mo</span>
+        </div>
       </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num accent">M-M</div>
-        <div class="hero-stat-label">Month-to-month</div>
+      <div class="reveal" style="transition-delay:.12s">
+        <div class="dist-sample-card">
+          <div class="dist-sample-top">
+            <span class="dist-sample-label">Sample lead — July 2026</span>
+            <span class="dist-sample-platform">WALMART</span>
+          </div>
+          <div class="dist-sample-body">
+            <div class="dist-sample-name">Premium Stainless Steel Insulated Water Bottle 32oz — BPA Free with Leak-Proof Lid</div>
+            <div class="dist-sample-metrics">
+              <div class="dsm">
+                <div class="dsm-label">Buy Price</div>
+                <div class="dsm-val">$6.80</div>
+              </div>
+              <div class="dsm">
+                <div class="dsm-label">Sell Price</div>
+                <div class="dsm-val">$28.99</div>
+              </div>
+              <div class="dsm">
+                <div class="dsm-label">Est. Profit</div>
+                <div class="dsm-val profit">$14.22</div>
+              </div>
+              <div class="dsm">
+                <div class="dsm-label">ROI</div>
+                <div class="dsm-val roi">209%</div>
+              </div>
+            </div>
+            <div class="dist-sample-footer">
+              <span>3,100 units/mo</span>
+              <span>Competition: Low</span>
+              <span>Category: Kitchen</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- TRUST BAR -->
-<div class="trust-bar reveal">
-  <div class="trust-bar-inner">
-    <span class="trust-label">Trusted by businesses across the US</span>
-    <div class="trust-divider"></div>
-    <div class="trust-badges">
-      <span class="trust-badge">Premier Landscaping ATX</span>
-      <span class="trust-badge">Mediterranean Spa</span>
-    </div>
-  </div>
-</div>
-
-<!-- SERVICES -->
-<div class="services-wrap" id="services">
-  <div class="section">
-    <div class="section-eyebrow reveal">What we manage</div>
-    <div class="section-title reveal">Everything your business needs to grow.</div>
-    <p class="section-sub reveal">One point of contact for your entire back office. No juggling five vendors, no chasing deliverables.</p>
-    <div class="services-grid">
-      <div class="service-card reveal">
-        <div class="service-icon">🌐</div>
-        <div class="service-title">Website &amp; SEO</div>
-        <p class="service-body">A fast, professional website built to convert visitors into leads — optimized for local search.</p>
-        <ul class="service-features">
-          <li>Design &amp; development</li>
-          <li>On-page SEO</li>
-          <li>Google Business Profile</li>
-          <li>Ongoing updates</li>
-        </ul>
+<!-- MARKETING SECTION -->
+<div class="mkt-section section-wrap" id="marketing">
+  <div class="section-inner">
+    <div class="mkt-grid">
+      <div>
+        <div class="section-eyebrow amber reveal">Marketing Management</div>
+        <h2 class="section-title reveal" style="transition-delay:.05s">Your ads.<br>Fully managed.</h2>
+        <p class="section-sub reveal" style="transition-delay:.1s">Google Ads, Local Service Ads, Facebook, Meta, and Instagram — all managed under one roof, tracked in one dashboard, reported to you every month.</p>
+        <div class="mkt-features reveal" style="transition-delay:.15s">
+          <div class="mkt-feature">
+            <span class="mkt-feature-num">01</span>
+            <div>
+              <div class="mkt-feature-title">All your ad platforms in one place</div>
+              <div class="mkt-feature-body">Google Ads, LSA, Facebook, Meta, and Instagram — managed from a single dashboard. One report, full picture.</div>
+            </div>
+          </div>
+          <div class="mkt-feature">
+            <span class="mkt-feature-num">02</span>
+            <div>
+              <div class="mkt-feature-title">Live client dashboard</div>
+              <div class="mkt-feature-body">You get a portal with real data — leads this month, spend, ROAS, job status from Jobber. No waiting for weekly emails.</div>
+            </div>
+          </div>
+          <div class="mkt-feature">
+            <span class="mkt-feature-num">03</span>
+            <div>
+              <div class="mkt-feature-title">Monthly performance reports</div>
+              <div class="mkt-feature-body">A branded report on the 1st of every month. Leads, spend, ROI, what's working, what's next. Honest and direct.</div>
+            </div>
+          </div>
+          <div class="mkt-feature">
+            <span class="mkt-feature-num">04</span>
+            <div>
+              <div class="mkt-feature-title">Month-to-month. No lock-in.</div>
+              <div class="mkt-feature-body">Cancel anytime with 30 days notice. You own your accounts, your spend stays on your card. No held assets.</div>
+            </div>
+          </div>
+        </div>
+        <div class="dist-cta-row reveal" style="transition-delay:.2s">
+          <a href="#contact" class="btn-amber">Book a free call →</a>
+          <a href="/portal" class="btn-ghost-amber">Client login →</a>
+        </div>
       </div>
-      <div class="service-card reveal" style="transition-delay:.06s">
-        <div class="service-icon">📣</div>
-        <div class="service-title">Google Ads</div>
-        <p class="service-body">Paid search campaigns that generate qualified leads at a predictable cost per call.</p>
-        <ul class="service-features">
-          <li>Campaign setup &amp; structure</li>
-          <li>Keyword research</li>
-          <li>Bid management</li>
-          <li>Conversion tracking</li>
-        </ul>
-      </div>
-      <div class="service-card reveal" style="transition-delay:.10s">
-        <div class="service-icon">📍</div>
-        <div class="service-title">Local Service Ads</div>
-        <p class="service-body">Google Guaranteed LSA management so you show up at the very top when locals search for your service.</p>
-        <ul class="service-features">
-          <li>LSA setup &amp; verification</li>
-          <li>Dispute management</li>
-          <li>Lead quality review</li>
-          <li>Budget optimization</li>
-        </ul>
-      </div>
-      <div class="service-card reveal" style="transition-delay:.14s">
-        <div class="service-icon">📋</div>
-        <div class="service-title">Operations (Jobber)</div>
-        <p class="service-body">Your Jobber account fully configured — quoting, scheduling, client management, and automation.</p>
-        <ul class="service-features">
-          <li>Jobber setup &amp; training</li>
-          <li>Quote &amp; job workflows</li>
-          <li>Client communication</li>
-          <li>Automation rules</li>
-        </ul>
-      </div>
-      <div class="service-card reveal" style="transition-delay:.18s">
-        <div class="service-icon">💰</div>
-        <div class="service-title">Invoicing &amp; Finance</div>
-        <p class="service-body">Invoices sent, payments followed up, and your financials organized — no more chasing money.</p>
-        <ul class="service-features">
-          <li>Invoice creation &amp; delivery</li>
-          <li>Payment follow-up</li>
-          <li>Monthly P&amp;L summary</li>
-          <li>Cash flow visibility</li>
-        </ul>
-      </div>
-      <div class="service-card reveal" style="transition-delay:.22s">
-        <div class="service-icon">📊</div>
-        <div class="service-title">Monthly Reporting</div>
-        <p class="service-body">A branded performance report on the 1st of every month — leads, spend, revenue, and what's next.</p>
-        <ul class="service-features">
-          <li>Lead source breakdown</li>
-          <li>Ad spend &amp; ROI</li>
-          <li>Google Ads performance</li>
-          <li>Recommendations</li>
-        </ul>
+      <div class="reveal" style="transition-delay:.12s">
+        <div class="platforms-grid">
+          <div class="platform-card">
+            <div class="platform-icon">🔍</div>
+            <div class="platform-name">Google Search Ads</div>
+            <div class="platform-desc">Keyword campaigns, bid management, conversion tracking, and daily optimization.</div>
+          </div>
+          <div class="platform-card">
+            <div class="platform-icon">📍</div>
+            <div class="platform-name">Google Local Service Ads</div>
+            <div class="platform-desc">Google Guaranteed badge, dispute management, and lead quality review.</div>
+          </div>
+          <div class="platform-card">
+            <div class="platform-icon">📘</div>
+            <div class="platform-name">Facebook Ads</div>
+            <div class="platform-desc">Audience targeting, retargeting, and creative management across the Facebook network.</div>
+          </div>
+          <div class="platform-card">
+            <div class="platform-icon">📸</div>
+            <div class="platform-name">Instagram & Meta</div>
+            <div class="platform-desc">Reels, stories, and feed placements managed and optimized for local reach.</div>
+          </div>
+          <div class="platform-card" style="grid-column: span 2">
+            <div class="platform-icon">📊</div>
+            <div class="platform-name">Unified Reporting Dashboard</div>
+            <div class="platform-desc">Every platform tracked in one place. Live data on leads, spend, ROAS, and job pipeline. Your portal is always on.</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ABOUT (dark) -->
-<div class="about-wrap" id="about">
+<!-- ABOUT -->
+<div class="about-section" id="about">
   <div class="about-inner">
-    <div class="about-avatar-block reveal">
+    <div class="about-left reveal">
       <div class="about-avatar">SE</div>
       <div>
         <div class="about-name">Sean Evangelista</div>
-        <div class="about-role">Founder, Evan Enterprises LLC</div>
+        <div class="about-title">Founder — Evan Enterprises LLC</div>
       </div>
-      <div class="about-creds">
-        <div class="about-cred"><div class="about-cred-dot"></div><div><strong>Website &amp; SEO</strong>Custom-built sites, local SEO, GBP management</div></div>
-        <div class="about-cred"><div class="about-cred-dot"></div><div><strong>Paid Search</strong>Google Ads &amp; LSA management, daily optimization</div></div>
-        <div class="about-cred"><div class="about-cred-dot"></div><div><strong>Field Operations</strong>Jobber setup, quoting, scheduling, automation</div></div>
-        <div class="about-cred"><div class="about-cred-dot"></div><div><strong>Reporting</strong>Monthly branded reports for every active client</div></div>
-        <div class="about-cred"><div class="about-cred-dot"></div><div><strong>Finance</strong>Invoicing, collections, and monthly P&amp;L summary</div></div>
+      <div class="about-tags">
+        <span class="about-tag green">Distribution Leads</span>
+        <span class="about-tag amber">Ad Management</span>
+        <span class="about-tag">Google Ads</span>
+        <span class="about-tag">Meta</span>
+        <span class="about-tag">LSA</span>
+        <span class="about-tag">Amazon FBA</span>
       </div>
     </div>
-    <div class="about-text reveal" style="transition-delay:.1s">
-      <div class="section-eyebrow section-eyebrow-dark" style="margin-bottom:14px">Meet Sean</div>
-      <div class="section-title section-title-dark" style="margin-bottom:24px; font-size: clamp(22px,2.5vw,30px)">The person behind the business.</div>
-      <blockquote>
-        "I started Evan Enterprises because I kept watching talented people struggle to run the business side of what they built. A great landscaper shouldn't have to figure out Google Ads. A spa owner shouldn't chase down invoices. I do all of that so they don't have to."
-      </blockquote>
-      <p>I manage every part of the back office for a small number of businesses — website, ads, marketing, operations, invoicing, and reporting. Everything under one roof, one invoice, one point of contact.</p>
-      <p style="margin-top:16px">I work with a small client roster intentionally. That means you're never a ticket number, I know your business deeply, and you can text me directly when something comes up.</p>
-    </div>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<div id="how" style="background:var(--dark-2);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06)">
-  <div class="section">
-    <div class="section-eyebrow reveal">How it works</div>
-    <div class="section-title reveal">From call to launch in 7 days.</div>
-    <p class="section-sub reveal">No lengthy onboarding, no agency bureaucracy. Just a clear process and results you can see.</p>
-    <div class="steps-grid">
-      <div class="step reveal">
-        <div class="step-num">1</div>
-        <div class="step-title">Free strategy call</div>
-        <p class="step-body">A 30-minute call to understand your business, your goals, and where you're losing time. No pitch, no pressure — just an honest conversation.</p>
-      </div>
-      <div class="step reveal" style="transition-delay:.08s">
-        <div class="step-num">2</div>
-        <div class="step-title">Custom scope</div>
-        <p class="step-body">Within 24 hours you'll receive a written scope of exactly what I'll manage, what it costs, and what to expect in the first 30 days.</p>
-      </div>
-      <div class="step active reveal" style="transition-delay:.14s">
-        <div class="step-num">3</div>
-        <div class="step-title">Go live in 7 days</div>
-        <p class="step-body">Accounts set up, campaigns launched, Jobber configured. Your ad spend stays on your card — I never hold your budget.</p>
-      </div>
-      <div class="step reveal" style="transition-delay:.20s">
-        <div class="step-num">4</div>
-        <div class="step-title">Monthly reports</div>
-        <p class="step-body">A branded performance report arrives on the 1st of every month. Full transparency on leads, spend, and what's coming next.</p>
+    <div class="about-right reveal" style="transition-delay:.1s">
+      <p class="about-quote">"I built two businesses under one name because <span>the underlying skill is the same</span> — knowing where money moves and making sure my clients capture it."</p>
+      <div class="about-body">
+        <p>On the distribution side, I research products for Amazon and Walmart sellers — the kind of vetted, margin-positive leads that actually move. On the marketing side, I manage ad accounts for small businesses who need real results, not agency jargon.</p>
+        <p>I keep both rosters intentionally small. Every client works directly with me — no account managers, no hand-offs. You can text me when something comes up.</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- RESULTS / CLIENTS -->
-<div class="results-wrap" id="clients">
-  <div class="results-inner">
-    <div class="section-eyebrow reveal">Who I work with</div>
-    <div class="section-title reveal">Current clients.</div>
-    <p class="section-sub reveal" style="margin-bottom:0">Clients fully managed, coast to coast.</p>
-    <div class="results-grid">
-      <div class="result-card reveal">
-        <div class="result-biz">Premier Landscaping ATX</div>
-        <div class="result-meta">Landscaping · Austin, TX</div>
-        <div class="result-services">
-          <div class="result-service">Website &amp; SEO</div>
-          <div class="result-service">Google Ads</div>
-          <div class="result-service">Local Service Ads</div>
-          <div class="result-service">Jobber Operations</div>
-          <div class="result-service">Monthly Reporting</div>
-        </div>
-      </div>
-      <div class="result-card reveal" style="transition-delay:.08s">
-        <div class="result-biz">Mediterranean Spa</div>
-        <div class="result-meta">Spa · Baltimore, MD</div>
-        <div class="result-services">
-          <div class="result-service">Website &amp; SEO</div>
-          <div class="result-service">Google Ads</div>
-          <div class="result-service">Local Service Ads</div>
-          <div class="result-service">Monthly Reporting</div>
-        </div>
-      </div>
-      <div class="result-quote-card reveal" style="transition-delay:.14s">
-        <div class="quote-mark">"</div>
-        <p class="quote-text">We went from 40 reviews to over 200 in a few months. The leads keep coming and I don't have to think about marketing anymore. Sean handles everything.</p>
-        <div class="quote-author">Salma M.</div>
-        <div class="quote-biz">Mediterranean Spa · Baltimore, MD</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- FAQ -->
-<div class="faq-wrap" id="faq">
-  <div class="section">
-    <div class="section-eyebrow reveal">FAQ</div>
-    <div class="section-title reveal">Common questions.</div>
-    <div class="faq-list reveal">
-      <div class="faq-item">
-        <button class="faq-question">
-          Do I need to sign a long-term contract?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">No. Everything is month-to-month. You can cancel at the end of any billing period with 30 days notice. I keep clients by doing good work, not by locking them in.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-question">
-          How long does it take to get started?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Seven business days from signed agreement to go-live. That includes account access, campaign setup, and any initial website work. I've run this process enough times to move fast without cutting corners.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-question">
-          Do you only work with Austin businesses?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">No — I work with businesses anywhere in the US. My services are fully remote: Google Ads, LSA, websites, invoicing, and reporting are all handled digitally. Local presence helps for LSA and local SEO, but most of what I do travels just fine. Reach out and we'll see if it's a fit.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-question">
-          How much does it cost?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">A flat monthly management fee plus a percentage of ad spend. The exact number depends on what you need and how much you're running in ads. The best way to get a real number is a free strategy call — I'll give you a specific quote within 24 hours.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-question">
-          What makes you different from an agency?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">At an agency you're a ticket number. Work gets handed between account managers, junior staff, and contractors. With Evan Enterprises, you work directly with me — one person who knows your business deeply, is reachable directly, and has skin in the game. I run a small roster by design so that every client gets real attention.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-question">
-          Who owns my ad accounts and website?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">You do. Always. I work inside your Google Ads account, your Google Business Profile, your Jobber — not mine. If you ever leave, you take everything with you. Your ad spend runs on your card. No lock-in, no held assets.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- CONTACT (dark) -->
-<div class="contact-wrap" id="contact">
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
   <div class="contact-inner">
-    <div class="contact-left reveal">
-      <div class="section-eyebrow section-eyebrow-dark" style="margin-bottom:16px">Get in touch</div>
-      <h2>Ready to hand off<br>the business side?</h2>
-      <p>Tell me a bit about your business and what you need help with. I'll follow up within 24 hours with a straight answer on whether I can help — and what it would look like.</p>
-      <div class="contact-perks">
-        <div class="contact-perk"><div class="contact-perk-dot"></div>Response within 24 hours</div>
-        <div class="contact-perk"><div class="contact-perk-dot"></div>Free 30-minute strategy call</div>
-        <div class="contact-perk"><div class="contact-perk-dot"></div>No commitment required</div>
-        <div class="contact-perk"><div class="contact-perk-dot"></div>Honest scope and pricing</div>
-      </div>
+    <div class="contact-header reveal">
+      <h2 class="contact-title">What are you here for?</h2>
+      <p class="contact-sub">Pick the service that fits and tell me a bit about your situation. I'll follow up within 24 hours.</p>
     </div>
-    <div class="reveal" style="transition-delay:.1s">
-      <form class="contact-form" id="contact-form" novalidate>
-        <div class="form-row">
-          <div class="form-field">
-            <label for="cf-name">Your name</label>
-            <input type="text" id="cf-name" name="name" placeholder="John Smith" required>
-          </div>
-          <div class="form-field">
-            <label for="cf-business">Business name</label>
-            <input type="text" id="cf-business" name="business" placeholder="Your Business Name" required>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <label for="cf-phone">Phone</label>
-            <input type="tel" id="cf-phone" name="phone" placeholder="(512) 000-0000">
-          </div>
-          <div class="form-field">
-            <label for="cf-email">Email</label>
-            <input type="email" id="cf-email" name="email" placeholder="you@yourbiz.com" required>
-          </div>
+    <div class="contact-selector reveal" style="transition-delay:.05s" id="contact-selector">
+      <button class="contact-select-btn dist selected" onclick="selectService('distribution')">
+        <div class="csb-label green">Distribution</div>
+        <div class="csb-desc">I sell on Amazon, Walmart, or eBay and want product leads.</div>
+      </button>
+      <button class="contact-select-btn mkt" onclick="selectService('marketing')">
+        <div class="csb-label amber">Marketing</div>
+        <div class="csb-desc">I run a local business and need ad management.</div>
+      </button>
+    </div>
+    <form class="contact-form reveal" style="transition-delay:.1s" id="contact-form" novalidate>
+      <input type="hidden" id="cf-service-type" name="service_type" value="distribution">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="cf-name">Your name</label>
+          <input type="text" id="cf-name" name="name" placeholder="John Smith" required>
         </div>
         <div class="form-field">
-          <label for="cf-service">What do you need help with?</label>
-          <select id="cf-service" name="service" required>
-            <option value="" disabled selected>Select a service…</option>
-            <option value="Website">Website &amp; SEO</option>
-            <option value="Google Ads">Google Ads</option>
-            <option value="LSA">Local Service Ads</option>
-            <option value="Operations">Operations (Jobber)</option>
-            <option value="Everything">Everything — full back office</option>
-            <option value="Not sure">Not sure yet</option>
-          </select>
+          <label for="cf-email">Email</label>
+          <input type="email" id="cf-email" name="email" placeholder="you@yourbiz.com" required>
         </div>
-        <button type="submit" class="btn-submit" id="submit-btn">
-          Send message →
-        </button>
-        <div class="form-success" id="form-success">
-          We'll be in touch within 24 hours.
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="cf-business">Business / store name</label>
+          <input type="text" id="cf-business" name="business" placeholder="Your Business Name">
         </div>
-      </form>
-    </div>
+        <div class="form-field">
+          <label for="cf-phone">Phone (optional)</label>
+          <input type="tel" id="cf-phone" name="phone" placeholder="(512) 000-0000">
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="cf-message">What do you need?</label>
+        <textarea id="cf-message" name="message" rows="3" placeholder="Tell me what you're selling, what platforms you're on, or what you need help with..."></textarea>
+      </div>
+      <button type="submit" class="btn-submit" id="submit-btn">Send message →</button>
+      <div class="form-success" id="form-success">Got it — I'll be in touch within 24 hours.</div>
+    </form>
   </div>
 </div>
 
 <!-- FOOTER -->
 <footer>
   <a href="/" class="footer-logo">
-    <svg viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
-      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="#2563EB"/>
-      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="#3B82F6"/>
-      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="#60A5FA"/>
-    </svg>
-    EVAN ENTERPRISES
+    <div class="footer-logo-mark">
+      <span></span><span></span><span></span>
+    </div>
+    EVAN ENTERPRISES LLC
   </a>
   <div class="footer-links">
-    <a href="#services">Services</a>
+    <a href="#distribution">Distribution</a>
+    <a href="#marketing">Marketing</a>
     <a href="#about">About</a>
-    <a href="#how">Process</a>
-    <a href="#faq">FAQ</a>
-    <a href="#contact">Contact</a>
+    <a href="/leads">Leads Portal</a>
+    <a href="/portal">Client Portal</a>
     <a href="/dashboard">Dashboard →</a>
   </div>
   <div class="footer-copy">© 2026 Evan Enterprises LLC</div>
 </footer>
 
 <script>
-// ── SCROLL REVEAL ──
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-}, { threshold: 0.06, rootMargin: '0px 0px -24px 0px' });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+// ── REVEAL ON SCROLL ──
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.07, rootMargin: '0px 0px -20px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-// ── NAV SCROLL BEHAVIOR ──
+// ── HAMBURGER ──
 (function() {
-  var nav = document.getElementById('site-nav');
-  var heroH = document.querySelector('.hero-wrap');
-  function updateNav() {
-    var threshold = heroH ? heroH.offsetHeight - 100 : 400;
-    if (window.scrollY > threshold) { nav.classList.add('light'); }
-    else { nav.classList.remove('light'); }
-  }
-  window.addEventListener('scroll', updateNav, { passive: true });
-  updateNav();
-})();
-
-// ── HAMBURGER MENU ──
-(function() {
-  var btn = document.getElementById('nav-hamburger');
-  var menu = document.getElementById('nav-mobile-menu');
-  if (!btn || !menu) return;
+  var btn  = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile');
   btn.addEventListener('click', function() {
     var open = menu.classList.toggle('open');
     btn.classList.toggle('open', open);
@@ -938,89 +864,46 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
   });
 })();
 
-// ── FAQ ACCORDION ──
-document.querySelectorAll('.faq-item').forEach(function(item) {
-  var btn = item.querySelector('.faq-question');
-  var icon = item.querySelector('.faq-icon');
-  btn.addEventListener('click', function() {
-    var isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item.open').forEach(function(o) {
-      o.classList.remove('open');
-      o.querySelector('.faq-icon').textContent = '+';
-    });
-    if (!isOpen) {
-      item.classList.add('open');
-      icon.textContent = '−';
-    }
-  });
-});
+// ── CONTACT SERVICE SELECTOR ──
+function selectService(type) {
+  document.querySelectorAll('.contact-select-btn').forEach(b => b.classList.remove('selected'));
+  var btn = document.querySelector('.contact-select-btn.' + (type === 'distribution' ? 'dist' : 'mkt'));
+  if (btn) btn.classList.add('selected');
+  document.getElementById('cf-service-type').value = type;
+  var placeholder = type === 'distribution'
+    ? "Tell me what platforms you sell on (Amazon, Walmart, eBay) and what categories you typically source..."
+    : "Tell me about your business — what service you offer, where you're located, and what you're currently running for ads...";
+  document.getElementById('cf-message').placeholder = placeholder;
+}
 
 // ── CONTACT FORM ──
 (function() {
-  var form = document.getElementById('contact-form');
-  var btn = document.getElementById('submit-btn');
+  var form    = document.getElementById('contact-form');
+  var btn     = document.getElementById('submit-btn');
   var success = document.getElementById('form-success');
   if (!form) return;
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
-    var name    = form.querySelector('[name=name]').value.trim();
+    var name     = form.querySelector('[name=name]').value.trim();
+    var email    = form.querySelector('[name=email]').value.trim();
     var business = form.querySelector('[name=business]').value.trim();
-    var phone   = form.querySelector('[name=phone]').value.trim();
-    var email   = form.querySelector('[name=email]').value.trim();
-    var service = form.querySelector('[name=service]').value;
-    if (!name || !email || !service) return;
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
+    var phone    = form.querySelector('[name=phone]').value.trim();
+    var message  = form.querySelector('[name=message]').value.trim();
+    var svcType  = form.querySelector('[name=service_type]').value;
+    if (!name || !email) return;
+    btn.disabled = true; btn.textContent = 'Sending…';
     try {
-      var res = await fetch('/api/contact-site', {
+      await fetch('/api/contact-site', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, business, phone, email, service })
+        body: JSON.stringify({ name, email, business, phone, service: svcType, message })
       });
-      if (res.ok) {
-        form.style.display = 'none';
-        success.classList.add('show');
-      } else {
-        throw new Error('Server error');
-      }
+      form.style.display = 'none';
+      success.classList.add('show');
     } catch(err) {
-      btn.disabled = false;
-      btn.textContent = 'Send message →';
-      alert('Something went wrong. Please email seanjevangelista@gmail.com directly.');
+      btn.disabled = false; btn.textContent = 'Send message →';
     }
   });
-})();
-
-// ── INTRO ANIMATION ──
-(function () {
-  var wrap    = document.getElementById('intro-wrap');
-  var cover   = document.getElementById('intro-cover');
-  var navLogo = document.getElementById('nav-logo');
-  var navSvg  = document.getElementById('nav-logo-svg');
-  if (!wrap || !cover || !navLogo) return;
-
-  navLogo.style.opacity = '0';
-
-  setTimeout(function () {
-    var navRect  = navSvg.getBoundingClientRect();
-    var wrapRect = wrap.getBoundingClientRect();
-    var scale = navRect.width / wrapRect.width;
-    var dx = (navRect.left + navRect.width  / 2) - (wrapRect.left + wrapRect.width  / 2);
-    var dy = (navRect.top  + navRect.height / 2) - (wrapRect.top  + wrapRect.height / 2);
-
-    wrap.classList.add('fly');
-    wrap.style.transform = 'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px)) scale(' + scale + ')';
-
-    cover.classList.add('fade');
-
-    setTimeout(function () {
-      navLogo.style.opacity  = '1';
-      navLogo.style.transition = 'opacity 0.25s ease';
-      wrap.style.display = 'none';
-      cover.classList.add('gone');
-    }, 720);
-
-  }, 1450);
 })();
 </script>
 </body>

@@ -51,21 +51,18 @@ nav {
   padding: 0 48px; height: 62px;
 }
 .nav-logo {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 12px;
   text-decoration: none;
   font-family: var(--font-display); font-size: 12px; font-weight: 700;
   letter-spacing: 0.16em; color: var(--text);
+  transition: opacity 0.2s;
 }
-.nav-logo-mark {
-  display: flex; flex-direction: column; gap: 3px;
+.nav-logo:hover { opacity: 0.82; }
+.nav-logo-svg {
+  width: 38px; height: auto; flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
 }
-.nav-logo-mark span {
-  display: block; height: 2px; border-radius: 1px; background: var(--blue);
-  transform-origin: left;
-}
-.nav-logo-mark span:nth-child(1) { width: 18px; }
-.nav-logo-mark span:nth-child(2) { width: 14px; }
-.nav-logo-mark span:nth-child(3) { width: 10px; }
+.nav-logo:hover .nav-logo-svg { transform: scale(1.06); }
 .nav-links { display: flex; align-items: center; gap: 8px; }
 .nav-links a {
   font-size: 13px; color: var(--text2); text-decoration: none;
@@ -468,9 +465,20 @@ footer {
 <!-- NAV -->
 <nav id="site-nav">
   <a href="/" class="nav-logo">
-    <div class="nav-logo-mark">
-      <span></span><span></span><span></span>
-    </div>
+    <svg class="nav-logo-svg" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="nl1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
+        <linearGradient id="nl2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
+        <linearGradient id="nl3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
+        <linearGradient id="nlr" x1="1" y1="0" x2="0.5" y2="0"><stop offset="0%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
+      </defs>
+      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#nl1)"/>
+      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#nlr)"/>
+      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#nl2)"/>
+      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#nlr)"/>
+      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#nl3)"/>
+      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#nlr)"/>
+    </svg>
     EVAN ENTERPRISES
   </a>
   <div class="nav-links" id="nav-links">
@@ -825,9 +833,20 @@ footer {
 <!-- FOOTER -->
 <footer>
   <a href="/" class="footer-logo">
-    <div class="footer-logo-mark">
-      <span></span><span></span><span></span>
-    </div>
+    <svg style="width:30px;height:auto;flex-shrink:0;opacity:0.6" viewBox="0 0 104 84" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="fl1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="20%" stop-color="#E8EBF5"/><stop offset="60%" stop-color="#9AA4C0"/><stop offset="100%" stop-color="#2E3E68"/></linearGradient>
+        <linearGradient id="fl2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4E8F4"/><stop offset="30%" stop-color="#C0C8DC"/><stop offset="75%" stop-color="#7080A8"/><stop offset="100%" stop-color="#283868"/></linearGradient>
+        <linearGradient id="fl3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CDD2E4"/><stop offset="40%" stop-color="#8898B8"/><stop offset="100%" stop-color="#243060"/></linearGradient>
+        <linearGradient id="flr" x1="1" y1="0" x2="0.5" y2="0"><stop offset="0%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></linearGradient>
+      </defs>
+      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#fl1)"/>
+      <path d="M 0,20 L 14,0 L 86,0 Q 104,0 104,10 Q 104,20 86,20 Z" fill="url(#flr)"/>
+      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#fl2)"/>
+      <path d="M 0,52 L 14,32 L 86,32 Q 104,32 104,42 Q 104,52 86,52 Z" fill="url(#flr)"/>
+      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#fl3)"/>
+      <path d="M 0,84 L 14,64 L 86,64 Q 104,64 104,74 Q 104,84 86,84 Z" fill="url(#flr)"/>
+    </svg>
     EVAN ENTERPRISES LLC
   </a>
   <div class="footer-links">

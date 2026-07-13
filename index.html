@@ -1442,11 +1442,12 @@ function selectService(type) {
     if (!name || !email) return;
     btn.disabled = true; btn.textContent = 'Sending…';
     try {
-      await fetch('/api/contact-site', {
+      const r = await fetch('/api/contact-site', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, business, phone, service: svcType, message })
       });
+      if (!r.ok) throw new Error('Request failed');
       form.style.display = 'none';
       success.classList.add('show');
     } catch(err) {

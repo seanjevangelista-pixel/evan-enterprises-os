@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — EVAN Enterprises OS</title>
+<style>
+  :root {
+    --bg: #0A0F1E;
+    --surface: #111827;
+    --border: #1E293B;
+    --text: #F1F5F9;
+    --muted: #64748B;
+    --blue: #3B82F6;
+    --purple: #8B5CF6;
+    --green: #10B981;
+    --red: #EF4444;
+    --yellow: #F59E0B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: Inter, -apple-system, sans-serif; font-size: 14px; min-height: 100vh; }
+
+  /* ── Auth screen ── */
+  #auth-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 24px;
+  }
+  .auth-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 36px; width: 100%; max-width: 380px;
+  }
+  .auth-logo { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .auth-title { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+  .auth-card input {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 7px; padding: 10px 14px; color: var(--text); font-size: 14px;
+    margin-bottom: 12px; outline: none; transition: border-color .15s;
+  }
+  .auth-card input:focus { border-color: var(--blue); }
+  .btn-primary {
+    width: 100%; background: var(--blue); color: #fff; border: none;
+    border-radius: 7px; padding: 11px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .btn-primary:hover { opacity: .88; }
+  .auth-error { color: var(--red); font-size: 12px; margin-top: 8px; display: none; }
+
+  /* ── App shell ── */
+  #app { display: none; }
+  .topbar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 28px; height: 56px; display: flex; align-items: center;
+    gap: 16px; position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-logo { font-size: 13px; font-weight: 700; letter-spacing: .02em; }
+  .topbar-logo span { color: var(--blue); }
+  .topbar-badge {
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    background: rgba(59,130,246,.15); color: var(--blue);
+    padding: 2px 8px; border-radius: 20px;
+  }
+  .topbar-logout {
+    margin-left: auto; font-size: 12px; color: var(--muted);
+    cursor: pointer; background: none; border: none; color: var(--muted);
+  }
+  .topbar-logout:hover { color: var(--text); }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; gap: 0; border-bottom: 1px solid var(--border);
+    padding: 0 28px; background: var(--surface);
+  }
+  .tab {
+    padding: 12px 18px; font-size: 13px; font-weight: 500; color: var(--muted);
+    cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s;
+    background: none; border-top: none; border-left: none; border-right: none;
+  }
+  .tab.active { color: var(--text); border-bottom-color: var(--blue); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* ── Main content ── */
+  .content { padding: 28px; max-width: 1100px; }
+
+  /* ── Clients tab ── */
+  .clients-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .section-title { font-size: 18px; font-weight: 700; }
+  .section-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .btn-add {
+    background: var(--blue); color: #fff; border: none; border-radius: 7px;
+    padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 6px; transition: opacity .15s;
+  }
+  .btn-add:hover { opacity: .88; }
+
+  /* Client cards grid */
+  .clients-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+  }
+  .client-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px; transition: border-color .15s;
+  }
+  .client-card:hover { border-color: #334155; }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+  .card-name { font-weight: 700; font-size: 15px; }
+  .card-contact { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .card-fee {
+    font-size: 12px; font-weight: 600; color: var(--green);
+    background: rgba(16,185,129,.1); padding: 2px 10px; border-radius: 20px;
+  }
+  .services-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .chip {
+    font-size: 11px; padding: 2px 9px; border-radius: 20px;
+    background: rgba(59,130,246,.12); color: #93C5FD; border: 1px solid rgba(59,130,246,.2);
+  }
+  .card-actions { display: flex; gap: 8px; }
+  .btn-sm {
+    font-size: 12px; font-weight: 500; border-radius: 6px; padding: 6px 13px;
+    cursor: pointer; border: 1px solid var(--border); background: var(--bg);
+    color: var(--muted); transition: all .15s;
+  }
+  .btn-sm:hover { color: var(--text); border-color: #334155; }
+  .btn-sm.blue { background: rgba(59,130,246,.1); color: var(--blue); border-color: rgba(59,130,246,.3); }
+  .btn-sm.blue:hover { background: rgba(59,130,246,.2); }
+  .login-status {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--green); margin-bottom: 12px;
+  }
+  .login-status.no { color: var(--muted); }
+  .login-status::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* ── Add Client Modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7);
+    z-index: 100; align-items: flex-start; justify-content: center;
+    overflow-y: auto; padding: 40px 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; width: 100%; max-width: 540px; padding: 28px;
+    position: relative;
+  }
+  .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 24px; }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px; background: none; border: none;
+    color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+  .form-group.full { grid-column: 1/-1; }
+  label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  input[type=text], input[type=email], input[type=tel], input[type=number], textarea, select {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 7px;
+    padding: 9px 12px; color: var(--text); font-size: 13px; outline: none;
+    transition: border-color .15s; font-family: inherit; width: 100%;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--blue); }
+  textarea { resize: vertical; min-height: 80px; }
+  select option { background: var(--surface); }
+
+  .services-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    background: var(--bg); border-radius: 8px; padding: 14px; margin-top: 6px;
+  }
+  .service-toggle {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 10px 6px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--border); transition: all .15s; font-size: 11px;
+    color: var(--muted); text-align: center; user-select: none;
+  }
+  .service-toggle.active {
+    background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.4);
+    color: var(--blue);
+  }
+  .service-icon { font-size: 18px; }
+  input[type=checkbox].srv { display: none; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  .portal-section { background: var(--bg); border-radius: 8px; padding: 16px; }
+  .portal-section .toggle-row {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+  }
+  .toggle-label { font-size: 13px; font-weight: 500; }
+  .toggle-sub { font-size: 11px; color: var(--muted); }
+  .toggle-switch {
+    width: 40px; height: 22px; background: var(--border); border-radius: 11px;
+    cursor: pointer; position: relative; transition: background .2s;
+  }
+  .toggle-switch.on { background: var(--blue); }
+  .toggle-switch::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 16px; height: 16px; border-radius: 50%; background: #fff;
+    transition: left .2s;
+  }
+  .toggle-switch.on::after { left: 21px; }
+  #portal-email-group { display: none; margin-top: 12px; }
+  #portal-email-group.show { display: block; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
+  .btn-cancel {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 7px; padding: 9px 18px; font-size: 13px; cursor: pointer;
+  }
+  .btn-cancel:hover { color: var(--text); border-color: #334155; }
+  .btn-save {
+    background: var(--blue); color: #fff; border: none; border-radius: 7px;
+    padding: 9px 22px; font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: opacity .15s;
+  }
+  .btn-save:hover { opacity: .88; }
+  .btn-save:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* ── Portal Login Modal ── */
+  .result-box {
+    background: var(--bg); border-radius: 8px; padding: 14px;
+    margin-top: 14px; border: 1px solid var(--border); display: none;
+  }
+  .result-box.show { display: block; }
+  .result-row { font-size: 12px; margin-bottom: 6px; }
+  .result-row strong { font-family: monospace; background: rgba(59,130,246,.1); padding: 1px 6px; border-radius: 4px; }
+  .success-note { font-size: 11px; color: var(--green); margin-top: 8px; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px; background: #1E293B;
+    border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px;
+    font-size: 13px; z-index: 200; opacity: 0; transform: translateY(8px);
+    transition: all .2s; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+  #toast.ok { border-left: 3px solid var(--green); }
+  #toast.err { border-left: 3px solid var(--red); }
+
+  .empty-state {
+    text-align: center; padding: 60px 24px; color: var(--muted);
+    font-size: 14px;
+  }
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: .5; }
+  .spinner {
+    width: 24px; height: 24px; border: 2px solid var(--border);
+    border-top-color: var(--blue); border-radius: 50%;
+    animation: spin .6s linear infinite; margin: 40px auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- Auth Screen -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">EVAN Enterprises</div>
+    <div class="auth-title">Admin Portal</div>
+    <input type="email" id="login-email" placeholder="Email" autocomplete="email" />
+    <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password" />
+    <button class="btn-primary" onclick="doLogin()">Sign In</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">EVAN <span>OS</span></div>
+    <div class="topbar-badge">Admin</div>
+    <button class="topbar-logout" onclick="doLogout()">Sign out</button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('clients', this)">Clients</button>
+    <button class="tab" onclick="showTab('logins', this)">Portal Logins</button>
+  </div>
+
+  <!-- Clients Tab -->
+  <div id="tab-clients" class="content">
+    <div class="clients-header">
+      <div>
+        <div class="section-title">Clients</div>
+        <div class="section-sub">Manage your client roster and services</div>
+      </div>
+      <button class="btn-add" onclick="openAddClient()">
+        <span>+</span> Add Client
+      </button>
+    </div>
+    <div id="clients-list"><div class="spinner"></div></div>
+  </div>
+
+  <!-- Portal Logins Tab -->
+  <div id="tab-logins" class="content" style="display:none">
+    <div class="clients-header">
+      <div>
+        <div class="section-title">Portal Logins</div>
+        <div class="section-sub">Create and manage client portal access</div>
+      </div>
+    </div>
+    <div id="logins-list"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<!-- Add Client Modal -->
+<div class="modal-overlay" id="modal-add">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-add')">×</button>
+    <div class="modal-title">Add New Client</div>
+    <div class="modal-sub">Fill in details — portal login is optional and can be created later.</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Business Name *</label>
+        <input type="text" id="f-biz" placeholder="Premier Landscaping ATX" />
+      </div>
+      <div class="form-group">
+        <label>Monthly Fee</label>
+        <input type="number" id="f-fee" placeholder="1500" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Contact Name</label>
+        <input type="text" id="f-contact" placeholder="Angel Rodriguez" />
+      </div>
+      <div class="form-group">
+        <label>Contact Phone</label>
+        <input type="tel" id="f-phone" placeholder="(512) 555-1234" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Contact Email</label>
+      <input type="email" id="f-email" placeholder="angel@premieraustin.com" />
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="f-notes" placeholder="Any notes about this client..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Services Managed</label>
+      <div class="services-grid" id="services-grid">
+        <label class="service-toggle" data-svc="has_lsa" onclick="toggleSvc(this)">
+          <span class="service-icon">📢</span>LSA
+        </label>
+        <label class="service-toggle" data-svc="has_google_ads" onclick="toggleSvc(this)">
+          <span class="service-icon">🔍</span>Google Ads
+        </label>
+        <label class="service-toggle" data-svc="has_facebook" onclick="toggleSvc(this)">
+          <span class="service-icon">📘</span>Facebook
+        </label>
+        <label class="service-toggle" data-svc="has_instagram" onclick="toggleSvc(this)">
+          <span class="service-icon">📸</span>Instagram
+        </label>
+        <label class="service-toggle" data-svc="has_seo" onclick="toggleSvc(this)">
+          <span class="service-icon">🌐</span>SEO
+        </label>
+        <label class="service-toggle" data-svc="has_social" onclick="toggleSvc(this)">
+          <span class="service-icon">📱</span>Social
+        </label>
+        <label class="service-toggle" data-svc="has_jobber" onclick="toggleSvc(this)">
+          <span class="service-icon">🔧</span>Jobber
+        </label>
+        <label class="service-toggle" data-svc="has_reporting" onclick="toggleSvc(this)">
+          <span class="service-icon">📊</span>Reporting
+        </label>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="portal-section">
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Create Portal Login</div>
+          <div class="toggle-sub">Send the client their portal credentials via email</div>
+        </div>
+        <div class="toggle-switch" id="portal-toggle" onclick="togglePortal()"></div>
+      </div>
+      <div id="portal-email-group">
+        <div class="form-group" style="margin-bottom:0">
+          <label>Login Email (client)</label>
+          <input type="email" id="f-portal-email" placeholder="client@theirbusiness.com" />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-add')">Cancel</button>
+      <button class="btn-save" id="save-btn" onclick="saveClient()">Save Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- Portal Login Modal (for existing clients) -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('modal-login')">×</button>
+    <div class="modal-title">Create Portal Login</div>
+    <div class="modal-sub" id="modal-login-sub">For <span id="modal-client-name"></span></div>
+    <div class="form-group" style="margin-top:16px">
+      <label>Client Email Address</label>
+      <input type="email" id="lf-email" placeholder="client@theirbusiness.com" />
+    </div>
+    <div class="portal-section" style="margin-top:4px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="lf-send-welcome" checked style="width:auto;accent-color:var(--blue)">
+        <span style="font-size:13px;font-weight:normal;text-transform:none;letter-spacing:0">Send welcome email with login credentials</span>
+      </label>
+    </div>
+    <div class="result-box" id="login-result">
+      <div class="result-row">Email: <strong id="res-email"></strong></div>
+      <div class="result-row">Temp password: <strong id="res-pw"></strong></div>
+      <div class="success-note">✓ Portal login created. Client can sign in at evan-enterprises-os.vercel.app/portal</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-login')">Close</button>
+      <button class="btn-save" id="create-login-btn" onclick="createLogin()">Create Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://hzcgdnhecgewqpcnumwm.supabase.co';
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6Y2dkbmhlY2dld3FwY251bXdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2Nzk0MDgsImV4cCI6MjA5ODI1NTQwOH0.ZrpEnLvudbGYZJGf1Rr-cAEJkgbXX5Gvt9mWSAzYnW4';
+const API_BASE = '/api/admin';
+
+let sb = null;
+let currentUser = null;
+let pendingLoginClientId = null;
+let portalEnabled = false;
+
+// ── Supabase client (minimal) ──────────────────────────────────────────────
+function supabase() {
+  if (!sb) {
+    sb = {
+      async signIn(email, password) {
+        const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+          method: 'POST',
+          headers: { apikey: ANON_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        return r.json();
+      },
+      async getUser(token) {
+        const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+          headers: { apikey: ANON_KEY, Authorization: `Bearer ${token}` },
+        });
+        return r.json();
+      },
+    };
+  }
+  return sb;
+}
+
+// ── Auth ───────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('auth-error');
+  errEl.style.display = 'none';
+
+  if (!email || !pass) { showErr('Enter email and password'); return; }
+
+  const data = await supabase().signIn(email, pass);
+  if (data.error || !data.access_token) {
+    showErr(data.error?.message || 'Invalid credentials');
+    return;
+  }
+
+  // Check admin role
+  const token = data.access_token;
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${data.user.id}&select=role&limit=1`, {
+    headers: { apikey: ANON_KEY, Authorization: `Bearer ${token}` },
+  });
+  const rows = await r.json();
+  if (!rows?.[0] || rows[0].role !== 'admin') {
+    showErr('Access denied — admin accounts only');
+    return;
+  }
+
+  currentUser = { ...data.user, access_token: token };
+  sessionStorage.setItem('evan_admin', JSON.stringify({ token, userId: data.user.id }));
+  showApp();
+
+  function showErr(msg) { errEl.textContent = msg; errEl.style.display = 'block'; }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('evan_admin');
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// Check existing session on load
+(function checkSession() {
+  const saved = sessionStorage.getItem('evan_admin');
+  if (!saved) return;
+  try {
+    const { token, userId } = JSON.parse(saved);
+    currentUser = { id: userId, access_token: token };
+    showApp();
+  } catch(_) {}
+})();
+
+// ── App ────────────────────────────────────────────────────────────────────
+function showApp() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadClients();
+}
+
+function showTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-clients').style.display = tab === 'clients' ? 'block' : 'none';
+  document.getElementById('tab-logins').style.display  = tab === 'logins'  ? 'block' : 'none';
+  if (tab === 'logins') loadLoginsTab();
+}
+
+// ── Load Clients ───────────────────────────────────────────────────────────
+async function loadClients() {
+  const el = document.getElementById('clients-list');
+  el.innerHTML = '<div class="spinner"></div>';
+  try {
+    const r = await fetch(`${API_BASE}?action=list_clients`);
+    const { clients } = await r.json();
+    renderClients(clients || []);
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div>Failed to load clients</div>';
+  }
+}
+
+function renderClients(clients) {
+  const el = document.getElementById('clients-list');
+  if (!clients.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🏢</div>No clients yet — add your first one above.</div>';
+    return;
+  }
+
+  const svcMap = {
+    has_lsa: 'LSA', has_google_ads: 'Google Ads', has_facebook: 'Facebook',
+    has_instagram: 'Instagram', has_seo: 'SEO', has_social: 'Social',
+    has_jobber: 'Jobber', has_reporting: 'Reporting',
+  };
+
+  el.innerHTML = `<div class="clients-grid">${clients.map(c => {
+    const svcs = Object.entries(svcMap).filter(([k]) => c[k]).map(([,v]) => v);
+    const chips = svcs.map(s => `<span class="chip">${s}</span>`).join('');
+    const fee = c.monthly_fee ? `<span class="card-fee">$${Number(c.monthly_fee).toLocaleString()}/mo</span>` : '';
+    return `
+    <div class="client-card">
+      <div class="card-top">
+        <div>
+          <div class="card-name">${c.business_name}</div>
+          <div class="card-contact">${c.contact_name || ''}${c.contact_email ? ` · ${c.contact_email}` : ''}</div>
+        </div>
+        ${fee}
+      </div>
+      ${svcs.length ? `<div class="services-chips">${chips}</div>` : ''}
+      <div class="card-actions">
+        <button class="btn-sm blue" onclick='openCreateLogin("${c.id}","${(c.business_name||'').replace(/'/g,'')}")'>
+          + Portal Login
+        </button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ── Logins Tab ─────────────────────────────────────────────────────────────
+async function loadLoginsTab() {
+  const el = document.getElementById('logins-list');
+  el.innerHTML = '<div class="spinner"></div>';
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/users?select=*,clients(business_name)&order=created_at.desc`, {
+      headers: { apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}` },
+    });
+    const rows = await r.json();
+    if (!Array.isArray(rows) || !rows.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">🔑</div>No portal logins created yet.</div>';
+      return;
+    }
+    el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border)">
+          <th style="text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em">Email</th>
+          <th style="text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em">Client</th>
+          <th style="text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em">Role</th>
+          <th style="text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em">Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(u => `
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:10px 12px;font-size:13px">${u.email || '—'}</td>
+          <td style="padding:10px 12px;font-size:13px;color:var(--muted)">${u.clients?.business_name || '—'}</td>
+          <td style="padding:10px 12px">
+            <span style="font-size:11px;padding:2px 9px;border-radius:20px;
+              background:${u.role==='admin'?'rgba(139,92,246,.12)':'rgba(59,130,246,.12)'};
+              color:${u.role==='admin'?'#A78BFA':'#93C5FD'}">
+              ${u.role}
+            </span>
+          </td>
+          <td style="padding:10px 12px;font-size:12px;color:var(--muted)">${new Date(u.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state">Failed to load logins</div>';
+  }
+}
+
+// ── Add Client Modal ───────────────────────────────────────────────────────
+function openAddClient() {
+  // reset form
+  ['f-biz','f-fee','f-contact','f-phone','f-email','f-notes','f-portal-email'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.querySelectorAll('.service-toggle').forEach(t => t.classList.remove('active'));
+  portalEnabled = false;
+  document.getElementById('portal-toggle').classList.remove('on');
+  document.getElementById('portal-email-group').classList.remove('show');
+  document.getElementById('modal-add').classList.add('open');
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function toggleSvc(el) { el.classList.toggle('active'); }
+
+function togglePortal() {
+  portalEnabled = !portalEnabled;
+  document.getElementById('portal-toggle').classList.toggle('on', portalEnabled);
+  document.getElementById('portal-email-group').classList.toggle('show', portalEnabled);
+}
+
+async function saveClient() {
+  const btn = document.getElementById('save-btn');
+  const biz = document.getElementById('f-biz').value.trim();
+  if (!biz) { toast('Business name is required', 'err'); return; }
+
+  const services = {};
+  document.querySelectorAll('.service-toggle').forEach(t => {
+    services[t.dataset.svc] = t.classList.contains('active');
+  });
+
+  const payload = {
+    business_name: biz,
+    contact_name:  document.getElementById('f-contact').value.trim() || null,
+    contact_email: document.getElementById('f-email').value.trim() || null,
+    contact_phone: document.getElementById('f-phone').value.trim() || null,
+    monthly_fee:   document.getElementById('f-fee').value || null,
+    notes:         document.getElementById('f-notes').value.trim() || null,
+    ...services,
+  };
+
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  try {
+    const r = await fetch(`${API_BASE}?action=create_client`, {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload),
+    });
+    const data = await r.json();
+    if (!r.ok || !data.ok) throw new Error(data.error || 'Failed');
+
+    const newClient = data.client;
+
+    // Create portal login if enabled
+    if (portalEnabled) {
+      const portalEmail = document.getElementById('f-portal-email').value.trim();
+      if (portalEmail && newClient?.id) {
+        const lr = await fetch(`${API_BASE}?action=create_portal_login`, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ client_id: newClient.id, email: portalEmail, send_welcome: true }),
+        });
+        const ld = await lr.json();
+        if (!lr.ok || !ld.ok) toast(`Client saved but portal login failed: ${ld.error}`, 'err');
+        else toast(`Client added + portal login created for ${portalEmail}`, 'ok');
+      } else {
+        toast('Client saved (no portal email provided)', 'ok');
+      }
+    } else {
+      toast(`${biz} added successfully`, 'ok');
+    }
+
+    closeModal('modal-add');
+    loadClients();
+  } catch(e) {
+    toast(e.message, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save Client';
+  }
+}
+
+// ── Create Portal Login (existing client) ──────────────────────────────────
+function openCreateLogin(clientId, clientName) {
+  pendingLoginClientId = clientId;
+  document.getElementById('modal-client-name').textContent = clientName;
+  document.getElementById('lf-email').value = '';
+  document.getElementById('lf-send-welcome').checked = true;
+  document.getElementById('login-result').classList.remove('show');
+  document.getElementById('create-login-btn').style.display = '';
+  document.getElementById('create-login-btn').disabled = false;
+  document.getElementById('create-login-btn').textContent = 'Create Login';
+  document.getElementById('modal-login').classList.add('open');
+}
+
+async function createLogin() {
+  const email = document.getElementById('lf-email').value.trim();
+  if (!email) { toast('Enter an email address', 'err'); return; }
+
+  const btn = document.getElementById('create-login-btn');
+  btn.disabled = true; btn.textContent = 'Creating…';
+
+  try {
+    const r = await fetch(`${API_BASE}?action=create_portal_login`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        client_id: pendingLoginClientId, email,
+        send_welcome: document.getElementById('lf-send-welcome').checked,
+      }),
+    });
+    const data = await r.json();
+    if (!r.ok || !data.ok) throw new Error(data.error || 'Failed');
+
+    document.getElementById('res-email').textContent = email;
+    document.getElementById('res-pw').textContent = data.temp_password;
+    document.getElementById('login-result').classList.add('show');
+    btn.style.display = 'none';
+    toast('Portal login created', 'ok');
+    loadClients();
+  } catch(e) {
+    toast(e.message, 'err');
+    btn.disabled = false; btn.textContent = 'Create Login';
+  }
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+function toast(msg, type = 'ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.className = ''; }, 3500);
+}
+
+// Close modals on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>

@@ -126,6 +126,8 @@
   .btn-sm:hover { color: var(--text); border-color: #334155; }
   .btn-sm.blue { background: rgba(59,130,246,.1); color: var(--blue); border-color: rgba(59,130,246,.3); }
   .btn-sm.blue:hover { background: rgba(59,130,246,.2); }
+  .badge-muted { background: rgba(255,255,255,.05); color: var(--muted); border: 1px solid var(--border); font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; letter-spacing: .04em; }
+  .badge-red   { background: rgba(239,68,68,.1); color: var(--red); border: 1px solid rgba(239,68,68,.2); font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; letter-spacing: .04em; }
   .login-status {
     display: inline-flex; align-items: center; gap: 5px;
     font-size: 11px; color: var(--green); margin-bottom: 12px;
@@ -276,6 +278,8 @@
   </div>
   <div class="tabs">
     <button class="tab active" onclick="showTab('clients', this)">Clients</button>
+    <button class="tab" onclick="showTab('invoices', this)">Invoices</button>
+    <button class="tab" onclick="showTab('leads', this)">Leads</button>
     <button class="tab" onclick="showTab('logins', this)">Portal Logins</button>
   </div>
 
@@ -291,6 +295,31 @@
       </button>
     </div>
     <div id="clients-list"><div class="spinner"></div></div>
+  </div>
+
+  <!-- Invoices Tab -->
+  <div id="tab-invoices" class="content" style="display:none">
+    <div class="clients-header">
+      <div>
+        <div class="section-title">Invoices</div>
+        <div class="section-sub">Create and track client billing</div>
+      </div>
+      <button class="btn-add" onclick="openAddInvoice()">
+        <span>+</span> New Invoice
+      </button>
+    </div>
+    <div id="invoices-list"><div class="spinner"></div></div>
+  </div>
+
+  <!-- Leads Tab -->
+  <div id="tab-leads" class="content" style="display:none">
+    <div class="clients-header">
+      <div>
+        <div class="section-title">All Leads</div>
+        <div class="section-sub">LSA leads across all clients</div>
+      </div>
+    </div>
+    <div id="leads-list"><div class="spinner"></div></div>
   </div>
 
   <!-- Portal Logins Tab -->
@@ -424,6 +453,49 @@
   </div>
 </div>
 
+<!-- Add Invoice Modal -->
+<div class="modal-overlay" id="modal-invoice">
+  <div class="modal" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('modal-invoice')">×</button>
+    <div class="modal-title">New Invoice</div>
+    <div class="modal-sub">Invoice will appear in the client's portal immediately.</div>
+    <div class="form-group">
+      <label>Client *</label>
+      <select id="inv-client"></select>
+    </div>
+    <div class="form-group">
+      <label>Invoice Title *</label>
+      <input type="text" id="inv-title" placeholder="July Management Fee" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Amount ($) *</label>
+        <input type="number" id="inv-amount" placeholder="1500" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label>Due Date</label>
+        <input type="date" id="inv-due" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="inv-status">
+        <option value="unpaid">Unpaid</option>
+        <option value="paid">Paid</option>
+        <option value="overdue">Overdue</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="inv-notes" placeholder="Optional notes for this invoice..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-invoice')">Cancel</button>
+      <button class="btn-save" id="inv-save-btn" onclick="saveInvoice()">Create Invoice</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -523,9 +595,12 @@ function showApp() {
 function showTab(tab, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('tab-clients').style.display = tab === 'clients' ? 'block' : 'none';
-  document.getElementById('tab-logins').style.display  = tab === 'logins'  ? 'block' : 'none';
-  if (tab === 'logins') loadLoginsTab();
+  ['clients','invoices','leads','logins'].forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = tab === t ? 'block' : 'none';
+  });
+  if (tab === 'logins')   loadLoginsTab();
+  if (tab === 'invoices') loadInvoicesTab();
+  if (tab === 'leads')    loadLeadsTab();
 }
 
 // ── Load Clients ───────────────────────────────────────────────────────────
@@ -753,6 +828,168 @@ function toast(msg, type = 'ok') {
   el.className = `show ${type}`;
   clearTimeout(el._t);
   el._t = setTimeout(() => { el.className = ''; }, 3500);
+}
+
+// ── Invoices Tab ───────────────────────────────────────────────────────────
+let _clientsCache = [];
+
+async function loadInvoicesTab() {
+  const el = document.getElementById('invoices-list');
+  el.innerHTML = '<div class="spinner"></div>';
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/invoices?select=*,clients(business_name)&order=created_at.desc`, {
+      headers: { apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}` },
+    });
+    const rows = await r.json();
+    if (!Array.isArray(rows) || !rows.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">💳</div>No invoices yet — create the first one above.</div>';
+      return;
+    }
+    el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Client</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Invoice</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Amount</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Due</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Status</th>
+        <th style="padding:10px 12px"></th>
+      </tr></thead>
+      <tbody>
+        ${rows.map(inv => {
+          const cls = inv.status==='paid' ? 'badge-green' : inv.status==='overdue' ? 'badge-red' : 'badge-amber';
+          const due = inv.due_date ? new Date(inv.due_date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+          return `<tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:11px 12px;font-size:13px;color:var(--muted)">${inv.clients?.business_name||'—'}</td>
+            <td style="padding:11px 12px;font-size:13px;font-weight:500">${inv.title||'Invoice'}</td>
+            <td style="padding:11px 12px;font-size:13px;font-family:monospace;color:var(--green)">$${Number(inv.amount||0).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+            <td style="padding:11px 12px;font-size:12px;color:var(--muted)">${due}</td>
+            <td style="padding:11px 12px"><span class="card-badge ${cls}">${inv.status||'unpaid'}</span></td>
+            <td style="padding:11px 12px;display:flex;gap:8px">
+              ${inv.status !== 'paid' ? `<button class="btn-sm blue" onclick="markPaid('${inv.id}')">Mark Paid</button>` : ''}
+              <button class="btn-sm" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="deleteInvoice('${inv.id}')">Delete</button>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state">Failed to load invoices</div>';
+  }
+}
+
+async function openAddInvoice() {
+  // Load clients for dropdown
+  if (!_clientsCache.length) {
+    const r = await fetch(`${API_BASE}?action=list_clients`);
+    const d = await r.json();
+    _clientsCache = d.clients || [];
+  }
+  const sel = document.getElementById('inv-client');
+  sel.innerHTML = _clientsCache.map(c => `<option value="${c.id}">${c.business_name}</option>`).join('');
+  ['inv-title','inv-amount','inv-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('inv-status').value = 'unpaid';
+  // Default due date = end of this month
+  const now = new Date();
+  const eom = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0];
+  document.getElementById('inv-due').value = eom;
+  document.getElementById('modal-invoice').classList.add('open');
+}
+
+async function saveInvoice() {
+  const btn = document.getElementById('inv-save-btn');
+  const client_id = document.getElementById('inv-client').value;
+  const title     = document.getElementById('inv-title').value.trim();
+  const amount    = document.getElementById('inv-amount').value;
+  if (!title || !amount) { toast('Title and amount required', 'err'); return; }
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/invoices`, {
+      method: 'POST',
+      headers: {
+        apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}`,
+        'Content-Type': 'application/json', Prefer: 'return=representation',
+      },
+      body: JSON.stringify({
+        client_id, title, amount: parseFloat(amount),
+        due_date: document.getElementById('inv-due').value || null,
+        status: document.getElementById('inv-status').value,
+        notes: document.getElementById('inv-notes').value.trim() || null,
+      }),
+    });
+    if (!r.ok) throw new Error('Failed to create invoice');
+    toast('Invoice created', 'ok');
+    closeModal('modal-invoice');
+    loadInvoicesTab();
+  } catch(e) {
+    toast(e.message, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Create Invoice';
+  }
+}
+
+async function markPaid(id) {
+  await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: { apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: 'paid' }),
+  });
+  toast('Marked as paid', 'ok');
+  loadInvoicesTab();
+}
+
+async function deleteInvoice(id) {
+  if (!confirm('Delete this invoice? This cannot be undone.')) return;
+  await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: { apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}` },
+  });
+  toast('Invoice deleted', 'ok');
+  loadInvoicesTab();
+}
+
+// ── Leads Tab ───────────────────────────────────────────────────────────────
+async function loadLeadsTab() {
+  const el = document.getElementById('leads-list');
+  el.innerHTML = '<div class="spinner"></div>';
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/lsa_leads?select=*,clients(business_name)&order=lead_date.desc&limit=100`,
+      { headers: { apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}` } }
+    );
+    const rows = await r.json();
+    if (!Array.isArray(rows) || !rows.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>No leads yet.</div>';
+      return;
+    }
+    el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Date</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Client</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Customer</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Phone</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Type</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Status</th>
+      </tr></thead>
+      <tbody>
+        ${rows.map(l => {
+          const date = new Date((l.lead_date||l.created_at)+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+          const statusCls = l.status==='booked' ? 'badge-green' : l.status==='new' ? 'badge-blue' : 'badge-muted';
+          return `<tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:11px 12px;font-size:12px;font-family:monospace;color:var(--muted)">${date}</td>
+            <td style="padding:11px 12px;font-size:13px;color:var(--muted)">${l.clients?.business_name||'—'}</td>
+            <td style="padding:11px 12px;font-size:13px;font-weight:500">${l.customer_name||'—'}</td>
+            <td style="padding:11px 12px;font-size:12px;font-family:monospace">${l.customer_phone ? `<a href="tel:${l.customer_phone}" style="color:var(--green);text-decoration:none">${l.customer_phone}</a>` : '—'}</td>
+            <td style="padding:11px 12px"><span class="card-badge badge-blue">${l.lead_type||'Lead'}</span></td>
+            <td style="padding:11px 12px"><span class="card-badge ${statusCls}">${l.status||'new'}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state">Failed to load leads</div>';
+  }
 }
 
 // Close modals on backdrop click

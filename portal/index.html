@@ -25,17 +25,37 @@
 html{-webkit-font-smoothing:antialiased}
 body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;min-height:100vh}
 
-/* ── LOGIN ── */
+/* ─── ANIMATIONS ───────────────────────────────────────────────── */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes countPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes barGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+.fade-up{animation:fadeUp 0.5s cubic-bezier(.22,1,.36,1) both}
+.fade-up-1{animation-delay:0.05s}
+.fade-up-2{animation-delay:0.12s}
+.fade-up-3{animation-delay:0.19s}
+.fade-up-4{animation-delay:0.26s}
+.fade-up-5{animation-delay:0.33s}
+.fade-up-6{animation-delay:0.40s}
+
+/* ─── LOGIN ────────────────────────────────────────────────────── */
 #login-screen{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
   flex-direction:column;gap:36px;padding:24px;
-  background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(59,130,246,0.07) 0%,transparent 70%),var(--bg);
+  background:
+    radial-gradient(ellipse 60% 50% at 30% 40%,rgba(59,130,246,0.08) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 70% 60%,rgba(139,92,246,0.06) 0%,transparent 70%),
+    var(--bg);
 }
 .login-brand{display:flex;align-items:center;gap:14px;text-decoration:none}
 .login-emark{
-  width:40px;height:40px;border-radius:10px;
+  width:42px;height:42px;border-radius:10px;
   background:linear-gradient(135deg,var(--blue),#1D4ED8);
   display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 24px rgba(59,130,246,0.3);
 }
 .login-emark svg{width:22px;height:22px}
 .login-wordmark{font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:0.18em;color:var(--text)}
@@ -44,32 +64,35 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-si
   background:var(--surface);border:1px solid var(--border2);
   border-radius:16px;padding:36px;width:360px;max-width:100%;
   box-shadow:0 32px 80px rgba(0,0,0,0.5);
+  animation:fadeUp 0.4s cubic-bezier(.22,1,.36,1);
 }
-.login-card h2{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+.login-card h2{font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:6px}
 .login-card p{font-size:13px;color:var(--text2);margin-bottom:28px;line-height:1.6}
 .lf{margin-bottom:14px}
 .lf label{display:block;font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;text-transform:uppercase}
 .lf input{
   width:100%;background:var(--surface2);border:1px solid var(--border2);
   border-radius:8px;padding:11px 14px;font-size:14px;color:var(--text);
-  font-family:var(--font-body);outline:none;transition:border-color 0.15s;
+  font-family:var(--font-body);outline:none;transition:border-color 0.15s,box-shadow 0.15s;
 }
 .lf input::placeholder{color:var(--text3)}
-.lf input:focus{border-color:rgba(59,130,246,0.4);background:rgba(255,255,255,0.04)}
+.lf input:focus{border-color:rgba(59,130,246,0.5);box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
 .btn-login{
-  width:100%;background:var(--blue);color:#fff;border:none;
-  border-radius:8px;padding:12px;font-size:14px;font-weight:600;
-  font-family:var(--font-body);cursor:pointer;transition:background 0.15s,transform 0.15s;
-  margin-top:4px;
+  width:100%;background:linear-gradient(135deg,var(--blue),var(--blue-mid));
+  color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:600;
+  font-family:var(--font-body);cursor:pointer;
+  transition:opacity 0.15s,transform 0.15s,box-shadow 0.15s;
+  box-shadow:0 4px 20px rgba(59,130,246,0.3);margin-top:4px;
 }
-.btn-login:hover{background:var(--blue-mid);transform:translateY(-1px)}
-.btn-login:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.btn-login:hover{opacity:0.9;transform:translateY(-1px);box-shadow:0 8px 28px rgba(59,130,246,0.4)}
+.btn-login:active{transform:translateY(0)}
+.btn-login:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
 .login-err{color:var(--red);font-size:12px;margin-top:10px;display:none;line-height:1.5}
 
-/* ── APP SHELL ── */
+/* ─── APP SHELL ────────────────────────────────────────────────── */
 #app{display:none;min-height:100vh;flex-direction:column}
 .app-nav{
-  background:rgba(10,15,30,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(10,15,30,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 28px;height:58px;position:sticky;top:0;z-index:50;
@@ -81,92 +104,170 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-si
   display:flex;align-items:center;justify-content:center;
 }
 .app-nav-mark svg{width:16px;height:16px}
-.app-nav-wordmark{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.16em;color:var(--text)}
+.app-nav-wordmark{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.16em}
 .app-nav-right{display:flex;align-items:center;gap:14px}
-.app-nav-biz{font-size:12px;color:var(--text3)}
+.nav-biz-pill{
+  font-size:11px;color:var(--text2);
+  background:rgba(255,255,255,0.06);border:1px solid var(--border2);
+  border-radius:20px;padding:4px 12px;
+}
 .btn-signout{
-  background:rgba(255,255,255,0.05);border:1px solid var(--border2);
-  border-radius:6px;padding:6px 12px;color:var(--text2);font-size:12px;
-  cursor:pointer;font-family:var(--font-body);transition:background 0.15s;
+  background:transparent;border:1px solid var(--border2);
+  border-radius:6px;padding:6px 12px;color:var(--text3);font-size:12px;
+  cursor:pointer;font-family:var(--font-body);transition:all 0.15s;
 }
-.btn-signout:hover{background:rgba(255,255,255,0.09);color:var(--text)}
+.btn-signout:hover{background:rgba(255,255,255,0.06);color:var(--text);border-color:var(--border2)}
 
-/* ── BODY ── */
-.portal-body{max-width:960px;margin:0 auto;padding:36px 24px 60px}
-#loading{text-align:center;padding:80px 20px;color:var(--text3);font-size:13px}
-.spinner{
-  display:inline-block;width:22px;height:22px;border:2px solid var(--surface2);
+/* ─── BODY ─────────────────────────────────────────────────────── */
+.portal-body{max-width:980px;margin:0 auto;padding:40px 24px 80px}
+#loading{text-align:center;padding:100px 20px;color:var(--text3);font-size:13px}
+.load-spinner{
+  display:inline-block;width:24px;height:24px;border:2px solid rgba(255,255,255,0.08);
   border-top-color:var(--blue);border-radius:50%;
-  animation:spin 0.7s linear infinite;margin-bottom:14px;
+  animation:spin 0.7s linear infinite;margin-bottom:16px;
 }
-@keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── GREETING ── */
-.greeting{margin-bottom:36px}
-.greeting-eyebrow{font-size:11px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px}
-.greeting-name{font-family:var(--font-display);font-size:clamp(22px,3vw,30px);font-weight:700;color:var(--text);letter-spacing:-0.02em}
-.greeting-sub{font-size:14px;color:var(--text2);margin-top:6px}
+/* ─── HERO STAT ────────────────────────────────────────────────── */
+.hero-section{
+  background:linear-gradient(135deg,rgba(59,130,246,0.08) 0%,rgba(139,92,246,0.05) 100%);
+  border:1px solid rgba(59,130,246,0.15);
+  border-radius:16px;padding:32px;margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.hero-section::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(59,130,246,0.1) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-eyebrow{font-size:10px;font-weight:600;color:var(--blue);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px}
+.hero-name{font-family:var(--font-display);font-size:clamp(22px,3vw,28px);font-weight:700;letter-spacing:-0.02em;margin-bottom:4px}
+.hero-sub{font-size:13px;color:var(--text2)}
+.hero-big-num{
+  font-family:var(--font-mono);font-size:clamp(48px,7vw,72px);
+  font-weight:500;color:var(--green);line-height:1;
+  margin:20px 0 6px;letter-spacing:-0.03em;
+}
+.hero-big-label{font-size:12px;color:var(--text3)}
+.hero-delta{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:600;margin-top:8px;
+  padding:4px 10px;border-radius:20px;
+}
+.hero-delta.up{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,0.2)}
+.hero-delta.down{background:rgba(239,68,68,0.08);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.hero-delta.neutral{background:rgba(255,255,255,0.06);color:var(--text2);border:1px solid var(--border2)}
 
-/* ── STATS ── */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:28px}
+/* ─── STAT GRID ────────────────────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
 .stat-card{
   background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);
-  padding:20px;
+  padding:18px 20px;transition:border-color 0.2s,transform 0.2s;
 }
-.stat-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
-.stat-val{font-family:var(--font-mono);font-size:30px;font-weight:500;color:var(--text)}
+.stat-card:hover{border-color:rgba(255,255,255,0.18);transform:translateY(-2px)}
+.stat-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px}
+.stat-val{font-family:var(--font-mono);font-size:32px;font-weight:500;color:var(--text);line-height:1}
 .stat-val.green{color:var(--green)}
 .stat-val.blue{color:var(--blue)}
 .stat-val.amber{color:var(--amber)}
-.stat-change{font-size:11px;color:var(--text3);margin-top:4px}
+.stat-val.purple{color:var(--purple)}
+.stat-change{font-size:11px;color:var(--text3);margin-top:6px}
+.stat-delta{display:inline-block;font-size:10px;font-weight:600;margin-top:6px;padding:2px 8px;border-radius:20px}
+.stat-delta.up{background:var(--green-dim);color:var(--green)}
+.stat-delta.down{background:rgba(239,68,68,0.08);color:var(--red)}
+.stat-delta.neutral{color:var(--text3);background:none;padding:0}
 
-/* ── CARD ── */
+/* ─── ACTIVITY CHART ────────────────────────────────────────────── */
 .card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);margin-bottom:16px;overflow:hidden}
 .card-header{
   padding:16px 20px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
 }
-.card-title{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--text)}
-.card-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;letter-spacing:0.06em}
+.card-title{font-family:var(--font-display);font-size:13px;font-weight:600}
+.card-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;letter-spacing:0.04em;white-space:nowrap}
 .badge-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,0.2)}
 .badge-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2)}
 .badge-amber{background:rgba(245,158,11,0.10);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+.badge-purple{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(139,92,246,0.2)}
 .badge-red{background:rgba(239,68,68,0.10);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.badge-muted{background:rgba(255,255,255,0.05);color:var(--text3);border:1px solid var(--border)}
 .card-body{padding:20px}
 
-/* ── SERVICES ── */
+/* Chart */
+.chart-wrap{padding:0 20px 20px}
+.chart-svg{width:100%;overflow:visible}
+.chart-bar{fill:var(--blue);opacity:0.7;transition:opacity 0.15s;cursor:default;transform-origin:bottom;animation:barGrow 0.6s cubic-bezier(.22,1,.36,1) both}
+.chart-bar:hover{opacity:1}
+.chart-bar.today{fill:var(--green)}
+.chart-label{font-family:var(--font-mono);font-size:9px;fill:var(--text3)}
+.chart-tooltip{
+  position:absolute;background:#1E2D4A;border:1px solid var(--border2);
+  border-radius:7px;padding:6px 10px;font-size:12px;pointer-events:none;
+  opacity:0;transition:opacity 0.12s;white-space:nowrap;z-index:10;
+}
+
+/* ─── LEADS FEED ────────────────────────────────────────────────── */
+.leads-filter{display:flex;gap:8px;padding:0 20px 16px;flex-wrap:wrap}
+.filter-btn{
+  font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;
+  border:1px solid var(--border2);background:transparent;color:var(--text3);
+  cursor:pointer;font-family:var(--font-body);transition:all 0.15s;
+}
+.filter-btn:hover{color:var(--text);border-color:rgba(255,255,255,0.2)}
+.filter-btn.active{background:var(--blue-dim);color:var(--blue);border-color:rgba(59,130,246,0.35)}
+
+.leads-list{display:flex;flex-direction:column;gap:0}
+.lead-row{
+  display:grid;grid-template-columns:80px 1fr auto;align-items:center;
+  gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);
+  transition:background 0.12s;cursor:default;
+}
+.lead-row:last-child{border-bottom:none}
+.lead-row:hover{background:rgba(255,255,255,0.02)}
+.lead-date{font-family:var(--font-mono);font-size:11px;color:var(--text3)}
+.lead-main{display:flex;align-items:center;gap:10px;min-width:0}
+.lead-source{
+  width:24px;height:24px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.lead-source.lsa{background:rgba(59,130,246,0.15);color:var(--blue)}
+.lead-source.call{background:rgba(16,185,129,0.12);color:var(--green)}
+.lead-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lead-type{font-size:11px;color:var(--text3);margin-top:1px}
+.lead-phone{
+  font-family:var(--font-mono);font-size:12px;color:var(--text3);
+  text-decoration:none;transition:color 0.12s;
+}
+.lead-phone:hover{color:var(--green)}
+
+/* ─── SERVICES ──────────────────────────────────────────────────── */
 .services-list{display:flex;flex-wrap:wrap;gap:8px}
 .svc-chip{
   display:inline-flex;align-items:center;gap:6px;
   background:var(--blue-dim);border:1px solid rgba(59,130,246,0.2);
-  border-radius:99px;padding:5px 12px;
+  border-radius:99px;padding:5px 14px;
   font-size:11px;font-weight:600;color:var(--blue);
 }
-.svc-chip::before{content:'✓';font-size:10px}
+.svc-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0}
 
-/* ── TABLE ── */
-.data-table{width:100%;border-collapse:collapse}
-.data-table th{
-  font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;
-  letter-spacing:0.08em;padding:8px 12px 8px 0;border-bottom:1px solid var(--border);text-align:left;
+/* ─── INVOICES ──────────────────────────────────────────────────── */
+.invoice-row{
+  display:grid;grid-template-columns:1fr auto auto;align-items:center;
+  gap:16px;padding:12px 20px;border-bottom:1px solid var(--border);
 }
-.data-table td{padding:11px 12px 11px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);vertical-align:middle}
-.data-table tr:last-child td{border-bottom:none}
-.data-table td.mono{font-family:var(--font-mono);color:var(--text)}
-.data-table td.name{font-weight:500;color:var(--text)}
-
-/* ── STATUS BADGES ── */
+.invoice-row:last-child{border-bottom:none}
+.invoice-title{font-size:13px;font-weight:500;color:var(--text)}
+.invoice-due{font-size:11px;color:var(--text3);margin-top:2px}
+.invoice-amount{font-family:var(--font-mono);font-size:14px;font-weight:500;color:var(--text)}
 .status{display:inline-block;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:0.04em}
 .status-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,0.2)}
 .status-amber{background:rgba(245,158,11,0.10);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
 .status-red{background:rgba(239,68,68,0.10);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
 .status-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2)}
 
-/* ── CONTACT ── */
+/* ─── CONTACT ───────────────────────────────────────────────────── */
 .contact-row{
   display:flex;align-items:center;gap:20px;flex-wrap:wrap;
-  padding:20px;background:rgba(255,255,255,0.02);border-radius:10px;
-  border:1px solid var(--border);
 }
 .contact-avatar{
   width:48px;height:48px;border-radius:50%;flex-shrink:0;
@@ -174,43 +275,46 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-si
   display:flex;align-items:center;justify-content:center;
   font-family:var(--font-display);font-size:16px;font-weight:700;color:#fff;
 }
-.contact-name{font-size:15px;font-weight:600;color:var(--text)}
+.contact-name{font-size:15px;font-weight:600}
 .contact-role{font-size:12px;color:var(--text3);margin-top:2px}
 .contact-btns{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
 .contact-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(255,255,255,0.06);border:1px solid var(--border2);
-  border-radius:7px;padding:8px 14px;color:var(--text2);
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.05);border:1px solid var(--border2);
+  border-radius:8px;padding:9px 16px;color:var(--text2);
   font-size:12px;font-weight:500;text-decoration:none;
-  transition:background 0.15s,color 0.15s;font-family:var(--font-body);cursor:pointer;
+  transition:all 0.15s;font-family:var(--font-body);cursor:pointer;
 }
-.contact-btn:hover{background:rgba(255,255,255,0.1);color:var(--text)}
+.contact-btn:hover{background:rgba(255,255,255,0.1);color:var(--text);border-color:var(--border2)}
 
-/* ── REPORT LINK ── */
-.report-row{
-  display:flex;align-items:center;gap:14px;padding:14px 16px;
-  border-radius:8px;background:rgba(255,255,255,0.02);
-  border:1px solid var(--border);margin-bottom:10px;
-  transition:border-color 0.15s;
+/* ─── EMPTY ──────────────────────────────────────────────────────── */
+.empty-state{
+  text-align:center;padding:36px 20px;color:var(--text3);font-size:13px;line-height:1.7;
 }
-.report-row:hover{border-color:rgba(255,255,255,0.16)}
-.report-icon{font-size:20px;flex-shrink:0}
-.report-info{flex:1}
-.report-name{font-size:13px;font-weight:500;color:var(--text)}
-.report-meta{font-size:11px;color:var(--text3);margin-top:2px}
-.report-arrow{color:var(--text3);font-size:14px}
-
-/* ── EMPTY ── */
-.empty-state{text-align:center;padding:36px 20px;color:var(--text3);font-size:13px;line-height:1.7}
+.empty-icon{font-size:32px;margin-bottom:12px;opacity:0.5}
 .empty-state strong{display:block;color:var(--text2);font-size:14px;margin-bottom:4px}
 
-/* ── MOBILE ── */
+/* ─── SKELETON ───────────────────────────────────────────────────── */
+.skeleton{
+  background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:4px;
+}
+
+/* ─── MOBILE ──────────────────────────────────────────────────────── */
 @media(max-width:640px){
-  .portal-body{padding:24px 16px 48px}
+  .portal-body{padding:24px 16px 60px}
   .app-nav{padding:0 16px}
   .stats-grid{grid-template-columns:1fr 1fr}
+  .stats-grid .stat-card:last-child{display:none}
   .contact-btns{margin-left:0;width:100%}
-  .data-table th:nth-child(3),.data-table td:nth-child(3){display:none}
+  .lead-row{grid-template-columns:68px 1fr}
+  .lead-phone{display:none}
+  .hero-big-num{font-size:52px}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -233,10 +337,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-si
   </a>
   <div class="login-card">
     <h2>Sign in</h2>
-    <p>Access your ad performance, leads, and reports.</p>
+    <p>Access your lead data, ad performance, and reports.</p>
     <div class="lf">
       <label>Email</label>
-      <input type="email" id="p-email" placeholder="you@yourbiz.com" autocomplete="email">
+      <input type="email" id="p-email" placeholder="you@yourbusiness.com" autocomplete="email">
     </div>
     <div class="lf">
       <label>Password</label>
@@ -261,109 +365,26 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-si
       <div class="app-nav-wordmark">EVAN ENTERPRISES</div>
     </div>
     <div class="app-nav-right">
-      <span class="app-nav-biz" id="portal-biz-name"></span>
+      <div class="nav-biz-pill" id="portal-biz-name"></div>
       <button class="btn-signout" onclick="portalSignOut()">Sign out</button>
     </div>
   </nav>
 
   <div class="portal-body">
-    <div id="loading"><div class="spinner"></div><br>Loading your dashboard…</div>
+    <div id="loading"><div class="load-spinner"></div><br>Loading your dashboard…</div>
+    <div id="portal-content" style="display:none"></div>
+  </div>
+</div>
 
-    <div id="portal-content" style="display:none">
-
-      <div class="greeting">
-        <div class="greeting-eyebrow">Client dashboard</div>
-        <div class="greeting-name" id="greeting-text">Good morning</div>
-        <div class="greeting-sub" id="greeting-sub">Here's your business performance overview.</div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Leads This Month</div>
-          <div class="stat-val green" id="stat-leads">—</div>
-          <div class="stat-change">LSA + website calls combined</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Website Calls</div>
-          <div class="stat-val blue" id="stat-calls">—</div>
-          <div class="stat-change">Tracked via Google Ads</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">LSA Leads</div>
-          <div class="stat-val" id="stat-lsa">—</div>
-          <div class="stat-change">Google Local Service Ads</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Open Invoices</div>
-          <div class="stat-val amber" id="stat-invoices">—</div>
-          <div class="stat-change">Click below to view</div>
-        </div>
-      </div>
-
-      <!-- Services being managed -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">What We're Managing</div>
-          <span class="card-badge badge-blue">Active</span>
-        </div>
-        <div class="card-body">
-          <div class="services-list" id="services-list">
-            <span style="color:var(--text3);font-size:12px">Loading…</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- LSA Leads -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Recent LSA Leads</div>
-          <span class="card-badge badge-green" id="lsa-count-badge">—</span>
-        </div>
-        <div class="card-body" id="lsa-body">
-          <div class="empty-state"><strong>No LSA leads yet</strong>Leads will appear here once your Local Service Ads are running.</div>
-        </div>
-      </div>
-
-      <!-- Invoices -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Invoices</div>
-          <span class="card-badge badge-amber" id="inv-count-badge" style="display:none"></span>
-        </div>
-        <div class="card-body" id="invoices-body">
-          <div class="empty-state"><strong>No invoices yet</strong>Your billing history will appear here.</div>
-        </div>
-      </div>
-
-      <!-- Contact Sean -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Your Account Manager</div>
-        </div>
-        <div class="card-body">
-          <div class="contact-row">
-            <div class="contact-avatar">SE</div>
-            <div>
-              <div class="contact-name">Sean Evangelista</div>
-              <div class="contact-role">Evan Enterprises LLC — Direct line, always</div>
-            </div>
-            <div class="contact-btns">
-              <a href="mailto:seanjevangelista@gmail.com" class="contact-btn">✉ Email Sean</a>
-              <a href="sms:+15128005000" class="contact-btn">💬 Text</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /portal-content -->
-  </div><!-- /portal-body -->
-</div><!-- /app -->
+<!-- Tooltip for chart -->
+<div class="chart-tooltip" id="chart-tip"></div>
 
 <script>
 const SUPABASE_URL  = 'https://hzcgdnhecgewqpcnumwm.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6Y2dkbmhlY2dld3FwY251bXdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2Nzk0MDgsImV4cCI6MjA5ODI1NTQwOH0.ZrpEnLvudbGYZJGf1Rr-cAEJkgbXX5Gvt9mWSAzYnW4';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
+// ── Auth ──────────────────────────────────────────────────────────
 async function portalLogin() {
   const email = document.getElementById('p-email').value.trim();
   const pass  = document.getElementById('p-pass').value;
@@ -387,14 +408,11 @@ async function showPortal() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
 
-  const h = new Date().getHours();
-  document.getElementById('greeting-text').textContent =
-    h < 12 ? 'Good morning.' : h < 17 ? 'Good afternoon.' : 'Good evening.';
-
   const { data: userRow } = await sb.from('users').select('client_id').eq('id', user.id).single();
   const clientId = userRow?.client_id;
   if (!clientId) {
-    document.getElementById('loading').innerHTML = '<div class="empty-state"><strong>No account linked</strong>Contact Sean to get your portal set up.</div>';
+    document.getElementById('loading').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">🔗</div><strong>No account linked</strong>Contact Sean to get your portal set up.</div>';
     return;
   }
 
@@ -405,81 +423,309 @@ async function showPortal() {
   }
 
   document.getElementById('portal-biz-name').textContent = client.business_name;
-  document.getElementById('greeting-sub').textContent = client.business_name + ' — Evan Enterprises';
-  document.title = client.business_name + ' — Client Portal';
+  document.title = client.business_name + ' — Evan Enterprises';
 
-  const now    = new Date();
+  // Date helpers
+  const now     = new Date();
   const moStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  const safe   = p => p.then(r => r.data || []).catch(() => []);
+  const lastMoStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
+  const lastMoEnd   = moStart;
+  const day30Ago    = new Date(now - 30 * 86400000).toISOString();
 
-  const [calls, lsaLeads, invoices] = await Promise.all([
-    safe(sb.from('call_leads').select('id').eq('client_id', clientId).gte('tapped_at', moStart)),
-    safe(sb.from('lsa_leads').select('*').eq('client_id', clientId).order('created_at', { ascending: false }).limit(15)),
+  const safe = p => p.then(r => r.data || []).catch(() => []);
+
+  // Fetch all data in parallel
+  const [lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices] = await Promise.all([
+    safe(sb.from('lsa_leads').select('*').eq('client_id', clientId).gte('lead_date', day30Ago).order('lead_date', { ascending: false })),
+    safe(sb.from('lsa_leads').select('id').eq('client_id', clientId).gte('lead_date', lastMoStart).lt('lead_date', lastMoEnd)),
+    safe(sb.from('call_leads').select('*').eq('client_id', clientId).gte('tapped_at', moStart)),
+    safe(sb.from('call_leads').select('id').eq('client_id', clientId).gte('tapped_at', lastMoStart).lt('tapped_at', lastMoEnd)),
     safe(sb.from('invoices').select('*').eq('client_id', clientId).order('due_date', { ascending: false }).limit(10)),
   ]);
 
-  const lsaThisMonth = lsaLeads.filter(l => l.created_at >= moStart);
-  document.getElementById('stat-calls').textContent = calls.length;
-  document.getElementById('stat-lsa').textContent = lsaThisMonth.length;
-  document.getElementById('stat-leads').textContent = calls.length + lsaThisMonth.length;
+  // Also fetch all LSA this month
+  const lsaThisMo = lsaAll.filter(l => (l.lead_date || l.created_at) >= moStart);
 
-  const unpaid = invoices.filter(i => i.status !== 'paid');
-  document.getElementById('stat-invoices').textContent = unpaid.length;
-  if (!unpaid.length) document.getElementById('stat-invoices').classList.replace('amber', 'green');
+  const totalThisMo  = lsaThisMo.length + callsThisMo.length;
+  const totalLastMo  = lsaLastMo.length + callsLastMo.length;
+  const deltaTotal   = totalThisMo - totalLastMo;
+  const unpaid       = invoices.filter(i => i.status !== 'paid');
+
+  // Build 30-day chart data
+  const dayBuckets = {};
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now - i * 86400000);
+    const key = d.toISOString().split('T')[0];
+    dayBuckets[key] = 0;
+  }
+  lsaAll.forEach(l => {
+    const k = (l.lead_date || l.created_at||'').split('T')[0];
+    if (k in dayBuckets) dayBuckets[k]++;
+  });
+  callsThisMo.forEach(c => {
+    const k = (c.tapped_at||'').split('T')[0];
+    if (k in dayBuckets) dayBuckets[k]++;
+  });
+
+  // Merge leads feed (LSA + calls)
+  const allLeads = [
+    ...lsaAll.map(l => ({
+      date: l.lead_date || l.created_at, name: l.customer_name || 'Unknown',
+      type: l.lead_type || 'LSA Lead', phone: l.customer_phone, source: 'lsa',
+    })),
+    ...callsThisMo.map(c => ({
+      date: c.tapped_at, name: c.caller_name || 'Website Caller',
+      type: 'Website Call', phone: c.caller_phone, source: 'call',
+    })),
+  ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   // Services
   const svcMap = {
-    has_google_ads: 'Google Ads', has_lsa: 'Local Service Ads',
-    has_facebook: 'Facebook Ads', has_instagram: 'Instagram',
-    has_reporting: 'Monthly Reports', has_jobber: 'Jobber',
-    has_seo: 'SEO', has_social: 'Social Media',
+    has_google_ads: ['Google Ads', '🔍'],
+    has_lsa:        ['Local Service Ads', '📢'],
+    has_facebook:   ['Facebook Ads', '📘'],
+    has_instagram:  ['Instagram', '📸'],
+    has_reporting:  ['Monthly Reports', '📊'],
+    has_jobber:     ['Jobber', '🔧'],
+    has_seo:        ['SEO', '🌐'],
+    has_social:     ['Social Media', '📱'],
   };
-  const svcs = Object.entries(svcMap).filter(([k]) => client[k]).map(([,v]) => v);
-  const svcEl = document.getElementById('services-list');
-  svcEl.innerHTML = svcs.length
-    ? svcs.map(s => `<span class="svc-chip">${s}</span>`).join('')
-    : '<span style="color:var(--text3);font-size:12px">No services configured yet — contact Sean.</span>';
+  const svcs = Object.entries(svcMap).filter(([k]) => client[k]);
 
-  // LSA Leads
-  const lsaBadge = document.getElementById('lsa-count-badge');
-  lsaBadge.textContent = lsaThisMonth.length + ' this month';
-  const lsaEl = document.getElementById('lsa-body');
-  if (lsaLeads.length) {
-    lsaEl.innerHTML = `<div style="overflow-x:auto"><table class="data-table">
-      <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Phone</th></tr></thead>
-      <tbody>${lsaLeads.map(l => `<tr>
-        <td class="mono">${new Date(l.lead_date || l.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td>
-        <td class="name">${l.customer_name || '—'}</td>
-        <td><span class="status status-blue">${l.lead_type || 'Lead'}</span></td>
-        <td>${l.customer_phone || '—'}</td>
-      </tr>`).join('')}</tbody>
-    </table></div>`;
-  }
+  const h = now.getHours();
+  const greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
 
-  // Invoices
-  const invEl = document.getElementById('invoices-body');
-  const invBadge = document.getElementById('inv-count-badge');
-  if (unpaid.length) {
-    invBadge.style.display = '';
-    invBadge.textContent = unpaid.length + ' unpaid';
-  }
-  if (invoices.length) {
-    invEl.innerHTML = `<div style="overflow-x:auto"><table class="data-table">
-      <thead><tr><th>Invoice</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead>
-      <tbody>${invoices.map(i => {
-        const cls = i.status==='paid' ? 'status-green' : i.status==='overdue' ? 'status-red' : 'status-amber';
-        return `<tr>
-          <td class="name">${i.title || 'Invoice'}</td>
-          <td class="mono">$${Number(i.amount||0).toFixed(2)}</td>
-          <td class="mono">${i.due_date ? new Date(i.due_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}</td>
-          <td><span class="status ${cls}">${i.status||'unpaid'}</span></td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table></div>`;
-  }
-
+  // Render
   document.getElementById('loading').style.display = 'none';
-  document.getElementById('portal-content').style.display = 'block';
+  const content = document.getElementById('portal-content');
+  content.style.display = 'block';
+
+  content.innerHTML = `
+    <!-- HERO -->
+    <div class="hero-section fade-up fade-up-1">
+      <div class="hero-eyebrow">Client dashboard</div>
+      <div class="hero-name">${greeting}, ${client.business_name}.</div>
+      <div class="hero-sub">Here's your lead performance for this month.</div>
+      <div class="hero-big-num" id="hero-num">0</div>
+      <div class="hero-big-label">Total leads generated this month</div>
+      <div class="hero-delta ${deltaTotal > 0 ? 'up' : deltaTotal < 0 ? 'down' : 'neutral'}" id="hero-delta">
+        ${deltaTotal > 0 ? '↑' : deltaTotal < 0 ? '↓' : '—'}
+        ${Math.abs(deltaTotal)} vs last month
+      </div>
+    </div>
+
+    <!-- STAT GRID -->
+    <div class="stats-grid fade-up fade-up-2">
+      <div class="stat-card">
+        <div class="stat-label">LSA Leads</div>
+        <div class="stat-val green" id="stat-lsa">0</div>
+        <div class="stat-change">Google Local Service Ads</div>
+        <div class="stat-delta ${lsaThisMo.length >= lsaLastMo.length ? 'up' : 'down'}">
+          ${lsaThisMo.length >= lsaLastMo.length ? '↑' : '↓'}
+          ${Math.abs(lsaThisMo.length - lsaLastMo.length)} vs last mo
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Website Calls</div>
+        <div class="stat-val blue" id="stat-calls">0</div>
+        <div class="stat-change">Tracked via Google Ads</div>
+        <div class="stat-delta ${callsThisMo.length >= callsLastMo.length ? 'up' : 'down'}">
+          ${callsThisMo.length >= callsLastMo.length ? '↑' : '↓'}
+          ${Math.abs(callsThisMo.length - callsLastMo.length)} vs last mo
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Open Invoices</div>
+        <div class="stat-val ${unpaid.length ? 'amber' : 'green'}" id="stat-inv">${unpaid.length}</div>
+        <div class="stat-change">${unpaid.length ? 'Payment due' : 'All paid up'}</div>
+        ${unpaid.length ? `<div class="stat-delta down">${unpaid.length} unpaid</div>` : '<div class="stat-delta up">✓ Clear</div>'}
+      </div>
+    </div>
+
+    <!-- ACTIVITY CHART -->
+    <div class="card fade-up fade-up-3">
+      <div class="card-header">
+        <div class="card-title">Lead Activity — Last 30 Days</div>
+        <span class="card-badge badge-blue">${lsaAll.length + callsThisMo.length} leads</span>
+      </div>
+      <div class="chart-wrap" style="position:relative">
+        ${buildChart(dayBuckets)}
+      </div>
+    </div>
+
+    <!-- ALL LEADS FEED -->
+    <div class="card fade-up fade-up-4">
+      <div class="card-header">
+        <div class="card-title">All Leads</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="card-badge badge-green" id="leads-badge">${allLeads.length} total</span>
+        </div>
+      </div>
+      <div class="leads-filter">
+        <button class="filter-btn active" onclick="filterLeads('all', this)">All</button>
+        <button class="filter-btn" onclick="filterLeads('lsa', this)">LSA</button>
+        <button class="filter-btn" onclick="filterLeads('call', this)">Website Calls</button>
+      </div>
+      <div class="leads-list" id="leads-list">
+        ${renderLeads(allLeads, 'all')}
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="card fade-up fade-up-5">
+      <div class="card-header">
+        <div class="card-title">What We're Managing</div>
+        <span class="card-badge badge-blue">${svcs.length} services</span>
+      </div>
+      <div class="card-body">
+        <div class="services-list">
+          ${svcs.length
+            ? svcs.map(([,v]) => `<span class="svc-chip"><span class="svc-dot"></span>${v[0]}</span>`).join('')
+            : '<span style="color:var(--text3);font-size:12px">No services configured yet.</span>'}
+        </div>
+      </div>
+    </div>
+
+    <!-- INVOICES -->
+    <div class="card fade-up fade-up-5">
+      <div class="card-header">
+        <div class="card-title">Invoices</div>
+        ${unpaid.length ? `<span class="card-badge badge-amber">${unpaid.length} unpaid</span>` : `<span class="card-badge badge-green">All clear</span>`}
+      </div>
+      ${invoices.length ? `<div class="invoices-list">${invoices.map(i => {
+        const cls = i.status==='paid' ? 'status-green' : i.status==='overdue' ? 'status-red' : 'status-amber';
+        return `<div class="invoice-row">
+          <div><div class="invoice-title">${i.title||'Invoice'}</div><div class="invoice-due">Due ${i.due_date ? new Date(i.due_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}</div></div>
+          <div class="invoice-amount">$${Number(i.amount||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+          <span class="status ${cls}">${i.status||'unpaid'}</span>
+        </div>`;
+      }).join('')}</div>` : `<div class="card-body"><div class="empty-state"><div class="empty-icon">💳</div><strong>No invoices yet</strong>Your billing history will appear here.</div></div>`}
+    </div>
+
+    <!-- CONTACT -->
+    <div class="card fade-up fade-up-6">
+      <div class="card-header"><div class="card-title">Your Account Manager</div></div>
+      <div class="card-body">
+        <div class="contact-row">
+          <div class="contact-avatar">SE</div>
+          <div>
+            <div class="contact-name">Sean Evangelista</div>
+            <div class="contact-role">Evan Enterprises LLC — Direct line, always</div>
+          </div>
+          <div class="contact-btns">
+            <a href="mailto:seanjevangelista@gmail.com" class="contact-btn">✉ Email Sean</a>
+            <a href="sms:+15128005000" class="contact-btn">💬 Text</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Store leads globally for filtering
+  window._allLeads = allLeads;
+
+  // Animate numbers
+  animateCount('hero-num', 0, totalThisMo, 800);
+  animateCount('stat-lsa', 0, lsaThisMo.length, 600);
+  animateCount('stat-calls', 0, callsThisMo.length, 600);
+
+  // Wire chart tooltips
+  initChartTooltips(dayBuckets);
+}
+
+// ── Number count-up ────────────────────────────────────────────────
+function animateCount(id, from, to, duration) {
+  const el = document.getElementById(id);
+  if (!el || to === 0) return;
+  const start = performance.now();
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(from + (to - from) * ease);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ── Lead filter ────────────────────────────────────────────────────
+function filterLeads(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('leads-list').innerHTML = renderLeads(window._allLeads, type);
+}
+
+function renderLeads(leads, filter) {
+  const filtered = filter === 'all' ? leads : leads.filter(l => l.source === filter);
+  if (!filtered.length) return `<div class="empty-state"><div class="empty-icon">📭</div><strong>No leads yet</strong>Leads will appear here as they come in.</div>`;
+  return filtered.slice(0, 50).map(l => {
+    const d = new Date(l.date);
+    const label = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const icon = l.source === 'lsa' ? '📢' : '📞';
+    const phone = l.phone ? `<a href="tel:${l.phone}" class="lead-phone">${l.phone}</a>` : '<span style="color:var(--text3);font-size:12px">—</span>';
+    return `<div class="lead-row">
+      <div class="lead-date">${label}</div>
+      <div class="lead-main">
+        <div class="lead-source ${l.source}">${icon}</div>
+        <div>
+          <div class="lead-name">${l.name}</div>
+          <div class="lead-type">${l.type}</div>
+        </div>
+      </div>
+      ${phone}
+    </div>`;
+  }).join('');
+}
+
+// ── Bar chart ──────────────────────────────────────────────────────
+function buildChart(dayBuckets) {
+  const keys = Object.keys(dayBuckets);
+  const vals = keys.map(k => dayBuckets[k]);
+  const maxV = Math.max(...vals, 1);
+  const W = 900, H = 80, pad = 4;
+  const bw = (W - pad * (keys.length - 1)) / keys.length;
+  const today = new Date().toISOString().split('T')[0];
+
+  const bars = keys.map((k, i) => {
+    const v = vals[i];
+    const h = Math.max(v / maxV * H, v > 0 ? 3 : 1);
+    const x = i * (bw + pad);
+    const y = H - h;
+    const isToday = k === today;
+    const delay = (i / keys.length * 0.4).toFixed(2);
+    return `<rect class="chart-bar${isToday ? ' today' : ''}" x="${x}" y="${y}" width="${bw}" height="${h}"
+      rx="2" data-date="${k}" data-val="${v}" style="animation-delay:${delay}s"/>`;
+  });
+
+  // X-axis labels: show every 7 days
+  const labels = keys.map((k, i) => {
+    if (i % 7 !== 0 && i !== keys.length - 1) return '';
+    const d = new Date(k + 'T12:00:00');
+    const lbl = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const x = i * (bw + pad) + bw / 2;
+    return `<text class="chart-label" x="${x}" y="${H + 14}" text-anchor="middle">${lbl}</text>`;
+  });
+
+  return `<svg class="chart-svg" viewBox="0 0 ${W} ${H + 20}" preserveAspectRatio="none"
+    style="height:90px;transform-origin:bottom">
+    ${bars.join('')}${labels.join('')}
+  </svg>`;
+}
+
+function initChartTooltips(dayBuckets) {
+  const tip = document.getElementById('chart-tip');
+  document.querySelectorAll('.chart-bar').forEach(bar => {
+    bar.addEventListener('mousemove', e => {
+      const date = bar.dataset.date;
+      const val  = bar.dataset.val;
+      const d = new Date(date + 'T12:00:00');
+      const label = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      tip.textContent = `${label}: ${val} lead${val != 1 ? 's' : ''}`;
+      tip.style.left = (e.pageX + 12) + 'px';
+      tip.style.top  = (e.pageY - 32) + 'px';
+      tip.style.opacity = '1';
+    });
+    bar.addEventListener('mouseleave', () => { tip.style.opacity = '0'; });
+  });
 }
 
 async function portalSignOut() {

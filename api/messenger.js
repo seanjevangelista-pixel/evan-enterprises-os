@@ -39,13 +39,15 @@ export default async function handler(req, res) {
     const clientFilter = body.client_id ? `&client_id=eq.${body.client_id}` : '';
     // Get LSA leads with phone numbers
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/lsa_leads?customer_phone=not.is.null&customer_phone=neq.&select=id,client_id,customer_name,customer_phone${clientFilter}`,
+      `${SUPABASE_URL}/rest/v1/lsa_leads?customer_phone=not.is.null&select=id,client_id,customer_name,customer_phone${clientFilter}`,
       { headers: sbH }
     );
     const leads = await r.json();
+    // Filter out empty strings client-side
+    const validLeads = Array.isArray(leads) ? leads.filter(l => l.customer_phone?.trim()) : [];
 
     let added = 0;
-    for (const lead of leads) {
+    for (const lead of validLeads) {
       // Upsert by (client_id, phone) — skip if already exists
       const check = await fetch(
         `${SUPABASE_URL}/rest/v1/contacts?client_id=eq.${lead.client_id}&phone=eq.${encodeURIComponent(lead.customer_phone)}&select=id&limit=1`,
@@ -69,7 +71,7 @@ export default async function handler(req, res) {
       added++;
     }
 
-    return res.status(200).json({ ok: true, synced: leads.length, added });
+    return res.status(200).json({ ok: true, synced: validLeads.length, added });
   }
 
   // ── LIST CAMPAIGNS ─────────────────────────────────────────────────────────

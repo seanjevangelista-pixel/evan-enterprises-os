@@ -3402,8 +3402,8 @@ $('load-payments-btn').addEventListener('click', async () => {
   container.innerHTML = '<div class="empty">Loading payments…</div>';
 
   try {
-    const params = new URLSearchParams({ endpoint:'payments', begin_time:begin, end_time:end });
-    const res  = await fetch(`/api/square?${params}`);
+    const params = new URLSearchParams({ action:'square', endpoint:'payments', begin_time:begin, end_time:end });
+    const res  = await fetch(`/api/integrations?${params}`);
     const data = await res.json();
     const payments = data.payments || [];
 
@@ -3622,6 +3622,7 @@ function onLsaClientChange() {
   if (sub) sub.textContent = client ? client.business_name + ' · LSA Lead Tracking' : 'Local Service Ads lead tracking';
   loadLsaLeads();
 }
+window.onLsaClientChange = onLsaClientChange;
 
 async function loadLsaLeads() {
   const el = $('lsa-content');
@@ -3858,6 +3859,7 @@ async function updateFormLeadStatus(id, status) {
   const lead = formLeads.find(l => l.id === id);
   if (lead) lead.status = status;
 }
+window.updateFormLeadStatus = updateFormLeadStatus;
 
 $('fl-client-filter')?.addEventListener('change', renderFormLeads);
 $('fl-status-filter')?.addEventListener('change', renderFormLeads);

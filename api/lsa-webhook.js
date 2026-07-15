@@ -19,9 +19,12 @@ export default async function handler(req, res) {
     Prefer: 'return=representation',
   };
 
-  // ── Parse inbound email payload (Resend inbound format) ────────────────────
-  // Resend sends: { from, to, subject, text, html, ... }
-  const payload = req.body || {};
+  // ── Parse inbound email payload ────────────────────────────────────────────
+  let payload = req.body || {};
+  // If body wasn't auto-parsed (no Content-Type: application/json from sender), parse manually
+  if (typeof payload === 'string') {
+    try { payload = JSON.parse(payload); } catch (_) { payload = {}; }
+  }
 
   const rawTo      = payload.to   || '';
   const rawFrom    = payload.from || '';

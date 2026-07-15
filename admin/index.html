@@ -531,6 +531,48 @@
   </div>
 </div>
 
+<!-- Edit Client Modal -->
+<div class="modal-overlay" id="modal-edit-client">
+  <div class="modal" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('modal-edit-client')">×</button>
+    <div class="modal-title">Edit Client</div>
+    <div class="modal-sub" id="edit-client-sub"></div>
+    <input type="hidden" id="edit-client-id" />
+    <div class="form-row">
+      <div class="form-group">
+        <label>Business Name</label>
+        <input type="text" id="edit-biz" />
+      </div>
+      <div class="form-group">
+        <label>Monthly Fee</label>
+        <input type="number" id="edit-fee" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Contact Name</label>
+        <input type="text" id="edit-contact" />
+      </div>
+      <div class="form-group">
+        <label>Contact Phone</label>
+        <input type="tel" id="edit-phone" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Contact Email</label>
+      <input type="email" id="edit-email" placeholder="angel@premieraustin.com" />
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="edit-notes"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-edit-client')">Cancel</button>
+      <button class="btn-save" id="edit-client-btn" onclick="saveEditClient()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <!-- Compose Campaign Modal -->
 <div class="modal-overlay" id="modal-compose">
   <div class="modal" style="max-width:540px">
@@ -727,6 +769,7 @@ function renderClients(clients) {
       </div>
       ${svcs.length ? `<div class="services-chips">${chips}</div>` : ''}
       <div class="card-actions">
+        <button class="btn-sm" onclick='openEditClient(${JSON.stringify(c).replace(/'/g,"&#39;")})'>Edit</button>
         <button class="btn-sm blue" onclick='openCreateLogin("${c.id}","${(c.business_name||'').replace(/'/g,'')}")'>
           + Portal Login
         </button>
@@ -1068,6 +1111,49 @@ async function loadLeadsTab() {
     </table>`;
   } catch(e) {
     el.innerHTML = '<div class="empty-state">Failed to load leads</div>';
+  }
+}
+
+// ── Edit Client ───────────────────────────────────────────────────────────────
+function openEditClient(c) {
+  document.getElementById('edit-client-id').value = c.id;
+  document.getElementById('edit-client-sub').textContent = c.business_name;
+  document.getElementById('edit-biz').value = c.business_name || '';
+  document.getElementById('edit-fee').value = c.monthly_fee || '';
+  document.getElementById('edit-contact').value = c.contact_name || '';
+  document.getElementById('edit-phone').value = c.contact_phone || '';
+  document.getElementById('edit-email').value = c.contact_email || '';
+  document.getElementById('edit-notes').value = c.notes || '';
+  document.getElementById('modal-edit-client').classList.add('open');
+}
+
+async function saveEditClient() {
+  const btn = document.getElementById('edit-client-btn');
+  const id = document.getElementById('edit-client-id').value;
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const r = await fetch(`${API_BASE}?action=update_client`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id,
+        business_name:  document.getElementById('edit-biz').value.trim(),
+        monthly_fee:    parseFloat(document.getElementById('edit-fee').value) || null,
+        contact_name:   document.getElementById('edit-contact').value.trim() || null,
+        contact_phone:  document.getElementById('edit-phone').value.trim() || null,
+        contact_email:  document.getElementById('edit-email').value.trim() || null,
+        notes:          document.getElementById('edit-notes').value.trim() || null,
+      }),
+    });
+    const data = await r.json();
+    if (!data.ok) throw new Error('Save failed');
+    showToast('✓ Client updated');
+    closeModal('modal-edit-client');
+    loadClients();
+  } catch(e) {
+    showToast('Failed to save');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save Changes';
   }
 }
 

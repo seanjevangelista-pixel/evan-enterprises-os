@@ -158,10 +158,10 @@ export default async function handler(req, res) {
     // Fetch client info to send notification email
     if (RESEND_KEY) {
       try {
-        const cr = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${client_id}&select=business_name,owner_email,owner_name&limit=1`, { headers: sb.headers });
+        const cr = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${client_id}&select=business_name,contact_email,contact_name&limit=1`, { headers: sb.headers });
         const clients = await cr.json();
         const client = clients?.[0];
-        if (client?.owner_email) {
+        if (client?.contact_email) {
           const dueFmt = due_date ? new Date(due_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'on file';
           const amtFmt = `$${parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
           await fetch('https://api.resend.com/emails', {
@@ -169,7 +169,7 @@ export default async function handler(req, res) {
             headers: { Authorization: `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
               from: 'EVAN Enterprises <noreply@evanenterprise.com>',
-              to: [client.owner_email],
+              to: [client.contact_email],
               reply_to: 'seanjevangelista@gmail.com',
               subject: `New Invoice — ${title}`,
               html: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;background:#F8FAFC;padding:32px;color:#0F172A">
@@ -179,7 +179,7 @@ export default async function handler(req, res) {
                     <div style="color:#94A3B8;font-size:12px;margin-top:2px">Invoice Notification</div>
                   </div>
                   <div style="padding:24px 28px">
-                    <h2 style="margin:0 0 4px;font-size:18px">Hi ${client.owner_name || client.business_name},</h2>
+                    <h2 style="margin:0 0 4px;font-size:18px">Hi ${client.contact_name || client.business_name},</h2>
                     <p style="color:#64748B;font-size:13px;margin:8px 0 20px">A new invoice has been created for your account.</p>
                     <table style="width:100%;border-collapse:collapse;font-size:13px">
                       <tr style="border-bottom:1px solid #F1F5F9"><td style="padding:8px 0;color:#64748B;width:40%">Invoice</td><td style="padding:8px 0;font-weight:600">${title}</td></tr>

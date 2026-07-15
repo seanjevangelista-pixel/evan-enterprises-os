@@ -144,6 +144,36 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true });
   }
 
+  // ── INVOICE CRUD ───────────────────────────────────────────────────────────
+  if (action === 'create_invoice') {
+    const { client_id, title, amount, due_date, status, notes } = body;
+    if (!client_id || !title || !amount) return res.status(400).json({ error: 'client_id, title, amount required' });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/invoices`, {
+      method: 'POST', headers: sb.headers,
+      body: JSON.stringify({ client_id, title, amount: parseFloat(amount), due_date: due_date || null, status: status || 'unpaid', notes: notes || null }),
+    });
+    const data = await r.json();
+    return res.status(200).json({ ok: true, invoice: Array.isArray(data) ? data[0] : data });
+  }
+
+  if (action === 'mark_paid') {
+    const { id } = body;
+    if (!id) return res.status(400).json({ error: 'id required' });
+    await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${id}`, {
+      method: 'PATCH', headers: sb.headers, body: JSON.stringify({ status: 'paid' }),
+    });
+    return res.status(200).json({ ok: true });
+  }
+
+  if (action === 'delete_invoice') {
+    const { id } = body;
+    if (!id) return res.status(400).json({ error: 'id required' });
+    await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${id}`, {
+      method: 'DELETE', headers: sb.headers,
+    });
+    return res.status(200).json({ ok: true });
+  }
+
   return res.status(400).json({ error: 'Unknown action' });
 }
 

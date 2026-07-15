@@ -920,10 +920,9 @@ async function loadInvoicesTab() {
   const el = document.getElementById('invoices-list');
   el.innerHTML = '<div class="spinner"></div>';
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/invoices?select=*,clients(business_name)&order=created_at.desc`, {
-      headers: { apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}` },
-    });
-    const rows = await r.json();
+    const r = await fetch(`${API_BASE}?action=list_invoices`);
+    const data = await r.json();
+    const rows = data.invoices;
     if (!Array.isArray(rows) || !rows.length) {
       el.innerHTML = '<div class="empty-state"><div class="empty-icon">💳</div>No invoices yet — create the first one above.</div>';
       return;
@@ -984,15 +983,12 @@ async function saveInvoice() {
   const client_id = document.getElementById('inv-client').value;
   const title     = document.getElementById('inv-title').value.trim();
   const amount    = document.getElementById('inv-amount').value;
-  if (!title || !amount) { toast('Title and amount required', 'err'); return; }
+  if (!title || !amount) { showToast('Title and amount required'); return; }
   btn.disabled = true; btn.textContent = 'Saving…';
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/invoices`, {
+    const r = await fetch(`${API_BASE}?action=create_invoice`, {
       method: 'POST',
-      headers: {
-        apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}`,
-        'Content-Type': 'application/json', Prefer: 'return=representation',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         client_id, title, amount: parseFloat(amount),
         due_date: document.getElementById('inv-due').value || null,
@@ -1000,34 +996,36 @@ async function saveInvoice() {
         notes: document.getElementById('inv-notes').value.trim() || null,
       }),
     });
-    if (!r.ok) throw new Error('Failed to create invoice');
-    toast('Invoice created', 'ok');
+    const data = await r.json();
+    if (!data.ok) throw new Error('Failed to create invoice');
+    showToast('✓ Invoice created');
     closeModal('modal-invoice');
     loadInvoicesTab();
   } catch(e) {
-    toast(e.message, 'err');
+    showToast(e.message);
   } finally {
     btn.disabled = false; btn.textContent = 'Create Invoice';
   }
 }
 
 async function markPaid(id) {
-  await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${id}`, {
-    method: 'PATCH',
-    headers: { apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: 'paid' }),
+  await fetch(`${API_BASE}?action=mark_paid`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
   });
-  toast('Marked as paid', 'ok');
+  showToast('✓ Marked as paid');
   loadInvoicesTab();
 }
 
 async function deleteInvoice(id) {
   if (!confirm('Delete this invoice? This cannot be undone.')) return;
-  await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${id}`, {
-    method: 'DELETE',
-    headers: { apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}` },
+  await fetch(`${API_BASE}?action=delete_invoice`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
   });
-  toast('Invoice deleted', 'ok');
+  showToast('Invoice deleted');
   loadInvoicesTab();
 }
 

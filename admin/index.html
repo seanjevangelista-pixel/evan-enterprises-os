@@ -126,8 +126,12 @@
   .btn-sm:hover { color: var(--text); border-color: #334155; }
   .btn-sm.blue { background: rgba(59,130,246,.1); color: var(--blue); border-color: rgba(59,130,246,.3); }
   .btn-sm.blue:hover { background: rgba(59,130,246,.2); }
+  .card-badge  { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; letter-spacing: .04em; }
   .badge-muted { background: rgba(255,255,255,.05); color: var(--muted); border: 1px solid var(--border); font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; letter-spacing: .04em; }
   .badge-red   { background: rgba(239,68,68,.1); color: var(--red); border: 1px solid rgba(239,68,68,.2); font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; letter-spacing: .04em; }
+  .badge-green { background: rgba(16,185,129,.1); color: var(--green); border: 1px solid rgba(16,185,129,.2); }
+  .badge-blue  { background: rgba(59,130,246,.12); color: var(--blue); border: 1px solid rgba(59,130,246,.2); }
+  .badge-amber { background: rgba(245,158,11,.1); color: var(--yellow); border: 1px solid rgba(245,158,11,.2); }
   .login-status {
     display: inline-flex; align-items: center; gap: 5px;
     font-size: 11px; color: var(--green); margin-bottom: 12px;
@@ -280,6 +284,8 @@
     <button class="tab active" onclick="showTab('clients', this)">Clients</button>
     <button class="tab" onclick="showTab('invoices', this)">Invoices</button>
     <button class="tab" onclick="showTab('leads', this)">Leads</button>
+    <button class="tab" onclick="showTab('contacts', this)">Contacts</button>
+    <button class="tab" onclick="showTab('campaigns', this)">Campaigns</button>
     <button class="tab" onclick="showTab('logins', this)">Portal Logins</button>
   </div>
 
@@ -320,6 +326,35 @@
       </div>
     </div>
     <div id="leads-list"><div class="spinner"></div></div>
+  </div>
+
+  <!-- Contacts Tab -->
+  <div id="tab-contacts" class="content" style="display:none">
+    <div class="clients-header">
+      <div>
+        <div class="section-title">Contacts</div>
+        <div class="section-sub">End-customers synced from LSA leads</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <select id="contacts-client-filter" onchange="loadContactsTab()" style="background:var(--surface);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:8px 12px;font-size:13px">
+          <option value="">All clients</option>
+        </select>
+        <button class="btn-add" onclick="syncLSA()">↻ Sync LSA Leads</button>
+      </div>
+    </div>
+    <div id="contacts-list"><div class="spinner"></div></div>
+  </div>
+
+  <!-- Campaigns Tab -->
+  <div id="tab-campaigns" class="content" style="display:none">
+    <div class="clients-header">
+      <div>
+        <div class="section-title">Campaigns</div>
+        <div class="section-sub">SMS and email blasts to your clients' customers</div>
+      </div>
+      <button class="btn-add" onclick="openCompose()">+ New Campaign</button>
+    </div>
+    <div id="campaigns-list"><div class="spinner"></div></div>
   </div>
 
   <!-- Portal Logins Tab -->
@@ -496,6 +531,52 @@
   </div>
 </div>
 
+<!-- Compose Campaign Modal -->
+<div class="modal-overlay" id="modal-compose">
+  <div class="modal" style="max-width:540px">
+    <button class="modal-close" onclick="closeModal('modal-compose')">×</button>
+    <div class="modal-title">New Campaign</div>
+    <div class="modal-sub">Blast SMS or email to a client's contacts</div>
+    <div class="form-group">
+      <label>Client *</label>
+      <select id="compose-client"></select>
+    </div>
+    <div class="form-group">
+      <label>Campaign Name *</label>
+      <input type="text" id="compose-name" placeholder="July Lawn Care Promo" />
+    </div>
+    <div class="form-group">
+      <label>Channel *</label>
+      <select id="compose-channel" onchange="toggleComposeChannel()">
+        <option value="sms">SMS only</option>
+        <option value="email">Email only</option>
+        <option value="both">SMS + Email</option>
+      </select>
+    </div>
+    <div id="compose-email-fields">
+      <div class="form-group">
+        <label>Email Subject</label>
+        <input type="text" id="compose-subject" placeholder="Special offer from Premier Landscaping" />
+      </div>
+      <div class="form-group">
+        <label>Email Body (HTML or plain text)</label>
+        <textarea id="compose-email-body" rows="4" placeholder="Hi there! We're running a special this month..."></textarea>
+      </div>
+    </div>
+    <div id="compose-sms-fields">
+      <div class="form-group">
+        <label>SMS Message <span id="sms-char-count" style="color:var(--muted);font-weight:400">(0/160)</span></label>
+        <textarea id="compose-sms-body" rows="3" placeholder="Hi! Premier Landscaping here — book your July mow and get 10% off. Reply STOP to opt out." oninput="updateSmsCount()"></textarea>
+      </div>
+    </div>
+    <div id="compose-contact-count" style="font-size:12px;color:var(--muted);margin-top:4px"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-compose')">Cancel</button>
+      <button class="btn-save" id="compose-send-btn" onclick="sendCampaign()">Send Campaign</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -595,12 +676,14 @@ function showApp() {
 function showTab(tab, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  ['clients','invoices','leads','logins'].forEach(t => {
+  ['clients','invoices','leads','contacts','campaigns','logins'].forEach(t => {
     document.getElementById(`tab-${t}`).style.display = tab === t ? 'block' : 'none';
   });
-  if (tab === 'logins')   loadLoginsTab();
-  if (tab === 'invoices') loadInvoicesTab();
-  if (tab === 'leads')    loadLeadsTab();
+  if (tab === 'logins')    loadLoginsTab();
+  if (tab === 'invoices')  loadInvoicesTab();
+  if (tab === 'leads')     loadLeadsTab();
+  if (tab === 'contacts')  loadContactsTab();
+  if (tab === 'campaigns') loadCampaignsTab();
 }
 
 // ── Load Clients ───────────────────────────────────────────────────────────
@@ -987,6 +1070,183 @@ async function loadLeadsTab() {
     </table>`;
   } catch(e) {
     el.innerHTML = '<div class="empty-state">Failed to load leads</div>';
+  }
+}
+
+// ── Contacts Tab ──────────────────────────────────────────────────────────────
+async function loadContactsTab() {
+  const el = document.getElementById('contacts-list');
+  el.innerHTML = '<div class="spinner"></div>';
+  const clientId = document.getElementById('contacts-client-filter')?.value || '';
+  const url = '/api/messenger?action=list_contacts' + (clientId ? `&client_id=${clientId}` : '');
+  try {
+    const r = await fetch(url);
+    const { contacts } = await r.json();
+    if (!contacts?.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div>No contacts yet. Click "Sync LSA Leads" to import.</div>';
+      return;
+    }
+    el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Name</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Phone</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Email</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Client</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Source</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Status</th>
+      </tr></thead>
+      <tbody>
+        ${contacts.map(c => `<tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:11px 12px;font-size:13px;font-weight:500">${c.name || '—'}</td>
+          <td style="padding:11px 12px;font-size:12px;font-family:monospace">${c.phone ? `<a href="tel:${c.phone}" style="color:var(--green);text-decoration:none">${c.phone}</a>` : '—'}</td>
+          <td style="padding:11px 12px;font-size:12px;color:var(--muted)">${c.email || '—'}</td>
+          <td style="padding:11px 12px;font-size:13px;color:var(--muted)">${c.clients?.business_name || '—'}</td>
+          <td style="padding:11px 12px"><span class="card-badge badge-blue">${c.source || 'manual'}</span></td>
+          <td style="padding:11px 12px"><span class="card-badge ${c.opted_out ? 'badge-muted' : 'badge-green'}">${c.opted_out ? 'Opted out' : 'Active'}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div style="padding:12px 16px;font-size:12px;color:var(--muted)">${contacts.length} contacts total</div>`;
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state">Failed to load contacts</div>';
+  }
+}
+
+async function syncLSA() {
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = 'Syncing…';
+  try {
+    const clientId = document.getElementById('contacts-client-filter')?.value || '';
+    const r = await fetch('/api/messenger?action=sync_lsa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id: clientId || undefined }),
+    });
+    const data = await r.json();
+    showToast(`✓ Synced ${data.synced} leads — ${data.added} new contacts added`);
+    loadContactsTab();
+  } catch(e) {
+    showToast('Sync failed');
+  } finally {
+    btn.disabled = false; btn.textContent = '↻ Sync LSA Leads';
+  }
+}
+
+// ── Campaigns Tab ─────────────────────────────────────────────────────────────
+async function loadCampaignsTab() {
+  const el = document.getElementById('campaigns-list');
+  el.innerHTML = '<div class="spinner"></div>';
+  try {
+    const r = await fetch('/api/messenger?action=list_campaigns');
+    const { campaigns } = await r.json();
+    if (!campaigns?.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">📣</div>No campaigns yet. Click "+ New Campaign" to send your first blast.</div>';
+      return;
+    }
+    el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Campaign</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Client</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Channel</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Sent</th>
+        <th style="text-align:left;padding:10px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Status</th>
+      </tr></thead>
+      <tbody>
+        ${campaigns.map(c => {
+          const date = c.sent_at ? new Date(c.sent_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
+          const statusCls = c.status==='sent' ? 'badge-green' : c.status==='draft' ? 'badge-muted' : 'badge-blue';
+          const chIcon = c.channel==='sms' ? '💬' : c.channel==='email' ? '✉️' : '📣';
+          return `<tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:11px 12px;font-size:13px;font-weight:500">${c.name}</td>
+            <td style="padding:11px 12px;font-size:13px;color:var(--muted)">${c.clients?.business_name||'—'}</td>
+            <td style="padding:11px 12px"><span class="card-badge badge-blue">${chIcon} ${c.channel}</span></td>
+            <td style="padding:11px 12px;font-size:12px;font-family:monospace;color:var(--muted)">${date}</td>
+            <td style="padding:11px 12px"><span class="card-badge ${statusCls}">${c.status}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state">Failed to load campaigns</div>';
+  }
+}
+
+// ── Compose Modal ─────────────────────────────────────────────────────────────
+async function openCompose() {
+  // Load clients into picker
+  const sel = document.getElementById('compose-client');
+  sel.innerHTML = '<option value="">Loading…</option>';
+  const r = await fetch('/api/admin?action=list_clients');
+  const { clients } = await r.json();
+  sel.innerHTML = clients.map(c => `<option value="${c.id}">${c.business_name}</option>`).join('');
+  toggleComposeChannel();
+  document.getElementById('compose-name').value = '';
+  document.getElementById('compose-subject').value = '';
+  document.getElementById('compose-sms-body').value = '';
+  document.getElementById('compose-email-body').value = '';
+  document.getElementById('compose-contact-count').textContent = '';
+  document.getElementById('sms-char-count').textContent = '(0/160)';
+  document.getElementById('modal-compose').classList.add('open');
+  // Show contact count for first client
+  updateComposeContactCount();
+  sel.onchange = updateComposeContactCount;
+}
+
+async function updateComposeContactCount() {
+  const clientId = document.getElementById('compose-client').value;
+  if (!clientId) return;
+  const r = await fetch(`/api/messenger?action=list_contacts&client_id=${clientId}`);
+  const { contacts } = await r.json();
+  const active = contacts?.filter(c => !c.opted_out) || [];
+  document.getElementById('compose-contact-count').textContent =
+    `${active.length} active contact${active.length !== 1 ? 's' : ''} will receive this message`;
+}
+
+function toggleComposeChannel() {
+  const ch = document.getElementById('compose-channel').value;
+  document.getElementById('compose-sms-fields').style.display  = (ch === 'email') ? 'none' : 'block';
+  document.getElementById('compose-email-fields').style.display = (ch === 'sms')   ? 'none' : 'block';
+}
+
+function updateSmsCount() {
+  const len = document.getElementById('compose-sms-body').value.length;
+  document.getElementById('sms-char-count').textContent = `(${len}/160)`;
+}
+
+async function sendCampaign() {
+  const btn = document.getElementById('compose-send-btn');
+  const client_id  = document.getElementById('compose-client').value;
+  const name       = document.getElementById('compose-name').value.trim();
+  const channel    = document.getElementById('compose-channel').value;
+  const subject    = document.getElementById('compose-subject').value.trim();
+  const body_sms   = document.getElementById('compose-sms-body').value.trim();
+  const body_email = document.getElementById('compose-email-body').value.trim();
+
+  if (!client_id || !name) { showToast('Client and campaign name required'); return; }
+  if ((channel === 'sms' || channel === 'both') && !body_sms) { showToast('SMS message is required'); return; }
+  if ((channel === 'email' || channel === 'both') && !body_email) { showToast('Email body is required'); return; }
+
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const r = await fetch('/api/messenger?action=send_campaign', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id, name, channel, subject, body_sms, body_email }),
+    });
+    const data = await r.json();
+    if (data.ok) {
+      showToast(`✓ Sent to ${data.sent} contacts${data.failed ? ` (${data.failed} failed)` : ''}`);
+      closeModal('modal-compose');
+      loadCampaignsTab();
+    } else {
+      showToast(data.error || 'Send failed');
+    }
+  } catch(e) {
+    showToast('Send failed');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send Campaign';
   }
 }
 

@@ -92,6 +92,14 @@ body {
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(29,78,216,0.1); }
 .form-group select option { background:#fff; color:var(--text-primary); }
 .form-group textarea { resize:vertical; min-height:68px; }
+.form-control {
+  background:#FFFFFF; border:1px solid var(--border); border-radius:6px;
+  color:var(--text-primary); font-family:var(--font-body); font-size:13px;
+  padding:9px 13px; outline:none; transition:border-color 0.15s, box-shadow 0.15s;
+}
+.form-control:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(29,78,216,0.1); }
+.card-body { padding:18px; }
+.empty-state { text-align:center; padding:36px 20px; color:var(--text-secondary); font-size:13px; }
 
 /* ── BUTTONS ── */
 .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:6px; font-family:var(--font-body); font-size:12px; font-weight:500; cursor:pointer; border:none; transition:all 0.15s; text-decoration:none; letter-spacing:0em; }
@@ -1790,7 +1798,7 @@ async function loadCallLeads() {
         <input type="text" id="review-job-desc" placeholder="e.g. lawn care and edging">
       </div>
     </div>
-    <div class="modal-ft">
+    <div class="modal-foot">
       <button class="btn btn-secondary" id="review-modal-close-2" onclick="document.getElementById('modal-review-request').classList.remove('open')">Cancel</button>
       <button class="btn btn-primary" id="review-send-btn">Send Review Request</button>
     </div>

@@ -1124,10 +1124,10 @@ async function syncLSA() {
       body: JSON.stringify({ client_id: clientId || undefined }),
     });
     const data = await r.json();
-    showToast(`✓ Synced ${data.synced} leads — ${data.added} new contacts added`);
+    toast(`✓ Synced ${data.synced} leads — ${data.added} new contacts added`, 'ok');
     loadContactsTab();
   } catch(e) {
-    showToast('Sync failed');
+    toast('Sync failed', 'err');
   } finally {
     btn.disabled = false; btn.textContent = '↻ Sync LSA Leads';
   }
@@ -1224,9 +1224,9 @@ async function sendCampaign() {
   const body_sms   = document.getElementById('compose-sms-body').value.trim();
   const body_email = document.getElementById('compose-email-body').value.trim();
 
-  if (!client_id || !name) { showToast('Client and campaign name required'); return; }
-  if ((channel === 'sms' || channel === 'both') && !body_sms) { showToast('SMS message is required'); return; }
-  if ((channel === 'email' || channel === 'both') && !body_email) { showToast('Email body is required'); return; }
+  if (!client_id || !name) { toast('Client and campaign name required', 'err'); return; }
+  if ((channel === 'sms' || channel === 'both') && !body_sms) { toast('SMS message is required', 'err'); return; }
+  if ((channel === 'email' || channel === 'both') && !body_email) { toast('Email body is required', 'err'); return; }
 
   btn.disabled = true; btn.textContent = 'Sending…';
   try {
@@ -1237,14 +1237,14 @@ async function sendCampaign() {
     });
     const data = await r.json();
     if (data.ok) {
-      showToast(`✓ Sent to ${data.sent} contacts${data.failed ? ` (${data.failed} failed)` : ''}`);
+      toast(`✓ Sent to ${data.sent} contacts${data.failed ? ` (${data.failed} failed)` : ''}`, 'ok');
       closeModal('modal-compose');
       loadCampaignsTab();
     } else {
-      showToast(data.error || 'Send failed');
+      toast(data.error || 'Send failed', 'err');
     }
   } catch(e) {
-    showToast('Send failed');
+    toast('Send failed', 'err');
   } finally {
     btn.disabled = false; btn.textContent = 'Send Campaign';
   }

@@ -1148,8 +1148,8 @@ async function saveEditClient() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         id,
-        business_name:  document.getElementById('edit-biz').value.trim(),
-        monthly_fee:    parseFloat(document.getElementById('edit-fee').value) || null,
+        business_name:     document.getElementById('edit-biz').value.trim(),
+        monthly_flat_fee:  parseFloat(document.getElementById('edit-fee').value) || null,
         contact_name:   document.getElementById('edit-contact').value.trim() || null,
         contact_phone:  document.getElementById('edit-phone').value.trim() || null,
         contact_email:  document.getElementById('edit-email').value.trim() || null,

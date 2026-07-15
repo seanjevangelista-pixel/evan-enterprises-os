@@ -416,7 +416,18 @@ async function showPortal() {
     return;
   }
 
-  const { data: client } = await sb.from('clients').select('*').eq('id', clientId).single();
+  // Fetch all data via server-side API (bypasses RLS using service key)
+  const { data: { session } } = await sb.auth.getSession();
+  const portalRes = await fetch('/api/portal', {
+    headers: { Authorization: `Bearer ${session.access_token}` }
+  });
+  const portalData = await portalRes.json();
+  if (!portalData.ok) {
+    document.getElementById('loading').textContent = 'Failed to load portal data.';
+    return;
+  }
+
+  const { client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices } = portalData;
   if (!client) {
     document.getElementById('loading').textContent = 'Client record not found.';
     return;
@@ -425,23 +436,8 @@ async function showPortal() {
   document.getElementById('portal-biz-name').textContent = client.business_name;
   document.title = client.business_name + ' — Evan Enterprises';
 
-  // Date helpers
   const now     = new Date();
   const moStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  const lastMoStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
-  const lastMoEnd   = moStart;
-  const day30Ago    = new Date(now - 30 * 86400000).toISOString();
-
-  const safe = p => p.then(r => r.data || []).catch(() => []);
-
-  // Fetch all data in parallel
-  const [lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices] = await Promise.all([
-    safe(sb.from('lsa_leads').select('*').eq('client_id', clientId).gte('lead_date', day30Ago).order('lead_date', { ascending: false })),
-    safe(sb.from('lsa_leads').select('id').eq('client_id', clientId).gte('lead_date', lastMoStart).lt('lead_date', lastMoEnd)),
-    safe(sb.from('call_leads').select('*').eq('client_id', clientId).gte('tapped_at', moStart)),
-    safe(sb.from('call_leads').select('id').eq('client_id', clientId).gte('tapped_at', lastMoStart).lt('tapped_at', lastMoEnd)),
-    safe(sb.from('invoices').select('*').eq('client_id', clientId).order('due_date', { ascending: false }).limit(10)),
-  ]);
 
   // Also fetch all LSA this month
   const lsaThisMo = lsaAll.filter(l => (l.lead_date || l.created_at) >= moStart);

@@ -735,7 +735,8 @@ async function loadClients() {
   try {
     const r = await fetch(`${API_BASE}?action=list_clients`);
     const { clients } = await r.json();
-    renderClients(clients || []);
+    _clientsCache = clients || [];
+    renderClients(_clientsCache);
   } catch(e) {
     el.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div>Failed to load clients</div>';
   }
@@ -769,7 +770,7 @@ function renderClients(clients) {
       </div>
       ${svcs.length ? `<div class="services-chips">${chips}</div>` : ''}
       <div class="card-actions">
-        <button class="btn-sm" onclick='openEditClient(${JSON.stringify(c).replace(/'/g,"&#39;")})'>Edit</button>
+        <button class="btn-sm" onclick="openEditClient('${c.id}')">Edit</button>
         <button class="btn-sm blue" onclick='openCreateLogin("${c.id}","${(c.business_name||'').replace(/'/g,'')}")'>
           + Portal Login
         </button>
@@ -1115,9 +1116,10 @@ async function loadLeadsTab() {
 }
 
 // ── Edit Client ───────────────────────────────────────────────────────────────
-function openEditClient(c) {
+function openEditClient(id) {
+  const c = (_clientsCache || []).find(x => x.id === id) || { id };
   document.getElementById('edit-client-id').value = c.id;
-  document.getElementById('edit-client-sub').textContent = c.business_name;
+  document.getElementById('edit-client-sub').textContent = c.business_name || '';
   document.getElementById('edit-biz').value = c.business_name || '';
   document.getElementById('edit-fee').value = c.monthly_fee || '';
   document.getElementById('edit-contact').value = c.contact_name || '';

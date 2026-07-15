@@ -153,7 +153,51 @@ export default async function handler(req, res) {
       body: JSON.stringify({ client_id, title, amount: parseFloat(amount), due_date: due_date || null, status: status || 'unpaid', notes: notes || null }),
     });
     const data = await r.json();
-    return res.status(200).json({ ok: true, invoice: Array.isArray(data) ? data[0] : data });
+    const invoice = Array.isArray(data) ? data[0] : data;
+
+    // Fetch client info to send notification email
+    if (RESEND_KEY) {
+      try {
+        const cr = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${client_id}&select=business_name,owner_email,owner_name&limit=1`, { headers: sb.headers });
+        const clients = await cr.json();
+        const client = clients?.[0];
+        if (client?.owner_email) {
+          const dueFmt = due_date ? new Date(due_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'on file';
+          const amtFmt = `$${parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              from: 'EVAN Enterprises <noreply@evanenterprise.com>',
+              to: [client.owner_email],
+              reply_to: 'seanjevangelista@gmail.com',
+              subject: `New Invoice — ${title}`,
+              html: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;background:#F8FAFC;padding:32px;color:#0F172A">
+                <div style="max-width:500px;margin:0 auto;background:#fff;border-radius:10px;border:1px solid #E2E8F0;overflow:hidden">
+                  <div style="background:#0F172A;padding:20px 28px">
+                    <div style="color:#fff;font-weight:700;font-size:16px">EVAN Enterprises</div>
+                    <div style="color:#94A3B8;font-size:12px;margin-top:2px">Invoice Notification</div>
+                  </div>
+                  <div style="padding:24px 28px">
+                    <h2 style="margin:0 0 4px;font-size:18px">Hi ${client.owner_name || client.business_name},</h2>
+                    <p style="color:#64748B;font-size:13px;margin:8px 0 20px">A new invoice has been created for your account.</p>
+                    <table style="width:100%;border-collapse:collapse;font-size:13px">
+                      <tr style="border-bottom:1px solid #F1F5F9"><td style="padding:8px 0;color:#64748B;width:40%">Invoice</td><td style="padding:8px 0;font-weight:600">${title}</td></tr>
+                      <tr style="border-bottom:1px solid #F1F5F9"><td style="padding:8px 0;color:#64748B">Amount</td><td style="padding:8px 0;font-weight:700;color:#10B981">${amtFmt}</td></tr>
+                      <tr><td style="padding:8px 0;color:#64748B">Due Date</td><td style="padding:8px 0;font-weight:500">${dueFmt}</td></tr>
+                    </table>
+                    ${notes ? `<div style="margin-top:16px;background:#F8FAFC;border-radius:6px;padding:12px;font-size:12px;color:#475569">${notes}</div>` : ''}
+                    <p style="margin-top:20px;font-size:12px;color:#64748B">Questions? Reply to this email or contact Sean directly.</p>
+                  </div>
+                </div>
+              </body></html>`,
+            }),
+          });
+        }
+      } catch (_) {}
+    }
+
+    return res.status(200).json({ ok: true, invoice });
   }
 
   if (action === 'mark_paid') {

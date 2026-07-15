@@ -953,11 +953,9 @@ async function loadLeadsTab() {
   const el = document.getElementById('leads-list');
   el.innerHTML = '<div class="spinner"></div>';
   try {
-    const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/lsa_leads?select=*,clients(business_name)&order=lead_date.desc&limit=100`,
-      { headers: { apikey: ANON_KEY, Authorization: `Bearer ${currentUser.access_token}` } }
-    );
-    const rows = await r.json();
+    const r = await fetch('/api/admin?action=list_leads');
+    const data = await r.json();
+    const rows = data.leads;
     if (!Array.isArray(rows) || !rows.length) {
       el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>No leads yet.</div>';
       return;

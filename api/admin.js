@@ -27,6 +27,18 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, clients });
   }
 
+  if (action === 'list_leads') {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?select=*,clients(business_name)&order=lead_date.desc,created_at.desc&limit=200`, { headers: sb.headers });
+    const leads = await r.json();
+    return res.status(200).json({ ok: true, leads });
+  }
+
+  if (action === 'list_invoices') {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/invoices?select=*,clients(business_name)&order=created_at.desc&limit=200`, { headers: sb.headers });
+    const invoices = await r.json();
+    return res.status(200).json({ ok: true, invoices });
+  }
+
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const body = req.body || {};

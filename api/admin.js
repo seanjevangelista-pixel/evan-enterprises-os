@@ -47,7 +47,7 @@ export default async function handler(req, res) {
   if (action === 'create_client') {
     const {
       business_name, contact_name, contact_email, contact_phone,
-      monthly_fee, notes,
+      monthly_flat_fee, notes,
       has_google_ads, has_lsa, has_facebook, has_instagram,
       has_reporting, has_jobber, has_seo, has_social,
     } = body;
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
 
     const row = {
       business_name, contact_name, contact_email, contact_phone,
-      monthly_fee: monthly_fee || null, notes,
+      monthly_flat_fee: monthly_flat_fee || null, notes,
       has_google_ads: !!has_google_ads, has_lsa: !!has_lsa,
       has_facebook: !!has_facebook, has_instagram: !!has_instagram,
       has_reporting: has_reporting !== false,

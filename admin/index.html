@@ -764,7 +764,7 @@ function renderClients(clients) {
   el.innerHTML = `<div class="clients-grid">${clients.map(c => {
     const svcs = Object.entries(svcMap).filter(([k]) => c[k]).map(([,v]) => v);
     const chips = svcs.map(s => `<span class="chip">${s}</span>`).join('');
-    const fee = c.monthly_fee ? `<span class="card-fee">$${Number(c.monthly_fee).toLocaleString()}/mo</span>` : '';
+    const fee = c.monthly_flat_fee ? `<span class="card-fee">$${Number(c.monthly_flat_fee).toLocaleString()}/mo</span>` : '';
     return `
     <div class="client-card">
       <div class="card-top">
@@ -867,7 +867,7 @@ async function saveClient() {
     contact_name:  document.getElementById('f-contact').value.trim() || null,
     contact_email: document.getElementById('f-email').value.trim() || null,
     contact_phone: document.getElementById('f-phone').value.trim() || null,
-    monthly_fee:   document.getElementById('f-fee').value || null,
+    monthly_flat_fee: document.getElementById('f-fee').value || null,
     notes:         document.getElementById('f-notes').value.trim() || null,
     ...services,
   };
@@ -1130,7 +1130,7 @@ function openEditClient(id) {
   document.getElementById('edit-client-id').value = c.id;
   document.getElementById('edit-client-sub').textContent = c.business_name || '';
   document.getElementById('edit-biz').value = c.business_name || '';
-  document.getElementById('edit-fee').value = c.monthly_fee || '';
+  document.getElementById('edit-fee').value = c.monthly_flat_fee || '';
   document.getElementById('edit-contact').value = c.contact_name || '';
   document.getElementById('edit-phone').value = c.contact_phone || '';
   document.getElementById('edit-email').value = c.contact_email || '';
@@ -1168,9 +1168,22 @@ async function saveEditClient() {
 }
 
 // ── Contacts Tab ──────────────────────────────────────────────────────────────
+async function populateContactsClientFilter() {
+  const sel = document.getElementById('contacts-client-filter');
+  if (!sel || sel.dataset.populated) return;
+  if (!_clientsCache.length) {
+    const r = await fetch(`${API_BASE}?action=list_clients`);
+    const d = await r.json();
+    _clientsCache = d.clients || [];
+  }
+  sel.insertAdjacentHTML('beforeend', _clientsCache.map(c => `<option value="${c.id}">${c.business_name}</option>`).join(''));
+  sel.dataset.populated = '1';
+}
+
 async function loadContactsTab() {
   const el = document.getElementById('contacts-list');
   el.innerHTML = '<div class="spinner"></div>';
+  await populateContactsClientFilter();
   const clientId = document.getElementById('contacts-client-filter')?.value || '';
   const url = '/api/messenger?action=list_contacts' + (clientId ? `&client_id=${clientId}` : '');
   try {

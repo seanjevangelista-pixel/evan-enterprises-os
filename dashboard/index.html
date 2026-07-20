@@ -2845,6 +2845,7 @@ function generatePDF() {
 </html>`;
 
   const win = window.open('','_blank','width=900,height=700');
+  if (!win) { toast('Popup blocked — allow popups for this site to generate the PDF', 'err'); return; }
   win.document.write(html);
   win.document.close();
   win.focus();
@@ -3745,7 +3746,7 @@ function renderLsaContent() {
 async function saveLead() {
   const clientId = $('ll-client').value;
   if (!clientId) { toast('Select a client', 'err'); return; }
-  const { error } = await safe(sb.from('lsa_leads').insert({
+  const { error } = await sb.from('lsa_leads').insert({
     client_id:    clientId,
     lead_date:    $('ll-date').value || new Date().toISOString().split('T')[0],
     lead_type:    $('ll-type').value,
@@ -3754,7 +3755,7 @@ async function saveLead() {
     cost_per_lead:  parseFloat($('ll-cost').value) || 0,
     status:       $('ll-status').value,
     notes:        $('ll-notes').value.trim() || null,
-  }));
+  });
   if (error) { toast('Error: ' + error.message, 'err'); return; }
   closeModal('modal-log-lead');
   $('lead-form').reset();

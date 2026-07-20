@@ -48,7 +48,7 @@ export default async function handler(req, res) {
   const lastMoEnd   = moStart;
 
   const [client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${clientId}&select=*&limit=1`, { headers: sb.headers }).then(r => r.json()).then(d => d[0] || null),
+    fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${clientId}&select=*&limit=1`, { headers: sb.headers }).then(r => r.json()).then(d => d[0] || null).catch(() => null),
     fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${day30Ago}&order=lead_date.desc`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
     fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${lastMoStart}&lead_date=lt.${lastMoEnd}&select=id`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
     fetch(`${SUPABASE_URL}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${moStart}`, { headers: sb.headers }).then(r => r.json()).catch(() => []),

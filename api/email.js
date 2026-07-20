@@ -66,16 +66,18 @@ async function handle_client_report(req, res) {
       ? unpaidInvoices.reduce((s, i) => s + Number(i.amount || 0), 0)
       : 0;
 
-    // Services checklist (from client record)
+    // Services checklist — client.services is the JSONB map set via the dashboard's
+    // Edit Client modal (keys: website, google_ads, jobber, social, gbp, invoicing, reporting).
+    // (Previously read client.has_* boolean columns, which the dashboard never writes to.)
+    const clientSvc = client.services || {};
     const services = [
-      client.has_website     && 'Website',
-      client.has_google_ads  && 'Google Ads',
-      client.has_lsa         && 'Local Service Ads',
-      client.has_jobber      && 'Jobber Management',
-      client.has_seo         && 'SEO',
-      client.has_social      && 'Social Media',
-      client.has_reviews     && 'Review Generation',
-      client.has_reporting   && 'Monthly Reporting',
+      clientSvc.website    && 'Website',
+      clientSvc.google_ads && 'Google Ads',
+      clientSvc.jobber     && 'Jobber Management',
+      clientSvc.social     && 'Social Media',
+      clientSvc.gbp        && 'Google Business Profile',
+      clientSvc.invoicing  && 'Invoicing',
+      clientSvc.reporting  && 'Monthly Reporting',
     ].filter(Boolean);
 
     const serviceRows = services.length

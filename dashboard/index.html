@@ -2928,7 +2928,7 @@ function renderInvoices(filterCid = '') {
   tbody.querySelectorAll('[data-del-inv]').forEach(btn => {
     btn.addEventListener('click', () => {
       showConfirm('Delete Invoice', 'Remove this invoice? This cannot be undone.', async () => {
-        const { error } = await sb.from('invoices').delete().eq('id', btn.dataset['del-inv']);
+        const { error } = await sb.from('invoices').delete().eq('id', btn.dataset.delInv);
         if (error) { toast('Error: ' + error.message, 'err'); return; }
         await loadAll(); renderInvoices($('inv-filter').value); toast('Invoice deleted');
       });

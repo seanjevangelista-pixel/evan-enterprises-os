@@ -683,7 +683,8 @@ async function handle_review_request(req, res) {
     `${supabaseUrl}/rest/v1/clients?id=eq.${clientId}&select=business_name`,
     { headers }
   );
-  const [client] = await clientRes.json();
+  const clientRows = await clientRes.json();
+  const client = Array.isArray(clientRows) ? clientRows[0] : null;
   const businessName = client?.business_name || 'your service provider';
 
   const firstName = customerName ? customerName.split(' ')[0] : 'there';
@@ -774,7 +775,8 @@ async function handle_onboarding_sequence(req, res) {
 
   const headers = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` };
   const clientRes = await fetch(`${supabaseUrl}/rest/v1/clients?id=eq.${clientId}&select=*`, { headers });
-  const [client]  = await clientRes.json();
+  const clientRows = await clientRes.json();
+  const client = Array.isArray(clientRows) ? clientRows[0] : null;
 
   if (!client)           return res.status(404).json({ error: 'Client not found' });
   if (!client.owner_email) return res.status(200).json({ ok: false, reason: 'No email on file' });

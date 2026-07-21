@@ -3116,12 +3116,18 @@ async function saveClient() {
   // Auto-send welcome packet + onboarding checklist
   const email = $('c-email') ? $('c-email').value.trim() : null;
   if (email) {
-    fetch('/api/email?action=welcome-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ businessName: biz, ownerName: $('c-owner').value.trim()||null, ownerEmail: email }),
-    }).catch(() => {});
-    toast('Welcome email sent to client!');
+    try {
+      const r = await fetch('/api/email?action=welcome-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessName: biz, ownerName: $('c-owner').value.trim()||null, ownerEmail: email }),
+      });
+      const d = await r.json().catch(() => ({}));
+      if (r.ok && d.ok !== false) toast('Welcome email sent to client!');
+      else toast('Client added, but welcome email failed to send','err');
+    } catch (e) {
+      toast('Client added, but welcome email failed to send','err');
+    }
   }
 }
 
@@ -4094,7 +4100,13 @@ async function saveDistLead() {
 }
 
 async function archiveDistLead(id) {
-  await fetch('/api/distribution?action=delete-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id}) });
+  try {
+    const r = await fetch('/api/distribution?action=delete-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id}) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'delete failed'), 'err');
+  } catch (e) {
+    return toast('Error: ' + e.message, 'err');
+  }
   toast('Lead removed');
   distLeads = distLeads.filter(l => l.id !== id);
   renderDistLeads();
@@ -4120,7 +4132,13 @@ async function saveDistSub() {
 
 async function toggleDistSubStatus(id, current) {
   const status = current === 'active' ? 'paused' : 'active';
-  await fetch('/api/distribution?action=update-subscriber', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id, status}) });
+  try {
+    const r = await fetch('/api/distribution?action=update-subscriber', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id, status}) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'update failed'), 'err');
+  } catch (e) {
+    return toast('Error: ' + e.message, 'err');
+  }
   toast(`Subscriber ${status}`);
   await loadDistSubs();
 }
@@ -4193,11 +4211,16 @@ document.getElementById('dist-add-lead-btn').addEventListener('click', () => {
 document.getElementById('dist-blast-btn').addEventListener('click', async () => {
   const btn = document.getElementById('dist-blast-btn');
   btn.textContent = 'Sending…'; btn.disabled = true;
-  const r = await fetch('/api/distribution?action=send-blast', { method:'POST', headers:{'Content-Type':'application/json'} });
-  const d = await r.json();
-  btn.textContent = '📧 Send Monthly Blast'; btn.disabled = false;
-  if (d.ok) toast(d.sent > 0 ? `Blast sent to ${d.sent} subscriber(s)!` : d.message || 'No subscribers');
-  else toast('Error: ' + d.error, 'err');
+  try {
+    const r = await fetch('/api/distribution?action=send-blast', { method:'POST', headers:{'Content-Type':'application/json'} });
+    const d = await r.json();
+    if (d.ok) toast(d.sent > 0 ? `Blast sent to ${d.sent} subscriber(s)!` : d.message || 'No subscribers');
+    else toast('Error: ' + d.error, 'err');
+  } catch (e) {
+    toast('Error: ' + e.message, 'err');
+  } finally {
+    btn.textContent = '📧 Send Monthly Blast'; btn.disabled = false;
+  }
 });
 
 document.querySelector('[data-tab="distribution"]').addEventListener('click', () => {

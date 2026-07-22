@@ -201,31 +201,36 @@ async function handle_health_check(req, res) {
   };
 
   // Fetch all active clients
-  const clientsRes = await fetch(
-    `${supabaseUrl}/rest/v1/clients?status=eq.active&select=*`,
-    { headers }
-  );
-  const clients = await clientsRes.json();
-  if (!Array.isArray(clients)) return res.status(500).json({ error: 'Failed to fetch clients' });
+  let clients, callLeads, lsaLeads, invoices, visits;
+  try {
+    const clientsRes = await fetch(
+      `${supabaseUrl}/rest/v1/clients?status=eq.active&select=*`,
+      { headers }
+    );
+    clients = await clientsRes.json();
+    if (!Array.isArray(clients)) return res.status(502).json({ error: 'Failed to fetch clients' });
+
+    // Fetch data needed for all checks in parallel
+    const [callLeadsRes, lsaLeadsRes, invoicesRes, visitsRes] = await Promise.all([
+      fetch(`${supabaseUrl}/rest/v1/call_leads?select=client_id,created_at`, { headers }),
+      fetch(`${supabaseUrl}/rest/v1/lsa_leads?select=client_id,created_at`, { headers }),
+      fetch(`${supabaseUrl}/rest/v1/invoices?status=eq.unpaid&select=client_id,due_date`, { headers }),
+      fetch(`${supabaseUrl}/rest/v1/visits?select=client_id,visit_date`, { headers }),
+    ]);
+
+    [callLeads, lsaLeads, invoices, visits] = await Promise.all([
+      callLeadsRes.json(),
+      lsaLeadsRes.json(),
+      invoicesRes.json(),
+      visitsRes.json(),
+    ]);
+  } catch (e) {
+    return res.status(502).json({ error: 'Supabase unreachable: ' + e.message });
+  }
 
   const now      = new Date();
   const ago30    = new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString();
   const ago14    = new Date(now - 14 * 24 * 60 * 60 * 1000).toISOString();
-
-  // Fetch data needed for all checks in parallel
-  const [callLeadsRes, lsaLeadsRes, invoicesRes, visitsRes] = await Promise.all([
-    fetch(`${supabaseUrl}/rest/v1/call_leads?select=client_id,created_at`, { headers }),
-    fetch(`${supabaseUrl}/rest/v1/lsa_leads?select=client_id,created_at`, { headers }),
-    fetch(`${supabaseUrl}/rest/v1/invoices?status=eq.unpaid&select=client_id,due_date`, { headers }),
-    fetch(`${supabaseUrl}/rest/v1/visits?select=client_id,visit_date`, { headers }),
-  ]);
-
-  const [callLeads, lsaLeads, invoices, visits] = await Promise.all([
-    callLeadsRes.json(),
-    lsaLeadsRes.json(),
-    invoicesRes.json(),
-    visitsRes.json(),
-  ]);
 
   const flagged = [];
 
@@ -362,12 +367,17 @@ async function handle_invoice_reminders(req, res) {
   };
 
   // Fetch all unpaid invoices with client info
-  const invRes = await fetch(
-    `${supabaseUrl}/rest/v1/invoices?select=*,clients(business_name,owner_name,owner_email)&status=eq.unpaid`,
-    { headers }
-  );
-  const invoices = await invRes.json();
-  if (!Array.isArray(invoices)) return res.status(500).json({ error: 'Failed to fetch invoices' });
+  let invoices;
+  try {
+    const invRes = await fetch(
+      `${supabaseUrl}/rest/v1/invoices?select=*,clients(business_name,owner_name,owner_email)&status=eq.unpaid`,
+      { headers }
+    );
+    invoices = await invRes.json();
+    if (!Array.isArray(invoices)) return res.status(502).json({ error: 'Failed to fetch invoices' });
+  } catch (e) {
+    return res.status(502).json({ error: 'Supabase unreachable: ' + e.message });
+  }
 
   const today     = new Date();
   today.setHours(0, 0, 0, 0);

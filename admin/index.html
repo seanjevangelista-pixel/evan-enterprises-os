@@ -1285,9 +1285,13 @@ async function openCompose() {
   // Load clients into picker
   const sel = document.getElementById('compose-client');
   sel.innerHTML = '<option value="">Loading…</option>';
-  const r = await fetch('/api/admin?action=list_clients');
-  const { clients } = await r.json();
-  sel.innerHTML = clients.map(c => `<option value="${c.id}">${c.business_name}</option>`).join('');
+  try {
+    const r = await fetch('/api/admin?action=list_clients');
+    const { clients } = await r.json();
+    sel.innerHTML = (clients || []).map(c => `<option value="${c.id}">${c.business_name}</option>`).join('');
+  } catch(e) {
+    sel.innerHTML = '<option value="">Failed to load clients</option>';
+  }
   toggleComposeChannel();
   document.getElementById('compose-name').value = '';
   document.getElementById('compose-subject').value = '';

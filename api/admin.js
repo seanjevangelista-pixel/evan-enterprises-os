@@ -24,18 +24,21 @@ export default async function handler(req, res) {
   if (action === 'list_clients') {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/clients?select=*&order=created_at.desc`, { headers: sb.headers });
     const clients = await r.json();
+    if (!Array.isArray(clients)) return res.status(502).json({ error: 'Failed to fetch clients', clients: [] });
     return res.status(200).json({ ok: true, clients });
   }
 
   if (action === 'list_leads') {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?select=*,clients(business_name)&order=lead_date.desc,created_at.desc&limit=200`, { headers: sb.headers });
     const leads = await r.json();
+    if (!Array.isArray(leads)) return res.status(502).json({ error: 'Failed to fetch leads', leads: [] });
     return res.status(200).json({ ok: true, leads });
   }
 
   if (action === 'list_invoices') {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/invoices?select=*,clients(business_name)&order=created_at.desc&limit=200`, { headers: sb.headers });
     const invoices = await r.json();
+    if (!Array.isArray(invoices)) return res.status(502).json({ error: 'Failed to fetch invoices', invoices: [] });
     return res.status(200).json({ ok: true, invoices });
   }
 

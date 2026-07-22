@@ -69,7 +69,10 @@ export default async function handler(req, res) {
       body: JSON.stringify({ title, description, platform, category, image_url, buy_price, sell_price, monthly_sales, competition }),
     });
     const data = await r.json();
-    return res.status(200).json({ ok: true, lead: Array.isArray(data) ? data[0] : data });
+    if (!r.ok || !Array.isArray(data) || !data[0]) {
+      return res.status(502).json({ ok: false, error: (data && data.message) || 'Insert failed' });
+    }
+    return res.status(200).json({ ok: true, lead: data[0] });
   }
 
   // ── UPDATE LEAD ───────────────────────────────────────────────────────────
@@ -126,7 +129,10 @@ export default async function handler(req, res) {
       body: JSON.stringify({ name, email, plan_price: plan_price || 99, square_customer_id, next_billing_date, notes }),
     });
     const data = await r.json();
-    const sub = Array.isArray(data) ? data[0] : data;
+    if (!r.ok || !Array.isArray(data) || !data[0]) {
+      return res.status(502).json({ ok: false, error: (data && data.message) || 'Insert failed' });
+    }
+    const sub = data[0];
 
     // Send welcome email with portal access link
     if (resendKey && sub?.access_token) {

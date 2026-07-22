@@ -13,12 +13,16 @@ export default async function handler(req, res) {
 
   if (!domain) return res.status(400).json({ error: 'domain required' });
 
-  const r    = await fetch(`${supabaseUrl}/rest/v1/clients?website_domain=eq.${encodeURIComponent(domain)}&select=id,business_name,owner_email,owner_name`, {
-    headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` },
-  });
-  const data = await r.json();
-  const client = Array.isArray(data) ? data[0] : null;
+  try {
+    const r    = await fetch(`${supabaseUrl}/rest/v1/clients?website_domain=eq.${encodeURIComponent(domain)}&select=id,business_name,owner_email,owner_name`, {
+      headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` },
+    });
+    const data = await r.json();
+    const client = Array.isArray(data) ? data[0] : null;
 
-  if (!client) return res.status(404).json({ error: 'Client not found for domain' });
-  return res.status(200).json({ ok: true, client });
+    if (!client) return res.status(404).json({ error: 'Client not found for domain' });
+    return res.status(200).json({ ok: true, client });
+  } catch (e) {
+    return res.status(502).json({ error: 'Lookup failed: ' + e.message });
+  }
 }

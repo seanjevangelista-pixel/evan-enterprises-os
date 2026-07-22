@@ -4091,9 +4091,13 @@ async function saveDistLead() {
     description:  document.getElementById('dl-desc').value.trim(),
   };
   if (!body.title || !body.buy_price || !body.sell_price) return toast('Title, buy price, sell price required', 'err');
-  const r = await fetch('/api/distribution?action=add-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-  const d = await r.json();
-  if (!d.ok) return toast('Error: ' + d.error, 'err');
+  try {
+    const r = await fetch('/api/distribution?action=add-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'save failed'), 'err');
+  } catch (e) {
+    return toast('Error: ' + e.message, 'err');
+  }
   toast('Lead added!');
   document.getElementById('dist-lead-form').style.display = 'none';
   await loadDistLeads();
@@ -4122,9 +4126,13 @@ async function saveDistSub() {
     notes:              document.getElementById('ds-notes').value.trim()||null,
   };
   if (!body.name || !body.email) return toast('Name and email required', 'err');
-  const r = await fetch('/api/distribution?action=add-subscriber', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-  const d = await r.json();
-  if (!d.ok) return toast('Error: ' + d.error, 'err');
+  try {
+    const r = await fetch('/api/distribution?action=add-subscriber', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'save failed'), 'err');
+  } catch (e) {
+    return toast('Error: ' + e.message, 'err');
+  }
   toast('Subscriber added + welcome email sent!');
   ['ds-name','ds-email','ds-price','ds-billing','ds-square','ds-notes'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
   await loadDistSubs();

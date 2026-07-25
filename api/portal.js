@@ -23,21 +23,26 @@ export default async function handler(req, res) {
   const userToken  = authHeader.replace('Bearer ', '').trim();
   if (!userToken) return res.status(401).json({ error: 'Missing token' });
 
-  // Verify token via Supabase Auth
-  const authRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-    headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${userToken}` },
-  });
-  if (!authRes.ok) return res.status(401).json({ error: 'Invalid token' });
-  const authUser = await authRes.json();
-  const userId = authUser.id;
+  let userId, clientId;
+  try {
+    // Verify token via Supabase Auth
+    const authRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${userToken}` },
+    });
+    if (!authRes.ok) return res.status(401).json({ error: 'Invalid token' });
+    const authUser = await authRes.json();
+    userId = authUser.id;
 
-  // Look up client_id from users table
-  const userRow = await fetch(
-    `${SUPABASE_URL}/rest/v1/users?id=eq.${userId}&select=client_id&limit=1`,
-    { headers: sb.headers }
-  ).then(r => r.json());
+    // Look up client_id from users table
+    const userRow = await fetch(
+      `${SUPABASE_URL}/rest/v1/users?id=eq.${userId}&select=client_id&limit=1`,
+      { headers: sb.headers }
+    ).then(r => r.json());
 
-  const clientId = userRow?.[0]?.client_id;
+    clientId = userRow?.[0]?.client_id;
+  } catch (e) {
+    return res.status(502).json({ error: 'Auth verification failed: ' + e.message });
+  }
   if (!clientId) return res.status(403).json({ error: 'No client linked to this account' });
 
   // Fetch all client data in parallel

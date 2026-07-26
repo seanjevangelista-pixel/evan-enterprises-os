@@ -3989,17 +3989,27 @@ function distTab(tab) {
 }
 
 async function loadDistLeads() {
-  const r = await fetch('/api/distribution?action=leads');
-  const d = await r.json();
-  distLeads = d.leads || [];
-  renderDistLeads();
+  const grid = document.getElementById('dist-leads-grid');
+  try {
+    const r = await fetch('/api/distribution?action=leads');
+    const d = await r.json();
+    distLeads = d.leads || [];
+    renderDistLeads();
+  } catch (e) {
+    if (grid) grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--red);padding:40px">Error loading leads: ${e.message}</div>`;
+  }
 }
 
 async function loadDistSubs() {
-  const r = await fetch('/api/distribution?action=subscribers');
-  const d = await r.json();
-  distSubs = d.subscribers || [];
-  renderDistSubs();
+  const tbody = document.getElementById('dist-subs-tbody');
+  try {
+    const r = await fetch('/api/distribution?action=subscribers');
+    const d = await r.json();
+    distSubs = d.subscribers || [];
+    renderDistSubs();
+  } catch (e) {
+    if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--red);padding:24px">Error loading subscribers: ${e.message}</td></tr>`;
+  }
 }
 
 function roiColor(roi) {

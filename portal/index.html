@@ -408,6 +408,8 @@ async function showPortal() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
 
+  try {
+
   const { data: userRow } = await sb.from('users').select('client_id').eq('id', user.id).single();
   const clientId = userRow?.client_id;
   if (!clientId) {
@@ -418,6 +420,10 @@ async function showPortal() {
 
   // Fetch all data via server-side API (bypasses RLS using service key)
   const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    document.getElementById('loading').textContent = 'Session expired — please sign in again.';
+    return;
+  }
   const portalRes = await fetch('/api/portal', {
     headers: { Authorization: `Bearer ${session.access_token}` }
   });
@@ -627,6 +633,10 @@ async function showPortal() {
 
   // Wire chart tooltips
   initChartTooltips(dayBuckets);
+
+  } catch (e) {
+    document.getElementById('loading').textContent = 'Something went wrong loading your portal — please refresh or contact Sean.';
+  }
 }
 
 // ── Number count-up ────────────────────────────────────────────────

@@ -230,6 +230,27 @@ CREATE POLICY "Service role full access"
   USING (auth.role() = 'service_role');
 
 
+-- ── OUTREACH LEADS ────────────────────────────────────────────
+-- Cold outreach queue for the $1,500 website + booking system offer.
+-- No RLS — matches project convention (dashboard writes via anon key).
+
+CREATE TABLE IF NOT EXISTS outreach_leads (
+  id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  business_name     text NOT NULL,
+  owner_name        text,
+  email             text NOT NULL,
+  phone             text,
+  city              text,
+  niche             text,
+  pain_point        text,
+  status            text DEFAULT 'pending', -- pending, sent, replied, converted, unsubscribed
+  notes             text,
+  last_emailed_at   timestamptz,
+  follow_up_count   int DEFAULT 0,
+  created_at        timestamptz DEFAULT now()
+);
+
+
 -- ============================================================
 -- DONE. Next steps:
 -- 1. Add a client: INSERT INTO clients (business_name, ...) VALUES (...)

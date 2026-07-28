@@ -2,8 +2,12 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
-    "api/*.js": { "maxDuration": 10 }
+    "api/*.js": { "maxDuration": 10 },
+    "api/integrations.js": { "maxDuration": 60 }
   },
+  "crons": [
+    { "path": "/api/integrations?action=outreach-cron", "schedule": "0 14 * * *" }
+  ],
   "rewrites": [
     {
       "source": "/dashboard",

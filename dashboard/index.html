@@ -1633,6 +1633,11 @@ async function loadCallLeads() {
               <div class="form-group" style="margin-bottom:0"><label class="form-group" style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Pain Point</label><input class="form-group" style="width:100%;background:#FFFFFF;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:var(--font-body);font-size:13px;padding:9px 13px;outline:none" id="ol-pain" placeholder="no website, bad reviews, no ads..."></div>
             </div>
             <button class="btn btn-secondary" id="add-prospect-btn">+ Add to List</button>
+
+            <div style="border-top:1px solid var(--border);margin:18px 0 14px"></div>
+            <label style="display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px">Bulk Add — one lead per line: Business Name, Owner, Email, City, Niche</label>
+            <textarea id="ol-bulk" rows="4" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:13px;padding:9px 13px;outline:none;resize:vertical;box-sizing:border-box" placeholder="Austin Plumbing Co, John Smith, john@austinplumbing.com, Austin TX, plumbing"></textarea>
+            <button class="btn btn-secondary" id="bulk-add-prospect-btn" style="margin-top:10px">+ Add Bulk List</button>
           </div>
         </div>
 
@@ -3379,6 +3384,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='form-leads') { populateFormLeadClientFilter(); loadFormLeads(); }
       if (tab==='jobber')     { populateJobberClientSelect(); if (jobberClientId) loadJobber(); loadCallLeads(); }
       if (tab==='settings')   { loadSettingsTab(); }
+      if (tab==='outreach')   { loadOutreachLeads(); }
     }, 150);
   });
 });
@@ -3771,6 +3777,179 @@ async function saveLead() {
   await refreshLsaOverview();
   toast('Lead logged!');
 }
+
+// ── OUTREACH ──
+let outreachLeads = [];
+
+const OUTREACH_STATUS_BADGE = {
+  pending:      ['rgba(148,163,184,0.15)', 'var(--text-muted)', 'Pending'],
+  sent:         ['rgba(29,78,216,0.1)',    '#1D4ED8',           'Sent'],
+  replied:      ['rgba(180,83,9,0.08)',    '#B45309',           'Replied'],
+  converted:    ['rgba(5,150,105,0.1)',    '#059669',           'Converted'],
+  unsubscribed: ['rgba(220,38,38,0.1)',    '#DC2626',           'Unsubscribed'],
+};
+
+function fmtTS(iso) {
+  return iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+}
+
+function generateLinkedInMessage(lead) {
+  const firstName = lead.owner_name ? lead.owner_name.split(' ')[0] : 'there';
+  const niche = lead.niche || 'home service';
+  const city  = lead.city || 'your area';
+  return `Hey ${firstName} — came across ${lead.business_name} and wanted to reach out. I build websites for ${niche} businesses in ${city} with a booking page synced to your calendar and a Call Me Now button, so customers can book or call without the phone tag. Flat $1,500. Worth a quick look?`;
+}
+
+async function loadOutreachLeads() {
+  const { data } = await safe(sb.from('outreach_leads').select('*').order('created_at', { ascending: false }));
+  outreachLeads = data || [];
+  renderOutreachQueue();
+}
+
+function renderOutreachQueue() {
+  const countEl = $('prospect-count');
+  if (countEl) countEl.textContent = `${outreachLeads.length} prospect${outreachLeads.length === 1 ? '' : 's'}`;
+
+  const el = $('outreach-queue');
+  if (!el) return;
+
+  if (!outreachLeads.length) {
+    el.innerHTML = '<div class="empty" style="padding:32px 24px">No prospects added yet.</div>';
+    return;
+  }
+
+  el.innerHTML = `
+    <table class="data-table">
+      <thead><tr>
+        <th>Business</th><th>Owner</th><th>City</th><th>Niche</th>
+        <th>Status</th><th>Last Emailed</th><th>Follow-ups</th><th></th>
+      </tr></thead>
+      <tbody>
+        ${outreachLeads.map(l => `<tr>
+          <td class="bold">${l.business_name}</td>
+          <td class="muted">${l.owner_name || '—'}</td>
+          <td class="muted">${l.city || '—'}</td>
+          <td class="muted">${l.niche || '—'}</td>
+          <td>
+            <select class="select-pill" style="font-size:11px;padding:4px 8px" data-status-outreach="${l.id}">
+              ${Object.keys(OUTREACH_STATUS_BADGE).map(s => `<option value="${s}" ${l.status === s ? 'selected' : ''}>${OUTREACH_STATUS_BADGE[s][2]}</option>`).join('')}
+            </select>
+          </td>
+          <td class="mono">${fmtTS(l.last_emailed_at)}</td>
+          <td class="mono">${l.follow_up_count || 0}</td>
+          <td class="tr">
+            <button class="btn btn-sm" style="padding:3px 8px;margin-right:6px" data-copy-li="${l.id}">Copy LinkedIn</button>
+            <button class="btn btn-sm" style="color:var(--red);border-color:rgba(239,68,68,0.3);padding:3px 8px" data-del-outreach="${l.id}">✕</button>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+
+  el.querySelectorAll('[data-status-outreach]').forEach(sel => {
+    sel.addEventListener('change', async () => {
+      const id = sel.dataset.statusOutreach;
+      const { error } = await sb.from('outreach_leads').update({ status: sel.value }).eq('id', id);
+      if (error) { toast('Error: ' + error.message, 'err'); return; }
+      const lead = outreachLeads.find(l => l.id === id);
+      if (lead) lead.status = sel.value;
+      toast('Status updated');
+    });
+  });
+
+  el.querySelectorAll('[data-copy-li]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const lead = outreachLeads.find(l => l.id === btn.dataset.copyLi);
+      if (!lead) return;
+      try {
+        await navigator.clipboard.writeText(generateLinkedInMessage(lead));
+        toast('LinkedIn message copied');
+      } catch (e) {
+        toast('Could not copy — clipboard blocked', 'err');
+      }
+    });
+  });
+
+  el.querySelectorAll('[data-del-outreach]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      showConfirm('Delete Prospect', 'Remove this prospect? This cannot be undone.', async () => {
+        const { error } = await sb.from('outreach_leads').delete().eq('id', btn.dataset.delOutreach);
+        if (error) { toast('Error: ' + error.message, 'err'); return; }
+        await loadOutreachLeads();
+        toast('Prospect deleted');
+      });
+    });
+  });
+}
+
+$('add-prospect-btn').addEventListener('click', async () => {
+  const businessName = $('ol-biz').value.trim();
+  const email = $('ol-email').value.trim();
+  if (!businessName || !email) { toast('Business name and email are required', 'err'); return; }
+  const { error } = await sb.from('outreach_leads').insert({
+    business_name: businessName,
+    owner_name:    $('ol-owner').value.trim() || null,
+    email,
+    city:          $('ol-city').value.trim() || null,
+    niche:         $('ol-niche').value.trim() || null,
+    pain_point:    $('ol-pain').value.trim() || null,
+    status:        'pending',
+  });
+  if (error) { toast('Error: ' + error.message, 'err'); return; }
+  ['ol-biz', 'ol-owner', 'ol-email', 'ol-city', 'ol-niche', 'ol-pain'].forEach(id => { $(id).value = ''; });
+  await loadOutreachLeads();
+  toast('Prospect added');
+});
+
+$('bulk-add-prospect-btn').addEventListener('click', async () => {
+  const raw = $('ol-bulk').value.trim();
+  if (!raw) { toast('Paste at least one lead', 'err'); return; }
+  const rows = raw.split('\n').map(line => line.trim()).filter(Boolean).map(line => {
+    const [businessName, ownerName, email, city, niche] = line.split(',').map(s => (s || '').trim());
+    return { business_name: businessName, owner_name: ownerName || null, email, city: city || null, niche: niche || null, status: 'pending' };
+  }).filter(r => r.business_name && r.email);
+
+  if (!rows.length) { toast('No valid rows found — use: Business, Owner, Email, City, Niche', 'err'); return; }
+
+  const { error } = await sb.from('outreach_leads').insert(rows);
+  if (error) { toast('Error: ' + error.message, 'err'); return; }
+  $('ol-bulk').value = '';
+  await loadOutreachLeads();
+  toast(`${rows.length} prospect${rows.length === 1 ? '' : 's'} added`);
+});
+
+$('send-outreach-btn').addEventListener('click', async () => {
+  const pending = outreachLeads.filter(l => l.status === 'pending');
+  if (!pending.length) { toast('No pending prospects to email', 'err'); return; }
+  const btn = $('send-outreach-btn');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  try {
+    const res = await fetch('/api/integrations?action=outreach', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
+      body: JSON.stringify({
+        leads: pending.map(l => ({
+          businessName: l.business_name,
+          ownerName:    l.owner_name,
+          email:        l.email,
+          city:         l.city,
+          niche:        l.niche,
+          painPoint:    l.pain_point,
+        })),
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) { toast('Error: ' + (data.error || 'Send failed'), 'err'); return; }
+    toast(`Sent ${data.sent}/${pending.length} emails`);
+    await loadOutreachLeads();
+  } catch (e) {
+    toast('Error: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+});
 
 async function refreshLsaOverview() {
   const { data } = await safe(sb.from('lsa_leads').select('lead_date,cost_per_lead'));

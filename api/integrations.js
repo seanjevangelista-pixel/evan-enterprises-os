@@ -622,6 +622,7 @@ async function handle_monthly_report(req, res) {
 //   phone text,
 //   city text,
 //   niche text,
+//   pain_point text,
 //   status text default 'pending', -- pending, sent, replied, converted, unsubscribed
 //   notes text,
 //   last_emailed_at timestamptz,
@@ -633,11 +634,11 @@ async function handle_monthly_report(req, res) {
 
 function buildInitialEmail({ businessName, ownerName, city, niche, painPoint }) {
   const firstName = ownerName ? ownerName.split(' ')[0] : 'there';
-  const nicheLabel = niche || 'local service';
+  const nicheLabel = niche || 'home service';
   const cityLabel  = city  || 'your area';
-  const pain       = painPoint || 'missing out on leads because their digital presence isn\'t keeping up';
+  const pain       = painPoint || 'losing calls to voicemail because there\'s no easy way for customers to book online';
 
-  const subject = `Quick question about ${businessName}'s online presence`;
+  const subject = `A booking page for ${businessName}`;
 
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:32px 16px;background:#F1F5F9;font-family:Inter,-apple-system,Arial,sans-serif">
@@ -651,7 +652,7 @@ function buildInitialEmail({ businessName, ownerName, city, niche, painPoint }) 
     </svg>
     <div>
       <div style="color:#fff;font-size:13px;font-weight:700;letter-spacing:0.12em">EVAN ENTERPRISES LLC</div>
-      <div style="color:#94A3B8;font-size:11px;margin-top:2px">Business Growth & Digital Operations</div>
+      <div style="color:#94A3B8;font-size:11px;margin-top:2px">Websites & Booking Systems for Local Service Businesses</div>
     </div>
   </div>
 
@@ -663,22 +664,27 @@ function buildInitialEmail({ businessName, ownerName, city, niche, painPoint }) 
     </p>
 
     <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 16px">
-      Most ${nicheLabel} businesses in ${cityLabel} are losing leads right now because ${pain}. It's not a business problem — it's a visibility and systems problem, and it's fixable fast.
+      Most ${nicheLabel} businesses in ${cityLabel} are ${pain}. That's a fixable problem, not a "hire more staff" problem.
     </p>
 
-    <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 16px">
-      At Evan Enterprises, we handle the entire digital side for local businesses — website, Google Ads, lead intake, invoicing, monthly reporting. You run the jobs, we run everything else.
-    </p>
-
-    <div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:8px;padding:16px 20px;margin:20px 0">
-      <div style="font-size:12px;font-weight:700;color:#0369A1;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">What We Do For Clients</div>
-      <p style="font-size:13px;color:#0F172A;line-height:1.6;margin:0">
-        We currently manage <strong>Premier Landscaping ATX</strong> — handling their entire operation: Google Ads, LSA, website, invoicing via Jobber, and monthly performance reports. They focus on the work; we handle the rest.
+    <div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:8px;padding:18px 20px;margin:20px 0">
+      <div style="font-size:12px;font-weight:700;color:#0369A1;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">$1,500 — Website + Booking System</div>
+      <p style="font-size:13px;color:#0F172A;line-height:1.7;margin:0">
+        A custom website for ${businessName} with a <strong>bookings page synced to your email and Google Calendar</strong> — customers pick a time that actually works, no phone tag — plus a <strong>"Call Me Now" button</strong> right on the page for anyone who wants to skip straight to a call.
       </p>
     </div>
 
+    <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 16px">
+      If you also want to show up when people search for ${nicheLabel} in ${cityLabel}, I can set that up too:
+    </p>
+
+    <ul style="font-size:13px;color:#374151;line-height:1.9;margin:0 0 20px;padding-left:20px">
+      <li>Google Business Profile setup — <strong>$500</strong> one-time</li>
+      <li>Local Service Ads management — <strong>$500 setup, $250/mo</strong></li>
+    </ul>
+
     <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 20px">
-      Would it make sense to jump on a quick 15-min call this week? No pitch deck, no pressure — just want to see if there's a fit.
+      No pressure on the add-ons — the $1,500 site + booking system stands on its own. Worth a quick 15-min call this week to see if it's a fit?
     </p>
 
     <div style="border-top:1px solid #E2E8F0;padding-top:20px;display:flex;align-items:center;gap:14px">
@@ -689,6 +695,10 @@ function buildInitialEmail({ businessName, ownerName, city, niche, painPoint }) 
         <div style="font-size:12px;color:#64748B">sean@evanenterprise.com</div>
       </div>
     </div>
+
+    <p style="font-size:11px;color:#94A3B8;line-height:1.6;margin:20px 0 0;border-top:1px solid #E2E8F0;padding-top:14px">
+      Not interested? Just reply and let me know — I won't follow up again.
+    </p>
   </div>
 
 </div>
@@ -701,7 +711,7 @@ function buildFollowUpEmail({ businessName, ownerName, city }) {
   const firstName = ownerName ? ownerName.split(' ')[0] : 'there';
   const cityLabel  = city || 'your area';
 
-  const subject = `Re: Quick question about ${businessName}'s online presence`;
+  const subject = `Re: A booking page for ${businessName}`;
 
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:32px 16px;background:#F1F5F9;font-family:Inter,-apple-system,Arial,sans-serif">
@@ -712,7 +722,7 @@ function buildFollowUpEmail({ businessName, ownerName, city }) {
       Just wanted to follow up on my last email — I know inboxes get busy.
     </p>
     <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 14px">
-      Happy to show you exactly what we do for a similar business in ${cityLabel} — real numbers, real results. Worth a quick call?
+      Quick recap: $1,500 gets ${businessName} a custom website with a booking page synced to your calendar and a Call Me Now button, so customers in ${cityLabel} can reach you without the phone tag. Happy to show you an example — worth a quick call?
     </p>
     <div style="border-top:1px solid #E2E8F0;padding-top:18px;display:flex;align-items:center;gap:12px">
       <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1D4ED8,#3B82F6);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px;flex-shrink:0">SE</div>
@@ -721,6 +731,9 @@ function buildFollowUpEmail({ businessName, ownerName, city }) {
         <div style="font-size:12px;color:#64748B">sean@evanenterprise.com</div>
       </div>
     </div>
+    <p style="font-size:11px;color:#94A3B8;line-height:1.6;margin:18px 0 0;border-top:1px solid #E2E8F0;padding-top:14px">
+      Not interested? Just reply and let me know — I won't follow up again.
+    </p>
   </div>
 </div>
 </body></html>`;
@@ -728,18 +741,10 @@ function buildFollowUpEmail({ businessName, ownerName, city }) {
   return { subject, html };
 }
 
-async function handle_outreach_send(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-  const { leads = [], followUp = false } = req.body || {};
-  if (!leads.length) return res.status(400).json({ error: 'No leads provided' });
-
-  const resendKey   = process.env.RESEND_API_KEY;
-  const supabaseUrl = 'https://hzcgdnhecgewqpcnumwm.supabase.co';
-  const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
-
-  if (!resendKey) return res.status(500).json({ error: 'RESEND_API_KEY not set' });
-
+// Sends the initial/follow-up outreach email to each lead via Resend and
+// upserts the result into outreach_leads. Shared by the manual dashboard
+// send and the daily outreach-cron.
+async function sendOutreachBatch(leads, followUp, resendKey, supabaseUrl, supabaseKey) {
   const results = [];
   let sent = 0;
 
@@ -813,6 +818,7 @@ async function handle_outreach_send(req, res) {
               email,
               city: city || null,
               niche: niche || null,
+              pain_point: painPoint || null,
               status: 'sent',
               last_emailed_at: now,
               follow_up_count: followUp ? 1 : 0,
@@ -828,7 +834,87 @@ async function handle_outreach_send(req, res) {
     results.push({ email, businessName, ok: emailOk, resend: emailResult });
   }
 
+  return { sent, results };
+}
+
+async function handle_outreach_send(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Same guard as monthly-report — this endpoint fires real emails from
+  // Sean's domain, so it can't be left open to any caller.
+  const internalKey = req.headers['x-internal-key'];
+  if (!internalKey) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { leads = [], followUp = false } = req.body || {};
+  if (!leads.length) return res.status(400).json({ error: 'No leads provided' });
+
+  const resendKey   = process.env.RESEND_API_KEY;
+  const supabaseUrl = SUPABASE_URL;
+  const supabaseKey = SUPABASE_SERVICE;
+
+  if (!resendKey) return res.status(500).json({ error: 'RESEND_API_KEY not set' });
+
+  const { sent, results } = await sendOutreachBatch(leads, followUp, resendKey, supabaseUrl, supabaseKey);
+
   return res.status(200).json({ ok: true, sent, results });
+}
+
+// ── OUTREACH-CRON ──
+// Triggered daily by Vercel Cron (see vercel.json). Sends the next batch of
+// pending leads, then a single follow-up to leads that went quiet for 4+
+// days. Capped per run to protect deliverability on a single domain.
+const OUTREACH_DAILY_BATCH_SIZE = 25;
+const OUTREACH_FOLLOWUP_DELAY_DAYS = 4;
+
+async function handle_outreach_cron(req, res) {
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && req.headers['authorization'] !== `Bearer ${cronSecret}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const resendKey   = process.env.RESEND_API_KEY;
+  const supabaseUrl = SUPABASE_URL;
+  const supabaseKey = SUPABASE_SERVICE;
+
+  if (!resendKey) return res.status(500).json({ error: 'RESEND_API_KEY not set' });
+
+  const mapRow = row => ({
+    businessName: row.business_name,
+    ownerName: row.owner_name,
+    email: row.email,
+    city: row.city,
+    niche: row.niche,
+    painPoint: row.pain_point,
+  });
+
+  // Batch 1: never-contacted leads
+  const pendingRes = await fetch(
+    `${supabaseUrl}/rest/v1/outreach_leads?status=eq.pending&order=created_at.asc&limit=${OUTREACH_DAILY_BATCH_SIZE}`,
+    { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+  );
+  const pendingRows = await pendingRes.json();
+  const pendingLeads = (Array.isArray(pendingRows) ? pendingRows : []).map(mapRow);
+  const initial = pendingLeads.length
+    ? await sendOutreachBatch(pendingLeads, false, resendKey, supabaseUrl, supabaseKey)
+    : { sent: 0, results: [] };
+
+  // Batch 2: leads sent 4+ days ago with no follow-up yet
+  const cutoff = new Date(Date.now() - OUTREACH_FOLLOWUP_DELAY_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const staleRes = await fetch(
+    `${supabaseUrl}/rest/v1/outreach_leads?status=eq.sent&follow_up_count=eq.0&last_emailed_at=lt.${cutoff}&order=last_emailed_at.asc&limit=${OUTREACH_DAILY_BATCH_SIZE}`,
+    { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+  );
+  const staleRows = await staleRes.json();
+  const staleLeads = (Array.isArray(staleRows) ? staleRows : []).map(mapRow);
+  const followUps = staleLeads.length
+    ? await sendOutreachBatch(staleLeads, true, resendKey, supabaseUrl, supabaseKey)
+    : { sent: 0, results: [] };
+
+  return res.status(200).json({
+    ok: true,
+    initialSent: initial.sent,
+    followUpsSent: followUps.sent,
+  });
 }
 
 // ── MEDIA UPLOAD ──
@@ -1118,6 +1204,7 @@ export default async function handler(req, res) {
   if (action === 'lsa-check') return handle_lsa_check(req, res);
   if (action === 'monthly-report') return handle_monthly_report(req, res);
   if (action === 'outreach') return handle_outreach_send(req, res);
+  if (action === 'outreach-cron') return handle_outreach_cron(req, res);
   if (action === 'square') return handle_square(req, res);
   if (action === 'buffer') return handle_buffer(req, res);
   if (action === 'media') return handle_media(req, res);

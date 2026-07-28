@@ -156,6 +156,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({ client_id, title, amount: parseFloat(amount), due_date: due_date || null, status: status || 'unpaid', notes: notes || null }),
     });
     const data = await r.json();
+    if (!r.ok) return res.status(500).json({ error: data?.message || 'Failed to create invoice' });
     const invoice = Array.isArray(data) ? data[0] : data;
 
     // Fetch client info to send notification email

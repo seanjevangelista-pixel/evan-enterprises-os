@@ -3113,19 +3113,24 @@ async function saveClient() {
   });
   if (error) { toast('Error: '+error.message,'err'); return; }
   closeModal('modal-add-client');
+  // Capture welcome-email fields BEFORE reset() blanks the form inputs —
+  // reading them after reset() left email empty, so the welcome packet
+  // silently never sent for any new client.
+  const ownerEmail = $('c-email').value.trim() || null;
+  const ownerName  = $('c-owner').value.trim() || null;
   $('client-form').reset();
   await loadAll();
   renderPipeline(); renderClients();
   populateGadsClientSelect(); populateJobberClientSelect(); populateLsaClientSelect();
   toast('Client added!');
   // Auto-send welcome packet + onboarding checklist
-  const email = $('c-email') ? $('c-email').value.trim() : null;
+  const email = ownerEmail;
   if (email) {
     try {
       const r = await fetch('/api/email?action=welcome-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ businessName: biz, ownerName: $('c-owner').value.trim()||null, ownerEmail: email }),
+        body: JSON.stringify({ businessName: biz, ownerName: ownerName, ownerEmail: email }),
       });
       const d = await r.json().catch(() => ({}));
       if (r.ok && d.ok !== false) toast('Welcome email sent to client!');

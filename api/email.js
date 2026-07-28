@@ -1058,12 +1058,20 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const action = req.query.action;
-  if (action === 'client-report') return handle_client_report(req, res);
-  if (action === 'health-check') return handle_health_check(req, res);
-  if (action === 'invoice-reminders') return handle_invoice_reminders(req, res);
-  if (action === 'welcome-email') return handle_welcome_email(req, res);
-  if (action === 'review-request') return handle_review_request(req, res);
-  if (action === 'onboarding') return handle_onboarding_sequence(req, res);
-  if (action === 'proposal') return handle_proposal(req, res);
-  return res.status(400).json({ error: 'Unknown action' });
+  // Wrap dispatch so a handler that throws before sending (e.g. Supabase
+  // unreachable, or a non-JSON gateway error page failing .json()) returns a
+  // clean 500 instead of a bare unhandled-rejection crash. `await` is required
+  // for the try/catch to catch async rejections.
+  try {
+    if (action === 'client-report') return await handle_client_report(req, res);
+    if (action === 'health-check') return await handle_health_check(req, res);
+    if (action === 'invoice-reminders') return await handle_invoice_reminders(req, res);
+    if (action === 'welcome-email') return await handle_welcome_email(req, res);
+    if (action === 'review-request') return await handle_review_request(req, res);
+    if (action === 'onboarding') return await handle_onboarding_sequence(req, res);
+    if (action === 'proposal') return await handle_proposal(req, res);
+    return res.status(400).json({ error: 'Unknown action' });
+  } catch (e) {
+    return res.status(500).json({ error: e.message || 'Internal error' });
+  }
 }

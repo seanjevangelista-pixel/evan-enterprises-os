@@ -98,6 +98,7 @@ All endpoints use `?action=` routing. Never create new API files — add actions
 ## Rules
 - Never exceed 12 Vercel functions — add actions to existing API files
 - No frameworks — vanilla HTML/CSS/JS only until a migration is planned
-- Dark design system: `#0A0F1E` bg, `#111827` surface, `#3B82F6` accent
+- Public site design system ("Dispatch", `index.html`) — sulfur / white / black: near-black `#111110` ground, panel `#1A1A17`, raised `#24241F`, white type `#FBFBF9`, body `#B7B7AE`, muted `#86867C`, sulfur-yellow `#E1D51B` accent (`#141410` text on sulfur fills), red `#E4553E` (missed) / green `#35C77A` (booked) semantic. Type: Anton (display, uppercase), IBM Plex Sans (body), IBM Plex Mono (data). Signature: hero "Today's board" panel animates 5 missed calls flipping to BOOKED; respects `prefers-reduced-motion`.
+- The admin dashboard (`dashboard/index.html`) keeps its own light system (Syne/Inter, `#F8FAFC` bg) — Dispatch is the public marketing site only.
 - Supabase anon key is public-safe; service key is server-only
 - Always commit with co-author: `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`

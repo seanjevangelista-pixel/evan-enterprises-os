@@ -6,55 +6,60 @@
 <title>Evan Enterprises LLC — The operator behind local business</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111110">
-<meta name="description" content="Evan Enterprises LLC — an AI front desk that answers every call, ad management that fills your schedule, and product leads with the margin already worked out. One operator, Austin TX.">
-<meta property="og:title" content="Evan Enterprises LLC — The operator behind local business">
-<meta property="og:description" content="Every missed call is somebody else's work order. AI front desk, ad management, and product leads for local businesses in Texas.">
+<meta name="theme-color" content="#0E0E0D">
+<meta name="description" content="An AI front desk that answers every call, texts back the ones it misses, and books the job instantly. Try it live. Plus ad management and product leads. Evan Enterprises LLC, Austin TX.">
+<meta property="og:title" content="Evan Enterprises LLC — An AI front desk that never misses a call">
+<meta property="og:description" content="It picks up every call, texts back the ones it misses, and books the job — instantly, day or night. Try the AI live on the site.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ═══════════ TOKENS · "Dispatch" — sulfur / white / black ═══════════ */
+/* ═══════════ TOKENS · "Dispatch" — chrome / white / black ═══════════ */
 :root{
-  --ink:#111110;        /* ground — warm near-black */
-  --panel:#1A1A17;      /* panel */
-  --raised:#24241F;     /* raised */
-  --white:#FBFBF9;      /* primary type — white */
-  --body:#B7B7AE;       /* running text */
-  --dim:#86867C;        /* muted, warm-neutral */
-  --sulfur:#E1D51B;     /* accent — sulfur yellow */
-  --on-sulfur:#141410;  /* text on sulfur fills */
-  --miss:#E4553E;       /* semantic: missed */
-  --book:#35C77A;       /* semantic: booked */
-  --hair:rgba(251,251,249,.10);
+  --ink:#0E0E0D;         /* ground — cool near-black */
+  --panel:#18181A;       /* panel */
+  --raised:#212124;      /* raised */
+  --white:#FBFBFA;       /* primary type — white */
+  --body:#B5B6B2;        /* running text */
+  --dim:#84857F;         /* muted, cool-neutral */
+  --silver:#DADCE0;      /* accent — brushed chrome */
+  --silver-dim:#8E9098;  /* secondary chrome, quieter */
+  --on-silver:#0C0C0B;   /* text on silver fills */
+  --chrome-grad:linear-gradient(120deg,#9A9CA2 0%,#F5F6F8 22%,#C6C8CE 45%,#F5F6F8 68%,#9A9CA2 100%);
+  --miss:#E4553E;        /* semantic: missed */
+  --book:#35C77A;        /* semantic: booked */
+  --hair:rgba(251,251,250,.10);
   --fd:'Anton',Impact,sans-serif;
   --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
   --fm:'IBM Plex Mono',ui-monospace,monospace;
   --max:1180px;
 }
+.chrome{background:var(--chrome-grad);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 5s ease-in-out infinite}
+@keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@media(prefers-reduced-motion:reduce){.chrome{animation:none;background-position:35% 50%}}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--ink);color:var(--white);font-family:var(--fb);font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
-:focus-visible{outline:2px solid var(--sulfur);outline-offset:3px}
+:focus-visible{outline:2px solid var(--silver);outline-offset:3px}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
 .disp{font-family:var(--fd);font-weight:400;letter-spacing:.005em;line-height:.95;text-transform:uppercase;text-wrap:balance}
-.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--sulfur)}
+.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--silver)}
 .tnum{font-variant-numeric:tabular-nums}
 .lede{color:var(--body)}
 
 /* ═══════════ NAV ═══════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(17,17,16,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
 .nav-in{max-width:var(--max);margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
 .logo{font-family:var(--fd);font-size:19px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
 .logo img{width:26px;height:26px;object-fit:contain}
-.logo b{color:var(--sulfur);font-weight:400}
+.logo b{color:var(--silver);font-weight:400}
 .nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--dim);font-weight:500}
 .nav-links a:hover{color:var(--white)}
-.nav-cta{background:var(--sulfur);color:var(--on-sulfur);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
-.nav-cta:hover{background:#F2E63A;color:var(--on-sulfur)}
+.nav-cta{background:var(--silver);color:var(--on-silver);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
+.nav-cta:hover{background:#EEEFF1;color:var(--on-silver)}
 .burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
 .burger span{display:block;width:23px;height:2px;background:var(--white)}
 .mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--hair);background:var(--panel)}
@@ -66,12 +71,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(17,17,16,.92)
 .hero{padding:148px 0 88px}
 .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
 .hero h1{font-size:clamp(42px,6.5vw,78px);margin:18px 0 0}
-.hero h1 em{font-style:normal;color:var(--sulfur)}
+.hero h1 em{font-style:normal;color:var(--silver)}
 .hero-sub{margin-top:22px;max-width:46ch;font-size:18px;color:var(--body)}
 .hero-cta{margin-top:32px;display:flex;flex-wrap:wrap;gap:12px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15.5px;padding:14px 25px;border:0;cursor:pointer;transition:.16s}
-.btn-p{background:var(--sulfur);color:var(--on-sulfur);font-weight:700}
-.btn-p:hover{background:#F2E63A;transform:translateY(-2px)}
+.btn-p{background:var(--chrome-grad);background-size:220% 100%;background-position:30% 50%;color:var(--on-silver);font-weight:700;transition:.35s}
+.btn-p:hover{background-position:70% 50%;transform:translateY(-2px)}
 .btn-p:disabled{opacity:.6;cursor:default;transform:none}
 .btn-s{border:1px solid var(--hair);color:var(--white);background:transparent}
 .btn-s:hover{border-color:var(--dim);background:var(--panel)}
@@ -79,7 +84,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(17,17,16,.92)
 
 /* ── the board (signature) ── */
 .board{background:var(--panel);border:1px solid var(--hair);box-shadow:0 24px 60px rgba(0,0,0,.5)}
-.board-top{display:flex;align-items:center;justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--hair);background:#131310}
+.board-top{display:flex;align-items:center;justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--hair);background:#111112}
 .board-t{font-family:var(--fm);font-size:11.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
 .live{display:flex;align-items:center;gap:7px;font-family:var(--fm);font-size:10.5px;letter-spacing:.14em;color:var(--book);text-transform:uppercase}
 .live i{width:7px;height:7px;border-radius:50%;background:var(--book);animation:blip 1.7s infinite}
@@ -91,8 +96,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(17,17,16,.92)
 .st{font-family:var(--fm);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:4px 7px;text-align:center;transition:.4s}
 .st.m{background:rgba(228,85,62,.16);color:var(--miss)}
 .st.b{background:rgba(61,209,127,.16);color:var(--book)}
-.board-foot{display:flex;align-items:center;gap:13px;padding:15px 17px;background:#131310;border-top:1px solid var(--hair)}
-.board-foot .n{font-family:var(--fd);font-size:34px;color:var(--sulfur);line-height:1}
+.board-foot{display:flex;align-items:center;gap:13px;padding:15px 17px;background:#111112;border-top:1px solid var(--hair)}
+.board-foot .n{font-family:var(--fd);font-size:34px;color:var(--silver);line-height:1}
 .board-foot .l{font-family:var(--fm);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);line-height:1.5}
 
 /* ═══════════ SECTIONS ═══════════ */
@@ -102,26 +107,34 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(17,17,16,.92)
 .sec-head .lede{margin-top:16px;max-width:58ch}
 
 /* ── services ── */
-.svcs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.svc{background:var(--panel);border:1px solid var(--hair);border-top:3px solid var(--sulfur);padding:30px 26px 26px;display:flex;flex-direction:column;transition:.2s}
+.svcs{display:flex;flex-direction:column;gap:18px}
+.svcs-row{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.svc{background:var(--panel);border:1px solid var(--hair);border-top:3px solid var(--silver-dim);padding:30px 26px 26px;display:flex;flex-direction:column;transition:.2s}
 .svc:hover{background:var(--raised);transform:translateY(-3px)}
-.svc:nth-child(2){border-top-color:var(--book)}
-.svc:nth-child(3){border-top-color:var(--miss)}
+.svc.featured{border-top:3px solid transparent;border-image:var(--chrome-grad) 1;padding:40px 40px 36px;position:relative;overflow:hidden}
+.svc.featured:before{content:"";position:absolute;top:-40%;right:-15%;width:60%;height:180%;background:radial-gradient(circle,rgba(218,220,224,.05),transparent 65%);pointer-events:none}
+.svc.featured .svc-tag{color:var(--silver-dim)}
+.svc.featured h3{font-size:42px}
+.svc.featured p{font-size:16.5px;max-width:56ch}
+.svc:nth-child(2) .svc-tag{color:var(--dim)}
+.svcs-row .svc:nth-child(1){border-top-color:var(--book)}
+.svcs-row .svc:nth-child(2){border-top-color:var(--miss)}
 .svc-tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
 .svc h3{font-family:var(--fd);font-size:30px;text-transform:uppercase;margin:12px 0 11px;letter-spacing:.01em;font-weight:400}
 .svc p{font-size:15px;color:var(--body);flex:1}
 .svc-p{font-family:var(--fm);font-size:12.5px;color:var(--dim);margin:22px 0 14px;padding-top:15px;border-top:1px solid var(--hair)}
 .svc-p b{font-family:var(--fd);font-size:27px;color:var(--white);letter-spacing:.01em;font-weight:400}
-.svc-go{font-size:14px;font-weight:600;color:var(--sulfur)}
+.svc.featured .svc-p b{font-size:34px}
+.svc-go{font-size:14px;font-weight:600;color:var(--silver)}
 .svc-go:hover{text-decoration:underline;text-underline-offset:4px}
-@media(max-width:900px){.svcs{grid-template-columns:1fr}}
+@media(max-width:900px){.svcs-row{grid-template-columns:1fr}.svc.featured{padding:30px 26px 26px}.svc.featured h3{font-size:32px}}
 
 /* ── bot scenarios ── */
 .scn{display:grid;grid-template-columns:.32fr .68fr;gap:40px;padding:40px 0;border-bottom:1px solid var(--hair);align-items:start}
 .scn:last-child{border-bottom:0}
 .scn-l .nm{font-family:var(--fd);font-size:27px;text-transform:uppercase;letter-spacing:.01em;line-height:1.06}
-.scn-l .ch{display:inline-block;margin-top:11px;font-family:var(--fm);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--sulfur);background:rgba(245,217,10,.1);padding:4px 9px}
-.scn-r .moment{font-size:21px;line-height:1.4;color:var(--white);font-weight:500;padding-left:19px;border-left:2px solid var(--sulfur);text-wrap:balance}
+.scn-l .ch{display:inline-block;margin-top:11px;font-family:var(--fm);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--silver);background:rgba(218,220,224,.12);padding:4px 9px}
+.scn-r .moment{font-size:21px;line-height:1.4;color:var(--white);font-weight:500;padding-left:19px;border-left:2px solid var(--silver);text-wrap:balance}
 .scn-r .what{margin-top:17px;font-size:15.5px;color:var(--body);max-width:62ch}
 .scn-r .for{margin-top:12px;font-family:var(--fm);font-size:12.5px;color:var(--dim)}
 @media(max-width:840px){.scn{grid-template-columns:1fr;gap:18px;padding:34px 0}}
@@ -129,45 +142,45 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(17,17,16,.92)
 /* ── pipeline (how it works) ── */
 .pipe{position:relative;margin-top:8px;padding-left:64px}
 .pipe-line{position:absolute;left:19px;top:6px;bottom:6px;width:2px;background:var(--hair);overflow:hidden}
-.pipe-line i{position:absolute;inset:0;background:linear-gradient(180deg,var(--sulfur),var(--book));transform:scaleY(0);transform-origin:top;transition:transform 1.6s cubic-bezier(.22,1,.36,1)}
+.pipe-line i{position:absolute;inset:0;background:linear-gradient(180deg,var(--silver),var(--book));transform:scaleY(0);transform-origin:top;transition:transform 1.6s cubic-bezier(.22,1,.36,1)}
 .pipe.in .pipe-line i{transform:scaleY(1)}
 .pipe-step{position:relative;padding:0 0 44px;opacity:0;transform:translateX(-14px);transition:.7s cubic-bezier(.22,1,.36,1)}
 .pipe.in .pipe-step{opacity:1;transform:none}
 .pipe-step:last-child{padding-bottom:0}
-.pipe-step:before{content:attr(data-n);position:absolute;left:-64px;top:-2px;width:40px;height:40px;border-radius:50%;background:var(--panel);border:2px solid var(--sulfur);color:var(--sulfur);font-family:var(--fm);font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center}
+.pipe-step:before{content:attr(data-n);position:absolute;left:-64px;top:-2px;width:40px;height:40px;border-radius:50%;background:var(--panel);border:2px solid var(--silver);color:var(--silver);font-family:var(--fm);font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center}
 .pipe-step h3{font-family:var(--fd);font-size:24px;text-transform:uppercase;font-weight:400;letter-spacing:.01em}
 .pipe-step p{margin-top:9px;font-size:15.5px;color:var(--body);max-width:62ch}
 @media(max-width:700px){.pipe{padding-left:52px}.pipe-line{left:15px}.pipe-step:before{left:-52px;width:32px;height:32px;font-size:13px}}
 
 /* ── widget nudge ── */
 .nudge{margin-top:32px;display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:13px;color:var(--dim);border:1px dashed var(--hair);padding:10px 16px}
-.nudge b{color:var(--sulfur);font-weight:500}
+.nudge b{color:var(--silver);font-weight:500}
 
 /* ── faq ── */
 .faq{border-top:1px solid var(--ink)}
 .faq-item{border-bottom:1px solid var(--hair)}
 .faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 0;background:none;border:0;cursor:pointer;color:var(--white);text-align:left;font-family:var(--fb);font-size:17px;font-weight:600}
-.faq-q:hover{color:var(--sulfur)}
-.faq-q .x{font-family:var(--fm);font-size:20px;color:var(--sulfur);transition:transform .3s;flex-shrink:0}
+.faq-q:hover{color:var(--silver)}
+.faq-q .x{font-family:var(--fm);font-size:20px;color:var(--silver);transition:transform .3s;flex-shrink:0}
 .faq-item.open .faq-q .x{transform:rotate(45deg)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
 .faq-item.open .faq-a{max-height:240px}
 .faq-a p{padding:0 0 24px;font-size:15.5px;color:var(--body);max-width:66ch}
 
 /* ── urgency ── */
-.urgency{display:inline-flex;align-items:center;gap:9px;font-family:var(--fm);font-size:12px;letter-spacing:.04em;color:var(--sulfur);background:rgba(225,213,27,.08);border:1px solid rgba(225,213,27,.25);padding:7px 13px;margin-top:18px}
-.urgency i{width:6px;height:6px;border-radius:50%;background:var(--sulfur);animation:blip 1.7s infinite}
+.urgency{display:inline-flex;align-items:center;gap:9px;font-family:var(--fm);font-size:12px;letter-spacing:.04em;color:var(--silver);background:rgba(218,220,224,.08);border:1px solid rgba(218,220,224,.28);padding:7px 13px;margin-top:18px}
+.urgency i{width:6px;height:6px;border-radius:50%;background:var(--silver);animation:blip 1.7s infinite}
 
 /* ── proof ── */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:44px}
 .stat{background:var(--panel);border:1px solid var(--hair);padding:26px 24px}
-.stat .n{font-family:var(--fd);font-size:46px;color:var(--sulfur);line-height:1;letter-spacing:.01em}
+.stat .n{font-family:var(--fd);font-size:46px;color:var(--silver);line-height:1;letter-spacing:.01em}
 .stat .l{font-family:var(--fm);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);margin-top:11px;line-height:1.5}
 .quotes{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
 .quote{background:var(--panel);border:1px solid var(--hair);padding:28px 26px}
 .quote-t{font-size:16px;color:var(--white);line-height:1.55}
 .quote-a{display:flex;align-items:center;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--hair)}
-.avatar{width:38px;height:38px;background:var(--sulfur);color:var(--on-sulfur);font-family:var(--fd);font-size:15px;display:flex;align-items:center;justify-content:center;letter-spacing:.02em}
+.avatar{width:38px;height:38px;background:var(--silver);color:var(--on-silver);font-family:var(--fd);font-size:15px;display:flex;align-items:center;justify-content:center;letter-spacing:.02em}
 .quote-name{font-weight:600;font-size:14.5px}
 .quote-biz{font-family:var(--fm);font-size:11.5px;color:var(--dim);margin-top:2px}
 @media(max-width:860px){.stats,.quotes{grid-template-columns:1fr}}
@@ -180,7 +193,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(17,17,16,.92)
 .about-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
 .tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border:1px solid var(--hair);padding:4px 8px}
 .about-q{font-size:22px;line-height:1.45;color:var(--white);font-weight:500;text-wrap:balance}
-.about-q em{font-style:normal;color:var(--sulfur)}
+.about-q em{font-style:normal;color:var(--silver)}
 .about-body{margin-top:22px;display:flex;flex-direction:column;gap:15px;color:var(--body);font-size:16px;max-width:62ch}
 @media(max-width:860px){.about-in{grid-template-columns:1fr;gap:34px}}
 
@@ -191,15 +204,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(17,17,16,.92)
 .svc-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:34px 0 26px}
 .svc-btn{background:var(--panel);border:1px solid var(--hair);padding:16px 15px;text-align:left;cursor:pointer;transition:.16s;color:var(--white);font-family:var(--fb)}
 .svc-btn:hover{border-color:var(--dim)}
-.svc-btn.on{border-color:var(--sulfur);background:var(--raised)}
+.svc-btn.on{border-color:var(--silver);background:var(--raised)}
 .svc-btn .sl{font-weight:600;font-size:14.5px}
 .svc-btn .sd{font-size:12.5px;color:var(--dim);margin-top:4px;line-height:1.45}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-family:var(--fm);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
 .field input,.field textarea{background:var(--panel);border:1px solid var(--hair);padding:13px 14px;color:var(--white);font-family:var(--fb);font-size:15.5px;resize:vertical}
-.field input:focus,.field textarea:focus{border-color:var(--sulfur);outline:none}
-.field input::placeholder,.field textarea::placeholder{color:#55554E}
+.field input:focus,.field textarea:focus{border-color:var(--silver);outline:none}
+.field input::placeholder,.field textarea::placeholder{color:#55564F}
 #contactForm .btn{width:100%;margin-top:18px}
 .form-ok{display:none;background:rgba(61,209,127,.11);border:1px solid rgba(61,209,127,.35);color:var(--book);padding:18px;text-align:center;font-weight:600;margin-top:8px}
 .form-ok.show{display:block}
@@ -215,8 +228,8 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
 .foot-links,.foot-social{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-size:14px;color:var(--dim)}
 .foot-links a:hover,.foot-social a:hover{color:var(--white)}
 .foot-contact{font-family:var(--fm);font-size:12.5px;color:var(--dim)}
-.foot-contact a:hover{color:var(--sulfur)}
-.foot-copy{font-family:var(--fm);font-size:11.5px;color:#55554E}
+.foot-contact a:hover{color:var(--silver)}
+.foot-copy{font-family:var(--fm);font-size:11.5px;color:#55564F}
 
 /* ── motion ── */
 .rv{opacity:0;transform:translateY(20px);transition:.75s cubic-bezier(.22,1,.36,1)}
@@ -252,12 +265,12 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
 <header class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="eyebrow">Evan Enterprises LLC · Austin, Texas</div>
-      <h1 class="disp">Every missed call<br>is <em>somebody else's</em><br>work order.</h1>
-      <p class="hero-sub">I run the three things that decide whether a local business grows: the phone, the ads, and the margin. One operator — you work with me directly, every time.</p>
+      <div class="eyebrow">AI Front Desk · Evan Enterprises LLC</div>
+      <h1 class="disp">An AI that never<br>lets a <em class="chrome">call</em><br>go unanswered.</h1>
+      <p class="hero-sub">It picks up every call, texts back the ones it misses, and books the job — instantly, day or night. Ask it something right now; the chat bubble in the corner is the real thing, not a mockup.</p>
       <div class="hero-cta">
-        <a href="#contact" class="btn btn-p">Book a free call</a>
-        <a href="#frontdesk" class="btn btn-s">See the five bots</a>
+        <a href="#bots" class="btn btn-p">Try the AI now →</a>
+        <a href="#contact" class="btn btn-s">Book a free call</a>
       </div>
     </div>
 
@@ -279,32 +292,34 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
 <section class="sec" id="services">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="eyebrow">Three services</div>
-      <h2 class="disp">Three leaks. Pick yours.</h2>
-      <p class="lede">Most local businesses are losing money in one of three places. Each service plugs a different one — take one, or take all three.</p>
+      <div class="eyebrow">What I run for you</div>
+      <h2 class="disp">One AI. Two more<br>ways I help.</h2>
+      <p class="lede">The AI Front Desk is the main thing — the phone is where most businesses bleed money first. Ads and product leads are here if you want the full picture.</p>
     </div>
     <div class="svcs rv">
-      <div class="svc" id="frontdesk">
-        <div class="svc-tag">Answer the phone</div>
+      <div class="svc featured" id="frontdesk">
+        <div class="svc-tag">Answer the phone — automatically</div>
         <h3>AI Front Desk</h3>
-        <p>Five bots that answer calls, text back missed callers, chat on your site, work cold quotes, and collect reviews — all reading the same brief about your business.</p>
+        <p>Five bots that answer calls, text back missed callers, chat on your site, work cold quotes, and collect reviews — all reading the same brief about your business. This is what's live in the corner of this page right now.</p>
         <div class="svc-p"><b>$299</b> /mo · per business</div>
         <a href="#bots" class="svc-go">See all five bots →</a>
         <div class="urgency"><i></i>Onboarding a limited number of businesses this month</div>
       </div>
-      <div class="svc" id="marketing">
-        <div class="svc-tag">Fill the schedule</div>
-        <h3>Marketing</h3>
-        <p>Google Search, Local Service Ads and Meta, managed end to end — with a live dashboard so you never wait on a monthly report to know your numbers. You own the accounts.</p>
-        <div class="svc-p"><b>$500</b> /mo · from · + ad spend</div>
-        <a href="#contact" class="svc-go">See what's included →</a>
-      </div>
-      <div class="svc" id="distribution">
-        <div class="svc-tag">Widen the margin</div>
-        <h3>Distribution</h3>
-        <p>Vetted Amazon, Walmart and eBay product leads every month — buy price, sell price, fees and ROI already worked out. Exclusive to subscribers, never published.</p>
-        <div class="svc-p"><b>$99</b> /mo · cancel anytime</div>
-        <a href="#contact" class="svc-go">Get this month's leads →</a>
+      <div class="svcs-row">
+        <div class="svc" id="marketing">
+          <div class="svc-tag">Fill the schedule</div>
+          <h3>Marketing</h3>
+          <p>Google Search, Local Service Ads and Meta, managed end to end — with a live dashboard so you never wait on a monthly report to know your numbers. You own the accounts.</p>
+          <div class="svc-p"><b>$500</b> /mo · from · + ad spend</div>
+          <a href="#contact" class="svc-go">See what's included →</a>
+        </div>
+        <div class="svc" id="distribution">
+          <div class="svc-tag">Widen the margin</div>
+          <h3>Distribution</h3>
+          <p>Vetted Amazon, Walmart and eBay product leads every month — buy price, sell price, fees and ROI already worked out. Exclusive to subscribers, never published.</p>
+          <div class="svc-p"><b>$99</b> /mo · cancel anytime</div>
+          <a href="#contact" class="svc-go">Get this month's leads →</a>
+        </div>
       </div>
     </div>
   </div>

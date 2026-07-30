@@ -780,6 +780,7 @@ async function handle_onboarding_sequence(req, res) {
   const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
 
   if (!resendKey)    return res.status(500).json({ error: 'RESEND_API_KEY not set' });
+  if (!supabaseKey)  return res.status(500).json({ error: 'SUPABASE service/anon key not set' });
   if (!clientId)     return res.status(400).json({ error: 'clientId required' });
   if (![2, 3].includes(Number(emailNumber))) return res.status(400).json({ error: 'emailNumber must be 2 or 3' });
 

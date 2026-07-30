@@ -833,7 +833,7 @@ async function loadJobber() {
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
         ${kpiCard('Jobs Completed', jobs.filter(j=>j.jobStatus==='completed').length, 'var(--text-primary)')}
         ${kpiCard('Jobs Scheduled', jobs.filter(j=>j.jobStatus==='scheduled'||j.jobStatus==='active').length, 'var(--text-primary)')}
-        ${kpiCard('Quotes Out', `${quoteSent} <span style="font-size:14px;color:var(--text-muted)">/ ${quoteValue>0?fmt(quoteValue)+' value':'$0'}`, 'var(--text-primary)')}
+        ${kpiCard('Quotes Out', `${quoteSent} <span style="font-size:14px;color:var(--text-muted)">/ ${quoteValue>0?fmt(quoteValue)+' value':'$0'}</span>`, 'var(--text-primary)')}
         ${kpiCard('Quotes Won', quoteApproved, 'var(--green)')}
       </div>
 
@@ -2280,13 +2280,21 @@ async function init() {
     if (session) {
       await enterApp(session);
     } else {
+      _entered = false;
       $('app').style.display = 'none';
       $('login-screen').style.display = 'flex';
     }
   });
 }
 
+// Supabase v2 fires an INITIAL_SESSION event when onAuthStateChange subscribes,
+// which re-runs enterApp a second time right after getSession() already ran it —
+// doubling every loadAll() DB round-trip and restarting all countUp animations
+// (visible flicker on load). Guard against re-entry; reset on sign-out above.
+let _entered = false;
 async function enterApp(session) {
+  if (_entered) return;
+  _entered = true;
   $('login-screen').style.display = 'none';
   $('app').style.display = 'block';
   const email = session.user.email || '';
@@ -2561,7 +2569,7 @@ function renderVisits(filterCid='') {
   const tbody = $('visits-tbody');
   const rows  = filterCid ? visits.filter(v=>v.client_id===filterCid) : visits;
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="10"><div class="empty">No visits logged yet.</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="11"><div class="empty">No visits logged yet.</div></td></tr>';
     return;
   }
   tbody.innerHTML = rows.map(v=>`

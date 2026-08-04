@@ -443,7 +443,10 @@ async function showPortal() {
   document.title = client.business_name + ' — Evan Enterprises';
 
   const now     = new Date();
-  const moStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  // Date-only (YYYY-MM-DD) so it compares correctly against lsa_leads.lead_date,
+  // which the webhook writes date-only. A full ISO timestamp here sorts AFTER a
+  // date-only string for the same day, silently dropping leads dated the 1st.
+  const moStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
 
   // Also fetch all LSA this month
   const lsaThisMo = lsaAll.filter(l => (l.lead_date || l.created_at) >= moStart);

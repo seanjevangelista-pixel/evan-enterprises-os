@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lone Star Plumbing & Drain — AI Front Desk Demo | Evan Enterprises LLC</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#0E0E0D">
+<meta name="description" content="Live demo: an AI front desk built by Evan Enterprises LLC, answering questions for a fake plumbing business. Try it yourself.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════ TOKENS · same "Dispatch" system as index.html ═══════════ */
+:root{
+  --ink:#0E0E0D; --panel:#18181A; --raised:#212124;
+  --white:#FBFBFA; --body:#B5B6B2; --dim:#84857F;
+  --silver:#DADCE0; --silver-dim:#8E9098; --on-silver:#0C0C0B;
+  --chrome-grad:linear-gradient(120deg,#9A9CA2 0%,#F5F6F8 22%,#C6C8CE 45%,#F5F6F8 68%,#9A9CA2 100%);
+  --miss:#E4553E; --book:#35C77A;
+  --hair:rgba(251,251,250,.10);
+  --fd:'Anton',Impact,sans-serif;
+  --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --fm:'IBM Plex Mono',ui-monospace,monospace;
+  --max:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--white);font-family:var(--fb);font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--silver);outline-offset:3px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
+.disp{font-family:var(--fd);font-weight:400;letter-spacing:.005em;line-height:.95;text-transform:uppercase;text-wrap:balance}
+.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--silver)}
+.lede{color:var(--body)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15.5px;padding:14px 25px;border:0;cursor:pointer;transition:.16s}
+.btn-p{background:var(--chrome-grad);background-size:220% 100%;background-position:30% 50%;color:var(--on-silver);font-weight:700;transition:.35s}
+.btn-p:hover{background-position:70% 50%;transform:translateY(-2px)}
+
+/* ── demo banner ── */
+.demo-banner{position:sticky;top:0;z-index:80;background:var(--panel);border-bottom:1px solid var(--hair);padding:12px 0}
+.demo-banner .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.demo-banner p{font-size:13px;color:var(--body)}
+.demo-banner p b{color:var(--white)}
+.demo-banner a.back{font-family:var(--fm);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--silver);border:1px solid var(--hair);padding:8px 14px;white-space:nowrap}
+.demo-banner a.back:hover{border-color:var(--dim)}
+
+/* ── fake plumbing-site hero ── */
+.hero{padding:80px 0 70px;border-bottom:1px solid var(--hair)}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}
+.hero h1{font-size:clamp(38px,6vw,66px);margin:16px 0 0}
+.hero h1 em{font-style:normal;color:var(--silver)}
+.hero-sub{margin-top:20px;max-width:46ch;font-size:17px;color:var(--body)}
+.hero-cta{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.hero-cta .hint{font-family:var(--fm);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.hero-art{background:var(--panel);border:1px solid var(--hair);padding:26px}
+.hero-art .row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--hair);font-size:14px}
+.hero-art .row:last-child{border-bottom:0}
+.hero-art .row span:first-child{color:var(--dim)}
+.hero-art .row span:last-child{font-family:var(--fm);color:var(--book)}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:32px}}
+
+/* ── services ── */
+.sec{padding:70px 0}
+.sec-head h2{font-size:clamp(28px,4vw,42px);margin-top:12px}
+.svcs{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
+.svc{background:var(--panel);border:1px solid var(--hair);border-top:3px solid var(--silver-dim);padding:22px 20px}
+.svc h3{font-family:var(--fd);font-size:20px;text-transform:uppercase;margin:10px 0 8px;font-weight:400}
+.svc p{font-size:13.5px;color:var(--body)}
+@media(max-width:880px){.svcs{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.svcs{grid-template-columns:1fr}}
+
+footer{padding:40px 0;border-top:1px solid var(--hair);text-align:center}
+footer p{font-size:12.5px;color:var(--dim)}
+footer a{color:var(--silver)}
+
+/* ═══════════ CHAT WIDGET (the actual product being demoed) ═══════════ */
+#chat-launcher{position:fixed;right:22px;bottom:22px;z-index:100;width:60px;height:60px;border-radius:50%;background:var(--chrome-grad);background-size:220% 100%;border:0;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;transition:.2s}
+#chat-launcher:hover{transform:translateY(-2px) scale(1.03)}
+#chat-launcher svg{width:26px;height:26px;color:var(--on-silver)}
+#chat-launcher .dot{position:absolute;top:6px;right:6px;width:11px;height:11px;border-radius:50%;background:var(--book);border:2px solid var(--ink);animation:blip 1.7s infinite}
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.3}}
+
+#chat-panel{position:fixed;right:22px;bottom:96px;z-index:99;width:min(380px,calc(100vw - 44px));height:min(560px,calc(100vh - 140px));background:var(--panel);border:1px solid var(--hair);box-shadow:0 24px 60px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden}
+#chat-panel.open{display:flex}
+.chat-head{background:#111112;border-bottom:1px solid var(--hair);padding:16px 18px;display:flex;align-items:center;justify-content:space-between}
+.chat-head .who{display:flex;align-items:center;gap:10px}
+.chat-head .who .avatar{width:34px;height:34px;border-radius:50%;background:var(--chrome-grad);display:flex;align-items:center;justify-content:center;font-family:var(--fd);color:var(--on-silver);font-size:15px}
+.chat-head .who b{display:block;font-size:14px}
+.chat-head .who small{display:block;font-family:var(--fm);font-size:10.5px;color:var(--book);letter-spacing:.06em;text-transform:uppercase}
+.chat-head button{background:none;border:0;color:var(--dim);cursor:pointer;font-size:20px;line-height:1;padding:4px}
+.chat-head button:hover{color:var(--white)}
+
+.chat-body{flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;padding:10px 13px;font-size:14px;line-height:1.5;border-radius:2px}
+.msg.bot{align-self:flex-start;background:var(--raised);color:var(--white)}
+.msg.user{align-self:flex-end;background:var(--silver);color:var(--on-silver)}
+.msg.typing{align-self:flex-start;background:var(--raised);color:var(--dim);font-family:var(--fm);font-size:12px;letter-spacing:.04em}
+
+.chat-lead{border-top:1px solid var(--hair);padding:10px 14px;display:none;gap:8px}
+.chat-lead.open{display:flex;flex-direction:column}
+.chat-lead .row{display:flex;gap:8px}
+.chat-lead input{flex:1;background:var(--raised);border:1px solid var(--hair);color:var(--white);padding:8px 10px;font-size:12.5px;font-family:var(--fb)}
+.chat-lead .save{font-family:var(--fm);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--book);cursor:pointer;background:none;border:1px solid var(--hair);padding:8px 10px}
+.chat-lead-toggle{font-family:var(--fm);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--silver-dim);cursor:pointer;padding:8px 16px 0;text-align:right}
+
+.chat-input{border-top:1px solid var(--hair);padding:12px 14px;display:flex;gap:8px}
+.chat-input input{flex:1;background:var(--raised);border:1px solid var(--hair);color:var(--white);padding:11px 13px;font-size:14px;font-family:var(--fb)}
+.chat-input input:focus{border-color:var(--silver-dim)}
+.chat-input button{background:var(--chrome-grad);background-size:220% 100%;border:0;color:var(--on-silver);font-weight:700;padding:0 16px;cursor:pointer;font-size:13.5px}
+.chat-input button:disabled{opacity:.5;cursor:default}
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <div class="wrap">
+    <p>🔧 <b>This is a live demo</b> — "Lone Star Plumbing & Drain" is a fake business built to showcase the AI front desk bot Evan Enterprises builds and deploys for real clients. Click the chat bubble, bottom right.</p>
+    <a class="back" href="/">← Evan Enterprises</a>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Lone Star Plumbing &amp; Drain</div>
+      <h1 class="disp">Fast, licensed<br><em>plumbing</em> help</h1>
+      <p class="hero-sub">24/7 emergency dispatch, same-day appointments, and a front desk that never misses a call — even at 2am. Serving the greater metro area.</p>
+      <div class="hero-cta">
+        <button class="btn btn-p" onclick="document.getElementById('chat-launcher').click()">Ask us anything →</button>
+        <span class="hint">↳ powered by evan enterprises</span>
+      </div>
+    </div>
+    <div class="hero-art">
+      <div class="row"><span>Licensed &amp; insured</span><span>Yes</span></div>
+      <div class="row"><span>Emergency dispatch</span><span>24/7</span></div>
+      <div class="row"><span>Diagnostic fee</span><span>$59</span></div>
+      <div class="row"><span>Financing</span><span>Available</span></div>
+      <div class="row"><span>Avg. response</span><span>&lt; 20 min</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Services</div>
+      <h2 class="disp">What we handle</h2>
+    </div>
+    <div class="svcs">
+      <div class="svc"><h3>Drain Cleaning</h3><p>Fast clog and slow-drain clearing for kitchens, bathrooms, and main lines.</p></div>
+      <div class="svc"><h3>Water Heaters</h3><p>Tank and tankless repair &amp; install, same-day diagnostics.</p></div>
+      <div class="svc"><h3>Emergency Plumbing</h3><p>Burst pipes, leaks, no-water calls — dispatched around the clock.</p></div>
+      <div class="svc"><h3>General Repairs</h3><p>Faucets, toilets, garbage disposals, fixture installs.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>This page is a demo built by <a href="/">Evan Enterprises LLC</a> — not a real plumbing company. The chat bot is real and running on Evan Enterprises' own stack.</p>
+</footer>
+
+<!-- ═══════════ CHAT WIDGET ═══════════ -->
+<button id="chat-launcher" aria-label="Open chat">
+  <div class="dot"></div>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</button>
+
+<div id="chat-panel">
+  <div class="chat-head">
+    <div class="who">
+      <div class="avatar">LS</div>
+      <div>
+        <b>Lone Star Plumbing</b>
+        <small>● AI front desk — online</small>
+      </div>
+    </div>
+    <button id="chat-close" aria-label="Close chat">&times;</button>
+  </div>
+  <div class="chat-body" id="chat-body"></div>
+  <div class="chat-lead-toggle" id="lead-toggle">📞 leave your number →</div>
+  <div class="chat-lead" id="chat-lead">
+    <div class="row">
+      <input id="lead-name" type="text" placeholder="Name" autocomplete="name">
+      <input id="lead-phone" type="tel" placeholder="Phone" autocomplete="tel">
+    </div>
+    <button class="save" id="lead-save">Share with the team</button>
+  </div>
+  <div class="chat-input">
+    <input id="chat-text" type="text" placeholder="Ask about pricing, availability, services…" autocomplete="off">
+    <button id="chat-send">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const BOT_SLUG = 'demo-plumbing';
+  const launcher = document.getElementById('chat-launcher');
+  const panel    = document.getElementById('chat-panel');
+  const closeBtn = document.getElementById('chat-close');
+  const body     = document.getElementById('chat-body');
+  const input    = document.getElementById('chat-text');
+  const sendBtn  = document.getElementById('chat-send');
+  const leadToggle = document.getElementById('lead-toggle');
+  const leadBox  = document.getElementById('chat-lead');
+  const leadSave = document.getElementById('lead-save');
+
+  let messages = [];
+  let pendingLead = null;
+  let leadSent = false;
+  let opened = false;
+
+  function addMsg(role, text){
+    const el = document.createElement('div');
+    el.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+    el.textContent = text;
+    body.appendChild(el);
+    body.scrollTop = body.scrollHeight;
+    return el;
+  }
+
+  launcher.addEventListener('click', () => {
+    panel.classList.add('open');
+    if (!opened) {
+      opened = true;
+      addMsg('bot', "Hey! I'm the front desk for Lone Star Plumbing & Drain — ask me about pricing, availability, or our services.");
+    }
+    input.focus();
+  });
+  closeBtn.addEventListener('click', () => panel.classList.remove('open'));
+
+  leadToggle.addEventListener('click', () => {
+    leadBox.classList.toggle('open');
+  });
+  leadSave.addEventListener('click', () => {
+    const name  = document.getElementById('lead-name').value.trim();
+    const phone = document.getElementById('lead-phone').value.trim();
+    if (!name && !phone) return;
+    pendingLead = { name, phone };
+    leadBox.classList.remove('open');
+    addMsg('bot', "Got it — I've passed your info to the team, they'll follow up shortly.");
+  });
+
+  async function send(){
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    sendBtn.disabled = true;
+    addMsg('user', text);
+    messages.push({ role: 'user', content: text });
+
+    const typing = addMsg('typing', 'typing…');
+    typing.classList.add('typing');
+
+    try {
+      const body_ = { messages, botSlug: BOT_SLUG };
+      if (pendingLead && !leadSent) {
+        body_.lead = pendingLead;
+        leadSent = true;
+      }
+      const r = await fetch('/api/agent?action=chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body_),
+      });
+      const data = await r.json();
+      typing.remove();
+      if (data.configured === false) {
+        addMsg('bot', "This demo bot isn't fully configured yet — check back soon.");
+      } else if (data.reply) {
+        addMsg('bot', data.reply);
+        messages.push({ role: 'assistant', content: data.reply });
+      } else {
+        addMsg('bot', "Sorry, I ran into an issue. Try again in a moment.");
+      }
+    } catch (e) {
+      typing.remove();
+      addMsg('bot', "Sorry, I ran into an issue. Try again in a moment.");
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', send);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
+})();
+</script>
+
+</body>
+</html>

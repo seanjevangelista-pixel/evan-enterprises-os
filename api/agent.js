@@ -1,9 +1,94 @@
 // api/agent.js — merged from agent-chat, agent-lead, agent-report, agent-review
 // Route via: /api/agent?action=chat|lead|report|review
 
+// ── SUPABASE HELPERS (shared across agents) ──
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
+const SUPABASE_KEY  = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+const sbHeaders = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
+
+// Code-level ultimate fallback — guarantees Agent 4 never breaks even if
+// bot_profiles hasn't been migrated yet or Supabase is unreachable.
+// Mirrors the prompt that used to be hardcoded directly in this file.
+const DEFAULT_BOT_PROFILE = {
+  slug: 'evan-enterprises',
+  business_name: 'Evan Enterprises LLC',
+  industry: 'marketing and distribution agency',
+  services: [
+    { name: 'Starter', desc: '$500/mo + 10% — Google LSA, Google Business Profile, review automation, SMS reactivation, monthly reports' },
+    { name: 'Growth', desc: '$900/mo + 10% — Everything in Starter + Google Ads, referral program, UGC content, Apple Maps, bi-weekly calls' },
+    { name: 'Multi-location', desc: '$1,300/location — Google Ads per location, unified reporting, cross-location strategy' },
+    { name: 'Distribution', desc: 'Custom — Amazon/Walmart product sourcing and placement' },
+  ],
+  pricing: null,
+  key_facts: [
+    "Ad spend always goes on the client's card, never ours",
+    '10% performance fee applies to revenue from retained clients we bring in',
+    'Free 30-minute strategy call to get started',
+    'Book at: https://calendar.google.com (or tell them to email sean@evanenterprise.com)',
+    'Current client: Mediterranean Spa, Baltimore MD — 34 leads in month 1 at $26.47 CPL',
+  ].join('\n'),
+  tone: 'concise, professional, and helpful',
+  booking_link: 'https://calendar.google.com',
+  is_demo: false,
+};
+
+async function fetchBotProfile(slug) {
+  if (!slug) return null;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/bot_profiles?slug=eq.${encodeURIComponent(slug)}&select=*&limit=1`, { headers: sbHeaders });
+    const rows = await r.json();
+    return Array.isArray(rows) ? (rows[0] || null) : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+// Looks up a profile by slug; falls back to the seeded 'evan-enterprises'
+// row, then to the code-level DEFAULT_BOT_PROFILE if Supabase is down or
+// unmigrated. No botSlug passed => always resolves to Evan Enterprises,
+// identical to today's behavior.
+async function getBotProfile(slug) {
+  return (await fetchBotProfile(slug)) || (await fetchBotProfile('evan-enterprises')) || DEFAULT_BOT_PROFILE;
+}
+
+async function fetchClient(clientId) {
+  if (!clientId) return null;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${encodeURIComponent(clientId)}&select=*&limit=1`, { headers: sbHeaders });
+    const rows = await r.json();
+    return Array.isArray(rows) ? (rows[0] || null) : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function buildSystemPrompt(profile) {
+  const servicesList = Array.isArray(profile.services) ? profile.services : [];
+  const servicesText = servicesList.length
+    ? servicesList.map(s => (typeof s === 'string' ? `- ${s}` : `- ${s.name}${s.desc ? ': ' + s.desc : ''}`)).join('\n')
+    : '- Ask us about our services';
+  const pricingBlock = profile.pricing ? `\n\nPRICING:\n${profile.pricing}` : '';
+
+  return `You are the virtual assistant for ${profile.business_name}${profile.industry ? `, a ${profile.industry}` : ''}.
+
+SERVICES:
+${servicesText}${pricingBlock}
+
+KEY FACTS:
+${profile.key_facts || '(none listed)'}
+
+RULES:
+- Be ${profile.tone || 'concise, professional, and friendly'}
+- If they ask to book, share this link: ${profile.booking_link || 'ask them to contact us directly'}
+- If they ask for pricing, explain it clearly using only what's listed above
+- If they provide their name/email/phone, acknowledge it and say the team will follow up
+- Never make up information not listed above
+- Keep responses under 3 sentences unless explaining a package`;
+}
+
 // ── CHAT ──
 // Agent 4: Landing Page Chatbot
-// Answers questions about Evan Enterprises services using OpenAI
+// Answers questions about the configured business (via botSlug -> bot_profiles) using OpenAI
 async function handle_agent_chat(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -13,30 +98,9 @@ async function handle_agent_chat(req, res) {
   const openaiKey = process.env.OPENAI_API_KEY;
   if (!openaiKey) return res.status(200).json({ configured: false });
 
-  const { messages = [], lead = {} } = req.body || {};
-
-  const system = `You are the virtual assistant for Evan Enterprises LLC, a marketing and distribution agency.
-
-SERVICES:
-- Starter: $500/mo + 10% — Google LSA, Google Business Profile, review automation, SMS reactivation, monthly reports
-- Growth: $900/mo + 10% — Everything in Starter + Google Ads, referral program, UGC content, Apple Maps, bi-weekly calls
-- Multi-location: $1,300/location — Google Ads per location, unified reporting, cross-location strategy
-- Distribution: Custom — Amazon/Walmart product sourcing and placement
-
-KEY FACTS:
-- Ad spend always goes on the client's card, never ours
-- 10% performance fee applies to revenue from retained clients we bring in
-- Free 30-minute strategy call to get started
-- Book at: https://calendar.google.com (or tell them to email sean@evanenterprise.com)
-- Current client: Mediterranean Spa, Baltimore MD — 34 leads in month 1 at $26.47 CPL
-
-RULES:
-- Be concise, professional, and helpful
-- If they ask to book a call, give them the calendar link
-- If they ask for pricing, explain the packages clearly
-- If they provide their name/email/phone, acknowledge it and say the team will follow up
-- Never make up information not listed above
-- Keep responses under 3 sentences unless explaining a package`;
+  const { messages = [], lead = {}, botSlug } = req.body || {};
+  const profile = await getBotProfile(botSlug);
+  const system = buildSystemPrompt(profile);
 
   try {
     const r = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -56,14 +120,15 @@ RULES:
     if (lead.email || lead.phone) {
       const resendKey = process.env.RESEND_API_KEY;
       if (resendKey) {
+        const tag = profile.is_demo ? '[DEMO] ' : '';
         fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
             from: 'Evan Enterprises Chat <chat@evanenterprise.com>',
             to: ['seanjevangelista@gmail.com'],
-            subject: `New chat lead — ${lead.name || lead.email}`,
-            html: `<p><b>Name:</b> ${lead.name || '—'}<br><b>Email:</b> ${lead.email || '—'}<br><b>Phone:</b> ${lead.phone || '—'}</p>`,
+            subject: `${tag}New chat lead — ${profile.business_name} — ${lead.name || lead.email}`,
+            html: `<p><b>Business:</b> ${profile.business_name}<br><b>Name:</b> ${lead.name || '—'}<br><b>Email:</b> ${lead.email || '—'}<br><b>Phone:</b> ${lead.phone || '—'}</p>`,
           }),
         }).catch(() => {});
       }
@@ -96,7 +161,12 @@ async function handle_agent_lead(req, res) {
   const leadName    = body.lead_contact_name || body.name || 'New customer';
   const leadPhone   = body.lead_contact_phone || body.phone || '';
   const service     = body.service_type || body.category || 'your service';
-  const business    = body.business_name || 'your business';
+
+  // If a clientId is provided, prefer Supabase's business_name as the
+  // source of truth over whatever the webhook payload sent — falls back
+  // to the webhook body (today's behavior) when no clientId is given.
+  const client  = await fetchClient(body.clientId);
+  const business = client?.business_name || body.business_name || 'your business';
 
   try {
     const auth = Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64');
@@ -114,7 +184,6 @@ async function handle_agent_lead(req, res) {
 
     // SMS 2: Follow-up to the lead (if phone provided)
     if (leadPhone) {
-      const clientPhone = process.env.CLIENT_MED_SPA_PHONE || '';
       // 2-min delay via scheduling not possible in serverless — send immediately
       await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
         method: 'POST',
@@ -149,6 +218,15 @@ async function handle_agent_report(req, res) {
   const gadsToken   = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
 
   if (!resendKey) return res.status(200).json({ configured: false, missing: 'RESEND_API_KEY' });
+
+  // Optional clientId (query param, since cron hits this via GET) — when
+  // present, pull business name/recipient/fee dynamically from Supabase.
+  // When absent, falls back to today's hardcoded Mediterranean Spa path.
+  const client = await fetchClient(req.query?.clientId);
+  const clientLabel   = client?.business_name || 'Mediterranean Spa';
+  const clientLocale  = client ? '' : ' · Baltimore, MD';
+  const clientEmail   = client?.contact_email || process.env.CLIENT_MED_SPA_EMAIL || 'client@example.com';
+  const flatFee       = client ? Number(client.monthly_flat_fee || 0) : 500;
 
   // ── Date range: last full month ──────────────────────────────────────────
   const now   = new Date();
@@ -237,7 +315,7 @@ async function handle_agent_report(req, res) {
   </div>
   <div class="body">
     <div class="month">${monthLabel} Report</div>
-    <div class="sub">Mediterranean Spa · Baltimore, MD</div>
+    <div class="sub">${clientLabel}${clientLocale}</div>
     <div class="grid">
       <div class="stat">
         <div class="stat-label">Revenue Collected</div>
@@ -261,7 +339,7 @@ async function handle_agent_report(req, res) {
       </div>
       <div class="stat">
         <div class="stat-label">My Fee</div>
-        <div class="stat-value">$${(500 + squareTotal * 0.1).toFixed(2)}</div>
+        <div class="stat-value">$${(flatFee + squareTotal * 0.1).toFixed(2)}</div>
       </div>
     </div>
     <p style="font-size:13px;color:#6B7280;line-height:1.6">
@@ -280,9 +358,9 @@ async function handle_agent_report(req, res) {
       headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: 'Evan Enterprises <reports@evanenterprise.com>',
-        to: [process.env.CLIENT_MED_SPA_EMAIL || 'client@example.com'],
+        to: [clientEmail],
         cc: ['seanjevangelista@gmail.com'],
-        subject: `${monthLabel} Performance Report — Mediterranean Spa`,
+        subject: `${monthLabel} Performance Report — ${clientLabel}`,
         html,
       }),
     });
@@ -309,12 +387,16 @@ async function handle_agent_review(req, res) {
     return res.status(200).json({ configured: false });
   }
 
-  const { customer_name, customer_phone, business_name, review_link } = req.body || {};
+  const { customer_name, customer_phone, business_name, review_link, clientId } = req.body || {};
 
   if (!customer_phone) return res.status(400).json({ error: 'customer_phone required' });
 
+  // business_name passed explicitly always wins; clientId is just a
+  // convenience fallback so callers don't have to look up the name themselves.
+  const client = business_name ? null : await fetchClient(clientId);
+
   const firstName = (customer_name || 'there').split(' ')[0];
-  const biz = business_name || 'us';
+  const biz = business_name || client?.business_name || 'us';
   const link = review_link || 'https://g.page/r/review';
 
   try {

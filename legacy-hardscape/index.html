@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Legacy Hardscape ATX — Patios, Pergolas & Outdoor Living in Austin, TX</title>
+<meta name="theme-color" content="#211E1A">
+<meta name="description" content="Austin, TX hardscaping contractor — patios, pergolas, outdoor kitchens, driveways, fire pits, and more. Free on-site quotes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#211E1A;        /* warm charcoal, not cool black */
+  --panel:#2B2620;
+  --cream:#F7F3EC;       /* warm off-white background */
+  --stone:#C9AF88;       /* accent — warm stone tan */
+  --stone-dark:#8B6F47;
+  --wood:#7A3E24;        /* cedar/redwood accent */
+  --sage:#5C6B4A;        /* muted landscape green */
+  --body:#5B564C;
+  --dim:#8C8578;
+  --hair:rgba(33,30,26,.12);
+  --hair-dark:rgba(247,243,236,.14);
+  --fd:'Fraunces',Georgia,serif;
+  --fb:'Inter',system-ui,-apple-system,sans-serif;
+  --max:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:var(--fb);font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
+.disp{font-family:var(--fd);font-weight:600;line-height:1.05;text-wrap:balance}
+.eyebrow{font-family:var(--fb);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--wood)}
+.lede{color:var(--body)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15px;padding:14px 26px;border:0;cursor:pointer;border-radius:2px;transition:.16s}
+.btn-p{background:var(--wood);color:var(--cream)}
+.btn-p:hover{background:#63311c;transform:translateY(-1px)}
+.btn-s{border:1.5px solid var(--ink);color:var(--ink);background:transparent}
+.btn-s:hover{background:var(--ink);color:var(--cream)}
+
+/* ── nav ── */
+nav{position:sticky;top:0;z-index:70;background:rgba(247,243,236,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:16px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.logo{font-family:var(--fd);font-weight:700;font-size:19px;letter-spacing:.01em}
+.logo span{color:var(--wood)}
+.nav-links{display:flex;align-items:center;gap:28px;font-size:14px;font-weight:500;color:var(--body)}
+.nav-links a:hover{color:var(--wood)}
+.nav-phone{font-family:var(--fb);font-weight:700;font-size:15px}
+@media(max-width:800px){.nav-links a:not(.nav-phone-link){display:none}}
+
+/* ── hero ── */
+.hero{padding:64px 0 80px}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.hero h1{font-size:clamp(36px,5vw,58px);margin-top:14px}
+.hero h1 em{font-style:italic;color:var(--wood)}
+.hero-sub{margin-top:18px;max-width:44ch;font-size:17px;color:var(--body)}
+.hero-cta{margin-top:30px;display:flex;flex-wrap:wrap;gap:12px}
+.hero-img{border-radius:4px;overflow:hidden;box-shadow:0 30px 60px rgba(33,30,26,.25)}
+.hero-img img{width:100%;height:520px;object-fit:cover}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.hero-img img{height:340px}}
+
+/* ── services ── */
+.sec{padding:80px 0;border-top:1px solid var(--hair)}
+.sec-head{margin-bottom:44px;max-width:60ch}
+.sec-head h2{font-size:clamp(30px,4vw,44px);margin-top:12px}
+.sec-head .lede{margin-top:14px}
+
+.cat{margin-bottom:52px}
+.cat:last-child{margin-bottom:0}
+.cat-title{font-family:var(--fd);font-size:22px;font-weight:600;margin-bottom:20px;color:var(--stone-dark)}
+.svcs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.svc{background:#fff;border:1px solid var(--hair);border-radius:4px;overflow:hidden;display:flex;flex-direction:column}
+.svc-img{height:170px;overflow:hidden;background:var(--panel)}
+.svc-img img{width:100%;height:100%;object-fit:cover;transition:.3s}
+.svc:hover .svc-img img{transform:scale(1.05)}
+.svc-body{padding:18px 20px 20px}
+.svc h3{font-family:var(--fd);font-size:19px;font-weight:600;margin-bottom:6px}
+.svc p{font-size:13.5px;color:var(--body)}
+.svc.text-only .svc-body{padding-top:20px}
+.svc.text-only{background:var(--cream);border-style:dashed}
+@media(max-width:900px){.svcs{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.svcs{grid-template-columns:1fr}}
+
+/* ── gallery ── */
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.gallery a{display:block;border-radius:3px;overflow:hidden;aspect-ratio:1/1}
+.gallery img{width:100%;height:100%;object-fit:cover;transition:.3s}
+.gallery a:hover img{transform:scale(1.06)}
+@media(max-width:880px){.gallery{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.gallery{grid-template-columns:repeat(2,1fr)}}
+
+/* ── quote form ── */
+.quote{background:var(--ink);color:var(--cream)}
+.quote .sec-head .eyebrow{color:var(--stone)}
+.quote .lede{color:#C9C4B8}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:720px}
+.form-grid .full{grid-column:1/-1}
+label{display:block;font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#C9C4B8;margin-bottom:7px}
+input,select,textarea{width:100%;background:var(--panel);border:1px solid var(--hair-dark);color:var(--cream);padding:12px 14px;font-family:var(--fb);font-size:15px;border-radius:2px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--stone)}
+textarea{resize:vertical;min-height:100px}
+.form-grid button{margin-top:6px}
+#form-status{margin-top:14px;font-size:14px}
+#form-status.ok{color:#8FBF7A}
+#form-status.err{color:#E4776A}
+
+footer{padding:44px 0;border-top:1px solid var(--hair);text-align:center}
+footer p{font-size:13px;color:var(--dim)}
+
+/* ═══════════ CHAT WIDGET ═══════════ */
+#chat-launcher{position:fixed;right:22px;bottom:22px;z-index:100;width:60px;height:60px;border-radius:50%;background:var(--wood);border:0;cursor:pointer;box-shadow:0 12px 30px rgba(33,30,26,.4);display:flex;align-items:center;justify-content:center;transition:.2s}
+#chat-launcher:hover{transform:translateY(-2px) scale(1.03)}
+#chat-launcher svg{width:26px;height:26px;color:var(--cream)}
+#chat-launcher .dot{position:absolute;top:6px;right:6px;width:11px;height:11px;border-radius:50%;background:var(--sage);border:2px solid var(--cream)}
+
+#chat-panel{position:fixed;right:22px;bottom:96px;z-index:99;width:min(380px,calc(100vw - 44px));height:min(560px,calc(100vh - 140px));background:#fff;border:1px solid var(--hair);border-radius:6px;box-shadow:0 24px 60px rgba(33,30,26,.35);display:none;flex-direction:column;overflow:hidden}
+#chat-panel.open{display:flex}
+.chat-head{background:var(--ink);color:var(--cream);padding:16px 18px;display:flex;align-items:center;justify-content:space-between}
+.chat-head .who{display:flex;align-items:center;gap:10px}
+.chat-head .who .avatar{width:34px;height:34px;border-radius:50%;background:var(--wood);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;color:var(--cream);font-size:14px}
+.chat-head .who b{display:block;font-size:14px}
+.chat-head .who small{display:block;font-size:10.5px;color:var(--sage);letter-spacing:.06em;text-transform:uppercase}
+.chat-head button{background:none;border:0;color:#C9C4B8;cursor:pointer;font-size:20px;line-height:1;padding:4px}
+.chat-head button:hover{color:var(--cream)}
+
+.chat-body{flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;padding:10px 13px;font-size:14px;line-height:1.5;border-radius:3px}
+.msg.bot{align-self:flex-start;background:var(--cream);color:var(--ink)}
+.msg.user{align-self:flex-end;background:var(--wood);color:var(--cream)}
+.msg.typing{align-self:flex-start;background:var(--cream);color:var(--dim);font-size:12px;letter-spacing:.04em}
+
+.chat-input{border-top:1px solid var(--hair);padding:12px 14px;display:flex;gap:8px}
+.chat-input input{flex:1;background:var(--cream);border:1px solid var(--hair);color:var(--ink);padding:11px 13px;font-size:14px;font-family:var(--fb)}
+.chat-input input:focus{border-color:var(--wood)}
+.chat-input button{background:var(--wood);border:0;color:var(--cream);font-weight:700;padding:0 16px;cursor:pointer;font-size:13.5px;border-radius:2px}
+.chat-input button:disabled{opacity:.5;cursor:default}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="logo">Legacy <span>Hardscape</span> ATX</div>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#quote">Get a Quote</a>
+      <a class="nav-phone nav-phone-link" href="tel:+15125551234">(512) 555-1234</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Austin, TX · Outdoor Living Contractor</div>
+      <h1 class="disp">Backyards built to <em>last</em>, not just look good on day one</h1>
+      <p class="hero-sub">Patios, pergolas, outdoor kitchens, driveways, and more — real work, real photos, no stock imagery. Free on-site quotes.</p>
+      <div class="hero-cta">
+        <a href="#quote" class="btn btn-p">Get a Free Quote</a>
+        <a href="#gallery" class="btn btn-s">See Our Work</a>
+      </div>
+    </div>
+    <div class="hero-img">
+      <img src="/legacy-hardscape/img/site/hero-patio-steps.jpg" alt="Finished paver patio with turf inlay and steps, Austin TX">
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">What We Build</div>
+      <h2 class="disp">Services</h2>
+      <p class="lede">From the driveway to the backyard, we handle the full outdoor project — not just one piece of it.</p>
+    </div>
+
+    <div class="cat">
+      <div class="cat-title">Hardscape</div>
+      <div class="svcs">
+        <div class="svc">
+          <div class="svc-img"><img src="/legacy-hardscape/img/site/driveway-1.jpg" alt="Finished concrete driveway"></div>
+          <div class="svc-body"><h3>Driveways</h3><p>Concrete driveway installs, from excavation and prep through the finished pour.</p></div>
+        </div>
+        <div class="svc">
+          <div class="svc-img"><img src="/legacy-hardscape/img/site/patio-1.jpg" alt="Stone patio installation"></div>
+          <div class="svc-body"><h3>Patios</h3><p>Stamped concrete, flagstone, and paver patios built for how you actually use your yard.</p></div>
+        </div>
+        <div class="svc">
+          <div class="svc-img"><img src="/legacy-hardscape/img/site/walkway-1.jpg" alt="Paver walkway"></div>
+          <div class="svc-body"><h3>Walkways</h3><p>Paver and stone walkways connecting your home to the yard.</p></div>
+        </div>
+        <div class="svc text-only">
+          <div class="svc-body"><h3>Stained Concrete</h3><p>Decorative stained concrete finishes for patios, walkways, and driveways.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat">
+      <div class="cat-title">Outdoor Living</div>
+      <div class="svcs">
+        <div class="svc">
+          <div class="svc-img"><img src="/legacy-hardscape/img/site/pergola-kitchen.jpg" alt="Wood pergola over stone outdoor kitchen"></div>
+          <div class="svc-body"><h3>Pergolas</h3><p>Custom wood pergolas, open-lattice or covered, built over patios and outdoor kitchens.</p></div>
+        </div>
+        <div class="svc">
+          <div class="svc-img"><img src="/legacy-hardscape/img/site/kitchen-1.jpg" alt="Stone outdoor kitchen with stainless grill"></div>
+          <div class="svc-body"><h3>Outdoor Kitchens</h3><p>Stone-base outdoor kitchens with built-in grills and stainless appliances.</p></div>
+        </div>
+        <div class="svc">
+          <div class="svc-img"><img src="/legacy-hardscape/img/site/firepit-1.jpg" alt="Stone fire pit on flagstone patio"></div>
+          <div class="svc-body"><h3>Fire Pits</h3><p>Stone fire pits set into flagstone or paver patios.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat">
+      <div class="cat-title">Landscape</div>
+      <div class="svcs">
+        <div class="svc">
+          <div class="svc-img"><img src="/legacy-hardscape/img/site/turf-1.jpg" alt="Artificial turf installation"></div>
+          <div class="svc-body"><h3>Turf Installation</h3><p>Low-maintenance artificial turf for yards that stay green year-round.</p></div>
+        </div>
+        <div class="svc text-only">
+          <div class="svc-body"><h3>Sod Installation</h3><p>Fresh sod installs for a real-grass lawn refresh.</p></div>
+        </div>
+        <div class="svc">
+          <div class="svc-img"><img src="/legacy-hardscape/img/site/planting-1.jpg" alt="Planter bed and plant installation"></div>
+          <div class="svc-body"><h3>Plant Installation</h3><p>Planter beds and landscape plant installs.</p></div>
+        </div>
+        <div class="svc text-only">
+          <div class="svc-body"><h3>Tree Removal</h3><p>Tree cutting and removal.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="gallery" style="border-top:1px solid var(--hair)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Real Projects</div>
+      <h2 class="disp">Recent Work</h2>
+      <p class="lede">Every photo here is a completed job — not a stock photo.</p>
+    </div>
+    <div class="gallery">
+      <a href="/legacy-hardscape/img/site/hero-patio-steps.jpg" target="_blank"><img src="/legacy-hardscape/img/site/hero-patio-steps.jpg" alt="Paver patio with steps"></a>
+      <a href="/legacy-hardscape/img/site/pergola-kitchen.jpg" target="_blank"><img src="/legacy-hardscape/img/site/pergola-kitchen.jpg" alt="Pergola over outdoor kitchen"></a>
+      <a href="/legacy-hardscape/img/site/pergola-1.jpg" target="_blank"><img src="/legacy-hardscape/img/site/pergola-1.jpg" alt="Wood pergola"></a>
+      <a href="/legacy-hardscape/img/site/kitchen-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/kitchen-2.jpg" alt="Outdoor kitchen"></a>
+      <a href="/legacy-hardscape/img/site/patio-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/patio-2.jpg" alt="Stamped concrete patio"></a>
+      <a href="/legacy-hardscape/img/site/driveway-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/driveway-2.jpg" alt="Driveway under construction"></a>
+      <a href="/legacy-hardscape/img/site/pergola-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/pergola-2.jpg" alt="Pergola over patio"></a>
+      <a href="/legacy-hardscape/img/site/retaining-wall-1.jpg" target="_blank"><img src="/legacy-hardscape/img/site/retaining-wall-1.jpg" alt="Retaining wall and planter"></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec quote" id="quote">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Let's Talk</div>
+      <h2 class="disp">Get a Free Quote</h2>
+      <p class="lede">Tell us about your project — we'll follow up quickly.</p>
+    </div>
+    <form id="quote-form" class="form-grid">
+      <div>
+        <label for="q-name">Name</label>
+        <input id="q-name" name="name" type="text" required autocomplete="name">
+      </div>
+      <div>
+        <label for="q-phone">Phone</label>
+        <input id="q-phone" name="phone" type="tel" required autocomplete="tel">
+      </div>
+      <div>
+        <label for="q-email">Email</label>
+        <input id="q-email" name="email" type="email" required autocomplete="email">
+      </div>
+      <div>
+        <label for="q-service">Project Type</label>
+        <select id="q-service" name="service" required>
+          <option value="">Select a service</option>
+          <option>Driveways</option>
+          <option>Patios</option>
+          <option>Walkways</option>
+          <option>Stained Concrete</option>
+          <option>Pergolas</option>
+          <option>Outdoor Kitchens</option>
+          <option>Fire Pits</option>
+          <option>Turf Installation</option>
+          <option>Sod Installation</option>
+          <option>Plant Installation</option>
+          <option>Tree Removal</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div class="full">
+        <label for="q-message">Tell us about your project</label>
+        <textarea id="q-message" name="message" placeholder="Yard size, ideas, timeline — whatever helps us prep for the quote."></textarea>
+      </div>
+      <div class="full">
+        <button type="submit" class="btn btn-p">Send Request</button>
+        <div id="form-status"></div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <p>Legacy Hardscape ATX · Serving Austin, TX and the surrounding metro · <a href="mailto:legacyhardscapeatx@gmail.com">legacyhardscapeatx@gmail.com</a></p>
+</footer>
+
+<!-- ═══════════ CHAT WIDGET ═══════════ -->
+<button id="chat-launcher" aria-label="Open chat">
+  <div class="dot"></div>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</button>
+
+<div id="chat-panel">
+  <div class="chat-head">
+    <div class="who">
+      <div class="avatar">LH</div>
+      <div>
+        <b>Legacy Hardscape ATX</b>
+        <small>● Online</small>
+      </div>
+    </div>
+    <button id="chat-close" aria-label="Close chat">&times;</button>
+  </div>
+  <div class="chat-body" id="chat-body"></div>
+  <div class="chat-input">
+    <input id="chat-text" type="text" placeholder="Ask about a project, pricing, timeline…" autocomplete="off">
+    <button id="chat-send">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const BOT_SLUG = 'legacy-hardscape-atx';
+  const launcher = document.getElementById('chat-launcher');
+  const panel    = document.getElementById('chat-panel');
+  const closeBtn = document.getElementById('chat-close');
+  const body     = document.getElementById('chat-body');
+  const input    = document.getElementById('chat-text');
+  const sendBtn  = document.getElementById('chat-send');
+
+  let messages = [];
+  let opened = false;
+
+  function addMsg(role, text){
+    const el = document.createElement('div');
+    el.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+    el.textContent = text;
+    body.appendChild(el);
+    body.scrollTop = body.scrollHeight;
+    return el;
+  }
+
+  launcher.addEventListener('click', () => {
+    panel.classList.add('open');
+    if (!opened) {
+      opened = true;
+      addMsg('bot', "Hey! Ask me about pricing, timelines, or any of our services — patios, pergolas, outdoor kitchens, and more.");
+    }
+    input.focus();
+  });
+  closeBtn.addEventListener('click', () => panel.classList.remove('open'));
+
+  async function send(){
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    sendBtn.disabled = true;
+    addMsg('user', text);
+    messages.push({ role: 'user', content: text });
+
+    const typing = addMsg('typing', 'typing…');
+    typing.classList.add('typing');
+
+    try {
+      const r = await fetch('/api/agent?action=chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages, botSlug: BOT_SLUG }),
+      });
+      const data = await r.json();
+      typing.remove();
+      if (data.configured === false) {
+        addMsg('bot', "Chat isn't fully set up yet — use the quote form below and we'll follow up.");
+      } else if (data.reply) {
+        addMsg('bot', data.reply);
+        messages.push({ role: 'assistant', content: data.reply });
+      } else {
+        addMsg('bot', "Sorry, I ran into an issue. Try again in a moment.");
+      }
+    } catch (e) {
+      typing.remove();
+      addMsg('bot', "Sorry, I ran into an issue. Try again in a moment.");
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', send);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
+})();
+
+// Quote form submission
+document.getElementById('quote-form').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const status = document.getElementById('form-status');
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  status.textContent = '';
+  status.className = '';
+
+  const payload = {
+    name: document.getElementById('q-name').value.trim(),
+    phone: document.getElementById('q-phone').value.trim(),
+    email: document.getElementById('q-email').value.trim(),
+    service: document.getElementById('q-service').value,
+    message: document.getElementById('q-message').value.trim(),
+    business: 'Legacy Hardscape ATX',
+    to: 'legacyhardscapeatx@gmail.com',
+  };
+
+  try {
+    const r = await fetch('/api/contact-site', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await r.json();
+    if (data.ok) {
+      status.textContent = "Thanks! We'll be in touch shortly.";
+      status.className = 'ok';
+      e.target.reset();
+    } else {
+      status.textContent = data.error || 'Something went wrong — try again.';
+      status.className = 'err';
+    }
+  } catch (err) {
+    status.textContent = 'Something went wrong — try again.';
+    status.className = 'err';
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+
+</body>
+</html>

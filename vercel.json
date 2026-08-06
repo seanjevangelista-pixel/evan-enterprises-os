@@ -27,6 +27,10 @@
     {
       "source": "/demo",
       "destination": "/demo/index.html"
+    },
+    {
+      "source": "/legacy-hardscape",
+      "destination": "/legacy-hardscape/index.html"
     }
   ],
   "headers": [

@@ -84,3 +84,34 @@ INSERT INTO bot_profiles (
   'https://calendar.google.com',
   true
 ) ON CONFLICT (slug) DO NOTHING;
+
+
+-- ── SEED: Legacy Hardscape ATX ──────────────────────────────────
+-- Real client — Austin, TX hardscaping and outdoor living contractor.
+-- Powers the chat widget on legacy-hardscape/index.html.
+INSERT INTO bot_profiles (
+  slug, business_name, industry, services, pricing, key_facts, tone, booking_link, contact_email, is_demo
+) VALUES (
+  'legacy-hardscape-atx',
+  'Legacy Hardscape ATX',
+  'hardscaping and outdoor living contractor',
+  '[
+    {"name":"Driveways","desc":"Concrete driveway installs, from prep and excavation through the finished pour"},
+    {"name":"Patios","desc":"Stamped concrete, flagstone, and paver patios"},
+    {"name":"Walkways","desc":"Paver and stone walkways"},
+    {"name":"Stained Concrete","desc":"Decorative stained concrete finishes"},
+    {"name":"Pergolas","desc":"Custom wood pergolas, open-lattice or covered roofing, built over patios and outdoor kitchens"},
+    {"name":"Outdoor Kitchens","desc":"Stone-base outdoor kitchens with built-in grills and stainless appliances"},
+    {"name":"Fire Pits","desc":"Stone fire pits set into flagstone or paver patios"},
+    {"name":"Turf Installation","desc":"Artificial turf installs for low-maintenance yards"},
+    {"name":"Sod Installation","desc":"Fresh sod installs"},
+    {"name":"Plant Installation","desc":"Planter beds and landscape plant installs"},
+    {"name":"Tree Removal","desc":"Tree cutting and removal"}
+  ]'::jsonb,
+  'Free on-site quotes. Pricing varies by project scope, materials, and square footage — the quote form on this site is the fastest way to get real numbers.',
+  E'Based in Austin, TX and serves the greater Austin metro area\nReal completed local projects, not stock photos\nFree quote/estimate requests through this site\nFor urgent requests, direct them to the quote form and note the team follows up quickly',
+  'friendly, straightforward, and knowledgeable about outdoor construction — like a foreman who knows the trade',
+  '#quote',
+  'legacyhardscapeatx@gmail.com',
+  false
+) ON CONFLICT (slug) DO NOTHING;

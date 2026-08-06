@@ -48,14 +48,22 @@ export default async function handler(req, res) {
   // Fetch all client data in parallel
   const now         = new Date();
   const day30Ago    = new Date(now - 30 * 86400e3).toISOString().split('T')[0];
+  // Timestamp bounds — for the timestamptz call_leads.tapped_at column.
   const moStart     = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
   const lastMoStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
   const lastMoEnd   = moStart;
+  // Date-only bounds — lsa_leads.lead_date is a DATE column (YYYY-MM-DD). It must be
+  // compared against date-only strings, NOT the ISO timestamps above: a timestamp bound
+  // like 2026-07-01T00:00:00Z drops a lead dated the 1st of last month and wrongly counts
+  // one dated the 1st of this month — the same date-vs-timestamp mismatch already fixed
+  // for the "this month" count (which is derived client-side against date-only day30Ago).
+  const moStartDate     = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  const lastMoStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0];
 
   const [client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices] = await Promise.all([
     fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${clientId}&select=*&limit=1`, { headers: sb.headers }).then(r => r.json()).then(d => d[0] || null).catch(() => null),
     fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${day30Ago}&order=lead_date.desc`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
-    fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${lastMoStart}&lead_date=lt.${lastMoEnd}&select=id`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
+    fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${lastMoStartDate}&lead_date=lt.${moStartDate}&select=id`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
     fetch(`${SUPABASE_URL}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${moStart}`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
     fetch(`${SUPABASE_URL}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${lastMoStart}&tapped_at=lt.${lastMoEnd}&select=id`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
     fetch(`${SUPABASE_URL}/rest/v1/invoices?client_id=eq.${clientId}&order=due_date.desc&limit=10`, { headers: sb.headers }).then(r => r.json()).catch(() => []),

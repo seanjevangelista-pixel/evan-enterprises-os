@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Contact Us — Legacy Hardscape ATX | Austin, Texas</title>
+<meta name="theme-color" content="#211E1A">
+<meta name="description" content="Request a free on-site quote from Legacy Hardscape ATX. Call (737) 428-4707 or send us your project details — Austin, TX and the surrounding metro.">
+<meta property="og:title" content="Contact Legacy Hardscape ATX">
+<meta property="og:description" content="Request a free on-site quote — Austin's hardscape and outdoor living contractor.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#211E1A;
+  --panel:#2B2620;
+  --cream:#F7F3EC;
+  --stone:#C9AF88;
+  --stone-dark:#8B6F47;
+  --wood:#7A3E24;
+  --accent:#D0451B;
+  --accent-hi:#EA5A2B;
+  --gold:#C99A3E;
+  --sage:#5C6B4A;
+  --body:#5B564C;
+  --dim:#8C8578;
+  --hair:rgba(33,30,26,.12);
+  --hair-dark:rgba(247,243,236,.14);
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'Inter',system-ui,-apple-system,sans-serif;
+  --max:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:var(--fb);font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
+.disp{font-family:var(--fd);font-weight:800;letter-spacing:-.01em;line-height:1.06;text-wrap:balance}
+.eyebrow{font-family:var(--fb);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--body)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15px;padding:14px 26px;border:0;cursor:pointer;border-radius:2px;transition:.16s}
+.btn-p{background:var(--accent);color:var(--cream);box-shadow:0 6px 18px rgba(208,69,27,.28)}
+.btn-p:hover{background:var(--accent-hi);transform:translateY(-2px);box-shadow:0 10px 24px rgba(208,69,27,.38)}
+
+nav{position:sticky;top:0;z-index:70;background:rgba(247,243,236,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:16px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.logo{font-family:var(--fd);font-weight:700;font-size:19px;letter-spacing:.01em}
+.logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:28px;font-size:14px;font-weight:500;color:var(--body)}
+.nav-links a:hover{color:var(--wood)}
+.nav-phone{font-family:var(--fb);font-weight:700;font-size:14px;background:var(--accent);color:var(--cream)!important;padding:9px 16px;border-radius:2px;transition:.18s}
+.nav-phone:hover{background:var(--accent-hi);color:var(--cream)!important;transform:translateY(-1px)}
+@media(max-width:800px){.nav-links a:not(.nav-phone-link){display:none}}
+
+.page-hero{padding:56px 0 40px;text-align:center}
+.page-hero h1{font-size:clamp(34px,4.6vw,52px);margin-top:14px}
+.page-hero p{max-width:56ch;margin:16px auto 0;font-size:17px;color:var(--body)}
+
+.sec{padding:0 0 80px}
+.contact-grid{display:grid;grid-template-columns:.9fr 1.4fr;gap:44px}
+@media(max-width:900px){.contact-grid{grid-template-columns:1fr}}
+
+.info-card{background:var(--ink);color:var(--cream);border-radius:6px;padding:36px 30px}
+.info-card h3{font-family:var(--fd);font-size:22px;font-weight:600;margin-bottom:18px}
+.info-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:20px}
+.info-row .ic{font-size:20px;line-height:1;margin-top:2px}
+.info-row b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.info-row a,.info-row span{font-size:15px;color:#E8E4D9}
+.info-row a:hover{color:var(--stone)}
+.info-card .btn-p{margin-top:8px;width:100%}
+
+.form-card{background:#fff;border:1px solid var(--hair);border-radius:6px;padding:36px 30px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-grid .full{grid-column:1/-1}
+label{display:block;font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin-bottom:7px}
+input,select,textarea{width:100%;background:var(--cream);border:1px solid var(--hair);color:var(--ink);padding:12px 14px;font-family:var(--fb);font-size:15px;border-radius:2px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{resize:vertical;min-height:110px}
+.form-grid button{margin-top:6px}
+#form-status{margin-top:14px;font-size:14px}
+#form-status.ok{color:#2F7A46}
+#form-status.err{color:#C0392B}
+
+footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;padding-bottom:36px;border-bottom:1px solid var(--hair-dark)}
+.foot-col .logo{color:var(--cream);margin-bottom:12px}
+.foot-col p{font-size:13.5px;line-height:1.6;color:#B7B2A5}
+.foot-col h4{font-family:var(--fb);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.foot-col ul{list-style:none}
+.foot-col li{margin-bottom:9px;font-size:13.5px}
+.foot-col a:hover{color:var(--cream)}
+.foot-social{display:flex;gap:10px;margin-top:16px}
+.foot-social a{width:34px;height:34px;border-radius:50%;border:1px solid var(--hair-dark);display:flex;align-items:center;justify-content:center;font-size:13px}
+.foot-social a:hover{background:var(--accent);border-color:var(--accent)}
+.foot-bottom{padding:22px 0;text-align:center;font-size:12.5px;color:#8A8578}
+.foot-bottom b{color:var(--gold);font-weight:600}
+@media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr;gap:28px}}
+@media(max-width:520px){.foot-grid{grid-template-columns:1fr}}
+
+#sticky-cta{display:none}
+@media(max-width:760px){
+  #sticky-cta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:90;box-shadow:0 -8px 24px rgba(33,30,26,.18)}
+  #sticky-cta a{flex:1;text-align:center;padding:15px 10px;font-family:var(--fb);font-weight:700;font-size:14px}
+  #sticky-cta a.call{background:var(--ink);color:var(--cream)}
+  #sticky-cta a.quote{background:var(--accent);color:var(--cream)}
+  body{padding-bottom:54px}
+}
+
+#chat-launcher{position:fixed;right:22px;bottom:22px;z-index:100;width:64px;height:64px;border-radius:50%;background:var(--accent);border:0;cursor:pointer;box-shadow:0 12px 30px rgba(208,69,27,.45);display:flex;align-items:center;justify-content:center;transition:.2s}
+#chat-launcher:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 16px 36px rgba(208,69,27,.55)}
+#chat-launcher:before{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--accent);opacity:0;animation:pulse-ring 2.6s ease-out infinite}
+@keyframes pulse-ring{0%{opacity:.55;transform:scale(.92)}70%{opacity:0;transform:scale(1.18)}100%{opacity:0;transform:scale(1.18)}}
+@media(prefers-reduced-motion:reduce){#chat-launcher:before{animation:none;display:none}}
+#chat-launcher svg{width:27px;height:27px;color:var(--cream);position:relative}
+#chat-launcher .dot{position:absolute;top:5px;right:5px;width:12px;height:12px;border-radius:50%;background:var(--sage);border:2.5px solid var(--cream)}
+#chat-launcher .label{position:absolute;right:74px;top:50%;transform:translateY(-50%);background:var(--ink);color:var(--cream);font-size:13px;font-weight:600;padding:8px 14px;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none;transition:.18s}
+#chat-launcher:hover .label{opacity:1}
+
+#chat-panel{position:fixed;right:22px;bottom:96px;z-index:99;width:min(380px,calc(100vw - 44px));height:min(560px,calc(100vh - 140px));background:#fff;border:1px solid var(--hair);border-radius:6px;box-shadow:0 24px 60px rgba(33,30,26,.35);display:none;flex-direction:column;overflow:hidden}
+#chat-panel.open{display:flex}
+.chat-head{background:var(--ink);color:var(--cream);padding:16px 18px;display:flex;align-items:center;justify-content:space-between}
+.chat-head .who{display:flex;align-items:center;gap:10px}
+.chat-head .who .avatar{width:34px;height:34px;border-radius:50%;background:var(--wood);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;color:var(--cream);font-size:14px}
+.chat-head .who b{display:block;font-size:14px}
+.chat-head .who small{display:block;font-size:10.5px;color:var(--sage);letter-spacing:.06em;text-transform:uppercase}
+.chat-head button{background:none;border:0;color:#C9C4B8;cursor:pointer;font-size:20px;line-height:1;padding:4px}
+.chat-head button:hover{color:var(--cream)}
+.chat-body{flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;padding:10px 13px;font-size:14px;line-height:1.5;border-radius:3px}
+.msg.bot{align-self:flex-start;background:var(--cream);color:var(--ink)}
+.msg.user{align-self:flex-end;background:var(--wood);color:var(--cream)}
+.msg.typing{align-self:flex-start;background:var(--cream);color:var(--dim);font-size:12px;letter-spacing:.04em}
+.chat-input{border-top:1px solid var(--hair);padding:12px 14px;display:flex;gap:8px}
+.chat-input input{flex:1;background:var(--cream);border:1px solid var(--hair);color:var(--ink);padding:11px 13px;font-size:14px;font-family:var(--fb)}
+.chat-input input:focus{border-color:var(--wood)}
+.chat-input button{background:var(--wood);border:0;color:var(--cream);font-weight:700;padding:0 16px;cursor:pointer;font-size:13.5px;border-radius:2px}
+.chat-input button:disabled{opacity:.5;cursor:default}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="logo">Legacy <span>Hardscape</span> ATX</div>
+    <div class="nav-links">
+      <a href="/legacy-hardscape/#services">Services</a>
+      <a href="/legacy-hardscape/#gallery">Gallery</a>
+      <a href="/legacy-hardscape/about">About</a>
+      <a href="/legacy-hardscape/contact">Contact</a>
+      <a class="nav-phone nav-phone-link" href="tel:+17374284707">📞 (737) 428-4707</a>
+    </div>
+  </div>
+</nav>
+
+<section class="page-hero wrap">
+  <div class="eyebrow">Get In Touch</div>
+  <h1 class="disp">Let's Build Something That <em style="color:var(--accent);font-style:italic">Lasts</em></h1>
+  <p>Call directly for the fastest response, or send us your project details below — either way, we'll follow up promptly with real next steps.</p>
+</section>
+
+<section class="sec">
+  <div class="wrap contact-grid">
+    <div class="info-card">
+      <h3>Contact Details</h3>
+      <div class="info-row">
+        <div class="ic">📞</div>
+        <div><b>Phone</b><a href="tel:+17374284707">(737) 428-4707</a></div>
+      </div>
+      <div class="info-row">
+        <div class="ic">✉️</div>
+        <div><b>Email</b><a href="mailto:legacyhardscapeatx@gmail.com">legacyhardscapeatx@gmail.com</a></div>
+      </div>
+      <div class="info-row">
+        <div class="ic">📍</div>
+        <div><b>Service Area</b><span>Austin, TX &amp; the surrounding metro</span></div>
+      </div>
+      <a href="tel:+17374284707" class="btn btn-p">📞 Call Now</a>
+    </div>
+
+    <div class="form-card">
+      <form id="quote-form" class="form-grid">
+        <div>
+          <label for="q-fname">First Name</label>
+          <input id="q-fname" name="firstName" type="text" required autocomplete="given-name">
+        </div>
+        <div>
+          <label for="q-lname">Last Name</label>
+          <input id="q-lname" name="lastName" type="text" autocomplete="family-name">
+        </div>
+        <div>
+          <label for="q-phone">Phone</label>
+          <input id="q-phone" name="phone" type="tel" required autocomplete="tel">
+        </div>
+        <div>
+          <label for="q-email">Email</label>
+          <input id="q-email" name="email" type="email" required autocomplete="email">
+        </div>
+        <div>
+          <label for="q-city">City / Area</label>
+          <input id="q-city" name="city" type="text" placeholder="e.g. Round Rock, Cedar Park" autocomplete="address-level2">
+        </div>
+        <div>
+          <label for="q-proptype">Property Type</label>
+          <select id="q-proptype" name="propertyType">
+            <option value="">Select one</option>
+            <option>Residential</option>
+            <option>Commercial</option>
+          </select>
+        </div>
+        <div>
+          <label for="q-service">Project Type</label>
+          <select id="q-service" name="service" required>
+            <option value="">Select a service</option>
+            <option>Driveways</option>
+            <option>Patios</option>
+            <option>Walkways</option>
+            <option>Stained Concrete</option>
+            <option>Pergolas</option>
+            <option>Outdoor Kitchens</option>
+            <option>Fire Pits</option>
+            <option>Turf Installation</option>
+            <option>Sod Installation</option>
+            <option>Plant Installation</option>
+            <option>Tree Removal</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+        <div>
+          <label for="q-budget">Estimated Budget</label>
+          <select id="q-budget" name="budget">
+            <option value="">Prefer not to say</option>
+            <option>Under $5,000</option>
+            <option>$5,000–$15,000</option>
+            <option>$15,000–$30,000</option>
+            <option>$30,000+</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+        <div class="full">
+          <label for="q-message">Tell us about your project</label>
+          <textarea id="q-message" name="message" placeholder="Yard size, ideas, timeline — whatever helps us prep for the quote."></textarea>
+        </div>
+        <div class="full">
+          <button type="submit" class="btn btn-p">Send Request</button>
+          <div id="form-status"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div class="foot-col">
+      <div class="logo">Legacy <span>Hardscape</span> ATX</div>
+      <p>Austin's hardscape and outdoor living authority — building outdoor spaces engineered to become part of your property's permanent character.</p>
+      <div class="foot-social">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Instagram">ig</a>
+        <a href="#" aria-label="Google">G</a>
+      </div>
+    </div>
+    <div class="foot-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="/legacy-hardscape/#services">Patios</a></li>
+        <li><a href="/legacy-hardscape/#services">Pergolas</a></li>
+        <li><a href="/legacy-hardscape/#services">Outdoor Kitchens</a></li>
+        <li><a href="/legacy-hardscape/#services">Driveways</a></li>
+        <li><a href="/legacy-hardscape/#services">Fire Pits</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="tel:+17374284707">(737) 428-4707</a></li>
+        <li><a href="mailto:legacyhardscapeatx@gmail.com">legacyhardscapeatx@gmail.com</a></li>
+        <li><a href="/legacy-hardscape/about">About Us</a></li>
+        <li><a href="/legacy-hardscape/contact">Contact Us</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Service Area</h4>
+      <ul>
+        <li>Austin, TX</li>
+        <li>&amp; the surrounding metro</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">© 2026 Legacy Hardscape ATX. All rights reserved. · Managed by <b>Evan Enterprises LLC</b></div>
+</footer>
+
+<div id="sticky-cta">
+  <a class="call" href="tel:+17374284707">📞 Call Now</a>
+  <a class="quote" href="#quote-form">Free Quote</a>
+</div>
+
+<button id="chat-launcher" aria-label="Chat with us">
+  <span class="label">Chat with us</span>
+  <div class="dot"></div>
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 5.94 2 10.8c0 2.68 1.4 5.08 3.6 6.7-.13 1.13-.53 2.5-1.5 3.9-.16.23.03.55.32.5 1.98-.36 3.6-1.16 4.72-1.87.9.24 1.86.37 2.86.37 5.52 0 10-3.94 10-8.8S17.52 2 12 2z"/><circle cx="8.2" cy="10.8" r="1.15" fill="var(--wood)"/><circle cx="12" cy="10.8" r="1.15" fill="var(--wood)"/><circle cx="15.8" cy="10.8" r="1.15" fill="var(--wood)"/></svg>
+</button>
+
+<div id="chat-panel">
+  <div class="chat-head">
+    <div class="who">
+      <div class="avatar">LH</div>
+      <div>
+        <b>Legacy Hardscape ATX</b>
+        <small>● Online</small>
+      </div>
+    </div>
+    <button id="chat-close" aria-label="Close chat">&times;</button>
+  </div>
+  <div class="chat-body" id="chat-body"></div>
+  <div class="chat-input">
+    <input id="chat-text" type="text" placeholder="Ask about a project, pricing, timeline…" autocomplete="off">
+    <button id="chat-send">Send</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const BOT_SLUG = 'legacy-hardscape-atx';
+  const launcher = document.getElementById('chat-launcher');
+  const panel    = document.getElementById('chat-panel');
+  const closeBtn = document.getElementById('chat-close');
+  const body     = document.getElementById('chat-body');
+  const input    = document.getElementById('chat-text');
+  const sendBtn  = document.getElementById('chat-send');
+
+  let messages = [];
+  let opened = false;
+
+  function addMsg(role, text){
+    const el = document.createElement('div');
+    el.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+    el.textContent = text;
+    body.appendChild(el);
+    body.scrollTop = body.scrollHeight;
+    return el;
+  }
+
+  launcher.addEventListener('click', () => {
+    panel.classList.add('open');
+    if (!opened) {
+      opened = true;
+      addMsg('bot', "Hey! Ask me about pricing, timelines, or any of our services — patios, pergolas, outdoor kitchens, and more.");
+    }
+    input.focus();
+  });
+  closeBtn.addEventListener('click', () => panel.classList.remove('open'));
+
+  async function send(){
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    sendBtn.disabled = true;
+    addMsg('user', text);
+    messages.push({ role: 'user', content: text });
+
+    const typing = addMsg('typing', 'typing…');
+    typing.classList.add('typing');
+
+    try {
+      const r = await fetch('/api/agent?action=chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages, botSlug: BOT_SLUG }),
+      });
+      const data = await r.json();
+      typing.remove();
+      if (data.configured === false) {
+        addMsg('bot', "Chat isn't fully set up yet — use the form below and we'll follow up.");
+      } else if (data.reply) {
+        addMsg('bot', data.reply);
+        messages.push({ role: 'assistant', content: data.reply });
+      } else {
+        addMsg('bot', "Sorry, I ran into an issue. Try again in a moment.");
+      }
+    } catch (e) {
+      typing.remove();
+      addMsg('bot', "Sorry, I ran into an issue. Try again in a moment.");
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', send);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
+})();
+
+document.getElementById('quote-form').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const status = document.getElementById('form-status');
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  status.textContent = '';
+  status.className = '';
+
+  const fname = document.getElementById('q-fname').value.trim();
+  const lname = document.getElementById('q-lname').value.trim();
+
+  const payload = {
+    name: [fname, lname].filter(Boolean).join(' '),
+    phone: document.getElementById('q-phone').value.trim(),
+    email: document.getElementById('q-email').value.trim(),
+    service: document.getElementById('q-service').value,
+    message: document.getElementById('q-message').value.trim(),
+    city: document.getElementById('q-city').value.trim(),
+    propertyType: document.getElementById('q-proptype').value,
+    budget: document.getElementById('q-budget').value,
+    business: 'Legacy Hardscape ATX',
+    to: 'legacyhardscapeatx@gmail.com',
+  };
+
+  try {
+    const r = await fetch('/api/contact-site', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await r.json();
+    if (data.ok) {
+      status.textContent = "Thanks! We'll be in touch shortly.";
+      status.className = 'ok';
+      e.target.reset();
+    } else {
+      status.textContent = data.error || 'Something went wrong — try again.';
+      status.className = 'err';
+    }
+  } catch (err) {
+    status.textContent = 'Something went wrong — try again.';
+    status.className = 'err';
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+
+</body>
+</html>

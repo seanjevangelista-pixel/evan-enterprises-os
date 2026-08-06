@@ -31,6 +31,14 @@
     {
       "source": "/legacy-hardscape",
       "destination": "/legacy-hardscape/index.html"
+    },
+    {
+      "source": "/legacy-hardscape/about",
+      "destination": "/legacy-hardscape/about/index.html"
+    },
+    {
+      "source": "/legacy-hardscape/contact",
+      "destination": "/legacy-hardscape/contact/index.html"
     }
   ],
   "headers": [

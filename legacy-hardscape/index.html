@@ -19,7 +19,10 @@
   --cream:#F7F3EC;       /* warm off-white background */
   --stone:#C9AF88;       /* accent — warm stone tan */
   --stone-dark:#8B6F47;
-  --wood:#7A3E24;        /* cedar/redwood accent */
+  --wood:#7A3E24;        /* cedar/redwood — headings, dark UI */
+  --accent:#D0451B;      /* punchy terracotta — CTAs, highlights, motion accents */
+  --accent-hi:#EA5A2B;
+  --gold:#C99A3E;        /* warm gold — badges, small highlights */
   --sage:#5C6B4A;        /* muted landscape green */
   --body:#5B564C;
   --dim:#8C8578;
@@ -36,11 +39,11 @@ a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
 .disp{font-family:var(--fd);font-weight:800;letter-spacing:-.01em;line-height:1.06;text-wrap:balance}
-.eyebrow{font-family:var(--fb);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--wood)}
+.eyebrow{font-family:var(--fb);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
 .lede{color:var(--body)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15px;padding:14px 26px;border:0;cursor:pointer;border-radius:2px;transition:.16s}
-.btn-p{background:var(--wood);color:var(--cream)}
-.btn-p:hover{background:#63311c;transform:translateY(-1px)}
+.btn-p{background:var(--accent);color:var(--cream);box-shadow:0 6px 18px rgba(208,69,27,.28)}
+.btn-p:hover{background:var(--accent-hi);transform:translateY(-2px);box-shadow:0 10px 24px rgba(208,69,27,.38)}
 .btn-s{border:1.5px solid var(--ink);color:var(--ink);background:transparent}
 .btn-s:hover{background:var(--ink);color:var(--cream)}
 
@@ -48,7 +51,7 @@ img{max-width:100%;display:block}
 nav{position:sticky;top:0;z-index:70;background:rgba(247,243,236,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
 .nav-in{max-width:var(--max);margin:0 auto;padding:16px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
 .logo{font-family:var(--fd);font-weight:700;font-size:19px;letter-spacing:.01em}
-.logo span{color:var(--wood)}
+.logo span{color:var(--accent)}
 .nav-links{display:flex;align-items:center;gap:28px;font-size:14px;font-weight:500;color:var(--body)}
 .nav-links a:hover{color:var(--wood)}
 .nav-phone{font-family:var(--fb);font-weight:700;font-size:15px}
@@ -58,7 +61,7 @@ nav{position:sticky;top:0;z-index:70;background:rgba(247,243,236,.94);backdrop-f
 .hero{padding:64px 0 80px}
 .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
 .hero h1{font-size:clamp(36px,5vw,58px);margin-top:14px}
-.hero h1 em{font-style:italic;color:var(--wood)}
+.hero h1 em{font-style:italic;color:var(--accent)}
 .hero-sub{margin-top:18px;max-width:44ch;font-size:17px;color:var(--body)}
 .hero-cta{margin-top:30px;display:flex;flex-wrap:wrap;gap:12px}
 .hero-img{border-radius:4px;overflow:hidden;box-shadow:0 30px 60px rgba(33,30,26,.25)}
@@ -114,9 +117,9 @@ footer{padding:44px 0;border-top:1px solid var(--hair);text-align:center}
 footer p{font-size:13px;color:var(--dim)}
 
 /* ═══════════ CHAT WIDGET ═══════════ */
-#chat-launcher{position:fixed;right:22px;bottom:22px;z-index:100;width:64px;height:64px;border-radius:50%;background:var(--wood);border:0;cursor:pointer;box-shadow:0 12px 30px rgba(33,30,26,.45);display:flex;align-items:center;justify-content:center;transition:.2s}
-#chat-launcher:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 16px 36px rgba(33,30,26,.5)}
-#chat-launcher:before{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--wood);opacity:0;animation:pulse-ring 2.6s ease-out infinite}
+#chat-launcher{position:fixed;right:22px;bottom:22px;z-index:100;width:64px;height:64px;border-radius:50%;background:var(--accent);border:0;cursor:pointer;box-shadow:0 12px 30px rgba(208,69,27,.45);display:flex;align-items:center;justify-content:center;transition:.2s}
+#chat-launcher:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 16px 36px rgba(208,69,27,.55)}
+#chat-launcher:before{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--accent);opacity:0;animation:pulse-ring 2.6s ease-out infinite}
 @keyframes pulse-ring{0%{opacity:.55;transform:scale(.92)}70%{opacity:0;transform:scale(1.18)}100%{opacity:0;transform:scale(1.18)}}
 @media(prefers-reduced-motion:reduce){#chat-launcher:before{animation:none;display:none}}
 #chat-launcher svg{width:27px;height:27px;color:var(--cream);position:relative}
@@ -145,6 +148,36 @@ footer p{font-size:13px;color:var(--dim)}
 .chat-input input:focus{border-color:var(--wood)}
 .chat-input button{background:var(--wood);border:0;color:var(--cream);font-weight:700;padding:0 16px;cursor:pointer;font-size:13.5px;border-radius:2px}
 .chat-input button:disabled{opacity:.5;cursor:default}
+
+/* ═══════════ SCROLL REVEAL / MOTION ═══════════ */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-stagger .reveal:nth-child(1){transition-delay:0s}
+.reveal-stagger .reveal:nth-child(2){transition-delay:.08s}
+.reveal-stagger .reveal:nth-child(3){transition-delay:.16s}
+.reveal-stagger .reveal:nth-child(4){transition-delay:.24s}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+.hero-img{opacity:0;transform:scale(1.06);animation:hero-in 1s cubic-bezier(.16,1,.3,1) .15s forwards}
+@keyframes hero-in{to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.hero-img{opacity:1;transform:none;animation:none}}
+
+.hero-cta .btn-p{animation:btn-pop .5s cubic-bezier(.34,1.56,.64,1) .6s backwards}
+@keyframes btn-pop{0%{opacity:0;transform:translateY(10px) scale(.92)}100%{opacity:1;transform:translateY(0) scale(1)}}
+
+.svc{transition:transform .28s cubic-bezier(.16,1,.3,1),box-shadow .28s}
+.svc:hover{transform:translateY(-5px);box-shadow:0 16px 32px rgba(33,30,26,.14)}
+
+.gallery a{position:relative}
+.gallery a:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(33,30,26,.55),transparent 55%);opacity:0;transition:opacity .25s;z-index:1}
+.gallery a:hover:before{opacity:1}
+.gallery a img{transition:transform .45s cubic-bezier(.16,1,.3,1)}
+
+.btn-s{transition:background .18s,color .18s,transform .18s}
+.btn-s:hover{transform:translateY(-2px)}
+
+.cat-title{position:relative;display:inline-block}
+.cat-title:after{content:"";position:absolute;left:0;bottom:-6px;width:36px;height:3px;background:var(--accent);border-radius:2px}
 </style>
 </head>
 <body>
@@ -180,7 +213,7 @@ footer p{font-size:13px;color:var(--dim)}
 
 <section class="sec" id="services">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <div class="eyebrow">What We Build</div>
       <h2 class="disp">Services</h2>
       <p class="lede">From the driveway to the backyard, we handle the full outdoor project — not just one piece of it.</p>
@@ -188,20 +221,20 @@ footer p{font-size:13px;color:var(--dim)}
 
     <div class="cat">
       <div class="cat-title">Hardscape</div>
-      <div class="svcs">
-        <div class="svc">
+      <div class="svcs reveal-stagger">
+        <div class="svc reveal">
           <div class="svc-img"><img src="/legacy-hardscape/img/site/driveway-1.jpg" alt="Finished concrete driveway"></div>
           <div class="svc-body"><h3>Driveways</h3><p>Concrete driveway installs, from excavation and prep through the finished pour.</p></div>
         </div>
-        <div class="svc">
+        <div class="svc reveal">
           <div class="svc-img"><img src="/legacy-hardscape/img/site/patio-1.jpg" alt="Stone patio installation"></div>
           <div class="svc-body"><h3>Patios</h3><p>Stamped concrete, flagstone, and paver patios built for how you actually use your yard.</p></div>
         </div>
-        <div class="svc">
+        <div class="svc reveal">
           <div class="svc-img"><img src="/legacy-hardscape/img/site/walkway-1.jpg" alt="Paver walkway"></div>
           <div class="svc-body"><h3>Walkways</h3><p>Paver and stone walkways connecting your home to the yard.</p></div>
         </div>
-        <div class="svc text-only">
+        <div class="svc text-only reveal">
           <div class="svc-body"><h3>Stained Concrete</h3><p>Decorative stained concrete finishes for patios, walkways, and driveways.</p></div>
         </div>
       </div>
@@ -209,16 +242,16 @@ footer p{font-size:13px;color:var(--dim)}
 
     <div class="cat">
       <div class="cat-title">Outdoor Living</div>
-      <div class="svcs">
-        <div class="svc">
+      <div class="svcs reveal-stagger">
+        <div class="svc reveal">
           <div class="svc-img"><img src="/legacy-hardscape/img/site/pergola-kitchen.jpg" alt="Wood pergola over stone outdoor kitchen"></div>
           <div class="svc-body"><h3>Pergolas</h3><p>Custom wood pergolas, open-lattice or covered, built over patios and outdoor kitchens.</p></div>
         </div>
-        <div class="svc">
+        <div class="svc reveal">
           <div class="svc-img"><img src="/legacy-hardscape/img/site/kitchen-1.jpg" alt="Stone outdoor kitchen with stainless grill"></div>
           <div class="svc-body"><h3>Outdoor Kitchens</h3><p>Stone-base outdoor kitchens with built-in grills and stainless appliances.</p></div>
         </div>
-        <div class="svc">
+        <div class="svc reveal">
           <div class="svc-img"><img src="/legacy-hardscape/img/site/firepit-1.jpg" alt="Stone fire pit on flagstone patio"></div>
           <div class="svc-body"><h3>Fire Pits</h3><p>Stone fire pits set into flagstone or paver patios.</p></div>
         </div>
@@ -227,19 +260,19 @@ footer p{font-size:13px;color:var(--dim)}
 
     <div class="cat">
       <div class="cat-title">Landscape</div>
-      <div class="svcs">
-        <div class="svc">
+      <div class="svcs reveal-stagger">
+        <div class="svc reveal">
           <div class="svc-img"><img src="/legacy-hardscape/img/site/turf-1.jpg" alt="Artificial turf installation"></div>
           <div class="svc-body"><h3>Turf Installation</h3><p>Low-maintenance artificial turf for yards that stay green year-round.</p></div>
         </div>
-        <div class="svc text-only">
+        <div class="svc text-only reveal">
           <div class="svc-body"><h3>Sod Installation</h3><p>Fresh sod installs for a real-grass lawn refresh.</p></div>
         </div>
-        <div class="svc">
+        <div class="svc reveal">
           <div class="svc-img"><img src="/legacy-hardscape/img/site/planting-1.jpg" alt="Planter bed and plant installation"></div>
           <div class="svc-body"><h3>Plant Installation</h3><p>Planter beds and landscape plant installs.</p></div>
         </div>
-        <div class="svc text-only">
+        <div class="svc text-only reveal">
           <div class="svc-body"><h3>Tree Removal</h3><p>Tree cutting and removal.</p></div>
         </div>
       </div>
@@ -249,27 +282,27 @@ footer p{font-size:13px;color:var(--dim)}
 
 <section class="sec" id="gallery" style="border-top:1px solid var(--hair)">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <div class="eyebrow">Real Projects</div>
       <h2 class="disp">Recent Work</h2>
       <p class="lede">Every photo here is a completed job — not a stock photo.</p>
     </div>
-    <div class="gallery">
-      <a href="/legacy-hardscape/img/site/hero-patio-steps.jpg" target="_blank"><img src="/legacy-hardscape/img/site/hero-patio-steps.jpg" alt="Paver patio with steps"></a>
-      <a href="/legacy-hardscape/img/site/pergola-kitchen.jpg" target="_blank"><img src="/legacy-hardscape/img/site/pergola-kitchen.jpg" alt="Pergola over outdoor kitchen"></a>
-      <a href="/legacy-hardscape/img/site/pergola-1.jpg" target="_blank"><img src="/legacy-hardscape/img/site/pergola-1.jpg" alt="Wood pergola"></a>
-      <a href="/legacy-hardscape/img/site/kitchen-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/kitchen-2.jpg" alt="Outdoor kitchen"></a>
-      <a href="/legacy-hardscape/img/site/patio-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/patio-2.jpg" alt="Stamped concrete patio"></a>
-      <a href="/legacy-hardscape/img/site/driveway-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/driveway-2.jpg" alt="Driveway under construction"></a>
-      <a href="/legacy-hardscape/img/site/pergola-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/pergola-2.jpg" alt="Pergola over patio"></a>
-      <a href="/legacy-hardscape/img/site/retaining-wall-1.jpg" target="_blank"><img src="/legacy-hardscape/img/site/retaining-wall-1.jpg" alt="Retaining wall and planter"></a>
+    <div class="gallery reveal-stagger">
+      <a class="reveal" href="/legacy-hardscape/img/site/hero-patio-steps.jpg" target="_blank"><img src="/legacy-hardscape/img/site/hero-patio-steps.jpg" alt="Paver patio with steps"></a>
+      <a class="reveal" href="/legacy-hardscape/img/site/pergola-kitchen.jpg" target="_blank"><img src="/legacy-hardscape/img/site/pergola-kitchen.jpg" alt="Pergola over outdoor kitchen"></a>
+      <a class="reveal" href="/legacy-hardscape/img/site/pergola-1.jpg" target="_blank"><img src="/legacy-hardscape/img/site/pergola-1.jpg" alt="Wood pergola"></a>
+      <a class="reveal" href="/legacy-hardscape/img/site/kitchen-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/kitchen-2.jpg" alt="Outdoor kitchen"></a>
+      <a class="reveal" href="/legacy-hardscape/img/site/patio-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/patio-2.jpg" alt="Stamped concrete patio"></a>
+      <a class="reveal" href="/legacy-hardscape/img/site/driveway-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/driveway-2.jpg" alt="Driveway under construction"></a>
+      <a class="reveal" href="/legacy-hardscape/img/site/pergola-2.jpg" target="_blank"><img src="/legacy-hardscape/img/site/pergola-2.jpg" alt="Pergola over patio"></a>
+      <a class="reveal" href="/legacy-hardscape/img/site/retaining-wall-1.jpg" target="_blank"><img src="/legacy-hardscape/img/site/retaining-wall-1.jpg" alt="Retaining wall and planter"></a>
     </div>
   </div>
 </section>
 
 <section class="sec quote" id="quote">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <div class="eyebrow">Let's Talk</div>
       <h2 class="disp">Get a Free Quote</h2>
       <p class="lede">Tell us about your project — we'll follow up quickly.</p>
@@ -416,6 +449,24 @@ footer p{font-size:13px;color:var(--dim)}
 
   sendBtn.addEventListener('click', send);
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
+})();
+
+// Scroll-triggered reveal animations
+(function(){
+  const targets = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window) || !targets.length) {
+    targets.forEach(el => el.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  targets.forEach(el => io.observe(el));
 })();
 
 // Quote form submission

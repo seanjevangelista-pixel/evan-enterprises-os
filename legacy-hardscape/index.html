@@ -85,8 +85,9 @@ nav{position:sticky;top:0;z-index:70;background:rgba(247,243,236,.94);backdrop-f
 .svc-body{padding:18px 20px 20px}
 .svc h3{font-family:var(--fd);font-size:19px;font-weight:600;margin-bottom:6px}
 .svc p{font-size:13.5px;color:var(--body)}
-.svc.text-only .svc-body{padding-top:20px}
-.svc.text-only{background:var(--cream);border-style:dashed}
+.svc-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,var(--stone) 0%,var(--stone-dark) 100%)}
+.svc-placeholder span{font-size:34px;filter:grayscale(.2) opacity(.92)}
+.svc-placeholder small{font-family:var(--fb);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);opacity:.85}
 @media(max-width:900px){.svcs{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.svcs{grid-template-columns:1fr}}
 
@@ -330,7 +331,8 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
           <div class="svc-img"><img src="/legacy-hardscape/img/site/walkway-1.jpg" alt="Paver walkway"></div>
           <div class="svc-body"><h3>Walkways</h3><p>Paver and stone walkways connecting your home to the yard.</p></div>
         </div>
-        <div class="svc text-only reveal">
+        <div class="svc reveal">
+          <div class="svc-img svc-placeholder"><span>🎨</span><small>Photo Coming Soon</small></div>
           <div class="svc-body"><h3>Stained Concrete</h3><p>Decorative stained concrete finishes for patios, walkways, and driveways.</p></div>
         </div>
       </div>
@@ -361,14 +363,16 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
           <div class="svc-img"><img src="/legacy-hardscape/img/site/turf-1.jpg" alt="Artificial turf installation"></div>
           <div class="svc-body"><h3>Turf Installation</h3><p>Low-maintenance artificial turf for yards that stay green year-round.</p></div>
         </div>
-        <div class="svc text-only reveal">
+        <div class="svc reveal">
+          <div class="svc-img svc-placeholder"><span>🌱</span><small>Photo Coming Soon</small></div>
           <div class="svc-body"><h3>Sod Installation</h3><p>Fresh sod installs for a real-grass lawn refresh.</p></div>
         </div>
         <div class="svc reveal">
           <div class="svc-img"><img src="/legacy-hardscape/img/site/planting-1.jpg" alt="Planter bed and plant installation"></div>
           <div class="svc-body"><h3>Plant Installation</h3><p>Planter beds and landscape plant installs.</p></div>
         </div>
-        <div class="svc text-only reveal">
+        <div class="svc reveal">
+          <div class="svc-img svc-placeholder"><span>🪓</span><small>Photo Coming Soon</small></div>
           <div class="svc-body"><h3>Tree Removal</h3><p>Tree cutting and removal.</p></div>
         </div>
       </div>
@@ -458,8 +462,12 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
     </div>
     <form id="quote-form" class="form-grid">
       <div>
-        <label for="q-name">Name</label>
-        <input id="q-name" name="name" type="text" required autocomplete="name">
+        <label for="q-fname">First Name</label>
+        <input id="q-fname" name="firstName" type="text" required autocomplete="given-name">
+      </div>
+      <div>
+        <label for="q-lname">Last Name</label>
+        <input id="q-lname" name="lastName" type="text" autocomplete="family-name">
       </div>
       <div>
         <label for="q-phone">Phone</label>
@@ -468,6 +476,18 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
       <div>
         <label for="q-email">Email</label>
         <input id="q-email" name="email" type="email" required autocomplete="email">
+      </div>
+      <div>
+        <label for="q-city">City / Area</label>
+        <input id="q-city" name="city" type="text" placeholder="e.g. Round Rock, Cedar Park" autocomplete="address-level2">
+      </div>
+      <div>
+        <label for="q-proptype">Property Type</label>
+        <select id="q-proptype" name="propertyType">
+          <option value="">Select one</option>
+          <option>Residential</option>
+          <option>Commercial</option>
+        </select>
       </div>
       <div>
         <label for="q-service">Project Type</label>
@@ -484,6 +504,17 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
           <option>Sod Installation</option>
           <option>Plant Installation</option>
           <option>Tree Removal</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div>
+        <label for="q-budget">Estimated Budget</label>
+        <select id="q-budget" name="budget">
+          <option value="">Prefer not to say</option>
+          <option>Under $5,000</option>
+          <option>$5,000–$15,000</option>
+          <option>$15,000–$30,000</option>
+          <option>$30,000+</option>
           <option>Not sure yet</option>
         </select>
       </div>
@@ -743,12 +774,18 @@ document.getElementById('quote-form').addEventListener('submit', async function(
   status.textContent = '';
   status.className = '';
 
+  const fname = document.getElementById('q-fname').value.trim();
+  const lname = document.getElementById('q-lname').value.trim();
+
   const payload = {
-    name: document.getElementById('q-name').value.trim(),
+    name: [fname, lname].filter(Boolean).join(' '),
     phone: document.getElementById('q-phone').value.trim(),
     email: document.getElementById('q-email').value.trim(),
     service: document.getElementById('q-service').value,
     message: document.getElementById('q-message').value.trim(),
+    city: document.getElementById('q-city').value.trim(),
+    propertyType: document.getElementById('q-proptype').value,
+    budget: document.getElementById('q-budget').value,
     business: 'Legacy Hardscape ATX',
     to: 'legacyhardscapeatx@gmail.com',
   };

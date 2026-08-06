@@ -72,7 +72,8 @@ nav{position:sticky;top:0;z-index:70;background:rgba(247,243,236,.94);backdrop-f
 /* ── services ── */
 .sec{padding:80px 0;border-top:1px solid var(--hair)}
 .sec-head{margin-bottom:44px;max-width:60ch}
-.sec-head h2{font-size:clamp(30px,4vw,44px);margin-top:12px}
+.sec-head h2{font-size:clamp(38px,6vw,68px);margin-top:14px;letter-spacing:-.015em}
+.sec-head h2 .word{display:inline-block;will-change:transform,opacity}
 .sec-head .lede{margin-top:14px}
 
 .cat{margin-bottom:52px}
@@ -605,6 +606,7 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
 <script>
 (function(){
   const BOT_SLUG = 'legacy-hardscape-atx';
@@ -736,6 +738,30 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
   }
 
   gsap.registerPlugin(ScrollTrigger);
+  if (typeof SplitText !== 'undefined') gsap.registerPlugin(SplitText);
+
+  // Bold word-by-word pop-in for section headings — distinct from the
+  // plain fade used everywhere else, so titles feel like a statement
+  // instead of just another card sliding into place.
+  if (typeof SplitText !== 'undefined') {
+    document.querySelectorAll('.sec-head h2, .cta-band h2').forEach((h2) => {
+      const split = SplitText.create(h2, { type: 'words' });
+      gsap.set(split.words, { opacity: 0, y: 34, scale: 0.92, transformOrigin: 'left bottom' });
+      ScrollTrigger.create({
+        trigger: h2,
+        start: 'top 88%',
+        once: true,
+        onEnter: () => gsap.to(split.words, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.85,
+          ease: 'back.out(1.6)',
+          stagger: 0.07,
+        }),
+      });
+    });
+  }
 
   // Staggered fade-up reveals, grouped by proximity so cards in the same
   // row/section animate together instead of one-by-one.

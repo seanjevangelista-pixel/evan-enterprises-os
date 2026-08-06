@@ -69,7 +69,7 @@ nav{position:sticky;top:0;z-index:70;background:rgba(247,243,236,.94);backdrop-f
 
 .sec{padding:70px 0;border-top:1px solid var(--hair)}
 .sec-head{margin-bottom:40px;max-width:64ch}
-.sec-head h2{font-size:clamp(28px,3.8vw,40px);margin-top:12px}
+.sec-head h2{font-size:clamp(36px,5.5vw,60px);margin-top:14px;letter-spacing:-.015em}
 .sec-head .lede{margin-top:14px;font-size:17px}
 
 .philosophy{display:grid;grid-template-columns:1fr 1fr;gap:40px}
@@ -291,6 +291,7 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
 <script>
 (function(){
   const BOT_SLUG = 'legacy-hardscape-atx';
@@ -371,6 +372,21 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
     return;
   }
   gsap.registerPlugin(ScrollTrigger);
+  if (typeof SplitText !== 'undefined') {
+    gsap.registerPlugin(SplitText);
+    document.querySelectorAll('.sec-head h2, .cta-band h2').forEach((h2) => {
+      const split = SplitText.create(h2, { type: 'words' });
+      gsap.set(split.words, { opacity: 0, y: 34, scale: 0.92, transformOrigin: 'left bottom' });
+      ScrollTrigger.create({
+        trigger: h2,
+        start: 'top 88%',
+        once: true,
+        onEnter: () => gsap.to(split.words, {
+          opacity: 1, y: 0, scale: 1, duration: 0.85, ease: 'back.out(1.6)', stagger: 0.07,
+        }),
+      });
+    });
+  }
   ScrollTrigger.batch('.reveal', {
     start: 'top 85%',
     once: true,

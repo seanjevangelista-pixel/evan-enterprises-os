@@ -1,6 +1,6 @@
 # Legacy Hardscape ATX — Client Reference
 
-Status: **Full client** (per Sean, 2026-08-06) — website + AI bot built. Formal onboarding into the internal client system (Supabase `clients` table via `/admin`) is still outstanding — see To-Do below.
+Status: **Full client** (per Sean, 2026-08-06) — website + AI bot built. Added to the internal client system (Supabase `clients` table) on 2026-08-06 at **$750/mo**.
 
 ## Business Basics
 
@@ -64,7 +64,7 @@ Currently running under `evanenterprise.com/legacy-hardscape` — **not its own 
 - [ ] **Buy a domain** for Legacy Hardscape ATX (Sean to do — Claude can't purchase domains, but can check availability and help configure DNS/Vercel once bought)
 - [ ] Connect the purchased domain to this Vercel project (Vercel dashboard → Domains) and update internal links from `/legacy-hardscape/...` to the new domain root
 - [ ] Run `supabase-bot-profiles.sql` in Supabase if not already done
-- [ ] Add Legacy Hardscape ATX as a real client row via `/admin` → Add Client (monthly fee + which services Evan Enterprises manages for them — Sean's call)
+- [x] Add Legacy Hardscape ATX as a real client row (done 2026-08-06, $750/mo)
 - [ ] Get the real Google Business Profile listing link/Place ID → build "Leave a Review" CTA
 - [ ] Build a dedicated Reviews page once the above is in place
 - [ ] Real photos for Stained Concrete, Sod Installation, Tree Removal (currently icon placeholders)

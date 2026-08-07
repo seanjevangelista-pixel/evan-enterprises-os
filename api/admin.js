@@ -49,21 +49,30 @@ export default async function handler(req, res) {
   // ── CREATE CLIENT ──────────────────────────────────────────────────────────
   if (action === 'create_client') {
     const {
-      business_name, contact_name, contact_email, contact_phone,
-      monthly_flat_fee, notes,
-      has_google_ads, has_lsa, has_facebook, has_instagram,
-      has_reporting, has_jobber, has_seo, has_social,
+      business_name, owner_name, owner_email, owner_phone, city, state,
+      division, status, monthly_flat_fee, performance_pct,
+      lsa_weekly_budget, avg_ticket, google_review_count,
+      google_ads_customer_id, notes,
     } = body;
 
     if (!business_name) return res.status(400).json({ error: 'business_name required' });
 
     const row = {
-      business_name, contact_name, contact_email, contact_phone,
-      monthly_flat_fee: monthly_flat_fee || null, notes,
-      has_google_ads: !!has_google_ads, has_lsa: !!has_lsa,
-      has_facebook: !!has_facebook, has_instagram: !!has_instagram,
-      has_reporting: has_reporting !== false,
-      has_jobber: !!has_jobber, has_seo: !!has_seo, has_social: !!has_social,
+      business_name,
+      owner_name: owner_name || null,
+      owner_email: owner_email || null,
+      owner_phone: owner_phone || null,
+      city: city || null,
+      state: state || null,
+      division: division || 'marketing',
+      status: status || 'active',
+      monthly_flat_fee: monthly_flat_fee || 500,
+      performance_pct: performance_pct || 0.10,
+      lsa_weekly_budget: lsa_weekly_budget || null,
+      avg_ticket: avg_ticket || null,
+      google_review_count: google_review_count || null,
+      google_ads_customer_id: google_ads_customer_id || null,
+      notes: notes || null,
     };
 
     const r = await fetch(`${SUPABASE_URL}/rest/v1/clients`, {

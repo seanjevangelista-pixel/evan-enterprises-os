@@ -174,7 +174,7 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
       <p class="hero-sub">We're an Austin-based hardscape and outdoor living contractor with a simple standard: build it the way we'd want it built on our own property.</p>
     </div>
     <div class="hero-img">
-      <img src="/legacy-hardscape/img/site/pergola-kitchen.jpg" alt="Wood pergola over stone outdoor kitchen, Austin TX">
+      <img src="/img/site/pergola-kitchen.jpg" alt="Wood pergola over stone outdoor kitchen, Austin TX">
     </div>
   </div>
 </section>
@@ -337,7 +337,7 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
     typing.classList.add('typing');
 
     try {
-      const r = await fetch('/api/agent?action=chat', {
+      const r = await fetch('https://www.evanenterprise.com/api/agent?action=chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages, botSlug: BOT_SLUG }),

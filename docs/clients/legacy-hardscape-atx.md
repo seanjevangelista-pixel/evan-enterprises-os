@@ -19,14 +19,16 @@ Status: **Full client** (per Sean, 2026-08-06) — website + AI bot built. Added
 
 ## Website
 
-Lives inside this repo at `legacy-hardscape/`, deployed on the Evan Enterprises Vercel project under a subpath (not its own domain yet — see Domain section below).
+Code lives inside this repo at `legacy-hardscape/`, deployed on the Evan Enterprises Vercel project, but served on its **own domain** via host-based rewrites in `vercel.json` (registered through Vercel directly, not a separate registrar).
 
-| Page | Live URL (once deployed) |
+| Page | Live URL |
 |---|---|
-| Home | evanenterprise.com/legacy-hardscape |
-| About | evanenterprise.com/legacy-hardscape/about |
-| Contact | evanenterprise.com/legacy-hardscape/contact |
+| Home | legacyhardscapeatx.com |
+| About | legacyhardscapeatx.com/about |
+| Contact | legacyhardscapeatx.com/contact |
 | Reviews | Not built yet — pending Google Business Profile review link (see Reviews section) |
+
+Old subpath URLs (`evanenterprise.com/legacy-hardscape/...`) now 301-redirect to the new domain — see Domain section.
 
 **Design system:** Warm/premium palette — near-black `#211E1A`, cream `#F7F3EC`, terracotta accent `#D0451B`, gold `#C99A3E`, stone tones `#C9AF88`/`#8B6F47`. Fonts: Playfair Display (display/headings) + Inter (body). Distinct from Evan Enterprises' own "Dispatch" chrome/monochrome branding.
 
@@ -57,18 +59,23 @@ Quote form (`/api/contact-site`) on Home + Contact pages routes submissions to *
 
 ## Domain
 
-Currently running under `evanenterprise.com/legacy-hardscape` — **not its own domain**. Sean intends to purchase one (likely `legacyhardscapeatx.com` or similar) — see To-Do.
+**Purchased 2026-08-07** — `legacyhardscapeatx.com`, registered directly through Vercel ($11.25/yr, auto-renewal on). Registered under Sean's Vercel account/team (`seanjevangelista-pixel-projects`), not a separate Legacy Hardscape-owned registrar account — worth revisiting later per the earlier discussion about client asset ownership, but fine for now to get it live fast.
+
+Routing: `vercel.json` has host-scoped rewrites so `legacyhardscapeatx.com` serves the `legacy-hardscape/` files at clean root paths (`/`, `/about`, `/contact`), plus permanent redirects from `evanenterprise.com/legacy-hardscape/*` to the new domain.
+
+**Still needs doing in the Vercel dashboard:** click "Connect" on the domain's page to actually attach it to the `evan-enterprises-os` project — the routing config is ready in code, but the domain isn't wired to the project yet as of 2026-08-07.
 
 ## Outstanding To-Do
 
-- [ ] **Buy a domain** for Legacy Hardscape ATX (Sean to do — Claude can't purchase domains, but can check availability and help configure DNS/Vercel once bought)
-- [ ] Connect the purchased domain to this Vercel project (Vercel dashboard → Domains) and update internal links from `/legacy-hardscape/...` to the new domain root
+- [x] Buy a domain — `legacyhardscapeatx.com` (done 2026-08-07, via Vercel)
+- [ ] **Click "Connect" in Vercel** to attach the domain to the project (Vercel dashboard → Domains → legacyhardscapeatx.com → Connect)
 - [ ] Run `supabase-bot-profiles.sql` in Supabase if not already done
 - [x] Add Legacy Hardscape ATX as a real client row (done 2026-08-06, $750/mo)
 - [ ] Get the real Google Business Profile listing link/Place ID → build "Leave a Review" CTA
 - [ ] Build a dedicated Reviews page once the above is in place
 - [ ] Real photos for Stained Concrete, Sod Installation, Tree Removal (currently icon placeholders)
 - [ ] Real business hours, founder bio/history, and social media links if Sean wants those published (currently omitted rather than guessed)
+- [ ] Consider moving domain registration to a Legacy Hardscape-owned account (currently under Sean's Vercel team)
 
 ## Key Files (in this repo)
 

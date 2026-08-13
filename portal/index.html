@@ -484,18 +484,21 @@ async function showPortal() {
     })),
   ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  // Services
+  // Services — read from the client.services JSONB map set via the dashboard's
+  // Edit Client modal (keys: website, google_ads, jobber, social, gbp, invoicing,
+  // reporting). Previously read client.has_* boolean columns the dashboard never
+  // writes, so the portal's services list was always empty. Mirrors the api/email.js fix.
   const svcMap = {
-    has_google_ads: ['Google Ads', '🔍'],
-    has_lsa:        ['Local Service Ads', '📢'],
-    has_facebook:   ['Facebook Ads', '📘'],
-    has_instagram:  ['Instagram', '📸'],
-    has_reporting:  ['Monthly Reports', '📊'],
-    has_jobber:     ['Jobber', '🔧'],
-    has_seo:        ['SEO', '🌐'],
-    has_social:     ['Social Media', '📱'],
+    website:    ['Website', '🌐'],
+    google_ads: ['Google Ads', '🔍'],
+    jobber:     ['Jobber', '🔧'],
+    social:     ['Social Media', '📱'],
+    gbp:        ['Google Business', '📍'],
+    invoicing:  ['Invoicing', '🧾'],
+    reporting:  ['Monthly Reports', '📊'],
   };
-  const svcs = Object.entries(svcMap).filter(([k]) => client[k]);
+  const clientSvc = client.services || {};
+  const svcs = Object.entries(svcMap).filter(([k]) => clientSvc[k]);
 
   const h = now.getHours();
   const greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';

@@ -225,7 +225,7 @@ async function handle_agent_report(req, res) {
   const client = await fetchClient(req.query?.clientId);
   const clientLabel   = client?.business_name || 'Mediterranean Spa';
   const clientLocale  = client ? '' : ' · Baltimore, MD';
-  const clientEmail   = client?.contact_email || process.env.CLIENT_MED_SPA_EMAIL || 'client@example.com';
+  const clientEmail   = client?.owner_email || process.env.CLIENT_MED_SPA_EMAIL || 'client@example.com';
   const flatFee       = client ? Number(client.monthly_flat_fee || 0) : 500;
 
   // ── Date range: last full month ──────────────────────────────────────────

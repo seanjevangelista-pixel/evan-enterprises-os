@@ -403,10 +403,19 @@ async function handle_invoice_reminders(req, res) {
       subject      = `Invoice due today — ${client.business_name}`;
       bodyHeadline = 'Your invoice is due today';
       bodyMessage  = `Your invoice from Evan Enterprises is due <strong>today</strong>. Please reach out if you have any questions or need to make alternate arrangements.`;
-    } else if (diffDays === -3) {
+    } else if (diffDays <= -3) {
+      // `<=` rather than `=== -3`: this job runs nightly, so an exact-day match
+      // meant a single missed run (laptop asleep, deploy in progress, Supabase
+      // blip) permanently skipped the overdue notice AND left the invoice stuck
+      // at status 'unpaid' forever. Widening is safe here precisely because this
+      // branch flips status to 'overdue' below, which drops the row out of this
+      // handler's `status=eq.unpaid` query — so it still sends exactly once.
       subject      = `Invoice past due — Action needed`;
-      bodyHeadline = 'Your invoice is 3 days past due';
-      bodyMessage  = `Your invoice from Evan Enterprises was due on <strong>${due.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</strong> and is now 3 days overdue. Please reply to this email or contact Sean directly to get this resolved.`;
+      // Day count is derived, not hardcoded — a run that catches up after a
+      // missed night would otherwise tell a 9-days-late client they were 3 late.
+      const daysLate = Math.abs(diffDays);
+      bodyHeadline = `Your invoice is ${daysLate} days past due`;
+      bodyMessage  = `Your invoice from Evan Enterprises was due on <strong>${due.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</strong> and is now ${daysLate} days overdue. Please reply to this email or contact Sean directly to get this resolved.`;
       isOverdue    = true;
 
       // Mark invoice as overdue in Supabase

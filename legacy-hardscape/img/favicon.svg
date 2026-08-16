@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="10" fill="#211E1A"/>
+  <!-- staggered paver/step mark -->
+  <rect x="14" y="38" width="36" height="9" rx="1.5" fill="#D0451B"/>
+  <rect x="19" y="26" width="26" height="9" rx="1.5" fill="#C9AF88"/>
+  <rect x="24" y="14" width="16" height="9" rx="1.5" fill="#F7F3EC"/>
+</svg>

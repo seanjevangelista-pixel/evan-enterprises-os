@@ -1188,7 +1188,15 @@ async function loadContactsTab() {
   const url = '/api/messenger?action=list_contacts' + (clientId ? `&client_id=${clientId}` : '');
   try {
     const r = await fetch(url);
-    const { contacts } = await r.json();
+    const payload = await r.json();
+    // A failed load used to fall through to the "No contacts yet" empty state,
+    // which reads as "the table is fine, it's just empty" and points Sean at a
+    // Sync button that would fail the same way. Say what actually went wrong.
+    if (!r.ok || payload.error) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Couldn't load contacts.<div style="margin-top:8px;font-size:12px;color:var(--muted)">${payload.error || `HTTP ${r.status}`}</div></div>`;
+      return;
+    }
+    const { contacts } = payload;
     if (!contacts?.length) {
       el.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div>No contacts yet. Click "Sync LSA Leads" to import.</div>';
       return;
@@ -1231,7 +1239,17 @@ async function syncLSA() {
       body: JSON.stringify({ client_id: clientId || undefined }),
     });
     const data = await r.json();
-    toast(`✓ Synced ${data.synced} leads — ${data.added} new contacts added`, 'ok');
+    // An error response used to render as "✓ Synced undefined leads —
+    // undefined new contacts added", i.e. a green tick over a failed sync.
+    if (!r.ok || data.error) {
+      toast(`Sync failed — ${data.error || `HTTP ${r.status}`}`, 'err');
+      return;
+    }
+    toast(
+      `✓ Synced ${data.synced} leads — ${data.added} new contacts added` +
+      (data.failed ? ` (${data.failed} could not be saved)` : ''),
+      data.failed ? 'err' : 'ok'
+    );
     loadContactsTab();
   } catch(e) {
     toast('Sync failed', 'err');
@@ -1246,7 +1264,12 @@ async function loadCampaignsTab() {
   el.innerHTML = '<div class="spinner"></div>';
   try {
     const r = await fetch('/api/messenger?action=list_campaigns');
-    const { campaigns } = await r.json();
+    const payload = await r.json();
+    if (!r.ok || payload.error) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Couldn't load campaigns.<div style="margin-top:8px;font-size:12px;color:var(--muted)">${payload.error || `HTTP ${r.status}`}</div></div>`;
+      return;
+    }
+    const { campaigns } = payload;
     if (!campaigns?.length) {
       el.innerHTML = '<div class="empty-state"><div class="empty-icon">📣</div>No campaigns yet. Click "+ New Campaign" to send your first blast.</div>';
       return;
@@ -1308,11 +1331,23 @@ async function openCompose() {
 async function updateComposeContactCount() {
   const clientId = document.getElementById('compose-client').value;
   if (!clientId) return;
-  const r = await fetch(`/api/messenger?action=list_contacts&client_id=${clientId}`);
-  const { contacts } = await r.json();
-  const active = contacts?.filter(c => !c.opted_out) || [];
-  document.getElementById('compose-contact-count').textContent =
-    `${active.length} active contact${active.length !== 1 ? 's' : ''} will receive this message`;
+  const countEl = document.getElementById('compose-contact-count');
+  try {
+    const r = await fetch(`/api/messenger?action=list_contacts&client_id=${clientId}`);
+    const payload = await r.json();
+    // "0 active contacts will receive this message" was shown both when the
+    // client genuinely has none and when the lookup failed outright — the two
+    // need to look different before Sean hits Send.
+    if (!r.ok || payload.error) {
+      countEl.textContent = `⚠ Couldn't check the contact list — ${payload.error || `HTTP ${r.status}`}`;
+      return;
+    }
+    const active = payload.contacts?.filter(c => !c.opted_out) || [];
+    countEl.textContent =
+      `${active.length} active contact${active.length !== 1 ? 's' : ''} will receive this message`;
+  } catch (e) {
+    countEl.textContent = "⚠ Couldn't check the contact list — network error.";
+  }
 }
 
 function toggleComposeChannel() {
@@ -1349,7 +1384,10 @@ async function sendCampaign() {
     const data = await r.json();
     if (data.ok) {
       confirmBtn(btn, `Sent to ${data.sent}`);
-      toast(`✓ Sent to ${data.sent} contacts${data.failed ? ` (${data.failed} failed)` : ''}`, 'ok');
+      toast(`✓ Sent to ${data.sent} contacts${data.failed ? ` (${data.failed} failed)` : ''}`, data.failed ? 'err' : 'ok');
+      // e.g. a "both" campaign where Twilio isn't configured — half the
+      // campaign silently didn't go out, so say so rather than just "✓ Sent".
+      if (data.warning) toast(`⚠ ${data.warning}`, 'err');
       setTimeout(() => { closeModal('modal-compose'); loadCampaignsTab(); }, 1000);
     } else {
       toast(data.error || 'Send failed', 'err');

@@ -55,10 +55,20 @@ export default async function handler(req, res) {
     return data;
   }
 
+  // client_id arrives from the query string or the request body and was dropped
+  // into these PostgREST URLs raw. An '&' in the value ends the filter and starts
+  // a new query parameter, so a value like
+  //   <uuid>&or=(id.not.is.null)
+  // widens the row set instead of narrowing it — on send_campaign that turns the
+  // recipient filter into "every contact in the table", blasting one client's
+  // campaign to every other client's customers. Encoding leaves real UUIDs
+  // untouched and neutralises the separator.
+  const enc = (v) => encodeURIComponent(String(v));
+
   try {
     // ── LIST CONTACTS ────────────────────────────────────────────────────────
     if (action === 'list_contacts') {
-      const clientFilter = req.query.client_id ? `&client_id=eq.${req.query.client_id}` : '';
+      const clientFilter = req.query.client_id ? `&client_id=eq.${enc(req.query.client_id)}` : '';
       const contacts = await sb(
         `${SUPABASE_URL}/rest/v1/contacts?select=*,clients(business_name)&order=created_at.desc&limit=500${clientFilter}`
       );
@@ -67,7 +77,7 @@ export default async function handler(req, res) {
 
     // ── SYNC LSA → CONTACTS ──────────────────────────────────────────────────
     if (action === 'sync_lsa') {
-      const clientFilter = body.client_id ? `&client_id=eq.${body.client_id}` : '';
+      const clientFilter = body.client_id ? `&client_id=eq.${enc(body.client_id)}` : '';
       // Get LSA leads with phone numbers
       const leads = await sb(
         `${SUPABASE_URL}/rest/v1/lsa_leads?customer_phone=not.is.null&select=id,client_id,customer_name,customer_phone${clientFilter}`
@@ -79,7 +89,7 @@ export default async function handler(req, res) {
       for (const lead of validLeads) {
         // Upsert by (client_id, phone) — skip if already exists
         const existing = await sb(
-          `${SUPABASE_URL}/rest/v1/contacts?client_id=eq.${lead.client_id}&phone=eq.${encodeURIComponent(lead.customer_phone)}&select=id&limit=1`
+          `${SUPABASE_URL}/rest/v1/contacts?client_id=eq.${enc(lead.client_id)}&phone=eq.${enc(lead.customer_phone)}&select=id&limit=1`
         );
         if (Array.isArray(existing) && existing.length) continue;
 
@@ -109,7 +119,7 @@ export default async function handler(req, res) {
 
     // ── LIST CAMPAIGNS ───────────────────────────────────────────────────────
     if (action === 'list_campaigns') {
-      const clientFilter = req.query.client_id ? `&client_id=eq.${req.query.client_id}` : '';
+      const clientFilter = req.query.client_id ? `&client_id=eq.${enc(req.query.client_id)}` : '';
       const campaigns = await sb(
         `${SUPABASE_URL}/rest/v1/campaigns?select=*,clients(business_name)&order=created_at.desc&limit=100${clientFilter}`
       );
@@ -157,7 +167,7 @@ export default async function handler(req, res) {
                     : null;
 
       // Get contacts for this client (not opted out, has required contact info)
-      let contactsUrl = `${SUPABASE_URL}/rest/v1/contacts?client_id=eq.${client_id}&opted_out=eq.false`;
+      let contactsUrl = `${SUPABASE_URL}/rest/v1/contacts?client_id=eq.${enc(client_id)}&opted_out=eq.false`;
       if (channel === 'sms')   contactsUrl += '&phone=not.is.null&phone=neq.';
       if (channel === 'email') contactsUrl += '&email=not.is.null&email=neq.';
 
@@ -245,7 +255,7 @@ export default async function handler(req, res) {
 
       // Mark campaign sent
       try {
-        await sb(`${SUPABASE_URL}/rest/v1/campaigns?id=eq.${campaignId}`, {
+        await sb(`${SUPABASE_URL}/rest/v1/campaigns?id=eq.${enc(campaignId)}`, {
           method: 'PATCH',
           body: JSON.stringify({ status: 'sent', sent_at: new Date().toISOString() }),
         });

@@ -407,9 +407,9 @@ async function handle_invoice_reminders(req, res) {
       // `<=` rather than `=== -3`: this job runs nightly, so an exact-day match
       // meant a single missed run (laptop asleep, deploy in progress, Supabase
       // blip) permanently skipped the overdue notice AND left the invoice stuck
-      // at status 'unpaid' forever. Widening is safe here precisely because this
-      // branch flips status to 'overdue' below, which drops the row out of this
-      // handler's `status=eq.unpaid` query — so it still sends exactly once.
+      // at status 'unpaid' forever. Widening is safe here precisely because a
+      // delivered notice flips status to 'overdue', which drops the row out of
+      // this handler's `status=eq.unpaid` query — so it still sends exactly once.
       subject      = `Invoice past due — Action needed`;
       // Day count is derived, not hardcoded — a run that catches up after a
       // missed night would otherwise tell a 9-days-late client they were 3 late.
@@ -417,13 +417,14 @@ async function handle_invoice_reminders(req, res) {
       bodyHeadline = `Your invoice is ${daysLate} days past due`;
       bodyMessage  = `Your invoice from Evan Enterprises was due on <strong>${due.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</strong> and is now ${daysLate} days overdue. Please reply to this email or contact Sean directly to get this resolved.`;
       isOverdue    = true;
-
-      // Mark invoice as overdue in Supabase
-      await fetch(`${supabaseUrl}/rest/v1/invoices?id=eq.${inv.id}`, {
-        method: 'PATCH',
-        headers: { ...headers, Prefer: 'return=minimal' },
-        body: JSON.stringify({ status: 'overdue' }),
-      });
+      // The status flip to 'overdue' is deferred until the email actually sends
+      // (see below). It used to run right here, before the send — and because
+      // flipping the status drops the row out of this handler's
+      // `status=eq.unpaid` query, a Resend outage, an expired key, or a rate
+      // limit meant the past-due notice was never sent AND never retried. The
+      // client silently never heard that they were late. That is the same
+      // "sends exactly zero times" failure the missed-nightly-run fix above was
+      // meant to close, arriving through a different door.
     } else {
       continue; // Not a reminder day
     }
@@ -497,12 +498,30 @@ async function handle_invoice_reminders(req, res) {
         }),
       });
       const data = await emailRes.json();
+      const delivered = !!data.id;
+
+      // Only now that the notice has actually gone out do we flip the invoice to
+      // 'overdue', which is what drops it out of next run's `status=eq.unpaid`
+      // query. Flipping only on success means a failed send leaves the row
+      // unpaid and this job retries it tomorrow night, instead of the reminder
+      // being lost forever. It still sends exactly once in the normal case.
+      if (isOverdue && delivered) {
+        await fetch(`${supabaseUrl}/rest/v1/invoices?id=eq.${inv.id}`, {
+          method: 'PATCH',
+          headers: { ...headers, Prefer: 'return=minimal' },
+          body: JSON.stringify({ status: 'overdue' }),
+        });
+      }
+
       results.push({
         invoice: inv.title || inv.id,
         client: client.business_name,
         diffDays,
-        ok: !!data.id,
+        ok: delivered,
         emailId: data.id,
+        // Surface why a send failed instead of just ok:false — this is the only
+        // record of it, and a bad key looks identical to a bad address here.
+        error: delivered ? undefined : (data.message || data.name || 'Send failed'),
       });
     } catch(e) {
       results.push({ invoice: inv.id, client: client.business_name, error: e.message });

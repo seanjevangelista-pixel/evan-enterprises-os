@@ -149,10 +149,28 @@ export default async function handler(req, res) {
       // missing, so the campaign was being marked "sent" after reaching nobody
       // — with 0/0 counts and nothing saying why. Twilio is the live case:
       // 10DLC registration is still pending.
-      const wantsSms    = channel === 'sms'   || channel === 'both';
-      const wantsEmail  = channel === 'email' || channel === 'both';
+      // A channel is only actually sendable if it also has a message body. The
+      // SMS body was passed straight to Twilio as `Body: body_sms`, and
+      // URLSearchParams stringifies undefined — so a "both" campaign where only
+      // the email body was filled in texted the literal word "undefined" to every
+      // one of that client's customers, at full per-segment cost, and reported it
+      // as a successful send. The email side had the same hole through the
+      // `body_email || \`<p>${body_sms}</p>\`` fallback ("<p>undefined</p>").
+      // Treat a blank body as "channel not requested" and refuse the whole send
+      // if that leaves nothing to say.
+      const hasSmsBody   = !!String(body_sms   ?? '').trim();
+      const hasEmailBody = !!String(body_email ?? '').trim() || hasSmsBody;
+      const wantsSms    = (channel === 'sms'   || channel === 'both') && hasSmsBody;
+      const wantsEmail  = (channel === 'email' || channel === 'both') && hasEmailBody;
       const smsReady    = !!(TWILIO_SID && TWILIO_TOKEN && TWILIO_FROM);
       const emailReady  = !!RESEND_KEY;
+
+      if (!wantsSms && !wantsEmail) {
+        return res.status(400).json({
+          error: 'Cannot send — the message body is empty. Nothing was sent and the campaign was not marked sent.',
+        });
+      }
+
       if (!(wantsSms && smsReady) && !(wantsEmail && emailReady)) {
         const need = [];
         if (wantsSms)   need.push('Twilio (TWILIO_SID / TWILIO_TOKEN / TWILIO_FROM)');
@@ -164,6 +182,8 @@ export default async function handler(req, res) {
       }
       const warning = (wantsSms && !smsReady)     ? 'SMS was skipped — Twilio is not configured on this deployment.'
                     : (wantsEmail && !emailReady) ? 'Email was skipped — Resend is not configured on this deployment.'
+                    : (channel === 'both' && !hasSmsBody) ? 'SMS was skipped — no SMS message body was written.'
+                    : (channel === 'both' && !wantsEmail) ? 'Email was skipped — no email body was written.'
                     : null;
 
       // Get contacts for this client (not opted out, has required contact info)
@@ -240,7 +260,9 @@ export default async function handler(req, res) {
               body: JSON.stringify({
                 from: 'EVAN Enterprises <leads@evanenterprise.com>',
                 to: [contact.email],
-                subject: subject || name,
+                // Resend 422s on a missing subject, which would mark every
+                // recipient failed for a campaign saved without a name.
+                subject: subject || name || 'A message from your team',
                 html: body_email || `<p>${body_sms}</p>`,
               }),
             });

@@ -3431,6 +3431,17 @@ $('load-payments-btn').addEventListener('click', async () => {
     const params = new URLSearchParams({ action:'square', endpoint:'payments', begin_time:begin, end_time:end });
     const res  = await fetch(`/api/integrations?${params}`);
     const data = await res.json();
+    // A failed lookup is NOT the same as a month with no revenue. A missing
+    // SQUARE_ACCESS_TOKEN answers 500 {error}, and an expired or revoked token
+    // makes Square answer 401 with {errors:[...]}, which this route proxies
+    // through verbatim. Neither carries a `payments` key, so both used to fall
+    // straight through to "No payments found for this month" — reporting a broken
+    // integration as a $0 month, on the one screen used to check what came in.
+    if (!res.ok || data.error || data.errors) {
+      const why = data.error || data.errors?.[0]?.detail || `HTTP ${res.status}`;
+      container.innerHTML = `<div class="empty" style="color:var(--red)"><div class="empty-icon">◈</div>Couldn't load Square payments — ${why}.<div style="margin-top:8px;font-size:12px;color:var(--text-muted)">This is a connection problem, not a $0 month.</div></div>`;
+      return;
+    }
     const payments = data.payments || [];
 
     if (!payments.length) {
@@ -4185,6 +4196,11 @@ async function loadDistLeads() {
   try {
     const r = await fetch('/api/distribution?action=leads');
     const d = await r.json();
+    // A rejected request carries no `leads` key, so it used to render as an empty
+    // catalogue — "No leads yet, click Add Lead to get started" — which reads as
+    // "nothing here" rather than "this failed to load". Route it to the catch,
+    // which already shows a real error.
+    if (!r.ok || d.error) throw new Error(d.error || `HTTP ${r.status}`);
     distLeads = d.leads || [];
     renderDistLeads();
   } catch (e) {
@@ -4197,6 +4213,10 @@ async function loadDistSubs() {
   try {
     const r = await fetch('/api/distribution?action=subscribers');
     const d = await r.json();
+    // Same as loadDistLeads above — a failed load used to render "No subscribers
+    // yet", which is exactly what a paying subscriber list looks like when the
+    // query breaks. Let the catch report it.
+    if (!r.ok || d.error) throw new Error(d.error || `HTTP ${r.status}`);
     distSubs = d.subscribers || [];
     renderDistSubs();
   } catch (e) {

@@ -32,7 +32,10 @@ async function handle_client_report(req, res) {
 
   // Fetch clients
   let clientQuery = `${supabaseUrl}/rest/v1/clients?select=*&status=eq.active`;
-  if (clientId) clientQuery += `&id=eq.${clientId}`;
+  // clientId comes straight from the request body; unescaped, a value containing
+  // '&' would widen this filter instead of narrowing it (same PostgREST-injection
+  // class already fixed for client_id in messenger.js).
+  if (clientId) clientQuery += `&id=eq.${encodeURIComponent(clientId)}`;
   const clientsRes = await fetch(clientQuery, { headers });
   const clients = await clientsRes.json();
 
@@ -718,7 +721,7 @@ async function handle_review_request(req, res) {
 
   // Fetch client business name
   const clientRes = await fetch(
-    `${supabaseUrl}/rest/v1/clients?id=eq.${clientId}&select=business_name`,
+    `${supabaseUrl}/rest/v1/clients?id=eq.${encodeURIComponent(clientId)}&select=business_name`,
     { headers }
   );
   const clientRows = await clientRes.json();
@@ -813,7 +816,7 @@ async function handle_onboarding_sequence(req, res) {
   if (![2, 3].includes(Number(emailNumber))) return res.status(400).json({ error: 'emailNumber must be 2 or 3' });
 
   const headers = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` };
-  const clientRes = await fetch(`${supabaseUrl}/rest/v1/clients?id=eq.${clientId}&select=*`, { headers });
+  const clientRes = await fetch(`${supabaseUrl}/rest/v1/clients?id=eq.${encodeURIComponent(clientId)}&select=*`, { headers });
   const clientRows = await clientRes.json();
   const client = Array.isArray(clientRows) ? clientRows[0] : null;
 
@@ -830,8 +833,8 @@ async function handle_onboarding_sequence(req, res) {
     moStart.setDate(1); moStart.setHours(0,0,0,0);
     const safe = p => p.then(r => r.json()).then(d => Array.isArray(d) ? d : []).catch(() => []);
     const [calls, lsa] = await Promise.all([
-      safe(fetch(`${supabaseUrl}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${moStart.toISOString()}&select=id`, { headers })),
-      safe(fetch(`${supabaseUrl}/rest/v1/lsa_leads?client_id=eq.${clientId}&created_at=gte.${moStart.toISOString()}&select=id`, { headers })),
+      safe(fetch(`${supabaseUrl}/rest/v1/call_leads?client_id=eq.${encodeURIComponent(clientId)}&tapped_at=gte.${moStart.toISOString()}&select=id`, { headers })),
+      safe(fetch(`${supabaseUrl}/rest/v1/lsa_leads?client_id=eq.${encodeURIComponent(clientId)}&created_at=gte.${moStart.toISOString()}&select=id`, { headers })),
     ]);
     callCount = calls.length;
     lsaCount  = lsa.length;

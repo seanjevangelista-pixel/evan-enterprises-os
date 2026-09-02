@@ -121,7 +121,7 @@ export default async function handler(req, res) {
     // Fetch client name for welcome email
     let clientName = 'your business';
     try {
-      const cr = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${client_id}&select=business_name&limit=1`, { headers: sb.headers });
+      const cr = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${encodeURIComponent(client_id)}&select=business_name&limit=1`, { headers: sb.headers });
       const cd = await cr.json();
       if (cd?.[0]?.business_name) clientName = cd[0].business_name;
     } catch (_) {}
@@ -145,11 +145,17 @@ export default async function handler(req, res) {
   }
 
   // ── UPDATE CLIENT SERVICES ─────────────────────────────────────────────────
+  // `id`/`client_id` values below are dropped into PostgREST filter URLs
+  // unescaped throughout this file. An id containing '&' (e.g.
+  // "<uuid>&or=(id.not.is.null)") would widen the filter to match every row
+  // instead of one, turning a single-row PATCH/DELETE into a mass write across
+  // every client — the same class of bug already fixed for client_id in
+  // messenger.js. encodeURIComponent neutralizes the separator.
   if (action === 'update_client') {
     const { id, ...fields } = body;
     if (!id) return res.status(400).json({ error: 'id required' });
 
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${id}`, {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH', headers: sb.headers, body: JSON.stringify(fields),
     });
     if (!r.ok) return res.status(500).json({ error: 'Update failed' });
@@ -171,7 +177,7 @@ export default async function handler(req, res) {
     // Fetch client info to send notification email
     if (RESEND_KEY) {
       try {
-        const cr = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${client_id}&select=business_name,owner_email,owner_name&limit=1`, { headers: sb.headers });
+        const cr = await fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${encodeURIComponent(client_id)}&select=business_name,owner_email,owner_name&limit=1`, { headers: sb.headers });
         const clients = await cr.json();
         const client = clients?.[0];
         if (client?.owner_email) {
@@ -216,7 +222,7 @@ export default async function handler(req, res) {
   if (action === 'mark_paid') {
     const { id } = body;
     if (!id) return res.status(400).json({ error: 'id required' });
-    await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${id}`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH', headers: sb.headers, body: JSON.stringify({ status: 'paid' }),
     });
     return res.status(200).json({ ok: true });
@@ -225,7 +231,7 @@ export default async function handler(req, res) {
   if (action === 'delete_invoice') {
     const { id } = body;
     if (!id) return res.status(400).json({ error: 'id required' });
-    await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${id}`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${encodeURIComponent(id)}`, {
       method: 'DELETE', headers: sb.headers,
     });
     return res.status(200).json({ ok: true });

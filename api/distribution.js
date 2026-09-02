@@ -31,6 +31,20 @@ export default async function handler(req, res) {
     const { url } = req.body || {};
     if (!url) return res.status(400).json({ error: 'url required' });
 
+    // This handler fetches whatever URL it's given from the server, which
+    // otherwise turns it into an open proxy/SSRF vector — a caller could point
+    // it at an internal address instead of an Amazon product page. Restrict to
+    // actual Amazon hosts, which is the only thing this feature is for.
+    let parsed;
+    try { parsed = new URL(url); } catch (_) {
+      return res.status(400).json({ ok: false, error: 'Invalid URL' });
+    }
+    const host = parsed.hostname.toLowerCase();
+    const isAmazonHost = host === 'amazon.com' || host.endsWith('.amazon.com') || host === 'amzn.to';
+    if (parsed.protocol !== 'https:' || !isAmazonHost) {
+      return res.status(400).json({ ok: false, error: 'Only amazon.com product URLs are supported' });
+    }
+
     const asinMatch = url.match(/\/([A-Z0-9]{10})(?:[/?]|$)/);
     const asin = asinMatch ? asinMatch[1] : null;
 
@@ -76,10 +90,15 @@ export default async function handler(req, res) {
   }
 
   // ── UPDATE LEAD ───────────────────────────────────────────────────────────
+  // `id` is dropped into the PostgREST filter below — unescaped, a value like
+  // "<uuid>&or=(id.not.is.null)" would widen the filter to match every row
+  // instead of one, turning a single-row PATCH into a mass update. Encoding
+  // neutralizes the separator (same fix already applied to client_id in
+  // messenger.js for the same reason).
   if (action === 'update-lead' && req.method === 'POST') {
     const { id, ...fields } = req.body || {};
     if (!id) return res.status(400).json({ error: 'id required' });
-    await fetch(`${SB_URL}/rest/v1/distribution_leads?id=eq.${id}`, {
+    await fetch(`${SB_URL}/rest/v1/distribution_leads?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: { ...h, Prefer: 'return=minimal' },
       body: JSON.stringify(fields),
@@ -91,7 +110,7 @@ export default async function handler(req, res) {
   if (action === 'delete-lead' && req.method === 'POST') {
     const { id } = req.body || {};
     if (!id) return res.status(400).json({ error: 'id required' });
-    await fetch(`${SB_URL}/rest/v1/distribution_leads?id=eq.${id}`, {
+    await fetch(`${SB_URL}/rest/v1/distribution_leads?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: { ...h, Prefer: 'return=minimal' },
       body: JSON.stringify({ status: 'archived' }),
@@ -104,7 +123,7 @@ export default async function handler(req, res) {
     const { email, token } = req.query;
     if (!email && !token) return res.status(400).json({ error: 'email or token required' });
     let url = `${SB_URL}/rest/v1/distribution_subscribers?status=eq.active&select=id,name,email,access_token`;
-    if (token) url += `&access_token=eq.${token}`;
+    if (token) url += `&access_token=eq.${encodeURIComponent(token)}`;
     else url += `&email=eq.${encodeURIComponent(email)}`;
     const r = await fetch(url, { headers: h });
     const rows = await r.json();
@@ -174,7 +193,7 @@ export default async function handler(req, res) {
   if (action === 'update-subscriber' && req.method === 'POST') {
     const { id, ...fields } = req.body || {};
     if (!id) return res.status(400).json({ error: 'id required' });
-    await fetch(`${SB_URL}/rest/v1/distribution_subscribers?id=eq.${id}`, {
+    await fetch(`${SB_URL}/rest/v1/distribution_subscribers?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: { ...h, Prefer: 'return=minimal' },
       body: JSON.stringify(fields),

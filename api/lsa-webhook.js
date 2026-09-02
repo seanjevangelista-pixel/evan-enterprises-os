@@ -67,9 +67,14 @@ export default async function handler(req, res) {
     }
   } else {
     // Fetch client name/email by id
+    // clientId here comes straight from an unauthenticated caller (req.query.client_id
+    // or payload.client_id on this public inbound webhook) and was dropped into the
+    // PostgREST URL unescaped. A value containing '&' (e.g. "<uuid>&or=(id.not.is.null)")
+    // would widen the filter instead of narrowing it, matching any/every client row.
+    // Encoding neutralizes that the same way the messenger.js client_id fix does.
     try {
       const r = await fetch(
-        `${supabaseUrl}/rest/v1/clients?id=eq.${clientId}&select=id,business_name,owner_email&limit=1`,
+        `${supabaseUrl}/rest/v1/clients?id=eq.${encodeURIComponent(clientId)}&select=id,business_name,owner_email&limit=1`,
         { headers: sbHeaders }
       );
       const rows = await r.json();

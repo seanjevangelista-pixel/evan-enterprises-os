@@ -171,32 +171,49 @@ async function handle_agent_lead(req, res) {
   try {
     const auth = Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64');
 
-    // SMS 1: Alert Sean immediately
-    await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
-      method: 'POST',
-      headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        From: twilioFrom,
-        To: myPhone,
-        Body: `🔔 New LSA lead for ${business}:\n${leadName}${leadPhone ? ' · ' + leadPhone : ''}\nService: ${service}\n\nLog it: evan-enterprises-os.vercel.app/dashboard`,
-      }),
-    });
-
-    // SMS 2: Follow-up to the lead (if phone provided)
-    if (leadPhone) {
-      // 2-min delay via scheduling not possible in serverless — send immediately
-      await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
+    // Twilio signals rejection (bad number, unverified trial account, insufficient
+    // balance) with a non-2xx status, not a thrown error — fetch() doesn't throw for
+    // that. Not checking the response meant a completely failed send still returned
+    // ok:true, so Sean's own lead alert (and the lead's follow-up text) could
+    // silently never arrive with no record of why.
+    const sendSms = async (to, bodyText) => {
+      const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
         method: 'POST',
         headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          From: twilioFrom,
-          To: leadPhone,
-          Body: `Hi ${leadName.split(' ')[0]}! Thanks for reaching out to ${business}. We'll be in touch shortly to confirm your appointment. Reply STOP to opt out.`,
-        }),
+        body: new URLSearchParams({ From: twilioFrom, To: to, Body: bodyText }),
       });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || data.error_code) {
+        console.error('Twilio send failed:', r.status, data.message || data.error_code);
+        return { ok: false, error: data.message || `Twilio HTTP ${r.status}` };
+      }
+      return { ok: true, sid: data.sid };
+    };
+
+    // SMS 1: Alert Sean immediately
+    const alertResult = await sendSms(
+      myPhone,
+      `🔔 New LSA lead for ${business}:\n${leadName}${leadPhone ? ' · ' + leadPhone : ''}\nService: ${service}\n\nLog it: evan-enterprises-os.vercel.app/dashboard`
+    );
+
+    // SMS 2: Follow-up to the lead (if phone provided)
+    let followUpResult = null;
+    if (leadPhone) {
+      // 2-min delay via scheduling not possible in serverless — send immediately
+      followUpResult = await sendSms(
+        leadPhone,
+        `Hi ${leadName.split(' ')[0]}! Thanks for reaching out to ${business}. We'll be in touch shortly to confirm your appointment. Reply STOP to opt out.`
+      );
     }
 
-    return res.status(200).json({ ok: true, lead: leadName });
+    const ok = alertResult.ok && (!followUpResult || followUpResult.ok);
+    return res.status(ok ? 200 : 502).json({
+      ok,
+      lead: leadName,
+      alertSent: alertResult.ok,
+      followUpSent: followUpResult ? followUpResult.ok : null,
+      error: ok ? undefined : (alertResult.error || followUpResult?.error),
+    });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
@@ -210,7 +227,12 @@ async function handle_agent_lead(req, res) {
 async function handle_agent_report(req, res) {
   // Allow manual trigger from dashboard OR cron
   const isCron = req.headers['x-vercel-cron'] === '1';
-  const isInternal = req.headers['x-internal-key'] === process.env.INTERNAL_API_KEY;
+  // Comparing two undefined values is true, so if INTERNAL_API_KEY was never set
+  // in Vercel, req.headers['x-internal-key'] (also undefined when the caller sends
+  // no header at all) satisfied this check for every caller — this "protected"
+  // report endpoint was wide open by default until someone thought to configure
+  // the env var. Requiring the secret to actually be set closes that.
+  const isInternal = !!process.env.INTERNAL_API_KEY && req.headers['x-internal-key'] === process.env.INTERNAL_API_KEY;
   if (!isCron && !isInternal) return res.status(401).json({ error: 'Unauthorized' });
 
   const resendKey   = process.env.RESEND_API_KEY;
@@ -401,7 +423,7 @@ async function handle_agent_review(req, res) {
 
   try {
     const auth = Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64');
-    await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
+    const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
       method: 'POST',
       headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
@@ -410,6 +432,14 @@ async function handle_agent_review(req, res) {
         Body: `Hi ${firstName}! Thank you for visiting ${biz} today. If you enjoyed your experience, we'd love a quick Google review — it means a lot to us! ${link}\n\nReply STOP to opt out.`,
       }),
     });
+    // Twilio reports rejection (bad number, unverified trial account, etc.) with a
+    // non-2xx status rather than a thrown error, so this always returned ok:true
+    // even when the review request never actually went out.
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error_code) {
+      console.error('Twilio send failed:', r.status, data.message || data.error_code);
+      return res.status(502).json({ ok: false, error: data.message || `Twilio HTTP ${r.status}` });
+    }
     return res.status(200).json({ ok: true });
   } catch (e) {
     return res.status(500).json({ error: e.message });

@@ -197,7 +197,18 @@ function buildNotes({ subject, bodyText, rawFrom, service }) {
   return lines.join('\n');
 }
 
+// customerName/customerPhone/service/notesSummary are attacker-reachable — this
+// webhook takes unauthenticated POSTs — so they're escaped before landing in the
+// notification email's HTML, same reasoning as the dashboard's lsa_leads render.
+function escHtml(s) {
+  return s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function buildEmailHtml({ clientName, customerName, customerPhone, leadType, service, today, notesSummary }) {
+  customerName = escHtml(customerName);
+  customerPhone = escHtml(customerPhone);
+  service = escHtml(service);
+  notesSummary = escHtml(notesSummary);
   return `
 <!DOCTYPE html>
 <html>

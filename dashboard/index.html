@@ -2224,6 +2224,11 @@ let _editClientId = null;
 
 // ── UTILS ──
 const $ = id => document.getElementById(id);
+// Escapes text pulled from external/public sources (contact-form and LSA-webhook
+// submissions) before it's dropped into innerHTML — those rows are attacker-
+// reachable (lsa-webhook.js accepts unauthenticated POSTs) so unescaped values
+// here are a stored-XSS hole in the admin session.
+const escHtml = s => s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt$ = n => n == null ? '—' : '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtDate = d => d ? new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
 const sourceMap = {lsa:'LSA',google_ads:'Google Ads',instagram:'Instagram',referral:'Referral',walk_in:'Walk-In',other:'Other'};
@@ -3747,11 +3752,11 @@ function renderLsaContent() {
           ${filtered.length ? filtered.map(l => `<tr>
             <td class="mono">${fmtDate(l.lead_date)}</td>
             <td>${leadTypeBadge(l.lead_type)}</td>
-            <td class="bold">${l.customer_name || '—'}</td>
-            <td class="muted">${l.customer_phone || '—'}</td>
+            <td class="bold">${escHtml(l.customer_name) || '—'}</td>
+            <td class="muted">${escHtml(l.customer_phone) || '—'}</td>
             <td>${statusBadge(l.status)}</td>
             <td class="tr mono">${fmt$(l.cost_per_lead)}</td>
-            <td style="max-width:200px;color:var(--text-secondary);font-size:12px">${l.notes || '—'}</td>
+            <td style="max-width:200px;color:var(--text-secondary);font-size:12px">${escHtml(l.notes) || '—'}</td>
             <td class="tr"><button class="btn btn-sm" style="color:var(--red);border-color:rgba(239,68,68,0.3);padding:3px 8px" data-del-lead="${l.id}">✕</button></td>
           </tr>`).join('')
           : '<tr><td colspan="8"><div class="empty">No leads yet. Click "+ Log New Lead" to add one.</div></td></tr>'}
@@ -4050,10 +4055,10 @@ function renderFormLeads() {
     </tr></thead>
     <tbody>${rows.map(l => `<tr>
       <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:12px;color:var(--text-secondary)">${new Date(l.created_at).toLocaleDateString()}</td>
-      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:13px;font-weight:500">${l.customer_name || '—'}</td>
-      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:12px"><a href="tel:${l.customer_phone}" style="color:var(--accent)">${l.customer_phone || '—'}</a></td>
-      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:12px;color:var(--text-secondary)">${l.service || '—'}</td>
-      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:11px;color:var(--text-muted)">${(l.source || '').replace('Evan Enterprises — ','').replace(' — Quote Form','').replace(' — Booking Form','')}</td>
+      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:13px;font-weight:500">${escHtml(l.customer_name) || '—'}</td>
+      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:12px"><a href="tel:${escHtml(l.customer_phone)}" style="color:var(--accent)">${escHtml(l.customer_phone) || '—'}</a></td>
+      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:12px;color:var(--text-secondary)">${escHtml(l.service) || '—'}</td>
+      <td style="padding:10px 0;border-bottom:1px solid var(--surface-2);font-size:11px;color:var(--text-muted)">${escHtml((l.source || '').replace('Evan Enterprises — ','').replace(' — Quote Form','').replace(' — Booking Form',''))}</td>
       <td style="padding:10px 0;border-bottom:1px solid var(--surface-2)">
         <select onchange="updateFormLeadStatus('${l.id}', this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);cursor:pointer">
           ${['new','contacted','quoted','won','lost'].map(s => `<option value="${s}" ${l.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}

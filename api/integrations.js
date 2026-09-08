@@ -1051,12 +1051,17 @@ async function handle_buffer(req, res) {
     if (!text || !channel_ids?.length) return res.status(400).json({ error: 'text and channel_ids required' });
 
     try {
+      // channel_ids/scheduled_at/media_urls are dropped straight into this GraphQL
+      // string unescaped — a value containing a double-quote breaks out of its
+      // string literal and injects arbitrary fields into the mutation sent to
+      // Buffer's API. JSON.stringify produces a properly escaped GraphQL string
+      // literal (same fix already applied to `text` a few lines below).
       const media = media_urls?.length
-        ? media_urls.map(url => `{ url: "${url}", mediaType: IMAGE }`)
+        ? media_urls.map(url => `{ url: ${JSON.stringify(url)}, mediaType: IMAGE }`)
         : [];
-      const scheduledAtArg = scheduled_at ? `, scheduledAt: "${scheduled_at}"` : '';
+      const scheduledAtArg = scheduled_at ? `, scheduledAt: ${JSON.stringify(scheduled_at)}` : '';
       const mediaArg = media.length ? `, media: [${media.join(', ')}]` : '';
-      const channelIds = channel_ids.map(id => `"${id}"`).join(', ');
+      const channelIds = channel_ids.map(id => JSON.stringify(id)).join(', ');
 
       const mutation = `
         mutation {
@@ -1084,8 +1089,10 @@ async function handle_buffer(req, res) {
     const { channel_id } = req.query;
     if (!channel_id) return res.status(400).json({ error: 'channel_id required' });
     try {
+      // channel_id is a raw query param dropped into this GraphQL string unescaped
+      // — same injection risk as channel_ids/scheduled_at/media_urls above.
       const data = await bufferGQL(`{
-        posts(input: { organizationId: "${BUFFER_ORG_ID}", channelIds: ["${channel_id}"], status: [SCHEDULED] }) {
+        posts(input: { organizationId: "${BUFFER_ORG_ID}", channelIds: [${JSON.stringify(channel_id)}], status: [SCHEDULED] }) {
           edges { node { id text status scheduledAt channel { service name } } }
         }
       }`);
@@ -1102,8 +1109,10 @@ async function handle_buffer(req, res) {
     const { channel_id } = req.query;
     if (!channel_id) return res.status(400).json({ error: 'channel_id required' });
     try {
+      // channel_id is a raw query param dropped into this GraphQL string unescaped
+      // — same injection risk as channel_ids/scheduled_at/media_urls above.
       const data = await bufferGQL(`{
-        posts(input: { organizationId: "${BUFFER_ORG_ID}", channelIds: ["${channel_id}"], status: [SENT] }) {
+        posts(input: { organizationId: "${BUFFER_ORG_ID}", channelIds: [${JSON.stringify(channel_id)}], status: [SENT] }) {
           edges { node { id text status scheduledAt channel { service name } } }
         }
       }`);
@@ -1122,8 +1131,10 @@ async function handle_buffer(req, res) {
     const { post_id } = req.body || {};
     if (!post_id) return res.status(400).json({ error: 'post_id required' });
     try {
+      // post_id is a raw request-body value dropped into this GraphQL string
+      // unescaped — same injection risk as channel_ids/scheduled_at/media_urls above.
       const data = await bufferGQL(`
-        mutation { deletePost(input: { postId: "${post_id}" }) { postId } }
+        mutation { deletePost(input: { postId: ${JSON.stringify(post_id)} }) { postId } }
       `);
       if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
       return res.status(200).json({ ok: true });

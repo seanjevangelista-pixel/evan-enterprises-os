@@ -2926,7 +2926,7 @@ function renderInvoices(filterCid = '') {
 
   tbody.innerHTML = rows.map(inv => `<tr>
     <td class="bold">${inv.clients?.business_name || '—'}</td>
-    <td style="color:var(--text-secondary)">${inv.description || '—'}</td>
+    <td style="color:var(--text-secondary)">${inv.title || '—'}</td>
     <td class="mono">${fmt$(inv.amount)}</td>
     <td class="mono">${inv.due_date ? fmtDate(inv.due_date) : '—'}</td>
     <td>${statusBadge(inv)}</td>
@@ -2962,7 +2962,12 @@ async function saveInvoice() {
   const due      = $('inv-due').value;
   const status   = $('inv-status').value;
   if (!clientId || !desc || !amount || !due) { toast('Fill in all required fields', 'err'); return; }
-  const { error } = await sb.from('invoices').insert({ client_id: clientId, description: desc, amount, due_date: due, status });
+  // The invoices table has a required `title` column (see supabase-setup.sql) and
+  // no `description` column at all — inserting `description` here silently failed
+  // every "Add Invoice" submission (NOT NULL violation on the missing title, plus
+  // an unknown-column rejection from PostgREST), the same schema-drift bug already
+  // fixed for invoice-notification/monthly-report emails in api/email.js.
+  const { error } = await sb.from('invoices').insert({ client_id: clientId, title: desc, amount, due_date: due, status });
   if (error) { toast('Error: ' + error.message, 'err'); return; }
   closeModal('modal-add-invoice');
   $('invoice-form').reset();

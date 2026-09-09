@@ -924,8 +924,8 @@ async function loadCallLeads() {
                 : '—';
               return `<tr>
                 <td class="mono">${t}</td>
-                <td class="bold">${r.clients?.business_name || '—'}</td>
-                <td>${r.source || '—'}</td>
+                <td class="bold">${escHtml(r.clients?.business_name) || '—'}</td>
+                <td>${escHtml(r.source) || '—'}</td>
               </tr>`;
             }).join('')}
           </tbody>

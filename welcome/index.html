@@ -373,12 +373,15 @@ footer {
 </footer>
 
 <script>
-  // Read ?client= from URL to personalize
+  // Read ?client= from URL to personalize. URLSearchParams.get() already
+  // URL-decodes the value — a second decodeURIComponent() here threw on any
+  // business name containing a literal '%' (e.g. "100% Fresh Landscaping"),
+  // silently breaking personalization for that client's welcome link.
   const params = new URLSearchParams(window.location.search);
   const name = params.get('client');
   if (name) {
-    document.getElementById('client-label').textContent = `Welcome, ${decodeURIComponent(name)}`;
-    document.title = `Welcome, ${decodeURIComponent(name)} — Evan Enterprises`;
+    document.getElementById('client-label').textContent = `Welcome, ${name}`;
+    document.title = `Welcome, ${name} — Evan Enterprises`;
   }
 </script>
 </body>

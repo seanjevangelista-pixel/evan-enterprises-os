@@ -3091,7 +3091,7 @@ $('review-send-btn').addEventListener('click', async () => {
   try {
     const res  = await fetch('/api/email?action=review-request', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
       body: JSON.stringify({ clientId: _reviewClientId, customerName, customerEmail, jobDescription }),
     });
     const data = await res.json();
@@ -3147,7 +3147,7 @@ async function saveClient() {
     try {
       const r = await fetch('/api/email?action=welcome-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
         body: JSON.stringify({ businessName: biz, ownerName: ownerName, ownerEmail: email }),
       });
       const d = await r.json().catch(() => ({}));

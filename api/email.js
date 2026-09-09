@@ -2,11 +2,12 @@
 //                welcome-email, review-request, onboarding-sequence, proposal
 // Route via: POST /api/email?action=client-report|health-check|invoice-reminders|...
 
-// welcome-email, review-request, and proposal accept unauthenticated POSTs (the
-// dashboard sends an x-internal-key header, but nothing here ever checks it —
-// unlike monthly-report/outreach in integrations.js) and drop free-text request
-// fields straight into outbound HTML emails. Escaped before landing in that HTML,
+// welcome-email, review-request, and proposal drop free-text request fields
+// straight into outbound HTML emails. Escaped before landing in that HTML,
 // same reasoning as the lsa-webhook.js fix for its unauthenticated inbound payload.
+// (Every action in this file also now requires the x-internal-key header — see
+// the dispatcher below — closing the gap where these three, unlike
+// monthly-report/outreach in integrations.js, accepted unauthenticated POSTs.)
 function escHtml(s) {
   return s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -1119,6 +1120,13 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Every action here is dashboard-triggered — none of them is a public inbound
+  // webhook (that's lsa-webhook.js, which stays open on purpose). Matches the
+  // gate integrations.js already applies to monthly-report/outreach: any POST
+  // without the internal-key header is refused, so this isn't sitting open on
+  // the internet for anyone to fire off client emails / burn Resend quota with.
+  if (!req.headers['x-internal-key']) return res.status(401).json({ error: 'Unauthorized' });
 
   const action = req.query.action;
   // Wrap dispatch so a handler that throws before sending (e.g. Supabase

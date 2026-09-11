@@ -222,18 +222,20 @@ export default async function handler(req, res) {
   if (action === 'mark_paid') {
     const { id } = body;
     if (!id) return res.status(400).json({ error: 'id required' });
-    await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${encodeURIComponent(id)}`, {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH', headers: sb.headers, body: JSON.stringify({ status: 'paid' }),
     });
+    if (!r.ok) return res.status(500).json({ error: 'Failed to mark invoice paid' });
     return res.status(200).json({ ok: true });
   }
 
   if (action === 'delete_invoice') {
     const { id } = body;
     if (!id) return res.status(400).json({ error: 'id required' });
-    await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${encodeURIComponent(id)}`, {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${encodeURIComponent(id)}`, {
       method: 'DELETE', headers: sb.headers,
     });
+    if (!r.ok) return res.status(500).json({ error: 'Failed to delete invoice' });
     return res.status(200).json({ ok: true });
   }
 

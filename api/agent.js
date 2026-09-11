@@ -62,6 +62,14 @@ async function fetchClient(clientId) {
   }
 }
 
+// lead.name/email/phone come straight from the public chat widget (visitor-
+// controlled) and land in the HTML lead-notification email below. Escape
+// them, same reasoning as the welcome-email/review-request/proposal fix in
+// email.js and the lsa-webhook.js inbound-payload fix.
+function escHtml(s) {
+  return s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function buildSystemPrompt(profile) {
   const servicesList = Array.isArray(profile.services) ? profile.services : [];
   const servicesText = servicesList.length
@@ -128,7 +136,7 @@ async function handle_agent_chat(req, res) {
             from: 'Evan Enterprises Chat <chat@evanenterprise.com>',
             to: ['seanjevangelista@gmail.com'],
             subject: `${tag}New chat lead — ${profile.business_name} — ${lead.name || lead.email}`,
-            html: `<p><b>Business:</b> ${profile.business_name}<br><b>Name:</b> ${lead.name || '—'}<br><b>Email:</b> ${lead.email || '—'}<br><b>Phone:</b> ${lead.phone || '—'}</p>`,
+            html: `<p><b>Business:</b> ${escHtml(profile.business_name)}<br><b>Name:</b> ${escHtml(lead.name) || '—'}<br><b>Email:</b> ${escHtml(lead.email) || '—'}<br><b>Phone:</b> ${escHtml(lead.phone) || '—'}</p>`,
           }),
         }).catch(() => {});
       }

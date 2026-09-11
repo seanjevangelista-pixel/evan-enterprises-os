@@ -19,6 +19,18 @@ export default async function handler(req, res) {
   const resendKey = process.env.RESEND_API_KEY;
   const h         = sbHeaders(sbKey);
 
+  // Every action except `leads` (public, gated by access_token on the portal
+  // side — see below) and `verify` (the portal's own unauthenticated token
+  // check) is a dashboard-only admin operation: subscribers, add/update/
+  // delete-lead, add/update-subscriber, fetch-amazon, send-blast. None of
+  // them checked for the x-internal-key header the dashboard already sends
+  // on other admin routes (email.js, integrations.js), so any caller who
+  // knew the URL could read the full subscriber list (names, emails, Square
+  // IDs, billing dates) or fire off a paid Resend blast. Gate them the same way.
+  if (action !== 'leads' && action !== 'verify' && !req.headers['x-internal-key']) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   // ── GET LEADS (public — gated by access_token on portal side) ────────────
   if (action === 'leads') {
     const r = await fetch(`${SB_URL}/rest/v1/distribution_leads?status=eq.active&order=created_at.desc`, { headers: h });

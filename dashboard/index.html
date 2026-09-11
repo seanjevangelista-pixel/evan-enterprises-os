@@ -4221,7 +4221,7 @@ async function loadDistLeads() {
 async function loadDistSubs() {
   const tbody = document.getElementById('dist-subs-tbody');
   try {
-    const r = await fetch('/api/distribution?action=subscribers');
+    const r = await fetch('/api/distribution?action=subscribers', { headers: { 'x-internal-key': 'dashboard' } });
     const d = await r.json();
     // Same as loadDistLeads above — a failed load used to render "No subscribers
     // yet", which is exactly what a paying subscriber list looks like when the
@@ -4324,7 +4324,7 @@ async function saveDistLead() {
   };
   if (!body.title || !body.buy_price || !body.sell_price) return toast('Title, buy price, sell price required', 'err');
   try {
-    const r = await fetch('/api/distribution?action=add-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const r = await fetch('/api/distribution?action=add-lead', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'}, body:JSON.stringify(body) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'save failed'), 'err');
   } catch (e) {
@@ -4337,7 +4337,7 @@ async function saveDistLead() {
 
 async function archiveDistLead(id) {
   try {
-    const r = await fetch('/api/distribution?action=delete-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id}) });
+    const r = await fetch('/api/distribution?action=delete-lead', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'}, body:JSON.stringify({id}) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'delete failed'), 'err');
   } catch (e) {
@@ -4359,7 +4359,7 @@ async function saveDistSub() {
   };
   if (!body.name || !body.email) return toast('Name and email required', 'err');
   try {
-    const r = await fetch('/api/distribution?action=add-subscriber', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const r = await fetch('/api/distribution?action=add-subscriber', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'}, body:JSON.stringify(body) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'save failed'), 'err');
   } catch (e) {
@@ -4373,7 +4373,7 @@ async function saveDistSub() {
 async function toggleDistSubStatus(id, current) {
   const status = current === 'active' ? 'paused' : 'active';
   try {
-    const r = await fetch('/api/distribution?action=update-subscriber', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id, status}) });
+    const r = await fetch('/api/distribution?action=update-subscriber', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'}, body:JSON.stringify({id, status}) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'update failed'), 'err');
   } catch (e) {
@@ -4423,7 +4423,7 @@ async function fetchAmazonProduct() {
   btn.textContent = 'Fetching…'; btn.disabled = true;
   status.textContent = 'Looking up product on Amazon…'; status.style.display = 'block'; status.style.color = '#94a3b8';
   try {
-    const res  = await fetch('/api/distribution?action=fetch-amazon', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+    const res  = await fetch('/api/distribution?action=fetch-amazon', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' }, body: JSON.stringify({ url }) });
     const data = await res.json();
     if (data.ok) {
       if (data.title)     document.getElementById('dl-title').value     = data.title;
@@ -4452,7 +4452,7 @@ document.getElementById('dist-blast-btn').addEventListener('click', async () => 
   const btn = document.getElementById('dist-blast-btn');
   btn.textContent = 'Sending…'; btn.disabled = true;
   try {
-    const r = await fetch('/api/distribution?action=send-blast', { method:'POST', headers:{'Content-Type':'application/json'} });
+    const r = await fetch('/api/distribution?action=send-blast', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'} });
     const d = await r.json();
     if (d.ok) toast(d.sent > 0 ? `Blast sent to ${d.sent} subscriber(s)!` : d.message || 'No subscribers');
     else toast('Error: ' + d.error, 'err');

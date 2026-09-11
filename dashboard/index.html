@@ -3463,9 +3463,12 @@ $('load-payments-btn').addEventListener('click', async () => {
     const rows  = payments.map(p => {
       const amt    = ((p.total_money?.amount||0)/100).toFixed(2);
       const date   = new Date(p.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-      const status = p.status === 'COMPLETED' ? '<span class="badge badge-active">Completed</span>' : `<span class="badge">${p.status}</span>`;
-      const note   = p.note || p.order_id || '—';
-      const method = p.source_type || '—';
+      const status = p.status === 'COMPLETED' ? '<span class="badge badge-active">Completed</span>' : `<span class="badge">${escHtml(p.status)}</span>`;
+      // p.note is free text a payer can set at checkout via Square — escape it
+      // before it hits innerHTML, same reasoning as the other external-data
+      // renders in this dashboard (call_leads, lsa_leads, form_leads).
+      const note   = escHtml(p.note) || escHtml(p.order_id) || '—';
+      const method = escHtml(p.source_type) || '—';
       return `<tr>
         <td>${date}</td>
         <td class="mono green"><strong>$${amt}</strong></td>

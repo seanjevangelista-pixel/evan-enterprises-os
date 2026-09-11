@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { name, business, phone, email, service, message, to, city, propertyType, budget } = req.body || {};
+  const { name, business, phone, email, service, message, city, propertyType, budget } = req.body || {};
 
   if (!name || !email || !service) {
     return res.status(400).json({ error: 'Missing required fields: name, email, service' });
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         from: 'Evan Enterprises Website <noreply@evanenterprise.com>',
-        to: [to || 'seanjevangelista@gmail.com'],
+        to: ['seanjevangelista@gmail.com'],
         reply_to: email,
         subject,
         html,

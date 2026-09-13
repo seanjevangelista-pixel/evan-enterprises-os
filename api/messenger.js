@@ -38,6 +38,15 @@ export default async function handler(req, res) {
   }
   const action = req.query.action || body.action;
 
+  // This is a dashboard-only marketing tool — send_campaign fires real SMS/email
+  // to a client's whole contact list and burns Twilio/Resend quota, and
+  // list_contacts/list_campaigns expose customer PII. None of it was gated, so
+  // anyone who knew the URL could trigger a blast or read the contact list.
+  // Matches the x-internal-key guard already added to distribution.js/email.js.
+  if (!req.headers['x-internal-key']) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   // PostgREST signals failure with a 4xx/5xx plus a JSON error object. Returning
   // that object straight through as the data payload made a broken query
   // (missing table, RLS change, bad key) look exactly like an empty table.

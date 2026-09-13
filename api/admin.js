@@ -20,6 +20,18 @@ export default async function handler(req, res) {
 
   const action = req.query.action || req.body?.action;
 
+  // This endpoint creates real Supabase Auth users (with generated passwords
+  // emailed out), lists every client's PII, and mutates/deletes invoices — it
+  // was never gated server-side. The admin page only checked the caller's
+  // Supabase role client-side before showing its UI, then called this API
+  // with no credential at all, so anyone who found the URL could call
+  // ?action=create_portal_login or ?action=list_clients directly with curl.
+  // Matches the x-internal-key guard already added to distribution.js,
+  // email.js, and integrations.js for the same class of gap.
+  if (!req.headers['x-internal-key']) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   // ── LIST CLIENTS ───────────────────────────────────────────────────────────
   if (action === 'list_clients') {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/clients?select=*&order=created_at.desc`, { headers: sb.headers });

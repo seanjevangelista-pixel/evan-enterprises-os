@@ -3863,10 +3863,10 @@ function renderOutreachQueue() {
       </tr></thead>
       <tbody>
         ${outreachLeads.map(l => `<tr>
-          <td class="bold">${l.business_name}</td>
-          <td class="muted">${l.owner_name || '—'}</td>
-          <td class="muted">${l.city || '—'}</td>
-          <td class="muted">${l.niche || '—'}</td>
+          <td class="bold">${escHtml(l.business_name)}</td>
+          <td class="muted">${escHtml(l.owner_name) || '—'}</td>
+          <td class="muted">${escHtml(l.city) || '—'}</td>
+          <td class="muted">${escHtml(l.niche) || '—'}</td>
           <td>
             <select class="select-pill" style="font-size:11px;padding:4px 8px" data-status-outreach="${l.id}">
               ${Object.keys(OUTREACH_STATUS_BADGE).map(s => `<option value="${s}" ${l.status === s ? 'selected' : ''}>${OUTREACH_STATUS_BADGE[s][2]}</option>`).join('')}

@@ -28,7 +28,12 @@ export default async function handler(req, res) {
   // ?action=create_portal_login or ?action=list_clients directly with curl.
   // Matches the x-internal-key guard already added to distribution.js,
   // email.js, and integrations.js for the same class of gap.
-  if (!req.headers['x-internal-key']) {
+  //
+  // This only checked that the header was PRESENT, not that its value matched
+  // anything — so `curl -H "x-internal-key: anything"` sailed straight through
+  // without even needing to know the dashboard sends 'dashboard'. Require the
+  // actual shared value (matches the check agent.js already uses).
+  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

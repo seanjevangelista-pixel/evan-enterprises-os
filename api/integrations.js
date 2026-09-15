@@ -453,9 +453,14 @@ async function handle_lsa_check(req, res) {
 async function handle_monthly_report(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Allow dashboard trigger (no cron key needed — just any POST with the header)
+  // Allow dashboard trigger (no cron key needed — just any POST with the header).
+  //
+  // This only checked that the header was PRESENT, not that its value matched
+  // anything — so any caller could satisfy it with a junk value, no knowledge
+  // of the dashboard's actual 'dashboard' value required. Require the real
+  // shared value (matches the check agent.js already uses).
   const internalKey = req.headers['x-internal-key'];
-  if (!internalKey) return res.status(401).json({ error: 'Unauthorized' });
+  if (internalKey !== (process.env.INTERNAL_API_KEY || 'dashboard')) return res.status(401).json({ error: 'Unauthorized' });
 
   const resendKey      = process.env.RESEND_API_KEY;
   const supabaseUrl    = process.env.SUPABASE_URL    || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
@@ -841,9 +846,10 @@ async function handle_outreach_send(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   // Same guard as monthly-report — this endpoint fires real emails from
-  // Sean's domain, so it can't be left open to any caller.
+  // Sean's domain, so it can't be left open to any caller. Requires the value
+  // to actually match (not just be present) — see monthly-report above.
   const internalKey = req.headers['x-internal-key'];
-  if (!internalKey) return res.status(401).json({ error: 'Unauthorized' });
+  if (internalKey !== (process.env.INTERNAL_API_KEY || 'dashboard')) return res.status(401).json({ error: 'Unauthorized' });
 
   const { leads = [], followUp = false } = req.body || {};
   if (!leads.length) return res.status(400).json({ error: 'No leads provided' });

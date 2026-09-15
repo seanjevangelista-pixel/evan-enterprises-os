@@ -43,7 +43,12 @@ export default async function handler(req, res) {
   // list_contacts/list_campaigns expose customer PII. None of it was gated, so
   // anyone who knew the URL could trigger a blast or read the contact list.
   // Matches the x-internal-key guard already added to distribution.js/email.js.
-  if (!req.headers['x-internal-key']) {
+  //
+  // This only checked that the header was PRESENT, not that its value matched
+  // anything — so any caller could satisfy it by sending any junk value at all,
+  // no knowledge of the dashboard's actual 'dashboard' value required. Require
+  // the real shared value (matches the check agent.js already uses).
+  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

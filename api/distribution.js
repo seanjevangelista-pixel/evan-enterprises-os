@@ -27,7 +27,13 @@ export default async function handler(req, res) {
   // on other admin routes (email.js, integrations.js), so any caller who
   // knew the URL could read the full subscriber list (names, emails, Square
   // IDs, billing dates) or fire off a paid Resend blast. Gate them the same way.
-  if (action !== 'leads' && action !== 'verify' && !req.headers['x-internal-key']) {
+  //
+  // This only checked that the header was PRESENT, not that its value matched
+  // anything — so any caller could satisfy it with a junk value, no knowledge
+  // of the dashboard's actual 'dashboard' value required. Require the real
+  // shared value (matches the check agent.js already uses).
+  if (action !== 'leads' && action !== 'verify' &&
+      req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

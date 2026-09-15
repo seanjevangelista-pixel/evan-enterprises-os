@@ -1126,7 +1126,12 @@ export default async function handler(req, res) {
   // gate integrations.js already applies to monthly-report/outreach: any POST
   // without the internal-key header is refused, so this isn't sitting open on
   // the internet for anyone to fire off client emails / burn Resend quota with.
-  if (!req.headers['x-internal-key']) return res.status(401).json({ error: 'Unauthorized' });
+  //
+  // This only checked that the header was PRESENT, not that its value matched
+  // anything — so any caller could satisfy it with a junk value, no knowledge
+  // of the dashboard's actual 'dashboard' value required. Require the real
+  // shared value (matches the check agent.js already uses).
+  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) return res.status(401).json({ error: 'Unauthorized' });
 
   const action = req.query.action;
   // Wrap dispatch so a handler that throws before sending (e.g. Supabase

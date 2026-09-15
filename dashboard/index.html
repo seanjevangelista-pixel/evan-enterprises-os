@@ -4023,7 +4023,7 @@ function populateFormLeadClientFilter() {
   if (!sel) return;
   const current = sel.value;
   sel.innerHTML = '<option value="">All Clients</option>' +
-    clients.map(c => `<option value="${c.id}" ${c.id === current ? 'selected' : ''}>${c.business_name}</option>`).join('');
+    clients.map(c => `<option value="${c.id}" ${c.id === current ? 'selected' : ''}>${escHtml(c.business_name)}</option>`).join('');
 }
 
 async function loadFormLeads() {

@@ -70,6 +70,15 @@ function escHtml(s) {
   return s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+// escHtml() only guards the HTML body — the email `subject` line built from
+// the same visitor-controlled lead.name/lead.email below isn't HTML, so
+// escaping quotes/angle-brackets does nothing for it. A CR/LF there reaches
+// Resend as part of the subject header, which is exactly what email header
+// injection (adding a bogus Bcc/Content-Type/etc. line) needs.
+function stripCrlf(s) {
+  return s == null ? '' : String(s).replace(/[\r\n]+/g, ' ').trim();
+}
+
 function buildSystemPrompt(profile) {
   const servicesList = Array.isArray(profile.services) ? profile.services : [];
   const servicesText = servicesList.length
@@ -135,7 +144,7 @@ async function handle_agent_chat(req, res) {
           body: JSON.stringify({
             from: 'Evan Enterprises Chat <chat@evanenterprise.com>',
             to: ['seanjevangelista@gmail.com'],
-            subject: `${tag}New chat lead — ${profile.business_name} — ${lead.name || lead.email}`,
+            subject: `${tag}New chat lead — ${stripCrlf(profile.business_name)} — ${stripCrlf(lead.name || lead.email)}`,
             html: `<p><b>Business:</b> ${escHtml(profile.business_name)}<br><b>Name:</b> ${escHtml(lead.name) || '—'}<br><b>Email:</b> ${escHtml(lead.email) || '—'}<br><b>Phone:</b> ${escHtml(lead.phone) || '—'}</p>`,
           }),
         }).catch(() => {});

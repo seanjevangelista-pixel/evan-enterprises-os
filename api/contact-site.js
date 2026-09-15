@@ -23,7 +23,16 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server configuration error' });
   }
 
-  const subject = `New inquiry from ${name}${business ? ` — ${business}` : ''}`;
+  // escHtml() below only guards the HTML body — subject and reply_to are not
+  // HTML, so escaping quotes/angle-brackets does nothing for them. A CR/LF in
+  // name/business/email reaches Resend as part of a header field, which is
+  // exactly what email header injection (adding a bogus Bcc/Content-Type/etc.
+  // line) needs. Strip line breaks before anything goes into a header.
+  // (Same class of bug already fixed in the client-site copies of this
+  // endpoint — Premier Landscaping ATX and Mediterranean Spa.)
+  const stripCrlf = (v) => String(v ?? '').replace(/[\r\n]+/g, ' ').trim();
+
+  const subject = `New inquiry from ${stripCrlf(name)}${business ? ` — ${stripCrlf(business)}` : ''}`;
 
   const html = `
     <div style="font-family: Inter, sans-serif; max-width: 560px; color: #0F172A;">
@@ -97,7 +106,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         from: 'Evan Enterprises Website <noreply@evanenterprise.com>',
         to: ['seanjevangelista@gmail.com'],
-        reply_to: email,
+        reply_to: stripCrlf(email),
         subject,
         html,
       }),

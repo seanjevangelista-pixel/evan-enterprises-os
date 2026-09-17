@@ -638,6 +638,14 @@ let currentUser = null;
 let pendingLoginClientId = null;
 let portalEnabled = false;
 
+// lsa_leads.customer_name/customer_phone and contacts.name/phone/email can
+// originate from api/lsa-webhook.js — an unauthenticated public endpoint that
+// falls back to whatever customer_name/customer_phone the POST body sends
+// when it can't extract one from the email text — so they're attacker-
+// reachable here. Escape before landing in innerHTML, same as the fix
+// already applied to this data in dashboard/index.html.
+const escHtml = s => s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
 // ── Supabase client (minimal) ──────────────────────────────────────────────
 function supabase() {
   if (!sb) {
@@ -1110,9 +1118,9 @@ async function loadLeadsTab() {
           const statusCls = l.status==='booked' ? 'badge-green' : l.status==='new' ? 'badge-blue' : 'badge-muted';
           return `<tr style="border-bottom:1px solid var(--border)">
             <td style="padding:11px 12px;font-size:12px;font-family:monospace;color:var(--muted)">${date}</td>
-            <td style="padding:11px 12px;font-size:13px;color:var(--muted)">${l.clients?.business_name||'—'}</td>
-            <td style="padding:11px 12px;font-size:13px;font-weight:500">${l.customer_name||'—'}</td>
-            <td style="padding:11px 12px;font-size:12px;font-family:monospace">${l.customer_phone ? `<a href="tel:${l.customer_phone}" style="color:var(--green);text-decoration:none">${l.customer_phone}</a>` : '—'}</td>
+            <td style="padding:11px 12px;font-size:13px;color:var(--muted)">${escHtml(l.clients?.business_name)||'—'}</td>
+            <td style="padding:11px 12px;font-size:13px;font-weight:500">${escHtml(l.customer_name)||'—'}</td>
+            <td style="padding:11px 12px;font-size:12px;font-family:monospace">${l.customer_phone ? `<a href="tel:${escHtml(l.customer_phone)}" style="color:var(--green);text-decoration:none">${escHtml(l.customer_phone)}</a>` : '—'}</td>
             <td style="padding:11px 12px"><span class="card-badge badge-blue">${l.lead_type||'Lead'}</span></td>
             <td style="padding:11px 12px"><span class="card-badge ${statusCls}">${l.status||'new'}</span></td>
           </tr>`;
@@ -1213,11 +1221,11 @@ async function loadContactsTab() {
       </tr></thead>
       <tbody>
         ${contacts.map(c => `<tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:11px 12px;font-size:13px;font-weight:500">${c.name || '—'}</td>
-          <td style="padding:11px 12px;font-size:12px;font-family:monospace">${c.phone ? `<a href="tel:${c.phone}" style="color:var(--green);text-decoration:none">${c.phone}</a>` : '—'}</td>
-          <td style="padding:11px 12px;font-size:12px;color:var(--muted)">${c.email || '—'}</td>
-          <td style="padding:11px 12px;font-size:13px;color:var(--muted)">${c.clients?.business_name || '—'}</td>
-          <td style="padding:11px 12px"><span class="card-badge badge-blue">${c.source || 'manual'}</span></td>
+          <td style="padding:11px 12px;font-size:13px;font-weight:500">${escHtml(c.name) || '—'}</td>
+          <td style="padding:11px 12px;font-size:12px;font-family:monospace">${c.phone ? `<a href="tel:${escHtml(c.phone)}" style="color:var(--green);text-decoration:none">${escHtml(c.phone)}</a>` : '—'}</td>
+          <td style="padding:11px 12px;font-size:12px;color:var(--muted)">${escHtml(c.email) || '—'}</td>
+          <td style="padding:11px 12px;font-size:13px;color:var(--muted)">${escHtml(c.clients?.business_name) || '—'}</td>
+          <td style="padding:11px 12px"><span class="card-badge badge-blue">${escHtml(c.source) || 'manual'}</span></td>
           <td style="padding:11px 12px"><span class="card-badge ${c.opted_out ? 'badge-muted' : 'badge-green'}">${c.opted_out ? 'Opted out' : 'Active'}</span></td>
         </tr>`).join('')}
       </tbody>

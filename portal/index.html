@@ -384,6 +384,14 @@ const SUPABASE_URL  = 'https://hzcgdnhecgewqpcnumwm.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6Y2dkbmhlY2dld3FwY251bXdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2Nzk0MDgsImV4cCI6MjA5ODI1NTQwOH0.ZrpEnLvudbGYZJGf1Rr-cAEJkgbXX5Gvt9mWSAzYnW4';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
+// lsaAll[].customer_name/customer_phone (rendered below as lead.name/lead.phone)
+// originate from api/lsa-webhook.js — an unauthenticated public endpoint that falls
+// back to whatever customer_name/customer_phone the inbound POST body sends when it
+// can't extract one from the email text — so they're attacker-reachable here, and
+// this page is the one real clients log into. Escape before landing in innerHTML,
+// same reasoning as the dashboard/admin fixes for this same data.
+const escHtml = s => s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
 // ── Auth ──────────────────────────────────────────────────────────
 async function portalLogin() {
   const email = document.getElementById('p-email').value.trim();
@@ -673,14 +681,14 @@ function renderLeads(leads, filter) {
     const d = new Date(l.date);
     const label = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
     const icon = l.source === 'lsa' ? '📢' : '📞';
-    const phone = l.phone ? `<a href="tel:${l.phone}" class="lead-phone">${l.phone}</a>` : '<span style="color:var(--text3);font-size:12px">—</span>';
+    const phone = l.phone ? `<a href="tel:${escHtml(l.phone)}" class="lead-phone">${escHtml(l.phone)}</a>` : '<span style="color:var(--text3);font-size:12px">—</span>';
     return `<div class="lead-row">
       <div class="lead-date">${label}</div>
       <div class="lead-main">
         <div class="lead-source ${l.source}">${icon}</div>
         <div>
-          <div class="lead-name">${l.name}</div>
-          <div class="lead-type">${l.type}</div>
+          <div class="lead-name">${escHtml(l.name)}</div>
+          <div class="lead-type">${escHtml(l.type)}</div>
         </div>
       </div>
       ${phone}

@@ -874,7 +874,13 @@ const OUTREACH_FOLLOWUP_DELAY_DAYS = 4;
 
 async function handle_outreach_cron(req, res) {
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && req.headers['authorization'] !== `Bearer ${cronSecret}`) {
+  // If CRON_SECRET was never set in Vercel, `cronSecret && ...` short-circuited to
+  // false and skipped the check entirely — leaving this endpoint (fires real cold-
+  // outreach emails from Sean's domain to every pending/stale lead in Supabase, no
+  // method restriction) wide open to any caller on the internet. Same "unset secret
+  // means wide open by default" gap already fixed for api/agent.js's handle_agent_report
+  // — require the secret to actually be configured and match.
+  if (!cronSecret || req.headers['authorization'] !== `Bearer ${cronSecret}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

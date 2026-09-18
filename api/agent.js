@@ -418,6 +418,17 @@ async function handle_agent_review(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
 
+  // This fires a real Twilio SMS — to any customer_phone the caller supplies,
+  // with attacker-controlled business_name/customer_name/review_link folded
+  // into the message body — and had no auth check at all, unlike every other
+  // message-sending action in this codebase (email.js review-request,
+  // messenger.js send_campaign, agent.js report/lead). Anyone who found the
+  // URL could burn Sean's Twilio quota sending arbitrary text to arbitrary
+  // numbers. Require the same shared x-internal-key value the dashboard sends.
+  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   const twilioSid   = process.env.TWILIO_ACCOUNT_SID;
   const twilioToken = process.env.TWILIO_AUTH_TOKEN;
   const twilioFrom  = process.env.TWILIO_PHONE_NUMBER;

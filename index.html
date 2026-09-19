@@ -94,21 +94,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92)
 .svc-go:hover{text-decoration:underline;text-underline-offset:4px}
 @media(max-width:900px){.mkt-grid{grid-template-columns:1fr}}
 
-/* ── widget nudge ── */
-.nudge{margin-top:32px;display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:13px;color:var(--dim);border:1px dashed var(--hair);padding:10px 16px}
-.nudge b{color:var(--silver);font-weight:500}
-
-/* ── faq ── */
-.faq{border-top:1px solid var(--ink)}
-.faq-item{border-bottom:1px solid var(--hair)}
-.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 0;background:none;border:0;cursor:pointer;color:var(--white);text-align:left;font-family:var(--fb);font-size:17px;font-weight:600}
-.faq-q:hover{color:var(--silver)}
-.faq-q .x{font-family:var(--fm);font-size:20px;color:var(--silver);transition:transform .3s;flex-shrink:0}
-.faq-item.open .faq-q .x{transform:rotate(45deg)}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
-.faq-item.open .faq-a{max-height:240px}
-.faq-a p{padding:0 0 24px;font-size:15.5px;color:var(--body);max-width:66ch}
-
 /* ── urgency ── */
 .urgency{display:inline-flex;align-items:center;gap:9px;font-family:var(--fm);font-size:12px;letter-spacing:.04em;color:var(--silver);background:rgba(218,220,224,.08);border:1px solid rgba(218,220,224,.28);padding:7px 13px;margin-top:18px}
 .urgency i{width:6px;height:6px;border-radius:50%;background:var(--silver);animation:blip 1.7s infinite}
@@ -251,38 +236,6 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
   </div>
 </section>
 
-<!-- FAQ -->
-<section class="sec">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">Before you ask</div>
-      <h2 class="disp">Questions worth<br>answering upfront.</h2>
-    </div>
-    <div class="faq rv" id="faq">
-      <div class="faq-item">
-        <button class="faq-q" type="button">How fast can this go live?<span class="x">+</span></button>
-        <div class="faq-a"><p>Most businesses are live within a week. The only real wait is carrier approval for text messaging — that's out of anyone's hands, mine included, and usually clears in a few business days.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button">Do I need a new phone number?<span class="x">+</span></button>
-        <div class="faq-a"><p>No. We connect to your existing business line. Your customers dial the same number they always have.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button">Is there a contract?<span class="x">+</span></button>
-        <div class="faq-a"><p>No long-term contract. Cancel anytime — I'd rather earn the renewal every month than lock you in.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button">What if the bot doesn't know an answer?<span class="x">+</span></button>
-        <div class="faq-a"><p>It never guesses. If it's unsure, it takes the customer's name and number and flags it for a human — you.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button">Who's actually checking the bot's work?<span class="x">+</span></button>
-        <div class="faq-a"><p>I am, weekly. I skim real conversations and tighten anything that needs it. The bot doesn't retrain itself behind your back — every change is one I've approved.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- PROOF -->
 <section class="sec">
   <div class="wrap">
@@ -415,20 +368,6 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
     es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
   },{threshold:.12});
   document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
-})();
-
-// ── faq accordion ──
-(function(){
-  var faq=document.getElementById('faq');
-  if(!faq) return;
-  faq.querySelectorAll('.faq-q').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var item=btn.closest('.faq-item');
-      var wasOpen=item.classList.contains('open');
-      faq.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
-      if(!wasOpen) item.classList.add('open');
-    });
-  });
 })();
 
 // ── contact form → /api/contact-site ──

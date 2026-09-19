@@ -332,7 +332,7 @@ async function handle_agent_report(req, res) {
   body{font-family:Inter,Arial,sans-serif;background:#F5F7FC;margin:0;padding:32px}
   .wrap{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb}
   .header{background:#0D1117;padding:28px 32px;display:flex;align-items:center;gap:12px}
-  .header h1{color:#fff;font-size:16px;font-weight:700;margin:0;letter-spacing:0.1em}
+  .h1{color:#fff;font-size:16px;font-weight:700;margin:0;letter-spacing:0.1em}
   .header .sub{color:#6B7280;font-size:11px;margin-top:2px}
   .body{padding:32px}
   .month{font-size:22px;font-weight:700;color:#0D1117;margin-bottom:4px}
@@ -348,7 +348,7 @@ async function handle_agent_report(req, res) {
 <div class="wrap">
   <div class="header">
     <div>
-      <div class="header h1">EVAN ENTERPRISES LLC</div>
+      <div class="h1">EVAN ENTERPRISES LLC</div>
       <div class="sub">Monthly Performance Report</div>
     </div>
   </div>

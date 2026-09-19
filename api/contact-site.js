@@ -34,6 +34,17 @@ export default async function handler(req, res) {
 
   const subject = `New inquiry from ${stripCrlf(name)}${business ? ` — ${stripCrlf(business)}` : ''}`;
 
+  // A malformed reply_to (this endpoint is public and unauthenticated, so a raw
+  // POST can send anything regardless of the form's type="email" validation)
+  // makes Resend reject the whole request with a 422 — the entire notification,
+  // not just the reply-to header, silently never reaches Sean. Only set reply_to
+  // when the address is well formed; the address is still shown in the email
+  // body either way. Same fix already applied to Premier Landscaping ATX's and
+  // Mediterranean Spa's copies of this endpoint — missed here.
+  const replyTo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim())
+    ? stripCrlf(email)
+    : undefined;
+
   const html = `
     <div style="font-family: Inter, sans-serif; max-width: 560px; color: #0F172A;">
       <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px; color: #0F172A;">
@@ -106,7 +117,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         from: 'Evan Enterprises Website <noreply@evanenterprise.com>',
         to: ['seanjevangelista@gmail.com'],
-        reply_to: stripCrlf(email),
+        reply_to: replyTo,
         subject,
         html,
       }),

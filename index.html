@@ -47,11 +47,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92)
 .nav-in{max-width:var(--max);margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
 .logo{font-family:var(--fd);font-size:19px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
 .logo img{width:26px;height:26px;object-fit:contain}
-.logo b{color:var(--silver);font-weight:400}
+.logo b{color:var(--accent);font-weight:400}
 .nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--dim);font-weight:500}
 .nav-links a:hover{color:var(--white)}
-.nav-cta{background:var(--silver);color:var(--on-silver);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
-.nav-cta:hover{background:#EEEFF1;color:var(--on-silver)}
+.nav-cta{background:var(--accent);color:var(--on-accent);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
+.nav-cta:hover{background:#4A6BF0;color:var(--on-accent)}
 .burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
 .burger span{display:block;width:23px;height:2px;background:var(--white)}
 .mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--hair);background:var(--panel)}
@@ -236,18 +236,14 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
   <div class="nav-in">
     <a href="/" class="logo"><img src="logo-mark.png" alt="">Evan<b>·</b>Enterprises</a>
     <div class="nav-links">
-      <a href="#frontdesk">AI Front Desk</a>
       <a href="#marketing">Marketing</a>
-      <a href="#distribution">Distribution</a>
       <a href="#about">About</a>
       <a href="#contact" class="nav-cta">Book a call</a>
     </div>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#frontdesk">AI Front Desk</a>
     <a href="#marketing">Marketing</a>
-    <a href="#distribution">Distribution</a>
     <a href="#about">About</a>
     <a href="#contact">Book a call →</a>
   </div>

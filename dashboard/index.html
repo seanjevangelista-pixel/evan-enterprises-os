@@ -573,6 +573,24 @@ window.ENV = {
 // ── Shared state (written by module, read by global functions) ──
 var clients = [], visits = [];
 
+// escHtml and toast are also defined inside the module script below (module-scoped
+// bindings never attach to window), but loadCallLeads() here and the whole
+// Distribution tab further down (script block after the invite logic) run as
+// plain global scripts — every toast()/escHtml() call there threw
+// ReferenceError, so e.g. Add Lead / Archive Lead / Add Subscriber / Send Blast
+// in the Distribution tab crashed on both success and failure paths.
+function escHtml(s) { return s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = '';
+  void el.offsetWidth; // force reflow to restart animation
+  el.className = `show ${type}`;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className='', 3200);
+}
+
 // ── Global helpers exposed for non-module scripts ──
 // These are set by the module after it boots.
 window._sb          = null;   // Supabase client reference
@@ -4078,7 +4096,11 @@ function renderFormLeads() {
 }
 
 async function updateFormLeadStatus(id, status) {
-  await sb.from('form_leads').update({ status }).eq('id', id);
+  // Was fire-and-forget: a failed update (RLS, network) still updated the
+  // local array, so the dropdown looked saved while the DB silently kept the
+  // old status. Match the outreach-lead status handler's error surfacing.
+  const { error } = await sb.from('form_leads').update({ status }).eq('id', id);
+  if (error) { toast('Error: ' + error.message, 'err'); renderFormLeads(); return; }
   const lead = formLeads.find(l => l.id === id);
   if (lead) lead.status = status;
 }

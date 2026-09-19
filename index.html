@@ -61,36 +61,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92)
 
 /* ═══════════ HERO ═══════════ */
 .hero{padding:148px 0 88px}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
-.hero h1{font-size:clamp(42px,6.5vw,78px);margin:18px 0 0}
-.hero h1 em{font-style:normal;color:var(--silver)}
-.hero-sub{margin-top:22px;max-width:46ch;font-size:18px;color:var(--body)}
+.hero-h1{font-family:var(--fb);font-weight:700;font-size:clamp(38px,6vw,64px);line-height:1.15;margin:18px 0 0;letter-spacing:-.01em;max-width:16ch}
+.accent-t{color:var(--accent)}
+.hero-sub{margin-top:22px;max-width:52ch;font-size:18px;color:var(--body)}
 .hero-cta{margin-top:32px;display:flex;flex-wrap:wrap;gap:12px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15.5px;padding:14px 25px;border:0;cursor:pointer;transition:.16s}
-.btn-p{background:var(--chrome-grad);background-size:220% 100%;background-position:30% 50%;color:var(--on-silver);font-weight:700;transition:.35s}
-.btn-p:hover{background-position:70% 50%;transform:translateY(-2px)}
+.btn-p{background:var(--white);color:var(--ink);font-weight:700}
+.btn-p:hover{opacity:.85;transform:translateY(-2px)}
 .btn-p:disabled{opacity:.6;cursor:default;transform:none}
 .btn-s{border:1px solid var(--hair);color:var(--white);background:transparent}
 .btn-s:hover{border-color:var(--dim);background:var(--panel)}
-@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:40px}.hero{padding:124px 0 72px}}
-
-/* ── the board (signature) ── */
-.board{background:var(--panel);border:1px solid var(--hair);box-shadow:0 24px 60px rgba(0,0,0,.5)}
-.board-top{display:flex;align-items:center;justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--hair);background:#111112}
-.board-t{font-family:var(--fm);font-size:11.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
-.live{display:flex;align-items:center;gap:7px;font-family:var(--fm);font-size:10.5px;letter-spacing:.14em;color:var(--book);text-transform:uppercase}
-.live i{width:7px;height:7px;border-radius:50%;background:var(--book);animation:blip 1.7s infinite}
-@keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
-.brow{display:grid;grid-template-columns:60px 1fr 92px;gap:11px;align-items:center;padding:13px 17px;border-bottom:1px solid var(--hair);font-size:14px}
-.brow .t{font-family:var(--fm);font-size:12px;color:var(--dim)}
-.brow .who{font-weight:500;line-height:1.35}
-.brow .who small{display:block;color:var(--dim);font-size:12px;font-weight:400;margin-top:2px}
-.st{font-family:var(--fm);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:4px 7px;text-align:center;transition:.4s}
-.st.m{background:rgba(228,85,62,.16);color:var(--miss)}
-.st.b{background:rgba(61,209,127,.16);color:var(--book)}
-.board-foot{display:flex;align-items:center;gap:13px;padding:15px 17px;background:#111112;border-top:1px solid var(--hair)}
-.board-foot .n{font-family:var(--fd);font-size:34px;color:var(--silver);line-height:1}
-.board-foot .l{font-family:var(--fm);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);line-height:1.5}
+@media(max-width:940px){.hero{padding:124px 0 72px}}
 
 /* ═══════════ SECTIONS ═══════════ */
 .sec{padding:92px 0;border-top:1px solid var(--hair)}
@@ -251,27 +232,13 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
 
 <!-- HERO -->
 <header class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="eyebrow">AI Front Desk · Evan Enterprises LLC</div>
-      <h1 class="disp">An AI that never<br>lets a <em class="chrome">call</em><br>go unanswered.</h1>
-      <p class="hero-sub">It picks up every call, texts back the ones it misses, and books the job — instantly, day or night. Ask it something right now; the chat bubble in the corner is the real thing, not a mockup.</p>
-      <div class="hero-cta">
-        <a href="#bots" class="btn btn-p">Try the AI now →</a>
-        <a href="#contact" class="btn btn-s">Book a free call</a>
-      </div>
-    </div>
-
-    <div class="board" aria-hidden="true">
-      <div class="board-top">
-        <span class="board-t">Today's board</span>
-        <span class="live"><i></i>Live</span>
-      </div>
-      <div id="rows"></div>
-      <div class="board-foot">
-        <span class="n tnum" id="counter">0</span>
-        <span class="l">calls captured<br>that would've hit voicemail</span>
-      </div>
+  <div class="wrap">
+    <div class="eyebrow">Evan Enterprises LLC — Sean Evangelista</div>
+    <h1 class="hero-h1">Marketing built by <span class="accent-t">one person</span> who does the work.</h1>
+    <p class="hero-sub">Ad management, website builds, content creation, and UGC. No account managers, no hand-offs — every video, every ad account, every site, I build it myself.</p>
+    <div class="hero-cta">
+      <a href="#marketing" class="btn btn-p">See my work →</a>
+      <a href="#contact" class="btn btn-s">Book a call →</a>
     </div>
   </div>
 </header>
@@ -598,40 +565,6 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
       if(!wasOpen) item.classList.add('open');
     });
   });
-})();
-
-// ── the board ──
-(function(){
-  var calls=[
-    {t:'7:42a',w:'Unknown — Cedar Park',s:'Water heater leaking'},
-    {t:'11:08a',w:'Unknown — Round Rock',s:'Quote for a rebuild'},
-    {t:'1:26p',w:'Unknown — South Austin',s:'AC not cooling'},
-    {t:'6:03p',w:'Unknown — Pflugerville',s:'After-hours callback'},
-    {t:'9:17p',w:'Unknown — Kyle',s:'Drain backing up'}
-  ];
-  var rows=document.getElementById('rows');
-  if(!rows) return;
-  calls.forEach(function(c){
-    rows.insertAdjacentHTML('beforeend',
-      '<div class="brow"><span class="t tnum">'+c.t+'</span>'+
-      '<span class="who">'+c.w+'<small>'+c.s+'</small></span>'+
-      '<span class="st m">Missed</span></div>');
-  });
-  var counter=document.getElementById('counter');
-  var sts=Array.prototype.slice.call(document.querySelectorAll('.st'));
-  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce){ sts.forEach(function(s){s.className='st b';s.textContent='Booked';}); counter.textContent=sts.length; return; }
-  var n=0,i=0;
-  function flip(){
-    if(i>=sts.length) return;
-    sts[i].className='st b'; sts[i].textContent='Booked';
-    n++; counter.textContent=n; i++;
-    setTimeout(flip,900);
-  }
-  var start=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){ setTimeout(flip,700); start.disconnect(); } });
-  },{threshold:.3});
-  start.observe(rows);
 })();
 
 // ── contact form → /api/contact-site ──

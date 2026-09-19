@@ -41,7 +41,7 @@ img{max-width:100%;display:block}
 .lede{color:var(--body)}
 
 /* ═══════════ NAV ═══════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
 .nav-in{max-width:var(--max);margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
 .logo{font-family:var(--fd);font-size:19px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
 .logo img{width:26px;height:26px;object-fit:contain}
@@ -74,7 +74,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92)
 /* ═══════════ SECTIONS ═══════════ */
 .sec{padding:92px 0;border-top:1px solid var(--hair)}
 .sec-head{margin-bottom:46px}
-.sec-head h2{font-size:clamp(31px,4.5vw,50px);margin-top:13px}
+.sec-head h2{margin-top:13px}
 .sec-head .lede{margin-top:16px;max-width:58ch}
 .sec-h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4.2vw,42px);margin-top:13px;letter-spacing:-.01em;line-height:1.15}
 
@@ -108,14 +108,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92)
 
 /* ── contact ── */
 .contact-in{max-width:760px;margin:0 auto}
-.contact h2{font-size:clamp(32px,4.6vw,52px);margin-top:13px}
+.contact h2{margin-top:13px}
 .contact-sub{margin-top:16px;color:var(--body);max-width:54ch}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-family:var(--fm);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
 .field input,.field textarea{background:var(--panel);border:1px solid var(--hair);padding:13px 14px;color:var(--white);font-family:var(--fb);font-size:15.5px;resize:vertical}
 .field input:focus,.field textarea:focus{border-color:var(--accent);outline:none}
-.field input::placeholder,.field textarea::placeholder{color:#55564F}
+.field input::placeholder,.field textarea::placeholder{color:#4C4D52}
+#contactForm{margin-top:30px}
 #contactForm .btn{width:100%;margin-top:18px}
 .form-ok{display:none;background:rgba(61,209,127,.11);border:1px solid rgba(61,209,127,.35);color:#3DD17F;padding:18px;text-align:center;font-weight:600;margin-top:8px}
 .form-ok.show{display:block}
@@ -124,7 +125,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92)
 @media(max-width:700px){.frow{grid-template-columns:1fr}}
 
 /* ── footer ── */
-footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
+footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#050506}
 .foot-in{max-width:var(--max);margin:0 auto;padding:0 26px;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center}
 .foot-logo{font-family:var(--fd);font-size:18px;text-transform:uppercase;display:flex;align-items:center;gap:9px}
 .foot-logo img{width:24px;height:24px;object-fit:contain}
@@ -132,7 +133,7 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
 .foot-links a:hover,.foot-social a:hover{color:var(--white)}
 .foot-contact{font-family:var(--fm);font-size:12.5px;color:var(--dim)}
 .foot-contact a:hover{color:var(--accent)}
-.foot-copy{font-family:var(--fm);font-size:11.5px;color:#55564F}
+.foot-copy{font-family:var(--fm);font-size:11.5px;color:#4C4D52}
 
 /* ── motion ── */
 .rv{opacity:0;transform:translateY(20px);transition:.75s cubic-bezier(.22,1,.36,1)}
@@ -240,7 +241,7 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
     <div class="rv">
       <div class="eyebrow">Next step</div>
       <h2 class="sec-h2">Tell me what's leaking.</h2>
-      <p class="contact-sub">Pick what you're here for and tell me a bit about your situation. I follow up within 24 hours — you, me, no middlemen.</p>
+      <p class="contact-sub">Tell me a bit about your situation. I follow up within 24 hours — you, me, no middlemen.</p>
     </div>
     <form id="contactForm" class="rv" novalidate>
       <input type="hidden" id="svcType" name="service_type" value="marketing">

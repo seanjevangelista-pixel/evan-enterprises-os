@@ -32,7 +32,7 @@ Copy voice throughout emphasizes the solo-operator angle ("no account managers, 
    - **Ad Management** — proof: Mediterranean Spa Google Ads case study. **Caveat: that account was suspended for "Unacceptable business practices: Phishing" in Aug 2026 — confirm it's active and healthy again before publishing real metrics/claims tied to it. If unresolved, use capability/process framing instead of a results claim.**
    - **Website Building** — proof: live link to the Legacy Hardscape ATX site (now a standalone project at `~/Desktop/legacy-hardscape`, no longer inside this repo — link to the live domain, not a local path)
    - **Content Creation** — general framing, no specific case study required
-   - **UGC Work** — proof: link to `seanjevangelista-pixel.github.io/seanjayme`, plus explicit mention of Instagram/TikTok/YouTube as where his personal content lives
+   - **UGC Work** — proof: headline stat(s) pulled directly onto the card (e.g. "5.9M+ organic views", "30.9K TikTok") rather than a bare link, sourced from Sean's existing media kit at `seanjevangelista-pixel.github.io/seanjayme` — plus a "See full media kit →" link out to that site for rates/full stats, and explicit mention of Instagram/TikTok/YouTube as where his personal content lives
 3. **About** — reuse existing section (photo, bio, tags, UGC link) largely as-is, restyled to the new palette/type
 4. **Contact** — reuse existing form as-is, restyled. Remove the `svc-pick` service-picker buttons (AI Front Desk / Marketing / Distribution) entirely — the existing free-text "What do you need?" message field already captures which service someone wants, so no replacement picker is needed
 5. **Footer** — simplified; remove Distribution/old AI Front Desk links, but include the small "Try my AI chat →" call-out here (or in the hero — implementation can decide whichever reads cleaner) linking to/opening the live chat widget
@@ -61,7 +61,7 @@ Copy voice throughout emphasizes the solo-operator angle ("no account managers, 
 | Ad Management | Mediterranean Spa Google Ads results (pending account-health confirmation — see caveat above) |
 | Website Building | Live link to Legacy Hardscape ATX site |
 | Content Creation | No specific case study — general capability framing |
-| UGC Work | Link to `seanjevangelista-pixel.github.io/seanjayme` + Instagram/TikTok/YouTube mention |
+| UGC Work | Headline stats on-card (5.9M+ organic views / 30.9K TikTok) + "See full media kit →" link to `seanjevangelista-pixel.github.io/seanjayme` + Instagram/TikTok/YouTube mention |
 
 ## Out of Scope / Follow-ups
 

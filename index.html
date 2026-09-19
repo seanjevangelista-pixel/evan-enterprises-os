@@ -78,39 +78,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92)
 .sec-head{margin-bottom:46px}
 .sec-head h2{font-size:clamp(31px,4.5vw,50px);margin-top:13px}
 .sec-head .lede{margin-top:16px;max-width:58ch}
+.sec-h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4.2vw,42px);margin-top:13px;letter-spacing:-.01em;line-height:1.15}
 
-/* ── services ── */
-.svcs{display:flex;flex-direction:column;gap:18px}
-.svcs-row{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.svc{background:var(--panel);border:1px solid var(--hair);border-top:3px solid var(--silver-dim);padding:30px 26px 26px;display:flex;flex-direction:column;transition:.2s}
-.svc:hover{background:var(--raised);transform:translateY(-3px)}
-.svc.featured{border-top:3px solid transparent;border-image:var(--chrome-grad) 1;padding:40px 40px 36px;position:relative;overflow:hidden}
-.svc.featured:before{content:"";position:absolute;top:-40%;right:-15%;width:60%;height:180%;background:radial-gradient(circle,rgba(218,220,224,.05),transparent 65%);pointer-events:none}
-.svc.featured .svc-tag{color:var(--silver-dim)}
-.svc.featured h3{font-size:42px}
-.svc.featured p{font-size:16.5px;max-width:56ch}
-.svc:nth-child(2) .svc-tag{color:var(--dim)}
-.svcs-row .svc:nth-child(1){border-top-color:var(--book)}
-.svcs-row .svc:nth-child(2){border-top-color:var(--miss)}
-.svc-tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
-.svc h3{font-family:var(--fd);font-size:30px;text-transform:uppercase;margin:12px 0 11px;letter-spacing:.01em;font-weight:400}
-.svc p{font-size:15px;color:var(--body);flex:1}
-.svc-p{font-family:var(--fm);font-size:12.5px;color:var(--dim);margin:22px 0 14px;padding-top:15px;border-top:1px solid var(--hair)}
-.svc-p b{font-family:var(--fd);font-size:27px;color:var(--white);letter-spacing:.01em;font-weight:400}
-.svc.featured .svc-p b{font-size:34px}
-.svc-go{font-size:14px;font-weight:600;color:var(--silver)}
+/* ── marketing grid ── */
+.mkt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.mkt-card{background:var(--panel);border:1px solid var(--hair);padding:30px 26px;display:flex;flex-direction:column}
+.svc-tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
+.mkt-card h3{font-family:var(--fb);font-weight:600;font-size:22px;margin:12px 0 11px;letter-spacing:-.01em}
+.mkt-card p{font-size:15px;color:var(--body);flex:1}
+.mkt-stats{display:flex;gap:22px;margin:18px 0}
+.mkt-stat{display:flex;flex-direction:column}
+.mkt-stat .n{font-family:var(--fb);font-weight:700;font-size:26px;color:var(--white);line-height:1}
+.mkt-stat .l{font-family:var(--fm);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+.svc-go{font-size:14px;font-weight:600;color:var(--accent)}
 .svc-go:hover{text-decoration:underline;text-underline-offset:4px}
-@media(max-width:900px){.svcs-row{grid-template-columns:1fr}.svc.featured{padding:30px 26px 26px}.svc.featured h3{font-size:32px}}
-
-/* ── bot scenarios ── */
-.scn{display:grid;grid-template-columns:.32fr .68fr;gap:40px;padding:40px 0;border-bottom:1px solid var(--hair);align-items:start}
-.scn:last-child{border-bottom:0}
-.scn-l .nm{font-family:var(--fd);font-size:27px;text-transform:uppercase;letter-spacing:.01em;line-height:1.06}
-.scn-l .ch{display:inline-block;margin-top:11px;font-family:var(--fm);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--silver);background:rgba(218,220,224,.12);padding:4px 9px}
-.scn-r .moment{font-size:21px;line-height:1.4;color:var(--white);font-weight:500;padding-left:19px;border-left:2px solid var(--silver);text-wrap:balance}
-.scn-r .what{margin-top:17px;font-size:15.5px;color:var(--body);max-width:62ch}
-.scn-r .for{margin-top:12px;font-family:var(--fm);font-size:12.5px;color:var(--dim)}
-@media(max-width:840px){.scn{grid-template-columns:1fr;gap:18px;padding:34px 0}}
+@media(max-width:900px){.mkt-grid{grid-template-columns:1fr}}
 
 /* ── pipeline (how it works) ── */
 .pipe{position:relative;margin-top:8px;padding-left:64px}
@@ -243,100 +225,42 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
   </div>
 </header>
 
-<!-- SERVICES -->
-<section class="sec" id="services">
+<!-- MARKETING -->
+<section class="sec" id="marketing">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="eyebrow">What I run for you</div>
-      <h2 class="disp">One AI. Two more<br>ways I help.</h2>
-      <p class="lede">The AI Front Desk is the main thing — the phone is where most businesses bleed money first. Ads and product leads are here if you want the full picture.</p>
+      <div class="eyebrow">What I do</div>
+      <h2 class="sec-h2">One person. Every part<br>of your marketing.</h2>
+      <p class="lede">Ad management, website builds, content creation, and UGC — no account managers, no hand-offs. You work directly with me on every part of it.</p>
     </div>
-    <div class="svcs rv">
-      <div class="svc featured" id="frontdesk">
-        <div class="svc-tag">Answer the phone — automatically</div>
-        <h3>AI Front Desk</h3>
-        <p>Five bots that answer calls, text back missed callers, chat on your site, work cold quotes, and collect reviews — all reading the same brief about your business. This is what's live in the corner of this page right now.</p>
-        <div class="svc-p"><b>$299</b> /mo · per business</div>
-        <a href="#bots" class="svc-go">See all five bots →</a>
-        <div class="urgency"><i></i>Onboarding a limited number of businesses this month</div>
+    <div class="mkt-grid rv">
+      <div class="mkt-card">
+        <div class="svc-tag">Ad Management</div>
+        <h3>Google Ads &amp; Instagram, run end to end</h3>
+        <p>Strategy, creative, and daily optimization — managed personally, not handed off to a junior account rep. Real numbers, no fluff.</p>
       </div>
-      <div class="svcs-row">
-        <div class="svc" id="marketing">
-          <div class="svc-tag">Fill the schedule</div>
-          <h3>Marketing</h3>
-          <p>Google Search, Local Service Ads and Meta, managed end to end — with a live dashboard so you never wait on a monthly report to know your numbers. You own the accounts.</p>
-          <div class="svc-p"><b>$500</b> /mo · from · + ad spend</div>
-          <a href="#contact" class="svc-go">See what's included →</a>
-        </div>
-        <div class="svc" id="distribution">
-          <div class="svc-tag">Widen the margin</div>
-          <h3>Distribution</h3>
-          <p>Vetted Amazon, Walmart and eBay product leads every month — buy price, sell price, fees and ROI already worked out. Exclusive to subscribers, never published.</p>
-          <div class="svc-p"><b>$99</b> /mo · cancel anytime</div>
-          <a href="#contact" class="svc-go">Get this month's leads →</a>
-        </div>
+      <div class="mkt-card">
+        <div class="svc-tag">Website Building</div>
+        <h3>Custom sites, built and shipped by me</h3>
+        <p>From design to launch — a real example of the work:</p>
+        <a href="https://legacyhardscapeatx.com" target="_blank" rel="noopener" class="svc-go">See a live build → legacyhardscapeatx.com</a>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- BOTS -->
-<section class="sec" id="bots">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">The AI Front Desk, bot by bot</div>
-      <h2 class="disp">Five bots. One brief<br>about your business.</h2>
-      <p class="lede">They read the same file — your hours, your prices, your service area — so the answer is the same whichever way a customer reaches you. Take the whole suite, or start with the one that's costing you most.</p>
-    </div>
-
-    <div class="rv">
-      <div class="scn">
-        <div class="scn-l"><div class="nm">Missed-call<br>text-back</div><span class="ch">SMS</span></div>
-        <div class="scn-r">
-          <p class="moment">You're under a sink with both hands wet. The phone rings out.</p>
-          <p class="what">Before they can dial the next name on the list, they get a text from your business asking what they need — and the conversation keeps going until the job is booked.</p>
-          <p class="for">Best for: anyone whose work makes answering the phone impossible.</p>
-        </div>
+      <div class="mkt-card">
+        <div class="svc-tag">Content Creation</div>
+        <h3>Brand and marketing content</h3>
+        <p>Photo, video, and copy for your brand's own channels — planned and produced around what you're actually trying to sell.</p>
       </div>
-
-      <div class="scn">
-        <div class="scn-l"><div class="nm">AI<br>receptionist</div><span class="ch">Voice</span></div>
-        <div class="scn-r">
-          <p class="moment">It's 9:40 on a Sunday night and somebody's kitchen is flooding.</p>
-          <p class="what">It picks up in your business's voice, quotes your real prices, and books the slot. When it's a genuine emergency, it rings your cell and hands the call over warm instead of taking a message.</p>
-          <p class="for">Best for: the nights and weekends currently going to voicemail.</p>
+      <div class="mkt-card">
+        <div class="svc-tag">UGC Work</div>
+        <h3>Video content, backed by my own numbers</h3>
+        <p>I create UGC and personal content across Instagram, TikTok, and YouTube — this isn't theoretical:</p>
+        <div class="mkt-stats">
+          <div class="mkt-stat"><span class="n">5.9M+</span><span class="l">Organic views</span></div>
+          <div class="mkt-stat"><span class="n">30.9K</span><span class="l">TikTok followers</span></div>
         </div>
-      </div>
-
-      <div class="scn">
-        <div class="scn-l"><div class="nm">Website<br>chatbot</div><span class="ch">Web chat</span></div>
-        <div class="scn-r">
-          <p class="moment">Someone clicked your ad, read two lines, and reached for the chat box.</p>
-          <p class="what">It answers what they actually asked and books the job without a contact form. When it doesn't know something, it takes their number instead of making an answer up.</p>
-          <p class="for">Best for: converting the traffic you're already paying for.</p>
-        </div>
-      </div>
-
-      <div class="scn">
-        <div class="scn-l"><div class="nm">Follow-up<br>bot</div><span class="ch">SMS + Email</span></div>
-        <div class="scn-r">
-          <p class="moment">You sent the estimate eleven days ago. Nothing since.</p>
-          <p class="what">It checks back on a schedule, answers whatever question stalled them, and books the work when they're ready — so you're not the one doing the chasing.</p>
-          <p class="for">Best for: the quotes sitting quiet in your inbox right now.</p>
-        </div>
-      </div>
-
-      <div class="scn">
-        <div class="scn-l"><div class="nm">Review<br>bot</div><span class="ch">SMS + Email</span></div>
-        <div class="scn-r">
-          <p class="moment">The job went well. Nobody ever asks for the review.</p>
-          <p class="what">It asks once the work is done. Happy customers get your Google link; anyone unhappy gets routed straight to you — before they write it up in public.</p>
-          <p class="for">Best for: climbing the map pack without chasing anyone yourself.</p>
-        </div>
+        <a href="https://seanjevangelista-pixel.github.io/seanjayme/" target="_blank" rel="noopener" class="svc-go">See full media kit →</a>
       </div>
     </div>
-
-    <div class="nudge rv">↘ <b>Try it yourself</b> — open the chat bubble in the corner and ask it a real question.</div>
   </div>
 </section>
 

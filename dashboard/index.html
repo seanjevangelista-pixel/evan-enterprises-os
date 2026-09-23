@@ -3457,7 +3457,7 @@ $('load-payments-btn').addEventListener('click', async () => {
 
   try {
     const params = new URLSearchParams({ action:'square', endpoint:'payments', begin_time:begin, end_time:end });
-    const res  = await fetch(`/api/integrations?${params}`);
+    const res  = await fetch(`/api/integrations?${params}`, { headers: { 'x-internal-key': 'dashboard' } });
     const data = await res.json();
     // A failed lookup is NOT the same as a month with no revenue. A missing
     // SQUARE_ACCESS_TOKEN answers 500 {error}, and an expired or revoked token

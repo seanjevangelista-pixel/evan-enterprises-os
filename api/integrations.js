@@ -949,6 +949,13 @@ async function handle_media(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  // Had no auth check — sub=upload writes arbitrary files straight into
+  // Sean's Supabase storage bucket with no auth, and sub=sign hands out a
+  // signed upload URL for the same. Same guard as the rest of this file.
+  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   const { sub } = req.query;
 
   // POST ?action=media&sub=upload — upload image as base64
@@ -1039,6 +1046,13 @@ async function handle_buffer(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Had no auth check — sub=post publishes to Sean's connected social
+  // channels and sub=delete removes scheduled posts, both with no auth.
+  // Same guard as the rest of this file.
+  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
   if (!BUFFER_TOKEN) return res.status(500).json({ error: 'BUFFER_ACCESS_TOKEN not set in Vercel env vars' });
 
@@ -1163,6 +1177,15 @@ async function handle_square(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Unlike every other action in this file (monthly-report, outreach, etc.)
+  // this had no auth check at all — it proxies real Square payment/invoice
+  // data (amounts, customer names, receipt info), so anyone who found the
+  // URL could pull Sean's transaction history with a plain GET. Same guard
+  // as the rest of this file.
+  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
   const token = process.env.SQUARE_ACCESS_TOKEN;
   if (!token) return res.status(500).json({ error: 'Square not configured' });

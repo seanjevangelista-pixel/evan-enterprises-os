@@ -16,6 +16,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+/* Decide before first paint whether the logo intro cover should even show —
+   otherwise a repeat visit this session (or reduced-motion) briefly flashes
+   the cover before JS removes it a moment later. */
+(function () {
+  try {
+    var skip = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      sessionStorage.getItem('lh-intro-played');
+    if (skip) document.documentElement.classList.add('no-intro-cover');
+  } catch (e) {}
+})();
+</script>
 <style>
 :root{
   /* Simple 3-color system: black, white, orange — every other token below
@@ -265,6 +277,35 @@ footer{background:var(--ink);color:rgba(255,255,255,.65);padding-top:56px}
 .cat-title{position:relative;display:inline-block}
 .cat-title:after{content:"";position:absolute;left:0;bottom:-6px;width:36px;height:3px;background:var(--accent);border-radius:2px}
 
+/* ── logo intro (homepage only) ── */
+/* Real nav logo stays invisible until the intro finishes (or immediately on
+   a reduced-motion / repeat-session load) — CSS applies at first paint so
+   it never flashes in before JS hides it. */
+body:not(.is-ready) [data-logo-intro]{opacity:0}
+@media(prefers-reduced-motion:reduce){body:not(.is-ready) [data-logo-intro]{opacity:1}}
+
+.logo-intro-cover{position:fixed;inset:0;z-index:997;background:var(--cream);opacity:1;transition:opacity .6s var(--ease);pointer-events:none}
+.logo-intro-cover.is-hidden{opacity:0}
+html.no-intro-cover .logo-intro-cover{display:none}
+
+.logo-intro-overlay{position:fixed;inset:0;z-index:998;background:var(--cream);pointer-events:none;animation:logoIntroBackdrop 1.5s ease forwards}
+@keyframes logoIntroBackdrop{0%,45%{opacity:1}85%,100%{opacity:0}}
+
+.logo-intro-clone{position:fixed;display:flex;align-items:center;justify-content:center;margin:0;z-index:999;pointer-events:none;transform-origin:center center;opacity:0;animation:logoIntroMove 1.5s cubic-bezier(.16,1,.3,1) forwards,logoIntroFade 1.5s linear forwards}
+@keyframes logoIntroMove{0%,45%{transform:translate(var(--logo-intro-dx),var(--logo-intro-dy)) scale(var(--logo-intro-scale))}100%{transform:translate(0,0) scale(1)}}
+@keyframes logoIntroFade{0%{opacity:0}18%{opacity:1}76%{opacity:1}100%{opacity:0}}
+
+/* Nav links wave in from the right, toward the logo, once it settles —
+   only on the first page of a visit; skipped on repeat/reduced-motion. */
+body:not(.is-ready) .nav-links>a{opacity:0}
+body.is-ready--repeat .nav-links>a{opacity:1}
+body.is-ready:not(.is-ready--repeat) .nav-links>a{animation:navLinkIn .8s var(--ease) both}
+@keyframes navLinkIn{0%{opacity:0;transform:translateX(28px)}100%{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){
+  body:not(.is-ready) .nav-links>a{opacity:1}
+  body.is-ready .nav-links>a{animation:none}
+}
+
 /* ── success modal ── */
 #success-modal{position:fixed;inset:0;z-index:210;background:rgba(20,20,19,.72);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
 #success-modal.open{display:flex}
@@ -317,9 +358,11 @@ footer{background:var(--ink);color:rgba(255,255,255,.65);padding-top:56px}
 </head>
 <body>
 
+<div class="logo-intro-cover" aria-hidden="true"></div>
+
 <nav>
   <div class="nav-in">
-    <a class="logo" href="/">Legacy <span>Hardscape</span> ATX</a>
+    <a class="logo" href="/" data-logo-intro>Legacy <span>Hardscape</span> ATX</a>
     <div class="nav-links">
       <a href="#services">Services</a>
       <a href="#gallery">Gallery</a>
@@ -695,6 +738,93 @@ footer{background:var(--ink);color:rgba(255,255,255,.65);padding-top:56px}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
 <script>
+// Homepage logo intro — starts big & centered, settles into the nav on
+// load, then the nav links wave in from the right toward it.
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function markReady(repeat){
+    document.body.classList.add('is-ready');
+    if (repeat) document.body.classList.add('is-ready--repeat');
+  }
+
+  const target = document.querySelector('[data-logo-intro]');
+  const cover = document.querySelector('.logo-intro-cover');
+
+  function skipCover(){
+    if (cover && cover.parentNode) cover.parentNode.removeChild(cover);
+  }
+
+  if (!target || reduced || sessionStorage.getItem('lh-intro-played')) {
+    skipCover();
+    markReady(true);
+    return;
+  }
+  sessionStorage.setItem('lh-intro-played', '1');
+
+  function run(){
+    const rect = target.getBoundingClientRect();
+    if (!rect.width) { skipCover(); markReady(true); return; }
+
+    target.style.opacity = '0';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'logo-intro-overlay';
+
+    const clone = target.cloneNode(true);
+    clone.removeAttribute('data-logo-intro');
+    clone.className += ' logo-intro-clone';
+    clone.style.left = rect.left + 'px';
+    clone.style.top = rect.top + 'px';
+    clone.style.width = rect.width + 'px';
+    clone.style.height = rect.height + 'px';
+
+    const scale = Math.min(2.6, (window.innerWidth * 0.7) / rect.width);
+    const finalCenterX = rect.left + rect.width / 2;
+    const finalCenterY = rect.top + rect.height / 2;
+    const dx = window.innerWidth / 2 - finalCenterX;
+    const dy = window.innerHeight / 2 - finalCenterY;
+
+    clone.style.setProperty('--logo-intro-dx', dx.toFixed(2) + 'px');
+    clone.style.setProperty('--logo-intro-dy', dy.toFixed(2) + 'px');
+    clone.style.setProperty('--logo-intro-scale', String(scale));
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(clone);
+
+    setTimeout(function(){
+      target.style.transition = 'opacity 0.4s linear';
+      target.style.opacity = '1';
+    }, 1150);
+
+    let done = false;
+    function finish(){
+      if (done) return;
+      done = true;
+      target.style.opacity = '';
+      target.style.transition = '';
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      if (clone.parentNode) clone.parentNode.removeChild(clone);
+
+      if (cover) {
+        cover.classList.add('is-hidden');
+        setTimeout(function(){
+          if (cover.parentNode) cover.parentNode.removeChild(cover);
+        }, 600);
+      }
+      markReady(false);
+    }
+    clone.addEventListener('animationend', finish);
+    setTimeout(finish, 2000);
+  }
+
+  if (document.fonts && document.fonts.status !== 'loaded') {
+    document.fonts.ready.then(run);
+  } else {
+    run();
+  }
+})();
+
 (function(){
   const BOT_SLUG = 'legacy-hardscape-atx';
   const launcher = document.getElementById('chat-launcher');

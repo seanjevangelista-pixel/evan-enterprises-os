@@ -262,6 +262,21 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
 .cat-title{position:relative;display:inline-block}
 .cat-title:after{content:"";position:absolute;left:0;bottom:-6px;width:36px;height:3px;background:var(--accent);border-radius:2px}
 
+/* ── success modal ── */
+#success-modal{position:fixed;inset:0;z-index:210;background:rgba(33,30,26,.72);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+#success-modal.open{display:flex}
+.success-card{background:#fff;border-radius:8px;max-width:400px;width:100%;padding:44px 32px 36px;text-align:center;box-shadow:0 30px 70px rgba(33,30,26,.4);transform:scale(.9);opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s}
+#success-modal.open .success-card{transform:scale(1);opacity:1}
+.success-check{width:72px;height:72px;margin:0 auto 22px}
+.success-check circle{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-dasharray:166;stroke-dashoffset:166;transition:stroke-dashoffset .5s ease .1s}
+.success-check path{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:48;stroke-dashoffset:48;transition:stroke-dashoffset .35s ease .5s}
+#success-modal.open .success-check circle{stroke-dashoffset:0}
+#success-modal.open .success-check path{stroke-dashoffset:0}
+.success-card h3{font-family:var(--fd);font-size:24px;font-weight:700;margin-bottom:10px}
+.success-card p{font-size:14.5px;color:var(--body);line-height:1.55}
+.success-card .btn{margin-top:24px;width:100%}
+@media(prefers-reduced-motion:reduce){.success-card{transition:none;transform:none;opacity:1}.success-check circle,.success-check path{transition:none}}
+
 /* ── lightbox ── */
 #lightbox{position:fixed;inset:0;z-index:200;background:rgba(17,15,12,.94);display:none;align-items:center;justify-content:center;padding:60px 20px}
 #lightbox.open{display:flex}
@@ -479,6 +494,18 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
     <img id="lb-img" src="" alt="">
     <figcaption id="lb-caption"></figcaption>
   </figure>
+</div>
+
+<div id="success-modal" role="dialog" aria-modal="true" aria-label="Quote request sent" aria-hidden="true">
+  <div class="success-card">
+    <svg class="success-check" viewBox="0 0 60 60" aria-hidden="true">
+      <circle cx="30" cy="30" r="26"/>
+      <path d="M18 31 L26 39 L42 21"/>
+    </svg>
+    <h3>Request Sent</h3>
+    <p>Thanks — we've got your project details and will be in touch shortly to schedule your free on-site quote.</p>
+    <button type="button" class="btn btn-p" id="success-close">Done</button>
+  </div>
 </div>
 
 <section class="sec" style="border-top:1px solid var(--hair)">
@@ -736,6 +763,25 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
 })();
 
+// Success modal (shown after a quote form submission succeeds)
+(function(){
+  const modal = document.getElementById('success-modal');
+  const closeBtn = document.getElementById('success-close');
+  if (!modal || !closeBtn) return;
+
+  function close(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) close();
+  });
+})();
+
 // Gallery lightbox
 (function(){
   const items = Array.from(document.querySelectorAll('.gallery button'));
@@ -929,9 +975,11 @@ document.getElementById('quote-form').addEventListener('submit', async function(
     });
     const data = await r.json();
     if (data.ok) {
-      status.textContent = "Thanks! We'll be in touch shortly.";
-      status.className = 'ok';
       e.target.reset();
+      const modal = document.getElementById('success-modal');
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
     } else {
       status.textContent = data.error || 'Something went wrong — try again.';
       status.className = 'err';

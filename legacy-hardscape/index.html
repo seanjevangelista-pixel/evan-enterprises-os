@@ -84,6 +84,9 @@ nav{position:sticky;top:0;z-index:70;background:rgba(255,255,255,.94);backdrop-f
 .hero h1 em{font-style:italic;color:var(--accent)}
 .hero-sub{margin-top:18px;max-width:44ch;font-size:17px;color:var(--body)}
 .hero-cta{margin-top:30px;display:flex;flex-wrap:wrap;gap:12px}
+.hero-trust{margin-top:22px;display:flex;flex-wrap:wrap;gap:18px 26px}
+.hero-trust span{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--body)}
+.hero-trust svg{width:16px;height:16px;color:var(--accent);flex-shrink:0}
 .hero-img{border-radius:4px;overflow:hidden;box-shadow:0 30px 60px rgba(20,20,19,.25);height:520px;position:relative}
 .hero-img img{width:100%;height:130%;object-fit:cover;position:absolute;top:-15%;left:0}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.hero-img{height:340px}}
@@ -381,7 +384,12 @@ body.is-ready:not(.is-ready--repeat) .nav-links>a{animation:navLinkIn .8s var(--
       <p class="hero-sub">We design and build the hardscape and outdoor living spaces that define a property for decades — not the ones that need replacing in five years.</p>
       <div class="hero-cta">
         <a href="tel:+17374284707" class="btn btn-p">📞 Call (737) 428-4707</a>
-        <a href="#quote" class="btn btn-s">Request a Quote</a>
+        <a href="#quote" class="btn btn-s">Get My Free Quote</a>
+      </div>
+      <div class="hero-trust">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.4 9 8 10 4.6-1 8-5 8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Licensed &amp; Insured</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>4 Years in Austin</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>28+ Projects Done</span>
       </div>
     </div>
     <div class="hero-img">

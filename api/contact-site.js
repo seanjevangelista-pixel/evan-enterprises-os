@@ -24,13 +24,21 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server configuration error' });
   }
 
-  // Recipient is chosen from this server-side map, never from the request body —
-  // this endpoint is public and unauthenticated, so trusting a client-supplied
-  // "to" address would turn it into an open relay for spam to arbitrary inboxes.
-  const RECIPIENTS_BY_BUSINESS = {
-    'Legacy Hardscape ATX': ['legacyhardscapeatx@gmail.com'],
+  // Recipient and sending address are chosen from this server-side map, never
+  // from the request body — this endpoint is public and unauthenticated, so
+  // trusting a client-supplied "to"/"from" would turn it into an open relay.
+  // The "from" domain must be Verified in Resend or sending fails outright.
+  const EMAIL_CONFIG_BY_BUSINESS = {
+    'Legacy Hardscape ATX': {
+      to: ['legacyhardscapeatx@gmail.com'],
+      from: 'Legacy Hardscape ATX <noreply@legacyhardscapeatx.com>',
+    },
   };
-  const to = RECIPIENTS_BY_BUSINESS[business] || ['seanjevangelista@gmail.com'];
+  const emailConfig = EMAIL_CONFIG_BY_BUSINESS[business] || {
+    to: ['seanjevangelista@gmail.com'],
+    from: 'Evan Enterprises Website <noreply@evanenterprise.com>',
+  };
+  const { to, from } = emailConfig;
 
   // escHtml() below only guards the HTML body — subject and reply_to are not
   // HTML, so escaping quotes/angle-brackets does nothing for them. A CR/LF in
@@ -124,7 +132,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Evan Enterprises Website <noreply@evanenterprise.com>',
+        from,
         to,
         reply_to: replyTo,
         subject,

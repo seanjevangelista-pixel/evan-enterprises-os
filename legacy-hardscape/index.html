@@ -91,8 +91,10 @@ nav{position:sticky;top:0;z-index:70;background:rgba(247,243,236,.94);backdrop-f
 .svc-body{padding:18px 20px 20px}
 .svc h3{font-family:var(--fd);font-size:19px;font-weight:600;margin-bottom:6px}
 .svc p{font-size:13.5px;color:var(--body)}
-.svc-mark{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--wood) 0%,var(--ink) 100%)}
-.svc-mark svg{width:46px;height:46px}
+.svc-mark{position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--wood) 0%,var(--ink) 100%);overflow:hidden}
+.svc-mark:before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(135deg,rgba(247,243,236,.05) 0 2px,transparent 2px 14px);pointer-events:none}
+.svc-mark svg{width:50px;height:50px;position:relative;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.svc:hover .svc-mark svg{transform:scale(1.1) rotate(-3deg)}
 @media(max-width:900px){.svcs{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.svcs{grid-template-columns:1fr}}
 

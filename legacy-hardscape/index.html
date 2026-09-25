@@ -161,6 +161,14 @@ textarea{resize:vertical;min-height:100px}
 .testi-empty p{color:var(--dim);font-size:14.5px;max-width:48ch;margin:0 auto}
 .testi-stars{color:var(--gold);font-size:20px;letter-spacing:3px;margin-bottom:14px}
 
+/* ── trust badges (substitute for reviews until they accumulate) ── */
+.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:32px}
+.trust-card{background:#fff;border:1px solid var(--hair);border-radius:4px;padding:28px 24px;text-align:center}
+.trust-card svg{width:32px;height:32px;margin:0 auto 14px;color:var(--accent)}
+.trust-card b{display:block;font-family:var(--fd);font-size:26px;font-weight:800;color:var(--stone-dark);margin-bottom:4px}
+.trust-card span{display:block;font-size:13px;color:var(--body)}
+@media(max-width:760px){.trust-grid{grid-template-columns:1fr}}
+
 /* ── sticky mobile CTA bar ── */
 #sticky-cta{display:none}
 @media(max-width:760px){
@@ -464,12 +472,30 @@ footer{background:var(--ink);color:#C9C4B8;padding-top:56px}
 <section class="sec" style="border-top:1px solid var(--hair)">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">Client Reviews</div>
-      <h2 class="disp">What Our Clients Say</h2>
+      <div class="eyebrow">Why Homeowners Trust Us</div>
+      <h2 class="disp">Built On More Than Promises</h2>
+      <p class="lede">We're a young company by design — small enough that the owner is still on every job site. Here's what that gets you.</p>
+    </div>
+    <div class="trust-grid reveal-stagger">
+      <div class="trust-card reveal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 4 6v6c0 5 3.4 9 8 10 4.6-1 8-5 8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <b>Licensed &amp; Insured</b>
+        <span>Fully licensed and insured for residential and commercial work</span>
+      </div>
+      <div class="trust-card reveal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <b>4 Years Building in Austin</b>
+        <span>Hands-on experience with Central Texas soil, drainage, and climate</span>
+      </div>
+      <div class="trust-card reveal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+        <b>28+ Completed Projects</b>
+        <span>Real Austin-area patios, pergolas, and outdoor spaces — every photo above is one of them</span>
+      </div>
     </div>
     <div class="testi-empty reveal">
       <div class="testi-stars">★★★★★</div>
-      <p>We're just getting started on this site — real client reviews will show up here as jobs wrap up. Ask us for references directly in the meantime.</p>
+      <p>We're early on Google reviews — ask us for direct references from recent clients while our review history builds. In the meantime, help us out:</p>
       <a class="btn btn-s" href="https://g.page/r/CdARhLgqkoBWECE/review" target="_blank" rel="noopener" style="margin-top:18px">Leave Us a Review</a>
     </div>
   </div>

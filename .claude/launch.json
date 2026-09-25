@@ -6,6 +6,24 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["-y", "serve", "-l", "8080", "/Users/seanevangelista/Desktop/evan-enterprises-os"],
       "port": 8080
+    },
+    {
+      "name": "studio27",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "serve", "-l", "4173", "/Users/seanevangelista/Desktop/evan-enterprises-os/studio27"],
+      "port": 4173
+    },
+    {
+      "name": "sharpair",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "serve", "-l", "4174", "/Users/seanevangelista/Desktop/evan-enterprises-os/sharp-air-mechanical"],
+      "port": 4174
+    },
+    {
+      "name": "legacy-hardscape",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "serve", "-l", "4175", "/Users/seanevangelista/Desktop/evan-enterprises-os/legacy-hardscape"],
+      "port": 4175
     }
   ]
 }

@@ -75,7 +75,21 @@ nav{position:sticky;top:0;z-index:70;background:rgba(255,255,255,.94);backdrop-f
 .nav-links a:hover{color:var(--wood)}
 .nav-phone{font-family:var(--fb);font-weight:700;font-size:14px;background:var(--accent);color:var(--cream)!important;padding:9px 16px;border-radius:2px;transition:.22s var(--ease)}
 .nav-phone:hover{background:var(--accent-hi);color:var(--cream)!important;transform:translateY(-1px)}
-@media(max-width:800px){.nav-links a:not(.nav-phone-link){display:none}}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:10px;flex-direction:column;gap:5px;-webkit-tap-highlight-color:transparent}
+.burger span{display:block;width:22px;height:2px;background:var(--ink);transition:.25s var(--ease)}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--hair);background:var(--cream);max-height:0;overflow:hidden;transition:max-height .3s var(--ease)}
+.mobile-menu.open{max-height:60vh}
+.mobile-menu a{padding:16px 26px;border-bottom:1px solid var(--hair);font-size:16px;font-weight:600;color:var(--ink)}
+.mobile-menu a:last-child{color:var(--accent)}
+@media(max-width:800px){
+  .nav-links a:not(.nav-phone-link){display:none}
+  .nav-phone-link{display:none}
+  .burger{display:flex}
+  .mobile-menu{display:flex}
+}
 
 /* ── hero ── */
 .hero{padding:64px 0 80px}
@@ -130,8 +144,9 @@ nav{position:sticky;top:0;z-index:70;background:rgba(255,255,255,.94);backdrop-f
 .quote .lede{color:rgba(255,255,255,.65)}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:720px}
 .form-grid .full{grid-column:1/-1}
+@media(max-width:640px){.form-grid{grid-template-columns:1fr}}
 label{display:block;font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:7px}
-input,select,textarea{width:100%;background:var(--panel);border:1px solid var(--hair-dark);color:var(--cream);padding:12px 14px;font-family:var(--fb);font-size:15px;border-radius:2px}
+input,select,textarea{width:100%;background:var(--panel);border:1px solid var(--hair-dark);color:var(--cream);padding:12px 14px;font-family:var(--fb);font-size:16px;border-radius:2px}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--stone)}
 textarea{resize:vertical;min-height:100px}
 .form-grid button{margin-top:6px}
@@ -373,6 +388,14 @@ body.is-ready:not(.is-ready--repeat) .nav-links>a{animation:navLinkIn .8s var(--
       <a href="/contact">Contact</a>
       <a class="nav-phone nav-phone-link" href="tel:+17374284707">📞 (737) 428-4707</a>
     </div>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#services">Services</a>
+    <a href="#gallery">Gallery</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+    <a href="tel:+17374284707">📞 Call (737) 428-4707</a>
   </div>
 </nav>
 
@@ -746,6 +769,24 @@ body.is-ready:not(.is-ready--repeat) .nav-links>a{animation:navLinkIn .8s var(--
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
 <script>
+// Mobile menu
+(function(){
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('mobileMenu');
+  if (!burger || !menu) return;
+
+  function setOpen(open){
+    menu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  burger.addEventListener('click', () => setOpen(!menu.classList.contains('open')));
+  menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu.classList.contains('open')) setOpen(false);
+  });
+})();
+
 // Homepage logo intro — starts big & centered, settles into the nav on
 // load, then the nav links wave in from the right toward it.
 (function(){

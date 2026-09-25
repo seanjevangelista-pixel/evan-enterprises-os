@@ -1,6 +1,7 @@
 // api/contact-site.js — Vercel serverless function
-// Receives contact form submissions from the public marketing site
-// and emails seanjevangelista@gmail.com via Resend.
+// Receives contact form submissions from evanenterprise.com and client sites
+// that share this endpoint, and emails the right inbox via Resend — see
+// RECIPIENTS_BY_BUSINESS below for per-client routing.
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,6 +23,14 @@ export default async function handler(req, res) {
     console.error('RESEND_API_KEY not set');
     return res.status(500).json({ error: 'Server configuration error' });
   }
+
+  // Recipient is chosen from this server-side map, never from the request body —
+  // this endpoint is public and unauthenticated, so trusting a client-supplied
+  // "to" address would turn it into an open relay for spam to arbitrary inboxes.
+  const RECIPIENTS_BY_BUSINESS = {
+    'Legacy Hardscape ATX': ['legacyhardscapeatx@gmail.com'],
+  };
+  const to = RECIPIENTS_BY_BUSINESS[business] || ['seanjevangelista@gmail.com'];
 
   // escHtml() below only guards the HTML body — subject and reply_to are not
   // HTML, so escaping quotes/angle-brackets does nothing for them. A CR/LF in
@@ -116,7 +125,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         from: 'Evan Enterprises Website <noreply@evanenterprise.com>',
-        to: ['seanjevangelista@gmail.com'],
+        to,
         reply_to: replyTo,
         subject,
         html,

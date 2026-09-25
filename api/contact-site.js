@@ -32,13 +32,15 @@ export default async function handler(req, res) {
     'Legacy Hardscape ATX': {
       to: ['legacyhardscapeatx@gmail.com'],
       from: 'Legacy Hardscape ATX <noreply@legacyhardscapeatx.com>',
+      siteLabel: 'legacyhardscapeatx.com',
     },
   };
   const emailConfig = EMAIL_CONFIG_BY_BUSINESS[business] || {
     to: ['seanjevangelista@gmail.com'],
     from: 'Evan Enterprises Website <noreply@evanenterprise.com>',
+    siteLabel: 'evanenterprise.com',
   };
-  const { to, from } = emailConfig;
+  const { to, from, siteLabel } = emailConfig;
 
   // escHtml() below only guards the HTML body — subject and reply_to are not
   // HTML, so escaping quotes/angle-brackets does nothing for them. A CR/LF in
@@ -68,7 +70,7 @@ export default async function handler(req, res) {
         New website inquiry
       </h2>
       <p style="font-size: 13px; color: #94A3B8; margin-bottom: 28px; margin-top: 0;">
-        Submitted via evanenterprise.com
+        Submitted via ${siteLabel}
       </p>
 
       <table style="width: 100%; border-collapse: collapse; font-size: 14px;">

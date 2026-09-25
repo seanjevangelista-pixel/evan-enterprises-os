@@ -19,6 +19,18 @@
       "has": [{ "type": "host", "value": "evanenterprise.com" }],
       "destination": "https://legacyhardscapeatx.com/:path*",
       "permanent": true
+    },
+    {
+      "source": "/studio27",
+      "has": [{ "type": "host", "value": "evanenterprise.com" }],
+      "destination": "https://studio27atx.com/",
+      "permanent": true
+    },
+    {
+      "source": "/studio27/:path*",
+      "has": [{ "type": "host", "value": "evanenterprise.com" }],
+      "destination": "https://studio27atx.com/:path*",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -41,6 +53,30 @@
     {
       "source": "/demo",
       "destination": "/demo/index.html"
+    },
+    {
+      "source": "/studio27",
+      "destination": "/studio27/index.html"
+    },
+    {
+      "source": "/studio27/about",
+      "destination": "/studio27/about/index.html"
+    },
+    {
+      "source": "/studio27/services",
+      "destination": "/studio27/services/index.html"
+    },
+    {
+      "source": "/studio27/portfolio",
+      "destination": "/studio27/portfolio/index.html"
+    },
+    {
+      "source": "/studio27/photo-booth",
+      "destination": "/studio27/photo-booth/index.html"
+    },
+    {
+      "source": "/studio27/contact",
+      "destination": "/studio27/contact/index.html"
     },
     {
       "source": "/legacy-hardscape",

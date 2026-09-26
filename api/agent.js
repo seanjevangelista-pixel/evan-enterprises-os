@@ -37,8 +37,10 @@ async function fetchBotProfile(slug) {
   try {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/bot_profiles?slug=eq.${encodeURIComponent(slug)}&select=*&limit=1`, { headers: sbHeaders });
     const rows = await r.json();
+    if (!r.ok) console.error('fetchBotProfile debug: bad response', slug, r.status, JSON.stringify(rows));
     return Array.isArray(rows) ? (rows[0] || null) : null;
-  } catch (_) {
+  } catch (e) {
+    console.error('fetchBotProfile debug: threw', slug, e.message);
     return null;
   }
 }

@@ -127,7 +127,7 @@ async function handle_agent_chat(req, res) {
       method: 'POST',
       headers: { Authorization: `Bearer ${groqKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: 'qwen/qwen3.8-27b',
         messages: [{ role: 'system', content: system }, ...messages],
         max_tokens: 300,
         temperature: 0.7,

@@ -99,34 +99,37 @@ RULES:
 - If they ask to book, share this link: ${profile.booking_link || 'ask them to contact us directly'}
 - If they ask for pricing, explain it clearly using only what's listed above
 - If they provide their name/email/phone, acknowledge it and say the team will follow up
-- Never make up information not listed above
-- Keep responses under 3 sentences unless explaining a package`;
+- Never make up information not listed above — if something genuinely isn't covered, say so and point them to booking or contacting the team directly instead of guessing
+- Keep responses tight (2-4 sentences) for simple questions, but take the room you need to fully answer specific or multi-part questions — don't cut a real answer short just to hit a sentence count`;
 }
 
 // ── CHAT ──
 // Agent 4: Landing Page Chatbot
-// Answers questions about the configured business (via botSlug -> bot_profiles) using OpenAI
+// Answers questions about the configured business (via botSlug -> bot_profiles).
+// Uses Groq's free, OpenAI-compatible chat completions API — no OpenAI key was
+// ever configured on this project, which is why chat always fell back to the
+// "not fully set up yet" message regardless of botSlug/profile content.
 async function handle_agent_chat(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
 
-  const openaiKey = process.env.OPENAI_API_KEY;
-  if (!openaiKey) return res.status(200).json({ configured: false });
+  const groqKey = process.env.GROQ_API_KEY;
+  if (!groqKey) return res.status(200).json({ configured: false });
 
   const { messages = [], lead = {}, botSlug } = req.body || {};
   const profile = await getBotProfile(botSlug);
   const system = buildSystemPrompt(profile);
 
   try {
-    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${openaiKey}`, 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${groqKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'llama-3.3-70b-versatile',
         messages: [{ role: 'system', content: system }, ...messages],
-        max_tokens: 200,
+        max_tokens: 300,
         temperature: 0.7,
       }),
     });

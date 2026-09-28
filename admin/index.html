@@ -678,26 +678,35 @@ async function doLogin() {
 
   if (!email || !pass) { showErr('Enter email and password'); return; }
 
-  const data = await supabase().signIn(email, pass);
-  if (data.error || !data.access_token) {
-    showErr(data.error?.message || 'Invalid credentials');
-    return;
-  }
+  // Nothing below was wrapped in try/catch — a network blip or Supabase being
+  // unreachable threw inside signIn()/fetch with no .catch anywhere up the
+  // chain (this is called via a bare onclick), so the Sign In button just did
+  // nothing: no error message, no re-enabled state. Looked like the login was
+  // broken instead of a transient failure.
+  try {
+    const data = await supabase().signIn(email, pass);
+    if (data.error || !data.access_token) {
+      showErr(data.error?.message || 'Invalid credentials');
+      return;
+    }
 
-  // Check admin role
-  const token = data.access_token;
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${data.user.id}&select=role&limit=1`, {
-    headers: { apikey: ANON_KEY, Authorization: `Bearer ${token}` },
-  });
-  const rows = await r.json();
-  if (!rows?.[0] || rows[0].role !== 'admin') {
-    showErr('Access denied — admin accounts only');
-    return;
-  }
+    // Check admin role
+    const token = data.access_token;
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${data.user.id}&select=role&limit=1`, {
+      headers: { apikey: ANON_KEY, Authorization: `Bearer ${token}` },
+    });
+    const rows = await r.json();
+    if (!rows?.[0] || rows[0].role !== 'admin') {
+      showErr('Access denied — admin accounts only');
+      return;
+    }
 
-  currentUser = { ...data.user, access_token: token };
-  sessionStorage.setItem('evan_admin', JSON.stringify({ token, userId: data.user.id }));
-  showApp();
+    currentUser = { ...data.user, access_token: token };
+    sessionStorage.setItem('evan_admin', JSON.stringify({ token, userId: data.user.id }));
+    showApp();
+  } catch (e) {
+    showErr('Could not reach the server — check your connection and try again');
+  }
 
   function showErr(msg) { errEl.textContent = msg; errEl.style.display = 'block'; }
 }

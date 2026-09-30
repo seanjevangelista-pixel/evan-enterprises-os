@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>UGC Content — Sean Evangelista | Evan Enterprises LLC</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#0A0A0C">
+<meta name="description" content="5.9M+ organic views, 100% organic. UGC content, sponsored Reels/TikToks, and brand partnerships by Sean Evangelista — Austin, TX.">
+<meta property="og:title" content="UGC Content — Sean Evangelista">
+<meta property="og:description" content="5.9M+ organic views. UGC content, sponsored videos, and brand partnerships.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A0A0C;
+  --panel:#0F1B33;
+  --white:#F7F7F5;
+  --body:#9A9C9F;
+  --dim:#7A7C80;
+  --accent:#3B5BDB;
+  --on-accent:#F7F7F5;
+  --hair:rgba(247,247,245,.10);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-back:cubic-bezier(.34,1.56,.64,1);
+  --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --fm:'IBM Plex Mono',ui-monospace,monospace;
+  --max:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--white);font-family:var(--fb);font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
+.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--body)}
+.sec{padding:88px 0;border-top:1px solid var(--hair)}
+.sec-head{margin-bottom:44px}
+.sec-h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4.2vw,42px);margin-top:13px;letter-spacing:-.01em;line-height:1.15}
+.sec-head .lede{margin-top:16px;max-width:58ch}
+
+/* ── nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.logo{font-family:var(--fb);font-weight:700;font-size:19px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
+.logo img{width:26px;height:26px;object-fit:contain}
+.logo b{color:var(--accent);font-weight:400}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--dim);font-weight:500}
+.nav-links a:hover{color:var(--white)}
+.nav-cta{background:var(--accent);color:var(--on-accent);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
+.nav-cta:hover{background:#4A6BF0}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
+.burger span{display:block;width:23px;height:2px;background:var(--white)}
+.mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--hair);background:var(--panel)}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:15px 26px;border-bottom:1px solid var(--hair);font-size:15px;font-weight:500}
+@media(max-width:880px){.nav-links{display:none}.burger{display:flex}}
+
+/* ── hero ── */
+.hero{padding:148px 0 76px}
+.hero-grid{display:grid;grid-template-columns:.62fr .38fr;gap:52px;align-items:center}
+.hero-h1{font-family:var(--fb);font-weight:700;font-size:clamp(34px,5.2vw,56px);line-height:1.15;margin:16px 0 0;letter-spacing:-.01em}
+.accent-t{color:var(--accent)}
+.hero-sub{margin-top:20px;max-width:52ch;font-size:17px;color:var(--body)}
+.hero-cta{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15px;padding:14px 24px;border:0;cursor:pointer;transition:.16s}
+.btn-p{background:var(--white);color:var(--ink);font-weight:700}
+.btn-p:hover{opacity:.85}
+.btn-s{border:1px solid var(--hair);color:var(--white);background:transparent}
+.btn-s:hover{border-color:var(--dim);background:var(--panel)}
+.hero-photo-wrap{position:relative}
+.hero-photo{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 15%;filter:grayscale(1) contrast(1.05);border:1px solid var(--hair);transition:filter .5s var(--ease)}
+.hero-photo-wrap:hover .hero-photo{filter:grayscale(0) contrast(1.05)}
+.hero-mask{overflow:hidden}
+.hero-mask>*{transform:translateY(100%);opacity:0;transition:transform 1s var(--ease),opacity .8s var(--ease)}
+.hero-mask:nth-of-type(1)>*{transition-delay:.05s}
+.hero-mask:nth-of-type(2)>*{transition-delay:.16s}
+.hero-mask:nth-of-type(3)>*{transition-delay:.27s}
+.hero-mask:nth-of-type(4)>*{transition-delay:.38s}
+body.is-ready .hero-mask>*{transform:none;opacity:1}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:32px}.hero-photo-wrap{max-width:220px}}
+
+/* ── stats ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat-card{background:var(--panel);border:1px solid var(--hair);padding:22px 20px;transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.stat-card:hover{border-color:var(--accent);transform:translateY(-3px)}
+.stat-card .n{font-family:var(--fb);font-weight:700;font-size:clamp(24px,3vw,32px);color:var(--white);line-height:1}
+.stat-card .l{font-family:var(--fm);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-top:9px;line-height:1.5}
+@media(max-width:760px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ── about ── */
+.about-body{color:var(--body);max-width:66ch;font-size:16.5px;display:flex;flex-direction:column;gap:15px}
+.about-body em{font-style:normal;color:var(--accent)}
+
+/* ── pillars ── */
+.pillar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pillar-card{background:var(--panel);border:1px solid var(--hair);border-top:2px solid var(--hair);padding:28px 24px;transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.pillar-card:hover{border-color:var(--accent);border-top-color:var(--accent);transform:translateY(-4px)}
+.pillar-tag{font-family:var(--fm);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.pillar-card h3{font-size:20px;font-weight:600;margin:12px 0 10px;letter-spacing:-.01em}
+.pillar-card p{font-size:14.5px;color:var(--body);line-height:1.6}
+@media(max-width:860px){.pillar-grid{grid-template-columns:1fr}}
+
+/* ── video showcase ── */
+.video-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.video-card{position:relative;background:var(--panel);border:1px solid var(--hair);padding:22px 20px 24px;overflow:hidden;transition:border-color .35s var(--ease),transform .35s var(--ease)}
+.video-card:before{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(59,91,219,.16),transparent 60%);opacity:0;transition:opacity .4s var(--ease)}
+.video-card:hover{border-color:var(--accent);transform:translateY(-6px)}
+.video-card:hover:before{opacity:1}
+.video-plat{display:flex;align-items:center;gap:8px}
+.video-plat img{width:20px;height:20px;object-fit:contain;border-radius:4px}
+.video-plat span{font-family:var(--fm);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.video-badge{margin-left:auto;font-family:var(--fm);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:2px 7px;border-radius:2px}
+.video-views{font-family:var(--fb);font-weight:700;font-size:28px;margin-top:16px;color:var(--white);position:relative}
+.video-desc{font-size:13px;color:var(--body);margin-top:6px;position:relative}
+.video-link{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--accent);margin-top:16px;position:relative;transform:translateX(0);transition:transform .3s var(--ease)}
+.video-card:hover .video-link{transform:translateX(4px)}
+@media(max-width:900px){.video-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.video-grid{grid-template-columns:1fr}}
+
+/* ── branded partnerships ── */
+.brand-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.brand-card{background:var(--panel);border:1px dashed var(--hair);padding:26px 22px;display:flex;flex-direction:column;gap:8px;transition:border-color .3s var(--ease)}
+.brand-card:hover{border-color:var(--accent)}
+.brand-name{font-family:var(--fb);font-weight:600;font-size:18px}
+.brand-status{font-family:var(--fm);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--dim)}
+@media(max-width:860px){.brand-grid{grid-template-columns:1fr}}
+
+/* ── packages ── */
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pkg-card{background:var(--panel);border:1px solid var(--hair);padding:24px 22px;transition:transform .3s var(--ease),border-color .3s var(--ease)}
+.pkg-card:hover{transform:translateY(-4px) scale(1.015);border-color:var(--accent)}
+.pkg-icon{font-size:26px;transition:transform .35s var(--ease-back)}
+.pkg-card:hover .pkg-icon{transform:rotate(-8deg) scale(1.15)}
+.pkg-card h3{font-size:16.5px;font-weight:600;margin:12px 0 8px}
+.pkg-card p{font-size:13.5px;color:var(--body);line-height:1.6}
+@media(max-width:860px){.pkg-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.pkg-grid{grid-template-columns:1fr}}
+
+/* ── rates ── */
+.rate-table{width:100%;border-collapse:collapse}
+.rate-table th{text-align:left;font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:500;padding:0 0 12px;border-bottom:1px solid var(--hair)}
+.rate-table td{padding:16px 0;border-bottom:1px solid var(--hair);vertical-align:top;transition:background-color .2s var(--ease)}
+.rate-table tr{transition:background-color .2s var(--ease)}
+.rate-table tr:hover{background:rgba(59,91,219,.06)}
+.rate-table td.price{font-family:var(--fm);color:var(--accent);white-space:nowrap;padding-right:20px;font-size:15px}
+.rate-table td.desc{color:var(--body);font-size:14.5px}
+.rate-table tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+
+/* ── closing cta ── */
+.close-cta{text-align:center;padding:76px 0}
+.close-cta h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:-.01em}
+.close-cta p{margin-top:14px;color:var(--body)}
+.close-cta .hero-cta{justify-content:center;margin-top:26px}
+
+/* ── footer ── */
+footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#050506}
+.foot-in{max-width:var(--max);margin:0 auto;padding:0 26px;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center}
+.foot-logo{font-family:var(--fb);font-weight:700;font-size:18px;text-transform:uppercase;display:flex;align-items:center;gap:9px}
+.foot-logo img{width:24px;height:24px;object-fit:contain}
+.foot-links,.foot-social{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-size:14px;color:var(--dim)}
+.foot-links a:hover,.foot-social a:hover{color:var(--white)}
+.foot-copy{font-family:var(--fm);font-size:11.5px;color:#4C4D52}
+
+/* ── scroll reveal ── */
+.rv{opacity:0;transform:translateY(20px);transition:.75s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.hero-mask>*{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-in">
+    <a href="/" class="logo"><img src="../logo-mark.png" alt="">Evan<b>·</b>Enterprises</a>
+    <div class="nav-links">
+      <a href="/#marketing">Marketing</a>
+      <a href="/#about">About</a>
+      <a href="/#contact" class="nav-cta">Book a call</a>
+    </div>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/#marketing">Marketing</a>
+    <a href="/#about">About</a>
+    <a href="/#contact">Book a call →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="hero-mask"><div class="eyebrow">UGC &amp; Content Creation</div></div>
+      <div class="hero-mask"><h1 class="hero-h1">Content that pulls <span class="accent-t">5.9M+ views</span> — 100% organic.</h1></div>
+      <div class="hero-mask"><p class="hero-sub">I create UGC and personal content across Instagram, TikTok, and YouTube — men's wellness, entrepreneurship, and Filipino-American identity, for a loyal 18–34 audience. Every number below is real, nothing paid to inflate it.</p></div>
+      <div class="hero-mask">
+        <div class="hero-cta">
+          <a href="#rates" class="btn btn-p">See rates →</a>
+          <a href="/#contact" class="btn btn-s">Work with me →</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-photo-wrap hero-mask">
+      <img src="img/sean-hero.jpg" alt="Sean Evangelista" class="hero-photo">
+    </div>
+  </div>
+</header>
+
+<!-- STATS -->
+<section class="sec">
+  <div class="wrap">
+    <div class="stats-grid rv">
+      <div class="stat-card"><div class="n">5.9M+</div><div class="l">Total viral views</div></div>
+      <div class="stat-card"><div class="n">30.9K</div><div class="l">TikTok followers</div></div>
+      <div class="stat-card"><div class="n">12.7K</div><div class="l">Instagram followers</div></div>
+      <div class="stat-card"><div class="n">88.2%</div><div class="l">Non-follower reach</div></div>
+      <div class="stat-card"><div class="n">923K</div><div class="l">Views, last 90 days</div></div>
+      <div class="stat-card"><div class="n">445K</div><div class="l">Accounts reached</div></div>
+      <div class="stat-card"><div class="n">94,784</div><div class="l">Total interactions</div></div>
+      <div class="stat-card"><div class="n">100%</div><div class="l">Organic · zero paid</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">The story</div>
+      <h2 class="sec-h2">Real operator, real audience.</h2>
+    </div>
+    <div class="about-body rv">
+      <p>I'm a Filipino-American content creator, entrepreneur, and founder based in Austin, TX. For 5 years I've documented my own journey as an everyday builder — the wins, the setbacks, the pivots — at the intersection of authentic storytelling, men's wellness, and real-world business.</p>
+      <p>With 5 years of e-commerce experience across Amazon FBA and Walmart generating <em>$400K+ in revenue</em>, plus a background in creative content production, I bring both proven operator credibility and genuine on-camera presence to every partnership.</p>
+      <p>My content speaks to a generation of builders equally committed to inner growth and outer success — a loyal 18–34 audience that trusts the voice because it's real, not because it performs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT PILLARS -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">What I create about</div>
+      <h2 class="sec-h2">Three worlds, one thread.</h2>
+      <p class="lede">Every piece of content lives in one of these — and they all connect back to the same core: real people building real lives.</p>
+    </div>
+    <div class="pillar-grid rv">
+      <div class="pillar-card">
+        <div class="pillar-tag">🧠 Men's Wellness</div>
+        <h3>Honest, not performed</h3>
+        <p>Conversations about mental health, growth, and what it actually means to show up as a man. No fake strength.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-tag">🏗️ Entrepreneurship</div>
+        <h3>The gritty founder reality</h3>
+        <p>Real-talk on building, failing forward, and what it actually looks like behind the scenes — from Amazon FBA to skincare brands.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-tag">🌏 Identity &amp; Culture</div>
+        <h3>Filipino-American ambition</h3>
+        <p>What it means to build something real, for anyone who's ever felt like they were figuring it out alone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO SHOWCASE -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Content that actually hits</div>
+      <h2 class="sec-h2">Personal videos, real numbers.</h2>
+      <p class="lede">5.9M+ combined views on these alone. All organic, zero paid promotion.</p>
+    </div>
+    <div class="video-grid rv">
+      <div class="video-card">
+        <div class="video-plat"><img src="img/icon-instagram.png" alt=""><span>Instagram Reel</span><span class="video-badge">Viral</span></div>
+        <div class="video-views">2.5M</div>
+        <div class="video-desc">100% organic · no paid promotion</div>
+        <a href="https://www.instagram.com/reel/DVWWTiwjnk7/" target="_blank" rel="noopener" class="video-link">Watch Reel →</a>
+      </div>
+      <div class="video-card">
+        <div class="video-plat"><img src="img/icon-instagram.png" alt=""><span>Instagram Reel</span><span class="video-badge">Viral</span></div>
+        <div class="video-views">2.5M</div>
+        <div class="video-desc">Combined · 100% organic</div>
+        <a href="https://www.instagram.com/reel/DVWTYjIjiUV/" target="_blank" rel="noopener" class="video-link">Watch Reel →</a>
+      </div>
+      <div class="video-card">
+        <div class="video-plat"><img src="img/icon-tiktok.png" alt=""><span>TikTok</span><span class="video-badge">Viral</span></div>
+        <div class="video-views">3.4M</div>
+        <div class="video-desc">#seanjayme #filipino · organic</div>
+        <a href="https://www.tiktok.com/@seanevangelista_/video/7579506865801825567" target="_blank" rel="noopener" class="video-link">Watch Video →</a>
+      </div>
+      <div class="video-card">
+        <div class="video-plat"><img src="img/icon-tiktok.png" alt=""><span>TikTok</span><span class="video-badge">Top Video</span></div>
+        <div class="video-views">POV</div>
+        <div class="video-desc">"You're HIM" · 100% organic</div>
+        <a href="https://www.tiktok.com/@seanevangelista_/video/7608871525579590942" target="_blank" rel="noopener" class="video-link">Watch Video →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDED PARTNERSHIPS -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Branded partnerships</div>
+      <h2 class="sec-h2">Brands I've worked with.</h2>
+      <p class="lede">Sponsored content, treated like its own creative project — written, shot, and delivered to brief.</p>
+    </div>
+    <div class="brand-grid rv">
+      <div class="brand-card">
+        <div class="brand-name">Dude Wipes</div>
+        <div class="brand-status">Video coming soon</div>
+      </div>
+      <div class="brand-card">
+        <div class="brand-name">Clean Nutra</div>
+        <div class="brand-status">Video coming soon</div>
+      </div>
+      <div class="brand-card">
+        <div class="brand-name">Yaynuts</div>
+        <div class="brand-status">Video coming soon</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT PACKAGES -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">What I deliver</div>
+      <h2 class="sec-h2">Content packages.</h2>
+    </div>
+    <div class="pkg-grid rv">
+      <div class="pkg-card"><div class="pkg-icon">📸</div><h3>Instagram Story</h3><p>Casual, authentic behind-the-scenes moment featuring your product in my daily life. Best for limited-time offers and launches.</p></div>
+      <div class="pkg-card"><div class="pkg-icon">🖼️</div><h3>Instagram Post</h3><p>Polished lifestyle-forward static image or carousel. Clean aesthetic, authentic caption. Lives permanently on my profile.</p></div>
+      <div class="pkg-card"><div class="pkg-icon">🎬</div><h3>Instagram Reel</h3><p>Scroll-stopping short-form video, hook in the first 2 seconds. Best for maximum reach and brand discovery.</p></div>
+      <div class="pkg-card"><div class="pkg-icon">🎵</div><h3>TikTok Video</h3><p>Native, authentic short-form built to reach far beyond my existing audience. Hook-driven, trending audio.</p></div>
+      <div class="pkg-card"><div class="pkg-icon">▶️</div><h3>YouTube Short</h3><p>Punchy vertical short for one of the fastest-growing discovery formats. Repurposable across TikTok and Reels.</p></div>
+      <div class="pkg-card"><div class="pkg-icon">🎁</div><h3>UGC Ad Content</h3><p>Raw, authentic video created for your brand's own use in paid ads. No fluff — ready to run on TikTok or Meta Ads.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- RATES -->
+<section class="sec" id="rates">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Rates &amp; services</div>
+      <h2 class="sec-h2">Let's work together.</h2>
+    </div>
+    <div class="table-wrap rv">
+      <table class="rate-table">
+        <tr><th>Format</th><th>Rate</th><th>What it is</th></tr>
+        <tr><td>Sponsored Reel (IG)</td><td class="price">$150–$300</td><td class="desc">Brand integration in an Instagram Reel</td></tr>
+        <tr><td>Sponsored TikTok</td><td class="price">$200–$400</td><td class="desc">Dedicated TikTok video</td></tr>
+        <tr><td>Story Mention</td><td class="price">$50–$100</td><td class="desc">IG or TikTok story shoutout</td></tr>
+        <tr><td>UGC Ad Content</td><td class="price">$100–$250</td><td class="desc">Content for your brand's own use in ads</td></tr>
+        <tr><td>Multi-Platform Bundle</td><td class="price">$400–$700</td><td class="desc">IG + TikTok + Facebook</td></tr>
+        <tr><td>Custom Campaign</td><td class="price">Let's talk</td><td class="desc">Long-term or series collaborations</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING CTA -->
+<section class="close-cta">
+  <div class="wrap">
+    <h2 class="rv">Ready to connect?</h2>
+    <p class="rv">Open to gifted &amp; paid collabs. I respond within 24 hours.</p>
+    <div class="hero-cta rv">
+      <a href="/#contact" class="btn btn-p">Book a call →</a>
+      <a href="mailto:seanjayme@evanenterprise.com" class="btn btn-s">Email me →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-in">
+    <a href="/" class="foot-logo"><img src="../logo-mark.png" alt="">Evan Enterprises LLC</a>
+    <div class="foot-links">
+      <a href="/#marketing">Marketing</a>
+      <a href="/#about">About</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </div>
+    <div class="foot-social">
+      <a href="https://www.instagram.com/officialseanjayme" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener">YouTube</a>
+    </div>
+    <div class="foot-copy">© 2026 Evan Enterprises LLC. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+// ── mobile menu ──
+(function(){
+  var b=document.getElementById('burger'), m=document.getElementById('mobileMenu');
+  b.addEventListener('click',function(){
+    var open=m.classList.toggle('open');
+    b.setAttribute('aria-expanded',open?'true':'false');
+  });
+  m.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(){m.classList.remove('open');b.setAttribute('aria-expanded','false');});
+  });
+})();
+
+// ── page-load reveal (hero mask lines) ──
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ document.body.classList.add('is-ready'); return; }
+  requestAnimationFrame(function(){ document.body.classList.add('is-ready'); });
+})();
+
+// ── magnetic buttons ──
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(window.matchMedia('(hover: none)').matches) return;
+  document.querySelectorAll('.btn').forEach(function(btn){
+    btn.style.transition='transform .3s var(--ease)';
+    btn.addEventListener('mousemove',function(e){
+      var rect=btn.getBoundingClientRect();
+      var x=e.clientX-rect.left-rect.width/2, y=e.clientY-rect.top-rect.height/2;
+      btn.style.transitionDuration='.15s';
+      btn.style.transform='translate('+(x*0.25)+'px,'+(y*0.35)+'px)';
+    });
+    btn.addEventListener('mouseleave',function(){
+      btn.style.transitionDuration='.5s';
+      btn.style.transitionTimingFunction='var(--ease-back)';
+      btn.style.transform='translate(0,0)';
+    });
+  });
+})();
+
+// ── scroll reveal ──
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+})();
+</script>
+
+</body>
+</html>

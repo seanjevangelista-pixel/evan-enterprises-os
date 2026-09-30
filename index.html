@@ -25,6 +25,8 @@
   --accent:#3B5BDB;      /* accent — blue */
   --on-accent:#F7F7F5;   /* text on accent fills */
   --hair:rgba(247,247,245,.10);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-back:cubic-bezier(.34,1.56,.64,1);
   --fd:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
   --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
   --fm:'IBM Plex Mono',ui-monospace,monospace;
@@ -48,6 +50,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92)
 .logo b{color:var(--accent);font-weight:400}
 .nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--dim);font-weight:500}
 .nav-links a:hover{color:var(--white)}
+.nav-links > *{opacity:0;transform:translateY(-10px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.nav-links > *:nth-child(1){transition-delay:.15s}
+.nav-links > *:nth-child(2){transition-delay:.24s}
+.nav-links > *:nth-child(3){transition-delay:.33s}
+body.is-ready .nav-links > *{opacity:1;transform:none}
 .nav-cta{background:var(--accent);color:var(--on-accent);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
 .nav-cta:hover{background:#4A6BF0;color:var(--on-accent)}
 .burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
@@ -70,6 +77,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92)
 .btn-s{border:1px solid var(--hair);color:var(--white);background:transparent}
 .btn-s:hover{border-color:var(--dim);background:var(--panel)}
 @media(max-width:940px){.hero{padding:124px 0 72px}}
+.hero-mask{overflow:hidden}
+.hero-mask>*{transform:translateY(100%);opacity:0;transition:transform 1s var(--ease),opacity .8s var(--ease)}
+.hero-mask:nth-of-type(1)>*{transition-delay:.05s}
+.hero-mask:nth-of-type(2)>*{transition-delay:.16s}
+.hero-mask:nth-of-type(3)>*{transition-delay:.27s}
+.hero-mask:nth-of-type(4)>*{transition-delay:.38s}
+body.is-ready .hero-mask>*{transform:none;opacity:1}
 
 /* ═══════════ SECTIONS ═══════════ */
 .sec{padding:92px 0;border-top:1px solid var(--hair)}
@@ -164,12 +178,14 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#050506}
 <!-- HERO -->
 <header class="hero">
   <div class="wrap">
-    <div class="eyebrow">Evan Enterprises LLC — Sean Evangelista</div>
-    <h1 class="hero-h1">Marketing built by <span class="accent-t">one person</span> who does the work.</h1>
-    <p class="hero-sub">Ad management, website builds, and UGC. No account managers, no hand-offs — every video, every ad account, every site, I build it myself.</p>
-    <div class="hero-cta">
-      <a href="#marketing" class="btn btn-p">See my work →</a>
-      <a href="#contact" class="btn btn-s">Book a call →</a>
+    <div class="hero-mask"><div class="eyebrow">Evan Enterprises LLC — Sean Evangelista</div></div>
+    <div class="hero-mask"><h1 class="hero-h1">Marketing built by <span class="accent-t">one person</span> who does the work.</h1></div>
+    <div class="hero-mask"><p class="hero-sub">Ad management, website builds, and UGC. No account managers, no hand-offs — every video, every ad account, every site, I build it myself.</p></div>
+    <div class="hero-mask">
+      <div class="hero-cta">
+        <a href="#marketing" class="btn btn-p">See my work →</a>
+        <a href="#contact" class="btn btn-s">Book a call →</a>
+      </div>
     </div>
   </div>
 </header>
@@ -289,6 +305,32 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#050506}
   });
   m.querySelectorAll('a').forEach(function(a){
     a.addEventListener('click',function(){m.classList.remove('open');b.setAttribute('aria-expanded','false');});
+  });
+})();
+
+// ── page-load reveal (hero mask lines + nav stagger) ──
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ document.body.classList.add('is-ready'); return; }
+  requestAnimationFrame(function(){ document.body.classList.add('is-ready'); });
+})();
+
+// ── magnetic buttons ──
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(window.matchMedia('(hover: none)').matches) return;
+  document.querySelectorAll('.btn').forEach(function(btn){
+    btn.style.transition='transform .3s '+getComputedStyle(document.documentElement).getPropertyValue('--ease');
+    btn.addEventListener('mousemove',function(e){
+      var rect=btn.getBoundingClientRect();
+      var x=e.clientX-rect.left-rect.width/2, y=e.clientY-rect.top-rect.height/2;
+      btn.style.transitionDuration='.15s';
+      btn.style.transform='translate('+(x*0.25)+'px,'+(y*0.35)+'px)';
+    });
+    btn.addEventListener('mouseleave',function(){
+      btn.style.transitionDuration='.5s';
+      btn.style.transitionTimingFunction='var(--ease-back)';
+      btn.style.transform='translate(0,0)';
+    });
   });
 })();
 

@@ -118,15 +118,37 @@ with:
 
 Note: this step drops `--raised`/`--silver`/`--silver-dim`/`--on-silver`/`--chrome-grad`/`--miss`/`--book`/`.chrome`/`@keyframes shimmer` entirely (no later task needs a "raised navy" surface — every card in the new design uses flat `--panel`). Later tasks (2–10) remove every remaining usage of those old names as they rewrite or delete each section — do not search-and-replace them globally in this step, since sections not yet rewritten are deleted wholesale in later tasks anyway, not restyled in place.
 
-- [ ] **Step 4: Preview and verify**
+- [ ] **Step 4: Fix the two site-wide rules that reference `--silver` outside the `:root` block**
+
+`:focus-visible` (keyboard focus ring, used on every interactive element on every page view from this task onward) and `.eyebrow` (the small uppercase label used in the hero and every section, including ones not rewritten until later tasks) both hard-code `var(--silver)`, which Step 3 just deleted. Fix both now so every subsequent task's preview shows the correct accent color instead of an unset/invalid one:
+
+Replace:
+```css
+:focus-visible{outline:2px solid var(--silver);outline-offset:3px}
+```
+with:
+```css
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+```
+
+Replace:
+```css
+.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--silver)}
+```
+with:
+```css
+.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+```
+
+- [ ] **Step 5: Preview and verify**
 
 Run:
 ```bash
 open /Users/seanevangelista/Desktop/evan-enterprises-os/index.html
 ```
-Expected: the page still loads (later sections will look visually broken/unstyled in places referencing deleted variables like `--silver` — that's expected and fixed in Tasks 2–8, not this one). Check the browser console: there should be no *new* JS errors (CSS referencing a missing custom property never throws — it just falls back to `unset`, so this is safe by design).
+Expected: the page loads with correct blue focus rings and blue eyebrow labels site-wide. Later sections will still look visually broken/unstyled in other ways (old silver buttons, chrome gradients, etc.) — that's expected and fixed in Tasks 2–10, not this one. Check the browser console: there should be no *new* JS errors.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
 git add index.html
@@ -629,10 +651,16 @@ Delete this entire block:
 </section>
 ```
 
-- [ ] **Step 2: Remove the FAQ CSS**
+- [ ] **Step 2: Remove the FAQ CSS, plus the now-dead `.nudge` block that precedes it**
+
+`.nudge`/`.nudge b` styled a hint that only ever appeared inside the BOTS section's markup — already deleted in Task 4. It's dead CSS sitting immediately before the FAQ CSS in the file; remove both together:
 
 Delete this entire block:
 ```css
+/* ── widget nudge ── */
+.nudge{margin-top:32px;display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:13px;color:var(--dim);border:1px dashed var(--hair);padding:10px 16px}
+.nudge b{color:var(--silver);font-weight:500}
+
 /* ── faq ── */
 .faq{border-top:1px solid var(--ink)}
 .faq-item{border-bottom:1px solid var(--hair)}
@@ -718,10 +746,16 @@ Delete this entire block:
 </section>
 ```
 
-- [ ] **Step 2: Remove the proof CSS**
+- [ ] **Step 2: Remove the proof CSS, plus the now-dead `.urgency` block that precedes it**
+
+`.urgency`/`.urgency i` styled the "Onboarding a limited number..." badge that only ever appeared inside the old featured-service card — already deleted in Task 4. It's dead CSS sitting immediately before the Proof CSS in the file; remove both together:
 
 Delete this entire block:
 ```css
+/* ── urgency ── */
+.urgency{display:inline-flex;align-items:center;gap:9px;font-family:var(--fm);font-size:12px;letter-spacing:.04em;color:var(--silver);background:rgba(218,220,224,.08);border:1px solid rgba(218,220,224,.28);padding:7px 13px;margin-top:18px}
+.urgency i{width:6px;height:6px;border-radius:50%;background:var(--silver);animation:blip 1.7s infinite}
+
 /* ── proof ── */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:44px}
 .stat{background:var(--panel);border:1px solid var(--hair);padding:26px 24px}
@@ -737,11 +771,28 @@ Delete this entire block:
 @media(max-width:860px){.stats,.quotes{grid-template-columns:1fr}}
 ```
 
-- [ ] **Step 3: Preview and verify**
+- [ ] **Step 3: Remove now-fully-dead `.disp` and `.tnum` base CSS rules**
+
+After Tasks 3, 5, 6, and this task's Step 1 all run, no markup anywhere in the file uses `class="disp"` or `class="tnum"` any more (every section that used them — the old hero, How It Works, FAQ, and this Proof section — has been deleted or rewritten to use `.hero-h1`/`.sec-h2` instead). Remove these two now-unused rules (note `.eyebrow`'s color was already fixed to `--accent` back in Task 1 — this step only removes `.disp`/`.tnum`, `.eyebrow` and `.lede` are shown here only as surrounding context so you can locate the right lines):
+
+Replace:
+```css
+.disp{font-family:var(--fd);font-weight:400;letter-spacing:.005em;line-height:.95;text-transform:uppercase;text-wrap:balance}
+.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.tnum{font-variant-numeric:tabular-nums}
+.lede{color:var(--body)}
+```
+with:
+```css
+.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--body)}
+```
+
+- [ ] **Step 4: Preview and verify**
 
 Open `index.html`, confirm the page now flows from Marketing straight into About (once Tasks 5 and 6 are also applied) with no stray "Proof, not promises" heading or client quote cards. Confirm no console errors.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add index.html
@@ -1030,9 +1081,9 @@ Expected: no matches. If any match appears, fix it before proceeding.
 
 Run:
 ```bash
-grep -n "silver\|chrome-grad\|on-silver\|--miss\|--book\b" /Users/seanevangelista/Desktop/evan-enterprises-os/index.html
+grep -n "silver\|chrome-grad\|on-silver\|--miss\|--book\b\|--raised\|class=\"disp\|\.disp{\|class=\"tnum\|\.tnum{\|\.nudge\|\.urgency" /Users/seanevangelista/Desktop/evan-enterprises-os/index.html
 ```
-Expected: no matches (all replaced with `--accent`/`--white`/`--panel` in Tasks 1–10). If any match appears, it's a token reference Task 1 introduced but a later task's CSS edit missed — fix it to use the new token names from Task 1.
+Expected: no matches (all replaced with `--accent`/`--white`/`--panel` in Task 1, or removed entirely as dead code in Tasks 4/6/7). If any match appears, it's a token/class reference an earlier task's CSS edit missed — fix it to use the new token names from Task 1, or delete it if it's dead code left over from a removed section.
 
 - [ ] **Step 3: Confirm no orphaned element-ID references in JS**
 

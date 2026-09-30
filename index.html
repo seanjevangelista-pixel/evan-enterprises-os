@@ -3,63 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Evan Enterprises LLC — The operator behind local business</title>
+<title>Evan Enterprises LLC — Marketing built by one person who does the work</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0E0E0D">
-<meta name="description" content="An AI front desk that answers every call, texts back the ones it misses, and books the job instantly. Try it live. Plus ad management and product leads. Evan Enterprises LLC, Austin TX.">
-<meta property="og:title" content="Evan Enterprises LLC — An AI front desk that never misses a call">
-<meta property="og:description" content="It picks up every call, texts back the ones it misses, and books the job — instantly, day or night. Try the AI live on the site.">
+<meta name="theme-color" content="#0A0A0C">
+<meta name="description" content="Ad management, website builds, and UGC — all done personally by Sean Evangelista. No account managers, no hand-offs. Evan Enterprises LLC, Austin TX.">
+<meta property="og:title" content="Evan Enterprises LLC — Marketing built by one person who does the work">
+<meta property="og:description" content="Ad management, website builds, and UGC — all done personally. No account managers, no hand-offs.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ═══════════ TOKENS · "Dispatch" — chrome / white / black ═══════════ */
+/* ═══════════ TOKENS · black / navy / white ═══════════ */
 :root{
-  --ink:#0E0E0D;         /* ground — cool near-black */
-  --panel:#18181A;       /* panel */
-  --raised:#212124;      /* raised */
-  --white:#FBFBFA;       /* primary type — white */
-  --body:#B5B6B2;        /* running text */
-  --dim:#84857F;         /* muted, cool-neutral */
-  --silver:#DADCE0;      /* accent — brushed chrome */
-  --silver-dim:#8E9098;  /* secondary chrome, quieter */
-  --on-silver:#0C0C0B;   /* text on silver fills */
-  --chrome-grad:linear-gradient(120deg,#9A9CA2 0%,#F5F6F8 22%,#C6C8CE 45%,#F5F6F8 68%,#9A9CA2 100%);
-  --miss:#E4553E;        /* semantic: missed */
-  --book:#35C77A;        /* semantic: booked */
-  --hair:rgba(251,251,250,.10);
-  --fd:'Anton',Impact,sans-serif;
+  --ink:#0A0A0C;         /* ground — near-black */
+  --panel:#0F1B33;       /* navy panel */
+  --white:#F7F7F5;       /* primary type — white */
+  --body:#9A9C9F;        /* running text */
+  --dim:#7A7C80;         /* muted */
+  --accent:#3B5BDB;      /* accent — blue */
+  --on-accent:#F7F7F5;   /* text on accent fills */
+  --hair:rgba(247,247,245,.10);
+  --fd:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
   --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
   --fm:'IBM Plex Mono',ui-monospace,monospace;
   --max:1180px;
 }
-.chrome{background:var(--chrome-grad);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 5s ease-in-out infinite}
-@keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@media(prefers-reduced-motion:reduce){.chrome{animation:none;background-position:35% 50%}}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--ink);color:var(--white);font-family:var(--fb);font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
-:focus-visible{outline:2px solid var(--silver);outline-offset:3px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
-.disp{font-family:var(--fd);font-weight:400;letter-spacing:.005em;line-height:.95;text-transform:uppercase;text-wrap:balance}
-.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--silver)}
-.tnum{font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
 .lede{color:var(--body)}
 
 /* ═══════════ NAV ═══════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
 .nav-in{max-width:var(--max);margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
 .logo{font-family:var(--fd);font-size:19px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
 .logo img{width:26px;height:26px;object-fit:contain}
-.logo b{color:var(--silver);font-weight:400}
+.logo b{color:var(--accent);font-weight:400}
 .nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--dim);font-weight:500}
 .nav-links a:hover{color:var(--white)}
-.nav-cta{background:var(--silver);color:var(--on-silver);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
-.nav-cta:hover{background:#EEEFF1;color:var(--on-silver)}
+.nav-cta{background:var(--accent);color:var(--on-accent);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
+.nav-cta:hover{background:#4A6BF0;color:var(--on-accent)}
 .burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
 .burger span{display:block;width:23px;height:2px;background:var(--white)}
 .mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--hair);background:var(--panel)}
@@ -69,121 +59,38 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92)
 
 /* ═══════════ HERO ═══════════ */
 .hero{padding:148px 0 88px}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
-.hero h1{font-size:clamp(42px,6.5vw,78px);margin:18px 0 0}
-.hero h1 em{font-style:normal;color:var(--silver)}
-.hero-sub{margin-top:22px;max-width:46ch;font-size:18px;color:var(--body)}
+.hero-h1{font-family:var(--fb);font-weight:700;font-size:clamp(38px,6vw,64px);line-height:1.15;margin:18px 0 0;letter-spacing:-.01em;max-width:16ch}
+.accent-t{color:var(--accent)}
+.hero-sub{margin-top:22px;max-width:52ch;font-size:18px;color:var(--body)}
 .hero-cta{margin-top:32px;display:flex;flex-wrap:wrap;gap:12px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15.5px;padding:14px 25px;border:0;cursor:pointer;transition:.16s}
-.btn-p{background:var(--chrome-grad);background-size:220% 100%;background-position:30% 50%;color:var(--on-silver);font-weight:700;transition:.35s}
-.btn-p:hover{background-position:70% 50%;transform:translateY(-2px)}
+.btn-p{background:var(--white);color:var(--ink);font-weight:700}
+.btn-p:hover{opacity:.85;transform:translateY(-2px)}
 .btn-p:disabled{opacity:.6;cursor:default;transform:none}
 .btn-s{border:1px solid var(--hair);color:var(--white);background:transparent}
 .btn-s:hover{border-color:var(--dim);background:var(--panel)}
-@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:40px}.hero{padding:124px 0 72px}}
-
-/* ── the board (signature) ── */
-.board{background:var(--panel);border:1px solid var(--hair);box-shadow:0 24px 60px rgba(0,0,0,.5)}
-.board-top{display:flex;align-items:center;justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--hair);background:#111112}
-.board-t{font-family:var(--fm);font-size:11.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
-.live{display:flex;align-items:center;gap:7px;font-family:var(--fm);font-size:10.5px;letter-spacing:.14em;color:var(--book);text-transform:uppercase}
-.live i{width:7px;height:7px;border-radius:50%;background:var(--book);animation:blip 1.7s infinite}
-@keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
-.brow{display:grid;grid-template-columns:60px 1fr 92px;gap:11px;align-items:center;padding:13px 17px;border-bottom:1px solid var(--hair);font-size:14px}
-.brow .t{font-family:var(--fm);font-size:12px;color:var(--dim)}
-.brow .who{font-weight:500;line-height:1.35}
-.brow .who small{display:block;color:var(--dim);font-size:12px;font-weight:400;margin-top:2px}
-.st{font-family:var(--fm);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:4px 7px;text-align:center;transition:.4s}
-.st.m{background:rgba(228,85,62,.16);color:var(--miss)}
-.st.b{background:rgba(61,209,127,.16);color:var(--book)}
-.board-foot{display:flex;align-items:center;gap:13px;padding:15px 17px;background:#111112;border-top:1px solid var(--hair)}
-.board-foot .n{font-family:var(--fd);font-size:34px;color:var(--silver);line-height:1}
-.board-foot .l{font-family:var(--fm);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);line-height:1.5}
+@media(max-width:940px){.hero{padding:124px 0 72px}}
 
 /* ═══════════ SECTIONS ═══════════ */
 .sec{padding:92px 0;border-top:1px solid var(--hair)}
 .sec-head{margin-bottom:46px}
-.sec-head h2{font-size:clamp(31px,4.5vw,50px);margin-top:13px}
+.sec-head h2{margin-top:13px}
 .sec-head .lede{margin-top:16px;max-width:58ch}
+.sec-h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4.2vw,42px);margin-top:13px;letter-spacing:-.01em;line-height:1.15}
 
-/* ── services ── */
-.svcs{display:flex;flex-direction:column;gap:18px}
-.svcs-row{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.svc{background:var(--panel);border:1px solid var(--hair);border-top:3px solid var(--silver-dim);padding:30px 26px 26px;display:flex;flex-direction:column;transition:.2s}
-.svc:hover{background:var(--raised);transform:translateY(-3px)}
-.svc.featured{border-top:3px solid transparent;border-image:var(--chrome-grad) 1;padding:40px 40px 36px;position:relative;overflow:hidden}
-.svc.featured:before{content:"";position:absolute;top:-40%;right:-15%;width:60%;height:180%;background:radial-gradient(circle,rgba(218,220,224,.05),transparent 65%);pointer-events:none}
-.svc.featured .svc-tag{color:var(--silver-dim)}
-.svc.featured h3{font-size:42px}
-.svc.featured p{font-size:16.5px;max-width:56ch}
-.svc:nth-child(2) .svc-tag{color:var(--dim)}
-.svcs-row .svc:nth-child(1){border-top-color:var(--book)}
-.svcs-row .svc:nth-child(2){border-top-color:var(--miss)}
-.svc-tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
-.svc h3{font-family:var(--fd);font-size:30px;text-transform:uppercase;margin:12px 0 11px;letter-spacing:.01em;font-weight:400}
-.svc p{font-size:15px;color:var(--body);flex:1}
-.svc-p{font-family:var(--fm);font-size:12.5px;color:var(--dim);margin:22px 0 14px;padding-top:15px;border-top:1px solid var(--hair)}
-.svc-p b{font-family:var(--fd);font-size:27px;color:var(--white);letter-spacing:.01em;font-weight:400}
-.svc.featured .svc-p b{font-size:34px}
-.svc-go{font-size:14px;font-weight:600;color:var(--silver)}
+/* ── marketing grid ── */
+.mkt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.mkt-card{background:var(--panel);border:1px solid var(--hair);padding:30px 26px;display:flex;flex-direction:column}
+.svc-tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
+.mkt-card h3{font-family:var(--fb);font-weight:600;font-size:22px;margin:12px 0 11px;letter-spacing:-.01em}
+.mkt-card p{font-size:15px;color:var(--body);flex:1}
+.mkt-stats{display:flex;gap:22px;margin:18px 0}
+.mkt-stat{display:flex;flex-direction:column}
+.mkt-stat .n{font-family:var(--fb);font-weight:700;font-size:26px;color:var(--white);line-height:1}
+.mkt-stat .l{font-family:var(--fm);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+.svc-go{font-size:14px;font-weight:600;color:var(--accent)}
 .svc-go:hover{text-decoration:underline;text-underline-offset:4px}
-@media(max-width:900px){.svcs-row{grid-template-columns:1fr}.svc.featured{padding:30px 26px 26px}.svc.featured h3{font-size:32px}}
-
-/* ── bot scenarios ── */
-.scn{display:grid;grid-template-columns:.32fr .68fr;gap:40px;padding:40px 0;border-bottom:1px solid var(--hair);align-items:start}
-.scn:last-child{border-bottom:0}
-.scn-l .nm{font-family:var(--fd);font-size:27px;text-transform:uppercase;letter-spacing:.01em;line-height:1.06}
-.scn-l .ch{display:inline-block;margin-top:11px;font-family:var(--fm);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--silver);background:rgba(218,220,224,.12);padding:4px 9px}
-.scn-r .moment{font-size:21px;line-height:1.4;color:var(--white);font-weight:500;padding-left:19px;border-left:2px solid var(--silver);text-wrap:balance}
-.scn-r .what{margin-top:17px;font-size:15.5px;color:var(--body);max-width:62ch}
-.scn-r .for{margin-top:12px;font-family:var(--fm);font-size:12.5px;color:var(--dim)}
-@media(max-width:840px){.scn{grid-template-columns:1fr;gap:18px;padding:34px 0}}
-
-/* ── pipeline (how it works) ── */
-.pipe{position:relative;margin-top:8px;padding-left:64px}
-.pipe-line{position:absolute;left:19px;top:6px;bottom:6px;width:2px;background:var(--hair);overflow:hidden}
-.pipe-line i{position:absolute;inset:0;background:linear-gradient(180deg,var(--silver),var(--book));transform:scaleY(0);transform-origin:top;transition:transform 1.6s cubic-bezier(.22,1,.36,1)}
-.pipe.in .pipe-line i{transform:scaleY(1)}
-.pipe-step{position:relative;padding:0 0 44px;opacity:0;transform:translateX(-14px);transition:.7s cubic-bezier(.22,1,.36,1)}
-.pipe.in .pipe-step{opacity:1;transform:none}
-.pipe-step:last-child{padding-bottom:0}
-.pipe-step:before{content:attr(data-n);position:absolute;left:-64px;top:-2px;width:40px;height:40px;border-radius:50%;background:var(--panel);border:2px solid var(--silver);color:var(--silver);font-family:var(--fm);font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center}
-.pipe-step h3{font-family:var(--fd);font-size:24px;text-transform:uppercase;font-weight:400;letter-spacing:.01em}
-.pipe-step p{margin-top:9px;font-size:15.5px;color:var(--body);max-width:62ch}
-@media(max-width:700px){.pipe{padding-left:52px}.pipe-line{left:15px}.pipe-step:before{left:-52px;width:32px;height:32px;font-size:13px}}
-
-/* ── widget nudge ── */
-.nudge{margin-top:32px;display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:13px;color:var(--dim);border:1px dashed var(--hair);padding:10px 16px}
-.nudge b{color:var(--silver);font-weight:500}
-
-/* ── faq ── */
-.faq{border-top:1px solid var(--ink)}
-.faq-item{border-bottom:1px solid var(--hair)}
-.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 0;background:none;border:0;cursor:pointer;color:var(--white);text-align:left;font-family:var(--fb);font-size:17px;font-weight:600}
-.faq-q:hover{color:var(--silver)}
-.faq-q .x{font-family:var(--fm);font-size:20px;color:var(--silver);transition:transform .3s;flex-shrink:0}
-.faq-item.open .faq-q .x{transform:rotate(45deg)}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
-.faq-item.open .faq-a{max-height:240px}
-.faq-a p{padding:0 0 24px;font-size:15.5px;color:var(--body);max-width:66ch}
-
-/* ── urgency ── */
-.urgency{display:inline-flex;align-items:center;gap:9px;font-family:var(--fm);font-size:12px;letter-spacing:.04em;color:var(--silver);background:rgba(218,220,224,.08);border:1px solid rgba(218,220,224,.28);padding:7px 13px;margin-top:18px}
-.urgency i{width:6px;height:6px;border-radius:50%;background:var(--silver);animation:blip 1.7s infinite}
-
-/* ── proof ── */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:44px}
-.stat{background:var(--panel);border:1px solid var(--hair);padding:26px 24px}
-.stat .n{font-family:var(--fd);font-size:46px;color:var(--silver);line-height:1;letter-spacing:.01em}
-.stat .l{font-family:var(--fm);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);margin-top:11px;line-height:1.5}
-.quotes{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.quote{background:var(--panel);border:1px solid var(--hair);padding:28px 26px}
-.quote-t{font-size:16px;color:var(--white);line-height:1.55}
-.quote-a{display:flex;align-items:center;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--hair)}
-.avatar{width:38px;height:38px;background:var(--silver);color:var(--on-silver);font-family:var(--fd);font-size:15px;display:flex;align-items:center;justify-content:center;letter-spacing:.02em}
-.quote-name{font-weight:600;font-size:14.5px}
-.quote-biz{font-family:var(--fm);font-size:11.5px;color:var(--dim);margin-top:2px}
-@media(max-width:860px){.stats,.quotes{grid-template-columns:1fr}}
+@media(max-width:900px){.mkt-grid{grid-template-columns:1fr}}
 
 /* ── about ── */
 .about-in{display:grid;grid-template-columns:.34fr .66fr;gap:52px;align-items:start}
@@ -192,44 +99,41 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(14,14,13,.92)
 .about-role{font-family:var(--fm);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);margin-top:5px}
 .about-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
 .tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border:1px solid var(--hair);padding:4px 8px}
+.about-ugc{display:inline-block;font-family:var(--fm);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-top:16px;text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:2px;transition:opacity .15s}
+.about-ugc:hover{opacity:.75}
 .about-q{font-size:22px;line-height:1.45;color:var(--white);font-weight:500;text-wrap:balance}
-.about-q em{font-style:normal;color:var(--silver)}
+.about-q em{font-style:normal;color:var(--accent)}
 .about-body{margin-top:22px;display:flex;flex-direction:column;gap:15px;color:var(--body);font-size:16px;max-width:62ch}
 @media(max-width:860px){.about-in{grid-template-columns:1fr;gap:34px}}
 
 /* ── contact ── */
 .contact-in{max-width:760px;margin:0 auto}
-.contact h2{font-size:clamp(32px,4.6vw,52px);margin-top:13px}
+.contact h2{margin-top:13px}
 .contact-sub{margin-top:16px;color:var(--body);max-width:54ch}
-.svc-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:34px 0 26px}
-.svc-btn{background:var(--panel);border:1px solid var(--hair);padding:16px 15px;text-align:left;cursor:pointer;transition:.16s;color:var(--white);font-family:var(--fb)}
-.svc-btn:hover{border-color:var(--dim)}
-.svc-btn.on{border-color:var(--silver);background:var(--raised)}
-.svc-btn .sl{font-weight:600;font-size:14.5px}
-.svc-btn .sd{font-size:12.5px;color:var(--dim);margin-top:4px;line-height:1.45}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-family:var(--fm);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
 .field input,.field textarea{background:var(--panel);border:1px solid var(--hair);padding:13px 14px;color:var(--white);font-family:var(--fb);font-size:15.5px;resize:vertical}
-.field input:focus,.field textarea:focus{border-color:var(--silver);outline:none}
-.field input::placeholder,.field textarea::placeholder{color:#55564F}
+.field input:focus,.field textarea:focus{border-color:var(--accent);outline:none}
+.field input::placeholder,.field textarea::placeholder{color:#4C4D52}
+#contactForm{margin-top:30px}
 #contactForm .btn{width:100%;margin-top:18px}
-.form-ok{display:none;background:rgba(61,209,127,.11);border:1px solid rgba(61,209,127,.35);color:var(--book);padding:18px;text-align:center;font-weight:600;margin-top:8px}
+.form-ok{display:none;background:rgba(61,209,127,.11);border:1px solid rgba(61,209,127,.35);color:#3DD17F;padding:18px;text-align:center;font-weight:600;margin-top:8px}
 .form-ok.show{display:block}
-.form-err{display:none;background:rgba(228,85,62,.11);border:1px solid rgba(228,85,62,.35);color:var(--miss);padding:14px;text-align:center;font-size:14.5px;margin-top:12px}
+.form-err{display:none;background:rgba(228,85,62,.11);border:1px solid rgba(228,85,62,.35);color:#E4553E;padding:14px;text-align:center;font-size:14.5px;margin-top:12px}
 .form-err.show{display:block}
-@media(max-width:700px){.svc-pick,.frow{grid-template-columns:1fr}}
+@media(max-width:700px){.frow{grid-template-columns:1fr}}
 
 /* ── footer ── */
-footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
+footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#050506}
 .foot-in{max-width:var(--max);margin:0 auto;padding:0 26px;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center}
 .foot-logo{font-family:var(--fd);font-size:18px;text-transform:uppercase;display:flex;align-items:center;gap:9px}
 .foot-logo img{width:24px;height:24px;object-fit:contain}
 .foot-links,.foot-social{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-size:14px;color:var(--dim)}
 .foot-links a:hover,.foot-social a:hover{color:var(--white)}
 .foot-contact{font-family:var(--fm);font-size:12.5px;color:var(--dim)}
-.foot-contact a:hover{color:var(--silver)}
-.foot-copy{font-family:var(--fm);font-size:11.5px;color:#55564F}
+.foot-contact a:hover{color:var(--accent)}
+.foot-copy{font-family:var(--fm);font-size:11.5px;color:#4C4D52}
 
 /* ── motion ── */
 .rv{opacity:0;transform:translateY(20px);transition:.75s cubic-bezier(.22,1,.36,1)}
@@ -244,18 +148,14 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
   <div class="nav-in">
     <a href="/" class="logo"><img src="logo-mark.png" alt="">Evan<b>·</b>Enterprises</a>
     <div class="nav-links">
-      <a href="#frontdesk">AI Front Desk</a>
       <a href="#marketing">Marketing</a>
-      <a href="#distribution">Distribution</a>
       <a href="#about">About</a>
       <a href="#contact" class="nav-cta">Book a call</a>
     </div>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#frontdesk">AI Front Desk</a>
     <a href="#marketing">Marketing</a>
-    <a href="#distribution">Distribution</a>
     <a href="#about">About</a>
     <a href="#contact">Book a call →</a>
   </div>
@@ -263,210 +163,46 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
 
 <!-- HERO -->
 <header class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="eyebrow">AI Front Desk · Evan Enterprises LLC</div>
-      <h1 class="disp">An AI that never<br>lets a <em class="chrome">call</em><br>go unanswered.</h1>
-      <p class="hero-sub">It picks up every call, texts back the ones it misses, and books the job — instantly, day or night. Ask it something right now; the chat bubble in the corner is the real thing, not a mockup.</p>
-      <div class="hero-cta">
-        <a href="#bots" class="btn btn-p">Try the AI now →</a>
-        <a href="#contact" class="btn btn-s">Book a free call</a>
-      </div>
-    </div>
-
-    <div class="board" aria-hidden="true">
-      <div class="board-top">
-        <span class="board-t">Today's board</span>
-        <span class="live"><i></i>Live</span>
-      </div>
-      <div id="rows"></div>
-      <div class="board-foot">
-        <span class="n tnum" id="counter">0</span>
-        <span class="l">calls captured<br>that would've hit voicemail</span>
-      </div>
+  <div class="wrap">
+    <div class="eyebrow">Evan Enterprises LLC — Sean Evangelista</div>
+    <h1 class="hero-h1">Marketing built by <span class="accent-t">one person</span> who does the work.</h1>
+    <p class="hero-sub">Ad management, website builds, and UGC. No account managers, no hand-offs — every video, every ad account, every site, I build it myself.</p>
+    <div class="hero-cta">
+      <a href="#marketing" class="btn btn-p">See my work →</a>
+      <a href="#contact" class="btn btn-s">Book a call →</a>
     </div>
   </div>
 </header>
 
-<!-- SERVICES -->
-<section class="sec" id="services">
+<!-- MARKETING -->
+<section class="sec" id="marketing">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="eyebrow">What I run for you</div>
-      <h2 class="disp">One AI. Two more<br>ways I help.</h2>
-      <p class="lede">The AI Front Desk is the main thing — the phone is where most businesses bleed money first. Ads and product leads are here if you want the full picture.</p>
+      <div class="eyebrow">What I do</div>
+      <h2 class="sec-h2">One person. Every part<br>of your marketing.</h2>
+      <p class="lede">Ad management, website builds, and UGC — no account managers, no hand-offs. You work directly with me on every part of it.</p>
     </div>
-    <div class="svcs rv">
-      <div class="svc featured" id="frontdesk">
-        <div class="svc-tag">Answer the phone — automatically</div>
-        <h3>AI Front Desk</h3>
-        <p>Five bots that answer calls, text back missed callers, chat on your site, work cold quotes, and collect reviews — all reading the same brief about your business. This is what's live in the corner of this page right now.</p>
-        <div class="svc-p"><b>$299</b> /mo · per business</div>
-        <a href="#bots" class="svc-go">See all five bots →</a>
-        <div class="urgency"><i></i>Onboarding a limited number of businesses this month</div>
+    <div class="mkt-grid rv">
+      <div class="mkt-card">
+        <div class="svc-tag">Ad Management</div>
+        <h3>Google Ads, Local Service Ads &amp; Instagram, run end to end</h3>
+        <p>Strategy, creative, and daily optimization — managed personally, not handed off to a junior account rep. Real numbers, no fluff.</p>
       </div>
-      <div class="svcs-row">
-        <div class="svc" id="marketing">
-          <div class="svc-tag">Fill the schedule</div>
-          <h3>Marketing</h3>
-          <p>Google Search, Local Service Ads and Meta, managed end to end — with a live dashboard so you never wait on a monthly report to know your numbers. You own the accounts.</p>
-          <div class="svc-p"><b>$500</b> /mo · from · + ad spend</div>
-          <a href="#contact" class="svc-go">See what's included →</a>
+      <div class="mkt-card">
+        <div class="svc-tag">Website Building</div>
+        <h3>Custom sites, built from the ground up</h3>
+        <p>Vibe-coded to fit your brand, not a template — with the option to add an AI chatbot to the build for lead capture or customer questions. A real example of the work:</p>
+        <a href="https://legacyhardscapeatx.com" target="_blank" rel="noopener" class="svc-go">See a live build → legacyhardscapeatx.com</a>
+      </div>
+      <div class="mkt-card">
+        <div class="svc-tag">UGC Work</div>
+        <h3>Video content, backed by my own numbers</h3>
+        <p>I create UGC and personal content across Instagram, TikTok, and YouTube — this isn't theoretical:</p>
+        <div class="mkt-stats">
+          <div class="mkt-stat"><span class="n">5.9M+</span><span class="l">Organic views</span></div>
+          <div class="mkt-stat"><span class="n">30.9K</span><span class="l">TikTok followers</span></div>
         </div>
-        <div class="svc" id="distribution">
-          <div class="svc-tag">Widen the margin</div>
-          <h3>Distribution</h3>
-          <p>Vetted Amazon, Walmart and eBay product leads every month — buy price, sell price, fees and ROI already worked out. Exclusive to subscribers, never published.</p>
-          <div class="svc-p"><b>$99</b> /mo · cancel anytime</div>
-          <a href="#contact" class="svc-go">Get this month's leads →</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- BOTS -->
-<section class="sec" id="bots">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">The AI Front Desk, bot by bot</div>
-      <h2 class="disp">Five bots. One brief<br>about your business.</h2>
-      <p class="lede">They read the same file — your hours, your prices, your service area — so the answer is the same whichever way a customer reaches you. Take the whole suite, or start with the one that's costing you most.</p>
-    </div>
-
-    <div class="rv">
-      <div class="scn">
-        <div class="scn-l"><div class="nm">Missed-call<br>text-back</div><span class="ch">SMS</span></div>
-        <div class="scn-r">
-          <p class="moment">You're under a sink with both hands wet. The phone rings out.</p>
-          <p class="what">Before they can dial the next name on the list, they get a text from your business asking what they need — and the conversation keeps going until the job is booked.</p>
-          <p class="for">Best for: anyone whose work makes answering the phone impossible.</p>
-        </div>
-      </div>
-
-      <div class="scn">
-        <div class="scn-l"><div class="nm">AI<br>receptionist</div><span class="ch">Voice</span></div>
-        <div class="scn-r">
-          <p class="moment">It's 9:40 on a Sunday night and somebody's kitchen is flooding.</p>
-          <p class="what">It picks up in your business's voice, quotes your real prices, and books the slot. When it's a genuine emergency, it rings your cell and hands the call over warm instead of taking a message.</p>
-          <p class="for">Best for: the nights and weekends currently going to voicemail.</p>
-        </div>
-      </div>
-
-      <div class="scn">
-        <div class="scn-l"><div class="nm">Website<br>chatbot</div><span class="ch">Web chat</span></div>
-        <div class="scn-r">
-          <p class="moment">Someone clicked your ad, read two lines, and reached for the chat box.</p>
-          <p class="what">It answers what they actually asked and books the job without a contact form. When it doesn't know something, it takes their number instead of making an answer up.</p>
-          <p class="for">Best for: converting the traffic you're already paying for.</p>
-        </div>
-      </div>
-
-      <div class="scn">
-        <div class="scn-l"><div class="nm">Follow-up<br>bot</div><span class="ch">SMS + Email</span></div>
-        <div class="scn-r">
-          <p class="moment">You sent the estimate eleven days ago. Nothing since.</p>
-          <p class="what">It checks back on a schedule, answers whatever question stalled them, and books the work when they're ready — so you're not the one doing the chasing.</p>
-          <p class="for">Best for: the quotes sitting quiet in your inbox right now.</p>
-        </div>
-      </div>
-
-      <div class="scn">
-        <div class="scn-l"><div class="nm">Review<br>bot</div><span class="ch">SMS + Email</span></div>
-        <div class="scn-r">
-          <p class="moment">The job went well. Nobody ever asks for the review.</p>
-          <p class="what">It asks once the work is done. Happy customers get your Google link; anyone unhappy gets routed straight to you — before they write it up in public.</p>
-          <p class="for">Best for: climbing the map pack without chasing anyone yourself.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="nudge rv">↘ <b>Try it yourself</b> — open the chat bubble in the corner and ask it a real question.</div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="sec" id="how">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">How it actually works</div>
-      <h2 class="disp">From missed call<br>to booked job.</h2>
-      <p class="lede">Same pipeline behind every bot — the only thing that changes per business is the details it's trained on.</p>
-    </div>
-    <div class="pipe rv" id="pipe">
-      <div class="pipe-line"><i></i></div>
-      <div class="pipe-step" data-n="1">
-        <h3>Customer reaches out</h3>
-        <p>By call, text, or your website chat — whichever door they walk through, the bot's already there.</p>
-      </div>
-      <div class="pipe-step" data-n="2">
-        <h3>The bot answers instantly</h3>
-        <p>Using real facts about your business — hours, pricing, service area — never a guess, never made up.</p>
-      </div>
-      <div class="pipe-step" data-n="3">
-        <h3>The job lands on your calendar</h3>
-        <p>Booked automatically, no back-and-forth. Emergencies get warm-transferred straight to your cell.</p>
-      </div>
-      <div class="pipe-step" data-n="4">
-        <h3>You review, weekly</h3>
-        <p>A short skim of real conversations. You approve every fix — the bot gets sharper because you make it sharper, not on its own.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="sec">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">Before you ask</div>
-      <h2 class="disp">Questions worth<br>answering upfront.</h2>
-    </div>
-    <div class="faq rv" id="faq">
-      <div class="faq-item">
-        <button class="faq-q" type="button">How fast can this go live?<span class="x">+</span></button>
-        <div class="faq-a"><p>Most businesses are live within a week. The only real wait is carrier approval for text messaging — that's out of anyone's hands, mine included, and usually clears in a few business days.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button">Do I need a new phone number?<span class="x">+</span></button>
-        <div class="faq-a"><p>No. We connect to your existing business line. Your customers dial the same number they always have.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button">Is there a contract?<span class="x">+</span></button>
-        <div class="faq-a"><p>No long-term contract. Cancel anytime — I'd rather earn the renewal every month than lock you in.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button">What if the bot doesn't know an answer?<span class="x">+</span></button>
-        <div class="faq-a"><p>It never guesses. If it's unsure, it takes the customer's name and number and flags it for a human — you.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button">Who's actually checking the bot's work?<span class="x">+</span></button>
-        <div class="faq-a"><p>I am, weekly. I skim real conversations and tighten anything that needs it. The bot doesn't retrain itself behind your back — every change is one I've approved.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROOF -->
-<section class="sec">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">Real businesses, real numbers</div>
-      <h2 class="disp">Proof, not promises.</h2>
-    </div>
-    <div class="stats rv">
-      <div class="stat"><div class="n tnum">2×</div><div class="l">Lead volume in the first 30 days</div></div>
-      <div class="stat"><div class="n">24/7</div><div class="l">Calls answered — nights & weekends</div></div>
-      <div class="stat"><div class="n tnum">1</div><div class="l">Operator — you always work with Sean</div></div>
-    </div>
-    <div class="quotes rv">
-      <div class="quote">
-        <div class="quote-t">"Sean took over our Google Ads and LSA in the first week. Within 30 days our lead volume doubled and our cost per lead dropped significantly."</div>
-        <div class="quote-a"><div class="avatar">PL</div><div><div class="quote-name">Premier Landscaping ATX</div><div class="quote-biz">Austin, TX — Landscaping</div></div></div>
-      </div>
-      <div class="quote">
-        <div class="quote-t">"The distribution leads are legitimate. The ROI data is accurate and the leads are exclusive — not the recycled stuff you see on other lists."</div>
-        <div class="quote-a"><div class="avatar">MS</div><div><div class="quote-name">Mediterranean Spa</div><div class="quote-biz">Baltimore, MD — Wellness</div></div></div>
+        <a href="https://seanjevangelista-pixel.github.io/seanjayme/" target="_blank" rel="noopener" class="svc-go">See full media kit →</a>
       </div>
     </div>
   </div>
@@ -480,14 +216,15 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
       <div class="about-name">Sean Evangelista</div>
       <div class="about-role">Founder — Evan Enterprises LLC</div>
       <div class="about-tags">
-        <span class="tag">AI Front Desk</span><span class="tag">Google Ads</span><span class="tag">LSA</span><span class="tag">Meta</span><span class="tag">Amazon FBA</span>
+        <span class="tag">Ad Management</span><span class="tag">Website Building</span><span class="tag">UGC</span>
       </div>
+      <a href="https://seanjevangelista-pixel.github.io/seanjayme/" target="_blank" rel="noopener" class="about-ugc">See my UGC work →</a>
     </div>
     <div class="rv">
-      <p class="about-q">"I help local businesses <em>capture every dollar that walks in the door</em> — the call you missed, the ad you're wasting, the product you should be selling."</p>
+      <p class="about-q">"I help brands <em>show up like a real person made it</em> — the ad that actually converts, the site that actually loads fast, the content that doesn't look like an ad."</p>
       <div class="about-body">
         <p>I keep my roster small on purpose. Every client works directly with me — no account managers, no hand-offs, no junior reps learning on your budget.</p>
-        <p>Whether it's an AI receptionist catching your after-hours calls, ad accounts that actually turn a profit, or product leads with the math already done, the standard is the same: full transparency, real numbers, no fluff. You can text me when something comes up.</p>
+        <p>Whether it's an ad account that actually turns a profit, a site built from scratch, or UGC that pulls real views, the standard is the same: full transparency, real numbers, no fluff. You can text me when something comes up.</p>
       </div>
     </div>
   </div>
@@ -498,16 +235,11 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
   <div class="wrap contact-in">
     <div class="rv">
       <div class="eyebrow">Next step</div>
-      <h2 class="disp">Tell me what's leaking.</h2>
-      <p class="contact-sub">Pick what you're here for and tell me a bit about your situation. I follow up within 24 hours — you, me, no middlemen.</p>
-    </div>
-    <div class="svc-pick rv" id="svcPick">
-      <button type="button" class="svc-btn on" data-svc="frontdesk"><div class="sl">AI Front Desk</div><div class="sd">Answer calls & book jobs 24/7.</div></button>
-      <button type="button" class="svc-btn" data-svc="marketing"><div class="sl">Marketing</div><div class="sd">Run & manage my ads.</div></button>
-      <button type="button" class="svc-btn" data-svc="distribution"><div class="sl">Distribution</div><div class="sd">Product leads to flip.</div></button>
+      <h2 class="sec-h2">Tell me what's leaking.</h2>
+      <p class="contact-sub">Tell me a bit about your situation. I follow up within 24 hours — you, me, no middlemen.</p>
     </div>
     <form id="contactForm" class="rv" novalidate>
-      <input type="hidden" id="svcType" name="service_type" value="frontdesk">
+      <input type="hidden" id="svcType" name="service_type" value="marketing">
       <div class="frow">
         <div class="field"><label for="cf-name">Your name</label><input id="cf-name" name="name" placeholder="John Smith" required></div>
         <div class="field"><label for="cf-email">Email</label><input id="cf-email" name="email" type="email" placeholder="you@yourbiz.com" required></div>
@@ -529,10 +261,8 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
   <div class="foot-in">
     <a href="/" class="foot-logo"><img src="logo-mark.png" alt="">Evan Enterprises LLC</a>
     <div class="foot-links">
-      <a href="#frontdesk">AI Front Desk</a>
       <a href="#marketing">Marketing</a>
-      <a href="#distribution">Distribution</a>
-      <a href="/leads">Leads Portal</a>
+      <a href="#about">About</a>
       <a href="/portal">Client Portal</a>
       <a href="/privacy.html">Privacy</a>
       <a href="/terms.html">Terms</a>
@@ -562,88 +292,12 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
   });
 })();
 
-// ── service picker ──
-(function(){
-  document.querySelectorAll('.svc-btn').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      document.querySelectorAll('.svc-btn').forEach(function(b){b.classList.remove('on');});
-      btn.classList.add('on');
-      document.getElementById('svcType').value = btn.getAttribute('data-svc');
-    });
-  });
-})();
-
 // ── scroll reveal ──
 (function(){
   var io=new IntersectionObserver(function(es){
     es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
   },{threshold:.12});
   document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
-})();
-
-// ── pipeline draw + staggered steps ──
-(function(){
-  var pipe=document.getElementById('pipe');
-  if(!pipe) return;
-  var steps=pipe.querySelectorAll('.pipe-step');
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if(e.isIntersecting){
-        pipe.classList.add('in');
-        steps.forEach(function(s,i){ s.style.transitionDelay=(.15+i*.15)+'s'; });
-        io.unobserve(e.target);
-      }
-    });
-  },{threshold:.15});
-  io.observe(pipe);
-})();
-
-// ── faq accordion ──
-(function(){
-  var faq=document.getElementById('faq');
-  if(!faq) return;
-  faq.querySelectorAll('.faq-q').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var item=btn.closest('.faq-item');
-      var wasOpen=item.classList.contains('open');
-      faq.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
-      if(!wasOpen) item.classList.add('open');
-    });
-  });
-})();
-
-// ── the board ──
-(function(){
-  var calls=[
-    {t:'7:42a',w:'Unknown — Cedar Park',s:'Water heater leaking'},
-    {t:'11:08a',w:'Unknown — Round Rock',s:'Quote for a rebuild'},
-    {t:'1:26p',w:'Unknown — South Austin',s:'AC not cooling'},
-    {t:'6:03p',w:'Unknown — Pflugerville',s:'After-hours callback'},
-    {t:'9:17p',w:'Unknown — Kyle',s:'Drain backing up'}
-  ];
-  var rows=document.getElementById('rows');
-  if(!rows) return;
-  calls.forEach(function(c){
-    rows.insertAdjacentHTML('beforeend',
-      '<div class="brow"><span class="t tnum">'+c.t+'</span>'+
-      '<span class="who">'+c.w+'<small>'+c.s+'</small></span>'+
-      '<span class="st m">Missed</span></div>');
-  });
-  var counter=document.getElementById('counter');
-  var sts=Array.prototype.slice.call(document.querySelectorAll('.st'));
-  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce){ sts.forEach(function(s){s.className='st b';s.textContent='Booked';}); counter.textContent=sts.length; return; }
-  var n=0,i=0;
-  function flip(){
-    if(i>=sts.length) return;
-    sts[i].className='st b'; sts[i].textContent='Booked';
-    n++; counter.textContent=n; i++;
-    setTimeout(flip,900);
-  }
-  var start=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){ setTimeout(flip,700); start.disconnect(); } });
-  },{threshold:.3});
-  start.observe(rows);
 })();
 
 // ── contact form → /api/contact-site ──
@@ -672,7 +326,6 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
       });
       if(!r.ok) throw new Error('failed');
       form.style.display='none';
-      document.getElementById('svcPick').style.display='none';
       ok.classList.add('show');
     }catch(e2){
       btn.disabled=false; btn.textContent='Send message →';
@@ -683,7 +336,5 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#0C0C0B}
 })();
 </script>
 
-<!-- GoHighLevel Chat Widget — live AI Front Desk demo (Lone Star Plumbing sub-account) -->
-<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6a680fdbb0ee6ed3ac456763" data-source="WEB_USER"></script>
 </body>
 </html>

@@ -79,10 +79,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92)
 .hero-mask:nth-of-type(4)>*{transition-delay:.38s}
 body.is-ready .hero-mask>*{transform:none;opacity:1}
 
-/* ── track strip ── */
-.track-strip{display:flex;gap:14px;flex-wrap:wrap}
-.track-chip{font-family:var(--fm);font-size:12px;letter-spacing:.04em;color:var(--dim);border:1px solid var(--hair);padding:7px 13px}
-.track-chip b{color:var(--accent);font-weight:600}
+/* ── welcome note ── */
+.note-in{display:grid;grid-template-columns:.3fr .7fr;gap:44px;align-items:center}
+.note-photo{width:100%;max-width:210px;aspect-ratio:4/5;object-fit:cover;object-position:center 20%;filter:grayscale(1) contrast(1.05);border:1px solid var(--hair)}
+.note-q{font-size:21px;line-height:1.55;color:var(--white);font-weight:500;text-wrap:balance}
+.note-sign{margin-top:18px;font-family:var(--fm);font-size:12.5px;letter-spacing:.05em;color:var(--dim)}
+@media(max-width:700px){.note-in{grid-template-columns:1fr;gap:26px}.note-photo{max-width:160px}}
+
+/* ── faq ── */
+.faq-list{display:flex;flex-direction:column;border-top:1px solid var(--hair)}
+.faq-item{border-bottom:1px solid var(--hair)}
+.faq-item summary{padding:22px 0;font-weight:600;font-size:16px;color:var(--white);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary .ic{font-family:var(--fm);color:var(--accent);font-size:18px;transition:transform .25s var(--ease);flex:none}
+.faq-item[open] summary .ic{transform:rotate(45deg)}
+.faq-item p{padding-bottom:22px;color:var(--body);font-size:15px;line-height:1.65;max-width:62ch}
 
 /* ── payment cards ── */
 .pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -158,87 +169,67 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
 <!-- HERO -->
 <header class="hero">
   <div class="wrap">
-    <div class="hero-mask"><div class="eyebrow">Client Onboarding</div></div>
-    <div class="hero-mask"><h1 class="hero-h1">Working together — <span class="accent-t">how this goes</span> from here.</h1></div>
-    <div class="hero-mask"><p class="hero-sub">This covers how projects run across everything I do: ad management, website builds, and UGC. Some details shift per project — we'll confirm specifics on our kickoff call — but the structure below is consistent every time, so you know exactly what to expect before we start.</p></div>
+    <div class="hero-mask"><div class="eyebrow">Welcome</div></div>
+    <div class="hero-mask"><h1 class="hero-h1">Glad you're here — <span class="accent-t">here's how this goes</span> from here.</h1></div>
+    <div class="hero-mask"><p class="hero-sub">No fine print, no surprises. Just what to expect, what it costs, and answers to the stuff most people wonder about before working with someone new. If anything's still unclear after reading, just ask — that's what I'm here for.</p></div>
     <div class="hero-mask">
       <div class="hero-cta">
         <a href="/#contact" class="btn btn-p">Book a call →</a>
-        <a href="#payment" class="btn btn-s">See payment terms →</a>
+        <a href="#payment" class="btn btn-s">See pricing →</a>
       </div>
     </div>
   </div>
 </header>
 
-<!-- KICKOFF CALL -->
+<!-- WELCOME NOTE -->
 <section class="sec">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">Step one</div>
-      <h2 class="sec-h2">What we cover on the kickoff call.</h2>
-      <p class="lede">Before anything starts, we get on a call to lock in scope — a real target, not a guess.</p>
-    </div>
-    <div class="step-list rv">
-      <div class="step">
-        <div class="n">→</div>
-        <div>
-          <div class="svc-name">Ad Management</div>
-          <div class="items">Monthly ad spend budget ($500/mo minimum) · ad account access · target service area · the goal we're optimizing toward (calls, form fills, bookings).</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="n">→</div>
-        <div>
-          <div class="svc-name">Website Building</div>
-          <div class="items">Page count · who's responsible for copy and content · number of revision rounds included · target launch date · whether an AI chatbot add-on fits the build.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="n">→</div>
-        <div>
-          <div class="svc-name">UGC Work</div>
-          <div class="items">Number of pieces and formats · brand guidelines · approval process · usage rights (organic vs. paid ads) · turnaround time.</div>
-        </div>
+    <div class="note-in rv">
+      <img src="/sean.jpg" alt="Sean Evangelista" class="note-photo">
+      <div>
+        <div class="eyebrow">A quick note from me</div>
+        <p class="note-q" style="margin-top:14px">"You're working with me — not an account manager, not a junior rep learning on your budget. From your first message to the day we wrap, I'm the one doing the work and the one you text when something comes up."</p>
+        <div class="note-sign">— Sean, Evan Enterprises LLC</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- TIMELINE -->
+<!-- HOW IT WORKS -->
 <section class="sec">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="eyebrow">Step two</div>
-      <h2 class="sec-h2">From kickoff to launch.</h2>
-      <p class="lede">The exact timeline depends on the service, but the shape is the same every time.</p>
+      <div class="eyebrow">How it works</div>
+      <h2 class="sec-h2">Four steps, start to finish.</h2>
+      <p class="lede">Same shape every time, whether it's ads, a website, or content.</p>
     </div>
     <div class="step-list rv">
       <div class="step">
         <div class="n">01</div>
         <div>
-          <div class="svc-name">Deposit + kickoff call</div>
-          <div class="items">50% deposit to start, then a 15–20 minute call to confirm scope, budget, and timeline.</div>
+          <div class="svc-name">A quick call</div>
+          <div class="items">15–20 minutes, no pressure — we talk through what you need and lock in scope, budget, and timeline together.</div>
         </div>
       </div>
       <div class="step">
         <div class="n">02</div>
         <div>
-          <div class="svc-name">Build or setup</div>
-          <div class="items">Website: design and development against the agreed scope. Ads: account setup, conversion tracking, campaign build. UGC: production against brief.</div>
+          <div class="svc-name">Deposit, then I get moving</div>
+          <div class="items">A 50% deposit gets things started (ad management works a little differently — see pricing below). Then I'm heads-down on your project.</div>
         </div>
       </div>
       <div class="step">
         <div class="n">03</div>
         <div>
-          <div class="svc-name">Review</div>
-          <div class="items">You see the work before it goes live — a site walkthrough, an ad campaign screen-share, or content for approval, depending on the project.</div>
+          <div class="svc-name">You see it before it's final</div>
+          <div class="items">A site walkthrough, a campaign screen-share, or content sent for approval — nothing goes live without you seeing it first.</div>
         </div>
       </div>
       <div class="step">
         <div class="n">04</div>
         <div>
           <div class="svc-name">Launch</div>
-          <div class="items">Remaining balance due, then we go live. Ad management continues month-to-month with ongoing reporting; websites and UGC wrap at delivery.</div>
+          <div class="items">Remaining balance, then we're live. Websites and content wrap here; ad management keeps going with ongoing reporting and optimization.</div>
         </div>
       </div>
     </div>
@@ -249,25 +240,25 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
 <section class="sec" id="payment">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="eyebrow">Payment</div>
-      <h2 class="sec-h2">What it costs, and when it's due.</h2>
-      <p class="lede">Every one-time project starts with a 50% deposit — remainder due at delivery. Ad management runs on its own monthly structure.</p>
+      <div class="eyebrow">Pricing</div>
+      <h2 class="sec-h2">What it costs, in plain terms.</h2>
+      <p class="lede">Straightforward on purpose — here's what you'd pay and when, no hidden fees.</p>
     </div>
     <div class="pay-grid rv">
       <div class="pay-card">
         <div class="svc">Website Building</div>
         <div class="split">50% → 50%</div>
-        <div class="note">Deposit to start, remainder due at launch. Larger builds may split into deposit / design approval / launch (50/25/25) — confirmed at kickoff.</div>
+        <div class="note">Half to start, half when it launches. Bigger builds split into three — we'll map it out on the call.</div>
       </div>
       <div class="pay-card">
         <div class="svc">Ad Management</div>
         <div class="split">$400/mo</div>
-        <div class="note">$200 deposit, $200 before ads go live — covers setup plus the first month. $400/mo after that, month-to-month. Ad spend ($500/mo minimum) bills separately, direct to Google.</div>
+        <div class="note">$200 to start, $200 before ads go live, then $400/mo — cancel anytime. Ad spend itself ($500/mo min.) goes straight to Google, separate from my fee.</div>
       </div>
       <div class="pay-card">
         <div class="svc">UGC Work</div>
         <div class="split">50% → 50%</div>
-        <div class="note">Deposit to start production, remainder due on delivery of final content. See the UGC rate card below for per-piece pricing.</div>
+        <div class="note">Half to start production, half when the final content's delivered. Per-piece pricing below if you just want one-off content.</div>
       </div>
     </div>
   </div>
@@ -277,9 +268,9 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
 <section class="sec">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="eyebrow">UGC rate card</div>
-      <h2 class="sec-h2">À la carte content pricing.</h2>
-      <p class="lede">Useful if you want to add content alongside another project, or on its own.</p>
+      <div class="eyebrow">Just need content?</div>
+      <h2 class="sec-h2">Content, à la carte.</h2>
+      <p class="lede">No need to book a full project — these run on their own too.</p>
     </div>
     <div class="table-wrap rv">
       <table class="rate-table">
@@ -294,22 +285,34 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
   </div>
 </section>
 
-<!-- COMMS & TERMS -->
+<!-- FAQ -->
 <section class="sec">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="eyebrow">Communication &amp; terms</div>
-      <h2 class="sec-h2">How we work together day to day.</h2>
+      <div class="eyebrow">Common questions</div>
+      <h2 class="sec-h2">Things people usually ask.</h2>
     </div>
-    <div class="two-col rv">
-      <div>
-        <h3>Response time</h3>
-        <p>I follow up within 24 hours on anything you send — you, me, no middlemen, no account managers relaying messages.</p>
-      </div>
-      <div>
-        <h3>Contract terms</h3>
-        <p>One-time projects (websites, UGC) end at final delivery — no ongoing commitment. Ad management runs month-to-month; cancel anytime, no early termination fee.</p>
-      </div>
+    <div class="faq-list rv">
+      <details class="faq-item">
+        <summary>How fast do you respond?<span class="ic">+</span></summary>
+        <p>Within 24 hours, always — and it's always me replying, not a rep relaying things back and forth. Most of the time it's a lot faster than that.</p>
+      </details>
+      <details class="faq-item">
+        <summary>I'm not sure which service I need — is that okay?<span class="ic">+</span></summary>
+        <p>Completely normal. That's what the first call is for — tell me what's going on with your business and I'll tell you honestly what would actually help, even if it's not the thing you asked about.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I cancel ad management if it's not working out?<span class="ic">+</span></summary>
+        <p>Yes — it's month-to-month with no contract lock-in and no early termination fee. Cancel anytime.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Do one-time projects come with any ongoing commitment?<span class="ic">+</span></summary>
+        <p>No. Websites and UGC work wrap up at final delivery — no retainer, no renewal, nothing automatic.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What if I want changes after the first draft?<span class="ic">+</span></summary>
+        <p>Revision rounds are part of the scope we agree on at kickoff, so this isn't a surprise bill — we'll talk through exactly how many rounds are included before anything starts.</p>
+      </details>
     </div>
   </div>
 </section>
@@ -317,8 +320,8 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
 <!-- CLOSING CTA -->
 <section class="close-cta">
   <div class="wrap">
-    <h2 class="rv">Ready to get started?</h2>
-    <p class="rv">Book a call and we'll figure out which service fits, and lock in scope together.</p>
+    <h2 class="rv">Ready when you are.</h2>
+    <p class="rv">Book a call, or just email me — either way, we'll figure out what fits.</p>
     <div class="hero-cta rv">
       <a href="/#contact" class="btn btn-p">Book a call →</a>
       <a href="mailto:seanjayme@evanenterprise.com" class="btn btn-s">Email me →</a>

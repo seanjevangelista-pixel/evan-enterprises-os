@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Client Onboarding — Evan Enterprises LLC</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="theme-color" content="#0A0A0C">
+<meta name="description" content="How working with Evan Enterprises works — ad management, website builds, and UGC. Payment terms, kickoff process, timelines, and rates, all in one place.">
+<meta property="og:title" content="Client Onboarding — Evan Enterprises LLC">
+<meta property="og:description" content="How working together goes — payment terms, kickoff process, timelines, and rates for ad management, website builds, and UGC.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A0A0C;
+  --panel:#0F1B33;
+  --white:#F7F7F5;
+  --body:#9A9C9F;
+  --dim:#7A7C80;
+  --accent:#3B5BDB;
+  --on-accent:#F7F7F5;
+  --hair:rgba(247,247,245,.10);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-back:cubic-bezier(.34,1.56,.64,1);
+  --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --fm:'IBM Plex Mono',ui-monospace,monospace;
+  --max:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--white);font-family:var(--fb);font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
+.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--body)}
+.sec{padding:88px 0;border-top:1px solid var(--hair)}
+.sec-head{margin-bottom:44px}
+.sec-h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4.2vw,42px);margin-top:13px;letter-spacing:-.01em;line-height:1.15}
+.sec-head .lede{margin-top:16px;max-width:58ch}
+
+/* ── nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.logo{font-family:var(--fb);font-weight:700;font-size:19px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
+.logo img{width:26px;height:26px;object-fit:contain}
+.logo b{color:var(--accent);font-weight:400}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--dim);font-weight:500}
+.nav-links a:hover{color:var(--white)}
+.nav-cta{background:var(--accent);color:var(--on-accent);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
+.nav-cta:hover{background:#4A6BF0}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
+.burger span{display:block;width:23px;height:2px;background:var(--white)}
+.mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--hair);background:var(--panel)}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:15px 26px;border-bottom:1px solid var(--hair);font-size:15px;font-weight:500}
+@media(max-width:880px){.nav-links{display:none}.burger{display:flex}}
+
+/* ── hero ── */
+.hero{padding:148px 0 76px}
+.hero-h1{font-family:var(--fb);font-weight:700;font-size:clamp(34px,5.6vw,58px);line-height:1.15;margin:16px 0 0;letter-spacing:-.01em;max-width:18ch}
+.accent-t{color:var(--accent)}
+.hero-sub{margin-top:20px;max-width:56ch;font-size:17px;color:var(--body)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15px;padding:14px 24px;border:0;cursor:pointer;transition:.16s}
+.btn-p{background:var(--white);color:var(--ink);font-weight:700}
+.btn-p:hover{opacity:.85}
+.btn-s{border:1px solid var(--hair);color:var(--white);background:transparent}
+.btn-s:hover{border-color:var(--dim);background:var(--panel)}
+.hero-cta{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
+.hero-mask{overflow:hidden}
+.hero-mask>*{transform:translateY(100%);opacity:0;transition:transform 1s var(--ease),opacity .8s var(--ease)}
+.hero-mask:nth-of-type(1)>*{transition-delay:.05s}
+.hero-mask:nth-of-type(2)>*{transition-delay:.16s}
+.hero-mask:nth-of-type(3)>*{transition-delay:.27s}
+.hero-mask:nth-of-type(4)>*{transition-delay:.38s}
+body.is-ready .hero-mask>*{transform:none;opacity:1}
+
+/* ── track strip ── */
+.track-strip{display:flex;gap:14px;flex-wrap:wrap}
+.track-chip{font-family:var(--fm);font-size:12px;letter-spacing:.04em;color:var(--dim);border:1px solid var(--hair);padding:7px 13px}
+.track-chip b{color:var(--accent);font-weight:600}
+
+/* ── payment cards ── */
+.pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pay-card{background:var(--panel);border:1px solid var(--hair);padding:24px 22px;display:flex;flex-direction:column;gap:7px}
+.pay-card .svc{font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.pay-card .split{font-family:var(--fb);font-weight:700;font-size:20px;color:var(--white)}
+.pay-card .note{font-size:13.5px;color:var(--body);line-height:1.55}
+@media(max-width:900px){.pay-grid{grid-template-columns:1fr}}
+
+/* ── kickoff steps ── */
+.step-list{display:flex;flex-direction:column}
+.step{display:grid;grid-template-columns:40px 1fr;gap:18px;padding:22px 0;border-top:1px solid var(--hair)}
+.step:first-child{border-top:0}
+.step .n{font-family:var(--fm);font-size:14px;color:var(--accent);padding-top:3px}
+.step .svc-name{font-weight:600;font-size:16.5px;color:var(--white);margin-bottom:6px}
+.step .items{font-size:15px;color:var(--body);line-height:1.65}
+
+/* ── rate table ── */
+.rate-table{width:100%;border-collapse:collapse;font-size:15px}
+.rate-table th{text-align:left;font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:500;padding:0 0 12px;border-bottom:1px solid var(--hair)}
+.rate-table td{padding:15px 0;border-bottom:1px solid var(--hair);vertical-align:top}
+.rate-table td.price{font-family:var(--fm);color:var(--accent);white-space:nowrap;padding-right:20px}
+.rate-table td.desc{color:var(--body)}
+.rate-table tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+
+/* ── two col ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.two-col h3{font-size:16px;font-weight:600;margin-bottom:10px;color:var(--white)}
+.two-col p{color:var(--body);font-size:15px;line-height:1.65}
+
+/* ── closing / contact ── */
+.close-cta{text-align:center;padding:76px 0}
+.close-cta h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:-.01em}
+.close-cta p{margin-top:14px;color:var(--body)}
+.close-cta .hero-cta{justify-content:center;margin-top:26px}
+
+/* ── footer ── */
+footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
+.foot-in{max-width:var(--max);margin:0 auto;padding:0 26px;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center}
+.foot-logo{font-family:var(--fb);font-weight:700;font-size:18px;text-transform:uppercase;display:flex;align-items:center;gap:9px}
+.foot-logo img{width:22px;height:22px;object-fit:contain}
+.foot-links,.foot-social{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-size:14px;color:var(--dim)}
+.foot-links a:hover,.foot-social a:hover{color:var(--white)}
+.foot-copy{font-family:var(--fm);font-size:11.5px;color:#4C4D52}
+
+.rv{opacity:0;transform:translateY(20px);transition:.75s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.hero-mask>*{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-in">
+    <a href="/" class="logo"><img src="/logo-mark.png" alt="">Evan<b>·</b>Enterprises</a>
+    <div class="nav-links">
+      <a href="/#marketing">Marketing</a>
+      <a href="/#about">About</a>
+      <a href="/#contact" class="nav-cta">Book a call</a>
+    </div>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/#marketing">Marketing</a>
+    <a href="/#about">About</a>
+    <a href="/#contact">Book a call →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-mask"><div class="eyebrow">Client Onboarding</div></div>
+    <div class="hero-mask"><h1 class="hero-h1">Working together — <span class="accent-t">how this goes</span> from here.</h1></div>
+    <div class="hero-mask"><p class="hero-sub">This covers how projects run across everything I do: ad management, website builds, and UGC. Some details shift per project — we'll confirm specifics on our kickoff call — but the structure below is consistent every time, so you know exactly what to expect before we start.</p></div>
+    <div class="hero-mask">
+      <div class="hero-cta">
+        <a href="/#contact" class="btn btn-p">Book a call →</a>
+        <a href="#payment" class="btn btn-s">See payment terms →</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- KICKOFF CALL -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Step one</div>
+      <h2 class="sec-h2">What we cover on the kickoff call.</h2>
+      <p class="lede">Before anything starts, we get on a call to lock in scope — a real target, not a guess.</p>
+    </div>
+    <div class="step-list rv">
+      <div class="step">
+        <div class="n">→</div>
+        <div>
+          <div class="svc-name">Ad Management</div>
+          <div class="items">Monthly ad spend budget ($500/mo minimum) · ad account access · target service area · the goal we're optimizing toward (calls, form fills, bookings).</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">→</div>
+        <div>
+          <div class="svc-name">Website Building</div>
+          <div class="items">Page count · who's responsible for copy and content · number of revision rounds included · target launch date · whether an AI chatbot add-on fits the build.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">→</div>
+        <div>
+          <div class="svc-name">UGC Work</div>
+          <div class="items">Number of pieces and formats · brand guidelines · approval process · usage rights (organic vs. paid ads) · turnaround time.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Step two</div>
+      <h2 class="sec-h2">From kickoff to launch.</h2>
+      <p class="lede">The exact timeline depends on the service, but the shape is the same every time.</p>
+    </div>
+    <div class="step-list rv">
+      <div class="step">
+        <div class="n">01</div>
+        <div>
+          <div class="svc-name">Deposit + kickoff call</div>
+          <div class="items">50% deposit to start, then a 15–20 minute call to confirm scope, budget, and timeline.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">02</div>
+        <div>
+          <div class="svc-name">Build or setup</div>
+          <div class="items">Website: design and development against the agreed scope. Ads: account setup, conversion tracking, campaign build. UGC: production against brief.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">03</div>
+        <div>
+          <div class="svc-name">Review</div>
+          <div class="items">You see the work before it goes live — a site walkthrough, an ad campaign screen-share, or content for approval, depending on the project.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">04</div>
+        <div>
+          <div class="svc-name">Launch</div>
+          <div class="items">Remaining balance due, then we go live. Ad management continues month-to-month with ongoing reporting; websites and UGC wrap at delivery.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENT -->
+<section class="sec" id="payment">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Payment</div>
+      <h2 class="sec-h2">What it costs, and when it's due.</h2>
+      <p class="lede">Every one-time project starts with a 50% deposit — remainder due at delivery. Ad management runs on its own monthly structure.</p>
+    </div>
+    <div class="pay-grid rv">
+      <div class="pay-card">
+        <div class="svc">Website Building</div>
+        <div class="split">50% → 50%</div>
+        <div class="note">Deposit to start, remainder due at launch. Larger builds may split into deposit / design approval / launch (50/25/25) — confirmed at kickoff.</div>
+      </div>
+      <div class="pay-card">
+        <div class="svc">Ad Management</div>
+        <div class="split">$400/mo</div>
+        <div class="note">$200 deposit, $200 before ads go live — covers setup plus the first month. $400/mo after that, month-to-month. Ad spend ($500/mo minimum) bills separately, direct to Google.</div>
+      </div>
+      <div class="pay-card">
+        <div class="svc">UGC Work</div>
+        <div class="split">50% → 50%</div>
+        <div class="note">Deposit to start production, remainder due on delivery of final content. See the UGC rate card below for per-piece pricing.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UGC RATES -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">UGC rate card</div>
+      <h2 class="sec-h2">À la carte content pricing.</h2>
+      <p class="lede">Useful if you want to add content alongside another project, or on its own.</p>
+    </div>
+    <div class="table-wrap rv">
+      <table class="rate-table">
+        <tr><th>Format</th><th>Rate</th><th>What it is</th></tr>
+        <tr><td>Sponsored Reel (IG)</td><td class="price">$150–$300</td><td class="desc">Brand integration in an Instagram Reel</td></tr>
+        <tr><td>Sponsored TikTok</td><td class="price">$200–$400</td><td class="desc">Dedicated TikTok video</td></tr>
+        <tr><td>Story Mention</td><td class="price">$50–$100</td><td class="desc">IG or TikTok story shoutout</td></tr>
+        <tr><td>UGC Ad Content</td><td class="price">$100–$250</td><td class="desc">Content for your brand's own use in paid ads</td></tr>
+        <tr><td>Multi-Platform Bundle</td><td class="price">$400–$700</td><td class="desc">IG + TikTok + Facebook</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- COMMS & TERMS -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Communication &amp; terms</div>
+      <h2 class="sec-h2">How we work together day to day.</h2>
+    </div>
+    <div class="two-col rv">
+      <div>
+        <h3>Response time</h3>
+        <p>I follow up within 24 hours on anything you send — you, me, no middlemen, no account managers relaying messages.</p>
+      </div>
+      <div>
+        <h3>Contract terms</h3>
+        <p>One-time projects (websites, UGC) end at final delivery — no ongoing commitment. Ad management runs month-to-month; cancel anytime, no early termination fee.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING CTA -->
+<section class="close-cta">
+  <div class="wrap">
+    <h2 class="rv">Ready to get started?</h2>
+    <p class="rv">Book a call and we'll figure out which service fits, and lock in scope together.</p>
+    <div class="hero-cta rv">
+      <a href="/#contact" class="btn btn-p">Book a call →</a>
+      <a href="mailto:seanjayme@evanenterprise.com" class="btn btn-s">Email me →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-in">
+    <a href="/" class="foot-logo"><img src="/logo-mark.png" alt="">Evan Enterprises LLC</a>
+    <div class="foot-links">
+      <a href="/#marketing">Marketing</a>
+      <a href="/#about">About</a>
+      <a href="/onboarding">Onboarding</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </div>
+    <div class="foot-social">
+      <a href="https://www.instagram.com/officialseanjayme" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener">YouTube</a>
+    </div>
+    <div class="foot-contact" style="font-family:var(--fm);font-size:13px;color:var(--dim)">
+      Evan Enterprises LLC · Austin, TX · <a href="mailto:seanjayme@evanenterprise.com">seanjayme@evanenterprise.com</a> · (512) 905-0380
+    </div>
+    <div class="foot-copy">© 2026 Evan Enterprises LLC. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+// ── mobile menu ──
+(function(){
+  var b=document.getElementById('burger'), m=document.getElementById('mobileMenu');
+  b.addEventListener('click',function(){
+    var open=m.classList.toggle('open');
+    b.setAttribute('aria-expanded',open?'true':'false');
+  });
+  m.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(){m.classList.remove('open');b.setAttribute('aria-expanded','false');});
+  });
+})();
+
+// ── page-load reveal (hero mask lines) ──
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ document.body.classList.add('is-ready'); return; }
+  requestAnimationFrame(function(){ document.body.classList.add('is-ready'); });
+})();
+
+// ── magnetic buttons ──
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(window.matchMedia('(hover: none)').matches) return;
+  document.querySelectorAll('.btn').forEach(function(btn){
+    btn.style.transition='transform .3s var(--ease)';
+    btn.addEventListener('mousemove',function(e){
+      var rect=btn.getBoundingClientRect();
+      var x=e.clientX-rect.left-rect.width/2, y=e.clientY-rect.top-rect.height/2;
+      btn.style.transitionDuration='.15s';
+      btn.style.transform='translate('+(x*0.25)+'px,'+(y*0.35)+'px)';
+    });
+    btn.addEventListener('mouseleave',function(){
+      btn.style.transitionDuration='.5s';
+      btn.style.transitionTimingFunction='var(--ease-back)';
+      btn.style.transform='translate(0,0)';
+    });
+  });
+})();
+
+// ── scroll reveal ──
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+})();
+</script>
+
+</body>
+</html>

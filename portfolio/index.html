@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Website Portfolio — Evan Enterprises LLC</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="theme-color" content="#0A0A0C">
+<meta name="description" content="Websites built by Sean Evangelista — Legacy Hardscape ATX, Sharp Air Mechanical, and Studio 27. Custom-built, not templates.">
+<meta property="og:title" content="Website Portfolio — Evan Enterprises LLC">
+<meta property="og:description" content="Websites built by Sean Evangelista — custom-built, not templates.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A0A0C;
+  --panel:#0F1B33;
+  --white:#F7F7F5;
+  --body:#9A9C9F;
+  --dim:#7A7C80;
+  --accent:#3B5BDB;
+  --on-accent:#F7F7F5;
+  --hair:rgba(247,247,245,.10);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-back:cubic-bezier(.34,1.56,.64,1);
+  --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --fm:'IBM Plex Mono',ui-monospace,monospace;
+  --max:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--white);font-family:var(--fb);font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
+.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--body)}
+.sec{padding:88px 0;border-top:1px solid var(--hair)}
+.sec-head{margin-bottom:44px}
+.sec-h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4.2vw,42px);margin-top:13px;letter-spacing:-.01em;line-height:1.15}
+.sec-head .lede{margin-top:16px;max-width:58ch}
+
+/* ── nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.logo{font-family:var(--fb);font-weight:700;font-size:19px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
+.logo img{width:26px;height:26px;object-fit:contain}
+.logo b{color:var(--accent);font-weight:400}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--dim);font-weight:500}
+.nav-links a:hover{color:var(--white)}
+.nav-cta{background:var(--accent);color:var(--on-accent);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
+.nav-cta:hover{background:#4A6BF0}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
+.burger span{display:block;width:23px;height:2px;background:var(--white)}
+.mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--hair);background:var(--panel)}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:15px 26px;border-bottom:1px solid var(--hair);font-size:15px;font-weight:500}
+@media(max-width:880px){.nav-links{display:none}.burger{display:flex}}
+
+/* ── hero ── */
+.hero{padding:148px 0 76px}
+.hero-h1{font-family:var(--fb);font-weight:700;font-size:clamp(34px,5.6vw,58px);line-height:1.15;margin:16px 0 0;letter-spacing:-.01em;max-width:18ch}
+.accent-t{color:var(--accent)}
+.hero-sub{margin-top:20px;max-width:56ch;font-size:17px;color:var(--body)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15px;padding:14px 24px;border:0;cursor:pointer;transition:.16s}
+.btn-p{background:var(--white);color:var(--ink);font-weight:700}
+.btn-p:hover{opacity:.85}
+.btn-s{border:1px solid var(--hair);color:var(--white);background:transparent}
+.btn-s:hover{border-color:var(--dim);background:var(--panel)}
+.hero-cta{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
+.hero-mask{overflow:hidden}
+.hero-mask>*{transform:translateY(100%);opacity:0;transition:transform 1s var(--ease),opacity .8s var(--ease)}
+.hero-mask:nth-of-type(1)>*{transition-delay:.05s}
+.hero-mask:nth-of-type(2)>*{transition-delay:.16s}
+.hero-mask:nth-of-type(3)>*{transition-delay:.27s}
+.hero-mask:nth-of-type(4)>*{transition-delay:.38s}
+body.is-ready .hero-mask>*{transform:none;opacity:1}
+
+/* ── work grid ── */
+.work-grid{display:flex;flex-direction:column;gap:18px}
+.work-card{display:block;background:var(--panel);border:1px solid var(--hair);overflow:hidden;transition:border-color .3s var(--ease)}
+.work-card:hover{border-color:var(--accent)}
+.work-shot-wrap{overflow:hidden;border-bottom:1px solid var(--hair)}
+.work-shot{width:100%;display:block;transition:transform .6s var(--ease)}
+.work-card:hover .work-shot{transform:scale(1.035)}
+.work-body{padding:26px 28px;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:20px}
+.work-info{max-width:62ch}
+.work-tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.work-name{font-family:var(--fb);font-weight:700;font-size:24px;margin:8px 0 10px;letter-spacing:-.01em}
+.work-desc{font-size:15px;color:var(--body);line-height:1.6}
+.work-go{flex:none;font-size:14px;font-weight:600;color:var(--accent);white-space:nowrap;padding-top:4px}
+.work-go:hover{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:700px){.work-body{flex-direction:column}.work-name{font-size:21px}}
+
+/* ── closing ── */
+.close-cta{text-align:center;padding:76px 0}
+.close-cta h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:-.01em}
+.close-cta p{margin-top:14px;color:var(--body)}
+.close-cta .hero-cta{justify-content:center;margin-top:26px}
+
+/* ── footer ── */
+footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
+.foot-in{max-width:var(--max);margin:0 auto;padding:0 26px;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center}
+.foot-logo{font-family:var(--fb);font-weight:700;font-size:18px;text-transform:uppercase;display:flex;align-items:center;gap:9px}
+.foot-logo img{width:22px;height:22px;object-fit:contain}
+.foot-links,.foot-social{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-size:14px;color:var(--dim)}
+.foot-links a:hover,.foot-social a:hover{color:var(--white)}
+.foot-copy{font-family:var(--fm);font-size:11.5px;color:#4C4D52}
+
+.rv{opacity:0;transform:translateY(20px);transition:.75s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.hero-mask>*{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-in">
+    <a href="/" class="logo"><img src="/logo-mark.png" alt="">Evan<b>·</b>Enterprises</a>
+    <div class="nav-links">
+      <a href="/#marketing">Marketing</a>
+      <a href="/#about">About</a>
+      <a href="/#contact" class="nav-cta">Book a call</a>
+    </div>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/#marketing">Marketing</a>
+    <a href="/#about">About</a>
+    <a href="/#contact">Book a call →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-mask"><div class="eyebrow">Website Portfolio</div></div>
+    <div class="hero-mask"><h1 class="hero-h1">Sites I've <span class="accent-t">built from scratch</span> — no templates.</h1></div>
+    <div class="hero-mask"><p class="hero-sub">Every site below is live, built for a real business, and vibe-coded to fit the brand rather than pulled from a theme store. Click through to see any of them in action.</p></div>
+    <div class="hero-mask">
+      <div class="hero-cta">
+        <a href="/#contact" class="btn btn-p">Start a build →</a>
+        <a href="/onboarding" class="btn btn-s">See how it works →</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- WORK -->
+<section class="sec">
+  <div class="wrap">
+    <div class="work-grid">
+      <a href="https://legacyhardscapeatx.com" target="_blank" rel="noopener" class="work-card rv">
+        <div class="work-shot-wrap"><img src="/portfolio/img/legacy-hardscape.jpg" alt="Legacy Hardscape ATX website" class="work-shot"></div>
+        <div class="work-body">
+          <div class="work-info">
+            <div class="work-tag">Hardscape &amp; Outdoor Living · Austin, TX</div>
+            <h3 class="work-name">Legacy Hardscape ATX</h3>
+            <p class="work-desc">A lead-gen site for a patio and pergola builder — built around quote requests, real project photos, and local trust signals instead of stock imagery.</p>
+          </div>
+          <span class="work-go">Visit site → legacyhardscapeatx.com</span>
+        </div>
+      </a>
+      <a href="https://sharp-air-mock.vercel.app" target="_blank" rel="noopener" class="work-card rv">
+        <div class="work-shot-wrap"><img src="/portfolio/img/sharp-air.jpg" alt="Sharp Air Mechanical website" class="work-shot"></div>
+        <div class="work-body">
+          <div class="work-info">
+            <div class="work-tag">Heating &amp; Air Conditioning · Austin, TX</div>
+            <h3 class="work-name">Sharp Air Mechanical</h3>
+            <p class="work-desc">A service-business site built to earn trust fast — licensing front and center, real crew photos, and a click-to-call path for people who need a technician now, not a contact form.</p>
+          </div>
+          <span class="work-go">Visit site →</span>
+        </div>
+      </a>
+      <a href="https://studio27atx.com" target="_blank" rel="noopener" class="work-card rv">
+        <div class="work-shot-wrap"><img src="/portfolio/img/studio27.jpg" alt="Studio 27 website" class="work-shot"></div>
+        <div class="work-body">
+          <div class="work-info">
+            <div class="work-tag">Creative Studio Space · Austin, TX</div>
+            <h3 class="work-name">Studio 27</h3>
+            <p class="work-desc">A bold, motion-driven site for a multi-discipline creative studio — built to show off the space itself as much as the booking flow.</p>
+          </div>
+          <span class="work-go">Visit site → studio27atx.com</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING CTA -->
+<section class="close-cta">
+  <div class="wrap">
+    <h2 class="rv">Want one of these for your business?</h2>
+    <p class="rv">Every site starts the same way — a short call to figure out what you actually need.</p>
+    <div class="hero-cta rv">
+      <a href="/#contact" class="btn btn-p">Book a call →</a>
+      <a href="mailto:seanjayme@evanenterprise.com" class="btn btn-s">Email me →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-in">
+    <a href="/" class="foot-logo"><img src="/logo-mark.png" alt="">Evan Enterprises LLC</a>
+    <div class="foot-links">
+      <a href="/#marketing">Marketing</a>
+      <a href="/#about">About</a>
+      <a href="/portfolio">Portfolio</a>
+      <a href="/onboarding">Onboarding</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </div>
+    <div class="foot-social">
+      <a href="https://www.instagram.com/officialseanjayme" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener">YouTube</a>
+    </div>
+    <div class="foot-contact" style="font-family:var(--fm);font-size:13px;color:var(--dim)">
+      Evan Enterprises LLC · Austin, TX · <a href="mailto:seanjayme@evanenterprise.com">seanjayme@evanenterprise.com</a> · (512) 905-0380
+    </div>
+    <div class="foot-copy">© 2026 Evan Enterprises LLC. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+// ── mobile menu ──
+(function(){
+  var b=document.getElementById('burger'), m=document.getElementById('mobileMenu');
+  b.addEventListener('click',function(){
+    var open=m.classList.toggle('open');
+    b.setAttribute('aria-expanded',open?'true':'false');
+  });
+  m.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(){m.classList.remove('open');b.setAttribute('aria-expanded','false');});
+  });
+})();
+
+// ── page-load reveal (hero mask lines) ──
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ document.body.classList.add('is-ready'); return; }
+  requestAnimationFrame(function(){ document.body.classList.add('is-ready'); });
+})();
+
+// ── magnetic buttons ──
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(window.matchMedia('(hover: none)').matches) return;
+  document.querySelectorAll('.btn').forEach(function(btn){
+    btn.style.transition='transform .3s var(--ease)';
+    btn.addEventListener('mousemove',function(e){
+      var rect=btn.getBoundingClientRect();
+      var x=e.clientX-rect.left-rect.width/2, y=e.clientY-rect.top-rect.height/2;
+      btn.style.transitionDuration='.15s';
+      btn.style.transform='translate('+(x*0.25)+'px,'+(y*0.35)+'px)';
+    });
+    btn.addEventListener('mouseleave',function(){
+      btn.style.transitionDuration='.5s';
+      btn.style.transitionTimingFunction='var(--ease-back)';
+      btn.style.transform='translate(0,0)';
+    });
+  });
+})();
+
+// ── scroll reveal ──
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+})();
+</script>
+
+</body>
+</html>

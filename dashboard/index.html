@@ -2973,6 +2973,9 @@ function renderInvoices(filterCid = '') {
   });
 }
 
+// Same double-submit gap as saveClient (see comment above it) — the button
+// stayed enabled through the whole insert await, so a slow connection let a
+// second click fire a duplicate invoice insert. Same disable/try/finally guard.
 async function saveInvoice() {
   const clientId = $('inv-client').value;
   const desc     = $('inv-desc').value.trim();
@@ -2980,16 +2983,23 @@ async function saveInvoice() {
   const due      = $('inv-due').value;
   const status   = $('inv-status').value;
   if (!clientId || !desc || !amount || !due) { toast('Fill in all required fields', 'err'); return; }
-  // The invoices table has a required `title` column (see supabase-setup.sql) and
-  // no `description` column at all — inserting `description` here silently failed
-  // every "Add Invoice" submission (NOT NULL violation on the missing title, plus
-  // an unknown-column rejection from PostgREST), the same schema-drift bug already
-  // fixed for invoice-notification/monthly-report emails in api/email.js.
-  const { error } = await sb.from('invoices').insert({ client_id: clientId, title: desc, amount, due_date: due, status });
-  if (error) { toast('Error: ' + error.message, 'err'); return; }
-  closeModal('modal-add-invoice');
-  $('invoice-form').reset();
-  await loadAll(); renderInvoices(); toast('Invoice added!');
+  const btn = $('save-invoice-btn');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  try {
+    // The invoices table has a required `title` column (see supabase-setup.sql) and
+    // no `description` column at all — inserting `description` here silently failed
+    // every "Add Invoice" submission (NOT NULL violation on the missing title, plus
+    // an unknown-column rejection from PostgREST), the same schema-drift bug already
+    // fixed for invoice-notification/monthly-report emails in api/email.js.
+    const { error } = await sb.from('invoices').insert({ client_id: clientId, title: desc, amount, due_date: due, status });
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    closeModal('modal-add-invoice');
+    $('invoice-form').reset();
+    await loadAll(); renderInvoices(); toast('Invoice added!');
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 $('open-add-invoice').addEventListener('click', () => openModal('modal-add-invoice'));
@@ -3127,9 +3137,19 @@ $('review-send-btn').addEventListener('click', async () => {
 });
 
 // ── ADD CLIENT ──
+// Double-clicking "Save Client" (or clicking again before the first insert
+// resolves) re-ran this with no guard — the button stayed enabled through the
+// whole await, so a slow network round-trip let a second click fire a second
+// insert, creating a duplicate client row AND sending the new-client welcome
+// email twice to the client's real inbox. Disable the button for the duration,
+// same pattern already used for send-report-btn/review-send-btn/etc.
 async function saveClient() {
   const biz = $('c-biz').value.trim();
   if (!biz) { toast('Business name required','err'); return; }
+  const btn = $('save-client');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  try {
   const {error} = await sb.from('clients').insert({
     business_name:       biz,
     owner_name:          $('c-owner').value.trim()||null,
@@ -3174,6 +3194,9 @@ async function saveClient() {
     } catch (e) {
       toast('Client added, but welcome email failed to send','err');
     }
+  }
+  } finally {
+    btn.disabled = false;
   }
 }
 

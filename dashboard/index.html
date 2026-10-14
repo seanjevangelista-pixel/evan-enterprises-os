@@ -3335,7 +3335,13 @@ $('visit-form').addEventListener('submit', async e => {
   const btn    = $('visit-submit');
   const source = $('v-source').value;
   const amount = parseFloat($('v-amount').value);
+  // Same double-submit gap as saveClient/saveInvoice — the button only changed
+  // its label, so a second click (or Enter) during the insert logged the visit
+  // twice, and each counted visit adds a 10% fee to the client's bill.
+  if (btn.disabled) return;
+  btn.disabled = true;
   btn.textContent = 'Logging…';
+  try {
   const {error} = await sb.from('visits').insert({
     client_id:      $('v-client').value,
     visit_date:     $('v-date').value,
@@ -3348,7 +3354,6 @@ $('visit-form').addEventListener('submit', async e => {
     fee_pct:        0.10,
     count_for_fee:  source !== 'walk_in',
   });
-  btn.textContent = 'Log Visit';
   if (error) { toast('Error: '+error.message,'err'); return; }
   $('visit-form').reset();
   $('v-date').value = new Date().toISOString().split('T')[0];
@@ -3358,6 +3363,10 @@ $('visit-form').addEventListener('submit', async e => {
   renderOverview();
   renderVisits($('v-filter').value);
   toast('Visit logged — retained client check complete ✓');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Log Visit';
+  }
 });
 
 $('clear-visit').addEventListener('click', () => {

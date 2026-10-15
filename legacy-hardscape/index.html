@@ -1182,6 +1182,13 @@ document.getElementById('quote-form').addEventListener('submit', async function(
     });
     const data = await r.json();
     if (data.ok) {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'quote_submitted',
+        quote_service: payload.service,
+        quote_property_type: payload.propertyType,
+        quote_budget: payload.budget,
+      });
       e.target.reset();
       const modal = document.getElementById('success-modal');
       modal.classList.add('open');

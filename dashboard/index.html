@@ -3845,6 +3845,12 @@ function renderLsaContent() {
 async function saveLead() {
   const clientId = $('ll-client').value;
   if (!clientId) { toast('Select a client', 'err'); return; }
+  // Double-submit guard (see visit-form) — a duplicate lead row double-counts
+  // the client's LSA lead count and spend in the overview.
+  const btn = $('save-lead-btn');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  try {
   const { error } = await sb.from('lsa_leads').insert({
     client_id:    clientId,
     lead_date:    $('ll-date').value || new Date().toISOString().split('T')[0],
@@ -3863,6 +3869,9 @@ async function saveLead() {
   if (lsaClientId === clientId) await loadLsaLeads();
   await refreshLsaOverview();
   toast('Lead logged!');
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 // ── OUTREACH ──
@@ -3972,6 +3981,13 @@ $('add-prospect-btn').addEventListener('click', async () => {
   const businessName = $('ol-biz').value.trim();
   const email = $('ol-email').value.trim();
   if (!businessName || !email) { toast('Business name and email are required', 'err'); return; }
+  // Same double-submit gap as saveClient/saveInvoice/visit-form — a second click
+  // during the insert added the prospect twice, and Send Outreach then emails
+  // every pending row, so the prospect got the same cold email twice.
+  const btn = $('add-prospect-btn');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  try {
   const { error } = await sb.from('outreach_leads').insert({
     business_name: businessName,
     owner_name:    $('ol-owner').value.trim() || null,
@@ -3985,6 +4001,9 @@ $('add-prospect-btn').addEventListener('click', async () => {
   ['ol-biz', 'ol-owner', 'ol-email', 'ol-city', 'ol-niche', 'ol-pain'].forEach(id => { $(id).value = ''; });
   await loadOutreachLeads();
   toast('Prospect added');
+  } finally {
+    btn.disabled = false;
+  }
 });
 
 $('bulk-add-prospect-btn').addEventListener('click', async () => {
@@ -3997,11 +4016,20 @@ $('bulk-add-prospect-btn').addEventListener('click', async () => {
 
   if (!rows.length) { toast('No valid rows found — use: Business, Owner, Email, City, Niche', 'err'); return; }
 
+  // Same guard as add-prospect-btn — a double click inserted the whole pasted
+  // list twice, doubling every cold email Send Outreach goes out with.
+  const btn = $('bulk-add-prospect-btn');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  try {
   const { error } = await sb.from('outreach_leads').insert(rows);
   if (error) { toast('Error: ' + error.message, 'err'); return; }
   $('ol-bulk').value = '';
   await loadOutreachLeads();
   toast(`${rows.length} prospect${rows.length === 1 ? '' : 's'} added`);
+  } finally {
+    btn.disabled = false;
+  }
 });
 
 $('send-outreach-btn').addEventListener('click', async () => {

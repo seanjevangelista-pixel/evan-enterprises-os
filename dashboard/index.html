@@ -3313,11 +3313,21 @@ $('log-activity-btn').addEventListener('click', async () => {
   const type = $('log-type').value;
   if (!note) { toast('Enter a note first', 'err'); return; }
   if (!_editClientId) return;
-  const { error } = await sb.from('activity_log').insert({
-    client_id: _editClientId,
-    type,
-    note,
-  });
+  // Same double-submit gap as Log Visit — a second click during the insert
+  // logged the note twice.
+  const btn = $('log-activity-btn');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  let error;
+  try {
+    ({ error } = await sb.from('activity_log').insert({
+      client_id: _editClientId,
+      type,
+      note,
+    }));
+  } finally {
+    btn.disabled = false;
+  }
   if (error) { toast('Error: ' + error.message, 'err'); return; }
   $('log-note').value = '';
   const { data } = await safe(sb.from('activity_log').select('*').eq('client_id', _editClientId).order('created_at', { ascending: false }));
@@ -4226,9 +4236,11 @@ document.getElementById('invite-submit').addEventListener('click', async () => {
     });
     if (insertErr) throw new Error(insertErr.message);
 
-    okEl.innerHTML = `✓ Account created for <strong>${email}</strong>.<br>Share the portal link and temporary password:<br><br>
-      <strong>URL:</strong> ${window.location.origin}/portal/<br>
-      <strong>Password:</strong> <code style="background:var(--surface-2);padding:2px 6px;border-radius:4px">${pass}</code>`;
+    // Escape: a temp password containing < or & rendered mangled here, so the
+    // admin would hand the client a password that doesn't work.
+    okEl.innerHTML = `✓ Account created for <strong>${escHtml(email)}</strong>.<br>Share the portal link and temporary password:<br><br>
+      <strong>URL:</strong> ${escHtml(window.location.origin)}/portal/<br>
+      <strong>Password:</strong> <code style="background:var(--surface-2);padding:2px 6px;border-radius:4px">${escHtml(pass)}</code>`;
     okEl.style.display = 'block';
     btn.textContent = 'Done';
   } catch(e) {

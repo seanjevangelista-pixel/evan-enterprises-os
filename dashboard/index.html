@@ -4046,6 +4046,10 @@ $('send-outreach-btn').addEventListener('click', async () => {
   const pending = outreachLeads.filter(l => l.status === 'pending');
   if (!pending.length) { toast('No pending prospects to email', 'err'); return; }
   const btn = $('send-outreach-btn');
+  // Cold-emails every pending prospect in one click — confirm first, same as
+  // Email All Clients, so a misclick can't fire the whole batch.
+  if (btn.disabled) return;
+  if (!confirm(`Send outreach email to ${pending.length} pending prospect(s)?`)) return;
   const originalText = btn.textContent;
   btn.disabled = true;
   btn.textContent = 'Sending…';
@@ -4560,6 +4564,10 @@ document.getElementById('dist-add-lead-btn').addEventListener('click', () => {
 
 document.getElementById('dist-blast-btn').addEventListener('click', async () => {
   const btn = document.getElementById('dist-blast-btn');
+  // One stray click emailed every active subscriber with no way to undo it —
+  // confirm first, same as Email All Clients.
+  if (btn.disabled) return;
+  if (!confirm('Send the monthly blast to all active subscribers now?')) return;
   btn.textContent = 'Sending…'; btn.disabled = true;
   try {
     const r = await fetch('/api/distribution?action=send-blast', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'} });

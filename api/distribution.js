@@ -8,6 +8,18 @@ function sbHeaders(key) {
   return { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
 }
 
+// The update-lead / delete-lead / update-subscriber PATCHes never looked at the
+// Supabase response and always answered { ok: true } — so a rejected write (RLS
+// change, renamed column, bad key) showed "Subscriber paused" or "Lead removed"
+// in the dashboard while nothing changed. A "paused" subscriber stayed active and
+// kept getting the paid monthly blast; a "removed" lead reappeared on reload.
+async function patchError(r) {
+  const body = await r.text().catch(() => '');
+  console.error('Supabase PATCH failed:', r.status, body);
+  try { return JSON.parse(body).message || `Update failed (${r.status})`; }
+  catch (_) { return `Update failed (${r.status})`; }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
@@ -116,11 +128,12 @@ export default async function handler(req, res) {
   if (action === 'update-lead' && req.method === 'POST') {
     const { id, ...fields } = req.body || {};
     if (!id) return res.status(400).json({ error: 'id required' });
-    await fetch(`${SB_URL}/rest/v1/distribution_leads?id=eq.${encodeURIComponent(id)}`, {
+    const r = await fetch(`${SB_URL}/rest/v1/distribution_leads?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: { ...h, Prefer: 'return=minimal' },
       body: JSON.stringify(fields),
     });
+    if (!r.ok) return res.status(502).json({ ok: false, error: await patchError(r) });
     return res.status(200).json({ ok: true });
   }
 
@@ -128,11 +141,12 @@ export default async function handler(req, res) {
   if (action === 'delete-lead' && req.method === 'POST') {
     const { id } = req.body || {};
     if (!id) return res.status(400).json({ error: 'id required' });
-    await fetch(`${SB_URL}/rest/v1/distribution_leads?id=eq.${encodeURIComponent(id)}`, {
+    const r = await fetch(`${SB_URL}/rest/v1/distribution_leads?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: { ...h, Prefer: 'return=minimal' },
       body: JSON.stringify({ status: 'archived' }),
     });
+    if (!r.ok) return res.status(502).json({ ok: false, error: await patchError(r) });
     return res.status(200).json({ ok: true });
   }
 
@@ -211,11 +225,12 @@ export default async function handler(req, res) {
   if (action === 'update-subscriber' && req.method === 'POST') {
     const { id, ...fields } = req.body || {};
     if (!id) return res.status(400).json({ error: 'id required' });
-    await fetch(`${SB_URL}/rest/v1/distribution_subscribers?id=eq.${encodeURIComponent(id)}`, {
+    const r = await fetch(`${SB_URL}/rest/v1/distribution_subscribers?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: { ...h, Prefer: 'return=minimal' },
       body: JSON.stringify(fields),
     });
+    if (!r.ok) return res.status(502).json({ ok: false, error: await patchError(r) });
     return res.status(200).json({ ok: true });
   }
 

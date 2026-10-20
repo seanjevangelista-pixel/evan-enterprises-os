@@ -4305,7 +4305,7 @@ function distTab(tab) {
 async function loadDistLeads() {
   const grid = document.getElementById('dist-leads-grid');
   try {
-    const r = await fetch('/api/distribution?action=leads');
+    const r = await fetch('/api/distribution?action=leads', { headers: { 'x-internal-key': 'dashboard' } });
     const d = await r.json();
     // A rejected request carries no `leads` key, so it used to render as an empty
     // catalogue — "No leads yet, click Add Lead to get started" — which reads as

@@ -308,8 +308,9 @@ function unlockPortal(name) {
 async function loadLeads() {
   const grid = document.getElementById('leads-grid');
   try {
-    const r = await fetch('/api/distribution?action=leads');
+    const r = await fetch(`/api/distribution?action=leads&token=${encodeURIComponent(subToken || '')}`);
     const d = await r.json();
+    if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
     const leads = d.leads || [];
     if (leads.length) renderStats(leads);
     renderLeads(leads, grid);

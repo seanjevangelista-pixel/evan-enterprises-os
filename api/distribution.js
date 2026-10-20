@@ -49,8 +49,20 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  // ── GET LEADS (public — gated by access_token on portal side) ────────────
+  // ── GET LEADS (dashboard, or the portal with an active subscriber token) ──
+  // This used to be fully public — the "gate" was only the portal hiding its
+  // grid until verify passed, so anyone could read the whole paid catalogue
+  // with a plain GET to ?action=leads, no subscription needed. Require either
+  // the dashboard's internal key or an access_token belonging to an active
+  // subscriber (the same check `verify` does).
   if (action === 'leads') {
+    if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
+      const token = req.query.token;
+      if (!token) return res.status(401).json({ ok: false, error: 'Subscriber token required' });
+      const vr = await fetch(`${SB_URL}/rest/v1/distribution_subscribers?status=eq.active&select=id&access_token=eq.${encodeURIComponent(token)}`, { headers: h });
+      const vrows = await vr.json().catch(() => null);
+      if (!Array.isArray(vrows) || !vrows[0]) return res.status(403).json({ ok: false, error: 'Not an active subscriber' });
+    }
     const r = await fetch(`${SB_URL}/rest/v1/distribution_leads?status=eq.active&order=created_at.desc`, { headers: h });
     const leads = await r.json();
     return res.status(200).json({ ok: true, leads: Array.isArray(leads) ? leads : [] });

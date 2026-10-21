@@ -348,11 +348,11 @@ function renderLeads(leads, grid) {
     const compClass2 = compClass(l.competition);
     return `<div class="lead-card">
       ${l.image_url
-        ? `<img class="lead-img" src="${l.image_url}" alt="${escHtml(l.title)}" loading="lazy">`
+        ? `<img class="lead-img" src="${escHtml(l.image_url)}" alt="${escHtml(l.title)}" loading="lazy">`
         : `<div class="lead-img-placeholder">📦</div>`}
       <div class="lead-body">
         <div class="lead-tags">
-          <span class="tag ${platClass}">${l.platform || 'Amazon'}</span>
+          <span class="tag ${platClass}">${escHtml(l.platform || 'Amazon')}</span>
           ${l.category ? `<span class="tag tag-cat">${escHtml(l.category)}</span>` : ''}
           ${roi >= 100 ? `<span class="tag tag-hot">🔥 High ROI</span>` : ''}
         </div>
@@ -379,7 +379,7 @@ function renderLeads(leads, grid) {
         ${l.monthly_sales || l.competition ? `
         <div class="lead-footer">
           ${l.monthly_sales ? `<span>~${Number(l.monthly_sales).toLocaleString()} units/mo</span>` : ''}
-          ${l.competition ? `<span>Competition: <strong class="${compClass2}">${l.competition}</strong></span>` : ''}
+          ${l.competition ? `<span>Competition: <strong class="${compClass2}">${escHtml(l.competition)}</strong></span>` : ''}
         </div>` : ''}
       </div>
     </div>`;

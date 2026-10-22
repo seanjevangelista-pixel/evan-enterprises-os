@@ -60,13 +60,25 @@ export default async function handler(req, res) {
   const moStartDate     = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
   const lastMoStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0];
 
+  // PostgREST answers a failed query (missing table/column, RLS or schema change)
+  // with a JSON error OBJECT, not an array — and .then(r => r.json()) passed that
+  // object straight through as if it were the list. The portal then called
+  // lsaAll.filter / callsThisMo.length on it and the client's whole dashboard
+  // crashed on load over one bad query. Coerce anything that isn't a list to []
+  // (and log it) so one failing source just shows as empty.
+  const list = (label) => (d) => {
+    if (Array.isArray(d)) return d;
+    console.error(`portal: ${label} query failed:`, d);
+    return [];
+  };
+
   const [client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${clientId}&select=*&limit=1`, { headers: sb.headers }).then(r => r.json()).then(d => d[0] || null).catch(() => null),
-    fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${day30Ago}&order=lead_date.desc`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
-    fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${lastMoStartDate}&lead_date=lt.${moStartDate}&select=id`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
-    fetch(`${SUPABASE_URL}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${moStart}`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
-    fetch(`${SUPABASE_URL}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${lastMoStart}&tapped_at=lt.${lastMoEnd}&select=id`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
-    fetch(`${SUPABASE_URL}/rest/v1/invoices?client_id=eq.${clientId}&order=due_date.desc&limit=10`, { headers: sb.headers }).then(r => r.json()).catch(() => []),
+    fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${clientId}&select=*&limit=1`, { headers: sb.headers }).then(r => r.json()).then(d => (Array.isArray(d) && d[0]) || null).catch(() => null),
+    fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${day30Ago}&order=lead_date.desc`, { headers: sb.headers }).then(r => r.json()).then(list('lsaAll')).catch(() => []),
+    fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${lastMoStartDate}&lead_date=lt.${moStartDate}&select=id`, { headers: sb.headers }).then(r => r.json()).then(list('lsaLastMo')).catch(() => []),
+    fetch(`${SUPABASE_URL}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${moStart}`, { headers: sb.headers }).then(r => r.json()).then(list('callsThisMo')).catch(() => []),
+    fetch(`${SUPABASE_URL}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${lastMoStart}&tapped_at=lt.${lastMoEnd}&select=id`, { headers: sb.headers }).then(r => r.json()).then(list('callsLastMo')).catch(() => []),
+    fetch(`${SUPABASE_URL}/rest/v1/invoices?client_id=eq.${clientId}&order=due_date.desc&limit=10`, { headers: sb.headers }).then(r => r.json()).then(list('invoices')).catch(() => []),
   ]);
 
   return res.status(200).json({ ok: true, client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices });

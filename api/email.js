@@ -413,7 +413,9 @@ async function handle_invoice_reminders(req, res) {
       bodyHeadline = 'Your invoice is due in 3 days';
       bodyMessage  = `Just a heads up that your invoice from Evan Enterprises is due on <strong>${due.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</strong>. No action needed if you've already taken care of it.`;
     } else if (diffDays === 0) {
-      subject      = `Invoice due today — ${client.business_name}`;
+      // No business name here — the send below already prefixes it, which made
+      // this subject read "Acme — Invoice due today — Acme".
+      subject      = `Invoice due today`;
       bodyHeadline = 'Your invoice is due today';
       bodyMessage  = `Your invoice from Evan Enterprises is due <strong>today</strong>. Please reach out if you have any questions or need to make alternate arrangements.`;
     } else if (diffDays <= -3) {
@@ -518,12 +520,25 @@ async function handle_invoice_reminders(req, res) {
       // query. Flipping only on success means a failed send leaves the row
       // unpaid and this job retries it tomorrow night, instead of the reminder
       // being lost forever. It still sends exactly once in the normal case.
+      //
+      // The PATCH result used to be ignored. Because the overdue branch matches
+      // every day from -3 onward, a PATCH that failed (RLS/schema change, bad
+      // key, Supabase blip) left the row 'unpaid' and the client got the same
+      // "past due" email again every single night, with nothing in the results
+      // to say why. Report it so the nightly log shows it.
+      let statusError;
       if (isOverdue && delivered) {
-        await fetch(`${supabaseUrl}/rest/v1/invoices?id=eq.${inv.id}`, {
-          method: 'PATCH',
-          headers: { ...headers, Prefer: 'return=minimal' },
-          body: JSON.stringify({ status: 'overdue' }),
-        });
+        try {
+          const patchRes = await fetch(`${supabaseUrl}/rest/v1/invoices?id=eq.${inv.id}`, {
+            method: 'PATCH',
+            headers: { ...headers, Prefer: 'return=minimal' },
+            body: JSON.stringify({ status: 'overdue' }),
+          });
+          if (!patchRes.ok) statusError = `Overdue status not saved (${patchRes.status}): ${(await patchRes.text()).slice(0, 200)} — this notice will resend tomorrow`;
+        } catch (e) {
+          statusError = `Overdue status not saved: ${e.message} — this notice will resend tomorrow`;
+        }
+        if (statusError) console.error('invoice-reminders:', inv.id, statusError);
       }
 
       results.push({
@@ -534,7 +549,7 @@ async function handle_invoice_reminders(req, res) {
         emailId: data.id,
         // Surface why a send failed instead of just ok:false — this is the only
         // record of it, and a bad key looks identical to a bad address here.
-        error: delivered ? undefined : (data.message || data.name || 'Send failed'),
+        error: delivered ? statusError : (data.message || data.name || 'Send failed'),
       });
     } catch(e) {
       results.push({ invoice: inv.id, client: client.business_name, error: e.message });

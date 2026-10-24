@@ -105,26 +105,41 @@ export default async function handler(req, res) {
     notes:         notesSummary,
   };
 
+  // The insert's status was never checked: a PostgREST rejection (a client_id
+  // that isn't a real client, a bad uuid, a schema/RLS change) comes back as a
+  // JSON error object, which was stored as `insertedLead` — then the "New LSA
+  // Lead … View in Dashboard" email went out and the webhook answered ok:true for
+  // a lead that never reached the dashboard. Track whether it actually saved.
   let insertedLead = null;
+  let insertError = null;
   try {
     const r = await fetch(`${supabaseUrl}/rest/v1/lsa_leads`, {
       method: 'POST',
       headers: sbHeaders,
       body: JSON.stringify(leadRow),
     });
-    const rows = await r.json();
-    insertedLead = Array.isArray(rows) ? rows[0] : rows;
+    const rows = await r.json().catch(() => null);
+    if (r.ok && Array.isArray(rows) && rows.length) {
+      insertedLead = rows[0];
+    } else {
+      insertError = (rows && (rows.message || rows.error)) || `HTTP ${r.status}`;
+      console.error('lsa-webhook: lead insert failed:', r.status, rows);
+    }
   } catch (e) {
-    return res.status(500).json({ ok: false, error: 'Failed to insert lead: ' + e.message });
+    insertError = e.message;
+    console.error('lsa-webhook: lead insert failed:', e);
   }
 
   // ── Send notification emails via Resend ────────────────────────────────────
+  // Still sent when the insert failed — the email is then the only copy of the
+  // lead — but only to Sean, and flagged so nobody goes looking for it in the
+  // dashboard.
   if (resendKey) {
     const emailHtml = buildEmailHtml({ clientName, customerName, customerPhone, leadType, service, today, notesSummary });
-    const emailSubject = `New LSA Lead — ${clientName}`;
+    const emailSubject = (insertError ? '[NOT SAVED — add manually] ' : '') + `New LSA Lead — ${clientName}`;
 
     const recipients = ['seanjevangelista@gmail.com'];
-    if (clientEmail && clientEmail !== 'seanjevangelista@gmail.com') {
+    if (!insertError && clientEmail && clientEmail !== 'seanjevangelista@gmail.com') {
       recipients.push(clientEmail);
     }
 
@@ -147,6 +162,9 @@ export default async function handler(req, res) {
     }
   }
 
+  if (insertError) {
+    return res.status(502).json({ ok: false, error: 'Failed to insert lead: ' + insertError });
+  }
   return res.status(200).json({ ok: true, lead: insertedLead });
 }
 

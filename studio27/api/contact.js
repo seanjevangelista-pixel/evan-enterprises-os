@@ -46,7 +46,7 @@ export default async function handler(req, res) {
         from: 'Studio 27 Website <contact@studio27atx.com>',
         to: 'studio27.atx@gmail.com',
         reply_to: email,
-        subject: `${source ? 'Booking request' : 'Project enquiry'} — ${name}`,
+        subject: `${source ? 'Booking request' : 'Project enquiry'} — ${String(name).replace(/[\r\n]+/g, ' ').trim()}`,
         html
       })
     });

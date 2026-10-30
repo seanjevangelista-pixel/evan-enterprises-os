@@ -815,6 +815,11 @@
       startFrame = frame;
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
+      /* touch-action: pan-y hands vertical swipes to the browser, which fires
+         pointercancel instead of pointerup. Without this the viewer stayed
+         "dragging" after a phone visitor scrolled past it: the hint vanished,
+         auto-rotate never resumed, and later touches elsewhere spun it. */
+      window.addEventListener('pointercancel', onUp);
     }
     function onMove(e) {
       if (!dragging) return;
@@ -829,6 +834,7 @@
       host.classList.remove('is-dragging');
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
     }
 
     host.addEventListener('pointerdown', onDown);

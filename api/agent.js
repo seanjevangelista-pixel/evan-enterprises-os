@@ -272,31 +272,46 @@ async function handle_agent_report(req, res) {
   const flatFee       = client ? Number(client.monthly_flat_fee || 0) : 500;
 
   // ── Date range: last full month ──────────────────────────────────────────
+  // `end` used to be new Date(y, m, 0) — MIDNIGHT at the start of the last day
+  // of the month — so every payment taken on the 30th/31st was left out of
+  // Revenue Collected and out of the 10% fee. End at the start of this month.
   const now   = new Date();
   const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const end   = new Date(now.getFullYear(), now.getMonth(), 0);
+  const end   = new Date(now.getFullYear(), now.getMonth(), 1);
   const monthLabel = start.toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
   let squareTotal = 0, squareTx = 0;
   let gadsSpend = 0, gadsClicks = 0, gadsConversions = 0;
 
   // ── Pull Square data ─────────────────────────────────────────────────────
+  // ListPayments returns every status — FAILED and CANCELED (declined cards,
+  // voided auths) included — and those were all summed as "Revenue Collected",
+  // inflating both the client's revenue and the 10% fee billed on it. Count
+  // COMPLETED only. It also caps a page at 100 (the old limit:'200' was ignored),
+  // so a busy month was silently cut off after the first page — follow the cursor.
   if (squareToken) {
     try {
-      const params = new URLSearchParams({
-        begin_time: start.toISOString(),
-        end_time: end.toISOString(),
-        limit: '200',
-      });
-      const r = await fetch(`https://connect.squareup.com/v2/payments?${params}`, {
-        headers: { Authorization: `Bearer ${squareToken}`, 'Square-Version': '2024-01-18' },
-      });
-      const d = await r.json();
-      (d.payments || []).forEach(p => {
-        squareTotal += (p.amount_money?.amount || 0) / 100;
-        squareTx++;
-      });
-    } catch (_) {}
+      let cursor = null, pages = 0;
+      do {
+        const params = new URLSearchParams({
+          begin_time: start.toISOString(),
+          end_time: end.toISOString(),
+          limit: '100',
+        });
+        if (cursor) params.set('cursor', cursor);
+        const r = await fetch(`https://connect.squareup.com/v2/payments?${params}`, {
+          headers: { Authorization: `Bearer ${squareToken}`, 'Square-Version': '2024-01-18' },
+        });
+        const d = await r.json();
+        if (!r.ok) { console.error('Square payments fetch failed:', r.status, d.errors?.[0]?.detail); break; }
+        (d.payments || []).forEach(p => {
+          if (p.status !== 'COMPLETED') return;
+          squareTotal += (p.amount_money?.amount || 0) / 100;
+          squareTx++;
+        });
+        cursor = d.cursor || null;
+      } while (cursor && ++pages < 50);
+    } catch (e) { console.error('Square payments fetch threw:', e.message); }
   }
 
   // ── Pull Google Ads data ─────────────────────────────────────────────────
@@ -407,7 +422,13 @@ async function handle_agent_report(req, res) {
         html,
       }),
     });
-    const emailData = await emailRes.json();
+    // A Resend rejection (unverified domain, bad recipient) still answered ok:true,
+    // so the monthly report could silently never reach the client.
+    const emailData = await emailRes.json().catch(() => ({}));
+    if (!emailRes.ok || !emailData.id) {
+      console.error('Report email failed:', emailRes.status, emailData.message);
+      return res.status(502).json({ ok: false, month: monthLabel, error: emailData.message || `Resend HTTP ${emailRes.status}` });
+    }
     return res.status(200).json({ ok: true, month: monthLabel, email: emailData });
   } catch (e) {
     return res.status(500).json({ error: e.message });

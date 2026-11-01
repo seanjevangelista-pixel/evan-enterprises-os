@@ -1521,7 +1521,7 @@ select.field__input { appearance: none; cursor: pointer; background-image: linea
   opacity: 0.55;
 }
 .footer__grid { display: grid; gap: 40px; padding-inline: 10px; }
-@media (min-width: 820px) { .footer__grid { grid-template-columns: minmax(0, 1.5fr) repeat(4, minmax(0, 1fr)); gap: 40px; } }
+@media (min-width: 820px) { .footer__grid { grid-template-columns: minmax(0, 1.4fr) repeat(5, minmax(0, 1fr)); gap: 32px; } }
 .footer__col { display: flex; flex-direction: column; gap: 12px; }
 .footer__h {
   font-family: 'DM Mono', monospace;

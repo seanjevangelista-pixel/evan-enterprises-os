@@ -11,11 +11,12 @@
 
 /* ---------- 1. Studio details ----------------------------------
    Used in the nav, footer, contact page, and schema markup.
-   No phone number is shown on the site yet — add STUDIO.phone
-   and STUDIO.phoneHref back once there's a real business line. */
+   phone / phoneHref are shown in the footer and on the contact page. */
 const STUDIO = {
   name:      'Studio 27',
   email:     'studio27.atx@gmail.com',
+  phone:     '(737) 295-5912',
+  phoneHref: '+17372955912',
   city:      'Austin, TX',
   instagram: 'https://instagram.com/studio27.atx',
   igHandle:  '@studio27.atx',
@@ -1007,7 +1008,7 @@ const TEAM = [
     photoPosition: 'center 15%',
     bio: 'Studio 27 started with creativity long before it became a business. I bought my first DSLR almost on impulse and barely touched it for a year. One night while taking photos of a friend around downtown Austin, I remembered I had a real camera sitting at home. After that, we started going out after work almost every night to shoot, especially cars, which eventually led me into automotive photography, and then into all kinds of photo and video work, including becoming a photographer for a popular club on 6th Street. That creative journey helped shape the idea behind Studio 27, a space where different creatives, styles, and industries can come together under one roof.',
     email: 'Jayyd1gitaal@gmail.com',
-    phone: null,
+    phone: '(737) 295-5912',
     instagram: '@jayd1gital'
   },
   {

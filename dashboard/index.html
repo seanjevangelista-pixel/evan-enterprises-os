@@ -3038,8 +3038,14 @@ $('send-client-reports-btn').addEventListener('click', async () => {
     const res  = await fetch('/api/email?action=client-report', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' }, body: JSON.stringify({}) });
     const data = await res.json();
     if (data.ok) {
-      const sent = (data.results || []).filter(r => r.ok).length;
-      toast(`Reports sent to ${sent} client(s)!`);
+      // The handler answers ok:true even when every individual send failed
+      // (bad Resend key, unverified domain), which toasted a green
+      // "Reports sent to 0 client(s)!" — surface the failures instead.
+      const results = data.results || [];
+      const sent    = results.filter(r => r.ok).length;
+      const failed  = results.length - sent;
+      if (failed) toast(`Reports sent to ${sent}, failed for ${failed} client(s): ${results.find(r => !r.ok)?.error || 'send failed'}`, 'err');
+      else toast(`Reports sent to ${sent} client(s)!`);
     } else {
       toast('Error: ' + (data.error || 'Unknown'), 'err');
     }
@@ -3058,7 +3064,11 @@ $('run-reminders-btn').addEventListener('click', async () => {
     const res  = await fetch('/api/email?action=invoice-reminders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' } });
     const data = await res.json();
     if (data.ok) {
-      toast(data.sent > 0 ? `${data.sent} reminder(s) sent!` : `Checked ${data.checked} invoices — no reminders due today`);
+      // Failed sends come back inside results with ok:false, so sent:0 used to
+      // read "no reminders due today" when reminders were due and all failed.
+      const failed = (data.results || []).filter(r => !r.ok);
+      if (failed.length) toast(`${data.sent} reminder(s) sent, ${failed.length} failed: ${failed[0].error || 'send failed'}`, 'err');
+      else toast(data.sent > 0 ? `${data.sent} reminder(s) sent!` : `Checked ${data.checked} invoices — no reminders due today`);
     } else {
       toast('Error: ' + (data.error || 'Unknown'), 'err');
     }

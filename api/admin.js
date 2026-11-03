@@ -130,9 +130,24 @@ export default async function handler(req, res) {
       headers: sb.headers,
       body: JSON.stringify({ id: userId, client_id, email, role: 'client' }),
     });
+    // A failed link used to leave the Auth user behind with no users row, so the
+    // portal answered "No client linked to this account" and every retry of this
+    // action failed with "already registered" — the client could never get a
+    // login without hand-deleting the user in Supabase. Roll the Auth user back.
     if (!userRes.ok) {
-      const err = await userRes.json();
-      return res.status(500).json({ error: err?.message || 'Failed to link user to client' });
+      const errText = await userRes.text();
+      let errMsg;
+      try { errMsg = JSON.parse(errText)?.message; } catch (_) {}
+      try {
+        const delRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
+          method: 'DELETE',
+          headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
+        });
+        if (!delRes.ok) console.error('admin: orphaned auth user not rolled back', userId, delRes.status);
+      } catch (e) {
+        console.error('admin: orphaned auth user not rolled back', userId, e.message);
+      }
+      return res.status(500).json({ error: errMsg || errText.slice(0, 200) || 'Failed to link user to client' });
     }
 
     // Fetch client name for welcome email

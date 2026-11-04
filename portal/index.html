@@ -441,7 +441,7 @@ async function showPortal() {
     return;
   }
 
-  const { client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices } = portalData;
+  const { client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices, calls30d } = portalData;
   if (!client) {
     document.getElementById('loading').textContent = 'Client record not found.';
     return;
@@ -475,7 +475,7 @@ async function showPortal() {
     const k = (l.lead_date || l.created_at||'').split('T')[0];
     if (k in dayBuckets) dayBuckets[k]++;
   });
-  callsThisMo.forEach(c => {
+  calls30d.forEach(c => {
     const k = (c.tapped_at||'').split('T')[0];
     if (k in dayBuckets) dayBuckets[k]++;
   });
@@ -486,7 +486,7 @@ async function showPortal() {
       date: l.lead_date || l.created_at, name: l.customer_name || 'Unknown',
       type: l.lead_type || 'LSA Lead', phone: l.customer_phone, source: 'lsa',
     })),
-    ...callsThisMo.map(c => ({
+    ...calls30d.map(c => ({
       date: c.tapped_at, name: c.caller_name || 'Website Caller',
       type: 'Website Call', phone: c.caller_phone, source: 'call',
     })),

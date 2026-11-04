@@ -72,14 +72,17 @@ export default async function handler(req, res) {
     return [];
   };
 
-  const [client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices] = await Promise.all([
+  const [client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices, calls30d] = await Promise.all([
     fetch(`${SUPABASE_URL}/rest/v1/clients?id=eq.${clientId}&select=*&limit=1`, { headers: sb.headers }).then(r => r.json()).then(d => (Array.isArray(d) && d[0]) || null).catch(() => null),
     fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${day30Ago}&order=lead_date.desc`, { headers: sb.headers }).then(r => r.json()).then(list('lsaAll')).catch(() => []),
     fetch(`${SUPABASE_URL}/rest/v1/lsa_leads?client_id=eq.${clientId}&lead_date=gte.${lastMoStartDate}&lead_date=lt.${moStartDate}&select=id`, { headers: sb.headers }).then(r => r.json()).then(list('lsaLastMo')).catch(() => []),
     fetch(`${SUPABASE_URL}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${moStart}`, { headers: sb.headers }).then(r => r.json()).then(list('callsThisMo')).catch(() => []),
     fetch(`${SUPABASE_URL}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${lastMoStart}&tapped_at=lt.${lastMoEnd}&select=id`, { headers: sb.headers }).then(r => r.json()).then(list('callsLastMo')).catch(() => []),
     fetch(`${SUPABASE_URL}/rest/v1/invoices?client_id=eq.${clientId}&order=due_date.desc&limit=10`, { headers: sb.headers }).then(r => r.json()).then(list('invoices')).catch(() => []),
+    // The portal's "Last 30 Days" chart and lead feed need a rolling window;
+    // callsThisMo resets on the 1st, which blanked most of the month's call taps.
+    fetch(`${SUPABASE_URL}/rest/v1/call_leads?client_id=eq.${clientId}&tapped_at=gte.${day30Ago}&order=tapped_at.desc`, { headers: sb.headers }).then(r => r.json()).then(list('calls30d')).catch(() => []),
   ]);
 
-  return res.status(200).json({ ok: true, client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices });
+  return res.status(200).json({ ok: true, client, lsaAll, lsaLastMo, callsThisMo, callsLastMo, invoices, calls30d });
 }

@@ -26,10 +26,31 @@ export default async function handler(req, res) {
     try { payload = JSON.parse(payload); } catch (_) { payload = {}; }
   }
 
-  const rawTo      = payload.to   || '';
-  const rawFrom    = payload.from || '';
-  const subject    = payload.subject || '';
-  const bodyText   = payload.text || payload.html?.replace(/<[^>]+>/g, ' ') || '';
+  // Resend's email.received webhook nests the message under `data`, sends `to` as
+  // an array, and leaves the body out entirely — it has to be fetched by email_id.
+  // Reading the top level only meant a real inbound email matched no client and
+  // was answered ok:false, and an array `to` crashed extractEmail's .match().
+  const mail       = (payload.type === 'email.received' && payload.data) || payload;
+  const rawTo      = [].concat(mail.to || []).join(', ');
+  const rawFrom    = mail.from || '';
+  const subject    = mail.subject || '';
+  let   bodyText   = mail.text || mail.html?.replace(/<[^>]+>/g, ' ') || '';
+
+  if (!bodyText && mail.email_id && resendKey) {
+    try {
+      const r = await fetch(`https://api.resend.com/emails/receiving/${encodeURIComponent(mail.email_id)}`, {
+        headers: { Authorization: `Bearer ${resendKey}` },
+      });
+      if (r.ok) {
+        const full = await r.json();
+        bodyText = full.text || full.html?.replace(/<[^>]+>/g, ' ') || '';
+      } else {
+        console.error('lsa-webhook: could not fetch email body:', r.status, await r.text());
+      }
+    } catch (e) {
+      console.error('lsa-webhook: could not fetch email body:', e.message);
+    }
+  }
 
   // Also support direct JSON from a simple form POST or test:
   // { client_id, customer_name, customer_phone, lead_type, service, notes }
@@ -86,6 +107,7 @@ export default async function handler(req, res) {
   }
 
   if (!clientId) {
+    console.error('lsa-webhook: no client matched, lead dropped. to:', rawTo, 'subject:', subject);
     return res.status(200).json({
       ok: false,
       error: 'Could not match email to a client. Add ?client_id=<uuid> or ensure the to-address matches a client owner_email.',

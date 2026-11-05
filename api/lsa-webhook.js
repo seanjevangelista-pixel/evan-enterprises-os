@@ -166,7 +166,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      await fetch('https://api.resend.com/emails', {
+      const r = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${resendKey}`,
@@ -179,8 +179,11 @@ export default async function handler(req, res) {
           html: emailHtml,
         }),
       });
-    } catch (_) {
-      // Email failure is non-fatal — lead is already logged
+      if (!r.ok) console.error('lsa-webhook: notification email failed:', r.status, await r.text());
+    } catch (e) {
+      // Non-fatal to the response, but logged: when the insert also failed, this
+      // email was the only copy of the lead.
+      console.error('lsa-webhook: notification email failed:', e.message);
     }
   }
 

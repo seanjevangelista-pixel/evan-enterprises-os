@@ -511,23 +511,33 @@ async function handle_monthly_report(req, res) {
   }
 
   // ── Pull Square payments ────────────────────────────────────────────────
+  // ListPayments returns every status, so declined cards and voided auths were
+  // being summed as revenue, and it caps a page at 100, so a busy month was cut
+  // off. Same fix as the client report in api/agent.js: COMPLETED only, all pages.
   let squareTotal = 0, squareTx = 0;
   if (squareToken) {
     try {
-      const params = new URLSearchParams({
-        begin_time: moStart.toISOString(),
-        end_time:   now.toISOString(),
-        limit:      '200',
-      });
-      const r = await fetch(`https://connect.squareup.com/v2/payments?${params}`, {
-        headers: { Authorization: `Bearer ${squareToken}`, 'Square-Version': '2024-01-18' },
-      });
-      const d = await r.json();
-      (d.payments || []).forEach(p => {
-        squareTotal += (p.total_money?.amount || 0) / 100;
-        squareTx++;
-      });
-    } catch (_) {}
+      let cursor = null, pages = 0;
+      do {
+        const params = new URLSearchParams({
+          begin_time: moStart.toISOString(),
+          end_time:   now.toISOString(),
+          limit:      '100',
+        });
+        if (cursor) params.set('cursor', cursor);
+        const r = await fetch(`https://connect.squareup.com/v2/payments?${params}`, {
+          headers: { Authorization: `Bearer ${squareToken}`, 'Square-Version': '2024-01-18' },
+        });
+        const d = await r.json();
+        if (!r.ok) { console.error('Square payments fetch failed:', r.status, d.errors?.[0]?.detail); break; }
+        (d.payments || []).forEach(p => {
+          if (p.status !== 'COMPLETED') return;
+          squareTotal += (p.total_money?.amount || 0) / 100;
+          squareTx++;
+        });
+        cursor = d.cursor || null;
+      } while (cursor && ++pages < 50);
+    } catch (e) { console.error('Square payments fetch threw:', e.message); }
   }
 
   // ── Build HTML email ────────────────────────────────────────────────────
@@ -782,11 +792,17 @@ async function sendOutreachBatch(leads, followUp, resendKey, supabaseUrl, supaba
       emailResult = { error: e.message };
     }
 
-    const emailOk = !emailResult.error;
+    // Resend reports a rejection as { statusCode, name, message } with no `error`
+    // key, so checking !emailResult.error counted every rejected send as sent. The
+    // lead was then marked 'sent' without ever getting the first email, and got a
+    // "following up" email 4 days later (or nothing at all, if that one failed too).
+    const emailOk = !!emailResult.id;
     if (emailOk) sent++;
+    else console.error('Outreach send failed:', email, emailResult.message || emailResult.error);
 
-    // Upsert lead in Supabase
-    if (supabaseKey) {
+    // Upsert lead in Supabase. Only after a real send: a failed lead keeps its
+    // current status, so the next cron run retries it.
+    if (supabaseKey && emailOk) {
       try {
         const now = new Date().toISOString();
         // Try update first (by email), then insert if not found
@@ -1203,16 +1219,27 @@ async function handle_square(req, res) {
 
     if (endpoint === 'payments') {
       const { begin_time, end_time, location_id } = req.query;
-      const params = new URLSearchParams({ limit: '200' });
+      const params = new URLSearchParams({ limit: '100' });
       if (begin_time)   params.set('begin_time', begin_time);
       if (end_time)     params.set('end_time', end_time);
       if (location_id)  params.set('location_id', location_id);
 
-      const r = await fetch(`https://connect.squareup.com/v2/payments?${params}`, {
-        headers: { Authorization: `Bearer ${token}`, 'Square-Version': '2024-01-18' }
-      });
-      const data = await r.json();
-      return res.status(r.status).json(data);
+      // Square caps a page at 100 and hands back a cursor for the rest, which
+      // was never followed, so the Payments tab stopped at the first page. A
+      // failed page returns the error rather than a partial month.
+      const payments = [];
+      let cursor = null, pages = 0;
+      do {
+        if (cursor) params.set('cursor', cursor);
+        const r = await fetch(`https://connect.squareup.com/v2/payments?${params}`, {
+          headers: { Authorization: `Bearer ${token}`, 'Square-Version': '2024-01-18' }
+        });
+        const data = await r.json();
+        if (!r.ok) return res.status(r.status).json(data);
+        payments.push(...(data.payments || []));
+        cursor = data.cursor || null;
+      } while (cursor && ++pages < 50);
+      return res.status(200).json({ payments });
     }
 
     if (endpoint === 'invoices') {

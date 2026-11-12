@@ -494,6 +494,9 @@ var FEATURED = [];
   });
 })();
 (function(){
+  // No IntersectionObserver (older in-app browsers): show everything instead of
+  // throwing and leaving every .rv block at opacity:0.
+  if(!("IntersectionObserver" in window)){ document.querySelectorAll(".rv").forEach(function(el){ el.classList.add("in"); }); return; }
   var io=new IntersectionObserver(function(es){
     es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
   },{threshold:.12});

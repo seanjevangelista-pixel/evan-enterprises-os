@@ -147,6 +147,15 @@ body.is-ready .hero-mask>*{transform:none;opacity:1}
 .brand .bn{font-weight:600;font-size:16px}
 .brand .bs{font-family:var(--fm);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:4px}
 .ugc-more{text-align:center;margin-top:30px}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:16px}
+.feat{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.feat:hover{border-color:var(--accent);transform:translateY(-3px)}
+.feat-poster{aspect-ratio:9/12;background:var(--panel) center/cover no-repeat;position:relative}
+.feat-poster::after{content:"";position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px;border-radius:50%;background:rgba(10,10,12,.7) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23F7F7F5'%3E%3Cpath d='M9 7l9 5-9 5z'/%3E%3C/svg%3E") center/26px no-repeat;border:1px solid var(--hair)}
+.feat-body{padding:18px 20px;display:flex;flex-direction:column;gap:4px}
+.feat-views{font-weight:700;font-size:24px;letter-spacing:-.02em}
+.feat-title{font-size:14.5px;color:var(--body);line-height:1.5}
+.feat-meta{font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:6px}
 @media(max-width:800px){.plat-grid,.brand-row{grid-template-columns:1fr}}
 
 /* ── compare ── */
@@ -208,8 +217,8 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
   <div class="wrap hero-grid">
     <div>
       <div class="hero-mask"><div class="eyebrow">Portfolio · Sean Evangelista</div></div>
-      <div class="hero-mask"><h1 class="hero-h1">Websites, ads and content — <span class="accent-t">built by one person</span> who does the work.</h1></div>
-      <div class="hero-mask"><p class="hero-sub">Custom-built sites for Austin businesses, Google Ads that get managed weekly, and UGC that has pulled 5.9M+ organic views. No account managers, no hand-offs.</p></div>
+      <div class="hero-mask"><h1 class="hero-h1">Content, ads and AI — <span class="accent-t">one person</span> who does the work.</h1></div>
+      <div class="hero-mask"><p class="hero-sub">Top-of-funnel content that gets brands seen, ads that bring businesses real leads, and AI that automates the busywork. No account managers, no hand-offs.</p></div>
       <div class="hero-mask">
         <div class="hero-cta">
           <a href="/#contact" class="btn btn-p">Book a call →</a>
@@ -217,8 +226,8 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
         </div>
       </div>
     </div>
-    <div class="hero-media hero-mask">
-      <img src="/ugc/img/sean-hero.jpg" alt="Sean Evangelista">
+    <div class="hero-media hero-mask" id="heroMedia">
+      <img src="/ugc/img/sean-hero.jpg" alt="Sean Evangelista" id="heroPhoto">
       <div class="hero-badge"><i></i>Austin, TX · replies within 24 hours</div>
     </div>
   </div>
@@ -251,28 +260,28 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
     <div class="sec-head rv">
       <div class="eyebrow">Skills</div>
       <h2 class="sec-h2">What I actually do.</h2>
-      <p class="lede">Three services, one person. Everything below is something I do myself, not something I outsource.</p>
+      <p class="lede">Three things I'm strongest at. Everything here is something I do myself, not something I outsource.</p>
     </div>
     <div class="skills rv">
       <div class="skill">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3"/></svg></div>
+        <h3>Top-of-funnel content for brands</h3>
+        <p>UGC, Reels and TikToks built to get a brand in front of new people — native-feeling content that looks like a person, not a commercial.</p>
+      </div>
+      <div class="skill">
         <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
-        <h3>Google Ads &amp; LSA</h3>
-        <p>Search campaigns and Local Service Ads, built around calls and booked jobs, optimized weekly instead of set and forgotten.</p>
+        <h3>Ads for businesses</h3>
+        <p>Google Ads and Local Service Ads built around calls and booked jobs, optimized weekly instead of set and forgotten.</p>
+      </div>
+      <div class="skill">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg></div>
+        <h3>AI solutions &amp; automation</h3>
+        <p>AI chatbots, lead follow-up and workflow automation that handle the repetitive work, so you save time and stop dropping leads.</p>
       </div>
       <div class="skill">
         <div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
         <h3>Custom websites</h3>
         <p>Hand-built to fit the brand — fast, mobile-first and written for search. Not a template, not a theme.</p>
-      </div>
-      <div class="skill">
-        <div class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3"/></svg></div>
-        <h3>UGC &amp; short-form video</h3>
-        <p>Native-feeling Reels, TikToks and UGC ad content that looks like a person, not a commercial.</p>
-      </div>
-      <div class="skill">
-        <div class="ic"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-        <h3>AI chatbots</h3>
-        <p>Optional lead-capture bots added to a site build, so questions get answered when you can't pick up.</p>
       </div>
       <div class="skill">
         <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
@@ -342,6 +351,7 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
       <h2 class="sec-h2">Content that pulls real views.</h2>
       <p class="lede">5.9M+ combined views, 100% organic. Watch the work on the platforms where it lives.</p>
     </div>
+    <div class="feat-grid rv" id="featGrid" hidden></div>
     <div class="plat-grid rv">
       <a class="plat" href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener">
         <img src="/ugc/img/icon-tiktok.png" alt="">
@@ -422,6 +432,35 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
 </footer>
 
 <script>
+// ── featured videos: add one object per video, then it appears automatically ──
+// { platform:'TikTok', url:'https://...', views:'1.2M', title:'What it is', poster:'/portfolio/media/poster-1.jpg', tag:'Organic' }
+var FEATURED = [];
+(function(){
+  var g=document.getElementById('featGrid');
+  if(!g||!FEATURED.length) return;
+  g.innerHTML=FEATURED.map(function(v){
+    var bg=v.poster?' style="background-image:url('+v.poster+')"':'';
+    return '<a class="feat" href="'+v.url+'" target="_blank" rel="noopener">'+
+      '<div class="feat-poster"'+bg+'></div>'+
+      '<div class="feat-body"><div class="feat-views">'+v.views+' views</div>'+
+      '<div class="feat-title">'+v.title+'</div>'+
+      '<div class="feat-meta">'+v.platform+(v.tag?' · '+v.tag:'')+'</div></div></a>';
+  }).join('');
+  g.hidden=false;
+})();
+// ── intro video: drop /portfolio/media/intro.mp4 in and it replaces the hero photo ──
+(function(){
+  fetch('/portfolio/media/intro.mp4',{method:'HEAD'}).then(function(r){
+    if(!r.ok) return;
+    var photo=document.getElementById('heroPhoto'), box=document.getElementById('heroMedia');
+    var v=document.createElement('video');
+    v.src='/portfolio/media/intro.mp4'; v.poster=photo.src; v.playsInline=true; v.loop=true; v.muted=true; v.autoplay=true;
+    v.setAttribute('aria-label','Introduction from Sean Evangelista');
+    v.style.cssText='width:100%;aspect-ratio:4/5;object-fit:cover;display:block;cursor:pointer';
+    v.addEventListener('click',function(){ v.muted=!v.muted; v.loop=v.muted; if(!v.muted){v.currentTime=0;v.play();} });
+    box.replaceChild(v,photo);
+  }).catch(function(){});
+})();
 (function(){
   var b=document.getElementById('burger'), m=document.getElementById('mobileMenu');
   b.addEventListener('click',function(){

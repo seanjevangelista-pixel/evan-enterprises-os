@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Website Portfolio — Evan Enterprises LLC</title>
+<title>Portfolio — Sean Evangelista | Evan Enterprises LLC</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="theme-color" content="#0A0A0C">
-<meta name="description" content="Websites built by Sean Evangelista — Legacy Hardscape ATX, Sharp Air Mechanical, and Studio 27. Custom-built, not templates.">
-<meta property="og:title" content="Website Portfolio — Evan Enterprises LLC">
-<meta property="og:description" content="Websites built by Sean Evangelista — custom-built, not templates.">
+<meta name="description" content="Websites, Google Ads and UGC by Sean Evangelista — 5.9M+ organic views, custom-built sites for Austin businesses, and one person doing the work.">
+<meta property="og:title" content="Portfolio — Sean Evangelista">
+<meta property="og:description" content="Custom websites, ad management and UGC — all done personally. 5.9M+ organic views.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,9 @@
 <style>
 :root{
   --ink:#0A0A0C;
+  --ink-2:#0D0D11;
   --panel:#0F1B33;
+  --card:#111116;
   --white:#F7F7F5;
   --body:#9A9C9F;
   --dim:#7A7C80;
@@ -27,7 +29,8 @@
   --ease-back:cubic-bezier(.34,1.56,.64,1);
   --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
   --fm:'IBM Plex Mono',ui-monospace,monospace;
-  --max:1180px;
+  --max:1120px;
+  --r:18px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -37,40 +40,48 @@ img{max-width:100%;display:block}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
 .eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
-.lede{color:var(--body)}
-.sec{padding:88px 0;border-top:1px solid var(--hair)}
-.sec-head{margin-bottom:44px}
-.sec-h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4.2vw,42px);margin-top:13px;letter-spacing:-.01em;line-height:1.15}
-.sec-head .lede{margin-top:16px;max-width:58ch}
+.sec{padding:96px 0;border-top:1px solid var(--hair)}
+.sec.alt{background:var(--ink-2)}
+.sec-head{text-align:center;margin-bottom:52px}
+.sec-h2{font-weight:700;font-size:clamp(28px,4.4vw,44px);margin-top:13px;letter-spacing:-.025em;line-height:1.12;text-wrap:balance}
+.sec-head .lede{margin:16px auto 0;max-width:56ch;color:var(--body)}
 
-/* ── nav ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
-.nav-in{max-width:var(--max);margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-.logo{font-family:var(--fb);font-weight:700;font-size:19px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
-.logo img{width:26px;height:26px;object-fit:contain}
+/* ── floating pill nav ── */
+nav{position:fixed;top:14px;left:0;right:0;z-index:70;padding:0 16px}
+.nav-in{max-width:var(--max);margin:0 auto;padding:9px 10px 9px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px;background:rgba(17,17,22,.82);backdrop-filter:blur(14px);border:1px solid var(--hair);border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.logo{font-weight:700;font-size:17px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
+.logo img{width:24px;height:24px;object-fit:contain}
 .logo b{color:var(--accent);font-weight:400}
-.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--dim);font-weight:500}
+.nav-links{display:flex;align-items:center;gap:24px;font-size:14px;color:var(--dim);font-weight:500}
 .nav-links a:hover{color:var(--white)}
-.nav-cta{background:var(--accent);color:var(--on-accent);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
-.nav-cta:hover{background:#4A6BF0}
-.burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
-.burger span{display:block;width:23px;height:2px;background:var(--white)}
-.mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--hair);background:var(--panel)}
+.nav-cta{background:var(--white);color:var(--ink)!important;padding:9px 18px;border-radius:999px;font-weight:700;font-size:13.5px;transition:.16s}
+.nav-cta:hover{opacity:.85}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:8px 12px;flex-direction:column;gap:5px}
+.burger span{display:block;width:22px;height:2px;background:var(--white)}
+.mobile-menu{display:none;flex-direction:column;max-width:var(--max);margin:8px auto 0;background:rgba(17,17,22,.96);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden}
 .mobile-menu.open{display:flex}
-.mobile-menu a{padding:15px 26px;border-bottom:1px solid var(--hair);font-size:15px;font-weight:500}
+.mobile-menu a{padding:15px 22px;border-bottom:1px solid var(--hair);font-size:15px;font-weight:500}
+.mobile-menu a:last-child{border-bottom:0}
 @media(max-width:880px){.nav-links{display:none}.burger{display:flex}}
 
-/* ── hero ── */
-.hero{padding:148px 0 76px}
-.hero-h1{font-family:var(--fb);font-weight:700;font-size:clamp(34px,5.6vw,58px);line-height:1.15;margin:16px 0 0;letter-spacing:-.01em;max-width:18ch}
-.accent-t{color:var(--accent)}
-.hero-sub{margin-top:20px;max-width:56ch;font-size:17px;color:var(--body)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15px;padding:14px 24px;border:0;cursor:pointer;transition:.16s}
+/* ── buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15px;padding:14px 26px;border:0;border-radius:999px;cursor:pointer;transition:.16s}
 .btn-p{background:var(--white);color:var(--ink);font-weight:700}
 .btn-p:hover{opacity:.85}
-.btn-s{border:1px solid var(--hair);color:var(--white);background:transparent}
+.btn-s{border:1px solid var(--hair);color:var(--white);background:rgba(255,255,255,.03)}
 .btn-s:hover{border-color:var(--dim);background:var(--panel)}
 .hero-cta{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
+
+/* ── hero ── */
+.hero{padding:150px 0 84px;background:radial-gradient(900px 420px at 78% 8%,rgba(59,91,219,.16),transparent 70%)}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+.hero-h1{font-weight:700;font-size:clamp(36px,5.6vw,62px);line-height:1.08;margin:16px 0 0;letter-spacing:-.03em;text-wrap:balance}
+.accent-t{color:var(--accent)}
+.hero-sub{margin-top:20px;max-width:50ch;font-size:17.5px;color:var(--body)}
+.hero-media{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--hair);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.hero-media img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 15%}
+.hero-badge{position:absolute;left:14px;bottom:14px;right:14px;display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(10,10,12,.78);backdrop-filter:blur(10px);border:1px solid var(--hair);border-radius:12px;font-size:13px;color:var(--white)}
+.hero-badge i{width:8px;height:8px;border-radius:50%;background:#35C77A;flex:none}
 .hero-mask{overflow:hidden}
 .hero-mask>*{transform:translateY(100%);opacity:0;transition:transform 1s var(--ease),opacity .8s var(--ease)}
 .hero-mask:nth-of-type(1)>*{transition-delay:.05s}
@@ -78,36 +89,90 @@ nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92)
 .hero-mask:nth-of-type(3)>*{transition-delay:.27s}
 .hero-mask:nth-of-type(4)>*{transition-delay:.38s}
 body.is-ready .hero-mask>*{transform:none;opacity:1}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:36px}.hero-media{max-width:380px}}
 
-/* ── work grid ── */
-.work-grid{display:flex;flex-direction:column;gap:18px}
-.work-card{display:block;background:var(--panel);border:1px solid var(--hair);overflow:hidden;transition:border-color .3s var(--ease)}
-.work-card:hover{border-color:var(--accent)}
-.work-shot-wrap{overflow:hidden;border-bottom:1px solid var(--hair)}
-.work-shot{width:100%;display:block;transition:transform .6s var(--ease)}
-.work-card:hover .work-shot{transform:scale(1.035)}
-.work-body{padding:26px 28px;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:20px}
+/* ── stats ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);padding:24px 20px;text-align:center;transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.stat:hover{border-color:var(--accent);transform:translateY(-3px)}
+.stat .n{font-weight:700;font-size:clamp(26px,3.4vw,36px);letter-spacing:-.02em;color:var(--white)}
+.stat .l{font-family:var(--fm);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+@media(max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+
+/* ── logo marquee ── */
+.logos-label{text-align:center;font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:22px}
+.marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.marquee-track{display:flex;gap:14px;width:max-content;animation:slide 32s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.chip{flex:none;padding:14px 26px;background:var(--card);border:1px solid var(--hair);border-radius:999px;font-weight:600;font-size:15px;color:var(--body);white-space:nowrap}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* ── skills ── */
+.skills{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.skill{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);padding:28px 26px;transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.skill:hover{border-color:rgba(59,91,219,.6);transform:translateY(-4px)}
+.skill .ic{width:44px;height:44px;border-radius:12px;background:rgba(59,91,219,.12);border:1px solid rgba(59,91,219,.3);display:grid;place-items:center;margin-bottom:18px}
+.skill .ic svg{width:21px;height:21px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.skill h3{font-size:18px;font-weight:600;letter-spacing:-.01em;margin-bottom:8px}
+.skill p{font-size:14.5px;color:var(--body);line-height:1.6}
+@media(max-width:900px){.skills{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.skills{grid-template-columns:1fr}}
+
+/* ── websites ── */
+.work-grid{display:flex;flex-direction:column;gap:20px}
+.work-card{display:block;background:var(--card);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.work-card:hover{border-color:var(--accent);transform:translateY(-3px)}
+.work-shot-wrap{overflow:hidden;border-bottom:1px solid var(--hair);background:#fff}
+.work-shot{width:100%;display:block;transition:transform .7s var(--ease)}
+.work-card:hover .work-shot{transform:scale(1.03)}
+.work-body{padding:26px 30px;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:20px}
 .work-info{max-width:62ch}
 .work-tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
-.work-name{font-family:var(--fb);font-weight:700;font-size:24px;margin:8px 0 10px;letter-spacing:-.01em}
+.work-name{font-weight:700;font-size:24px;margin:8px 0 10px;letter-spacing:-.015em}
 .work-desc{font-size:15px;color:var(--body);line-height:1.6}
 .work-go{flex:none;font-size:14px;font-weight:600;color:var(--accent);white-space:nowrap;padding-top:4px}
-.work-go:hover{text-decoration:underline;text-underline-offset:4px}
-@media(max-width:700px){.work-body{flex-direction:column}.work-name{font-size:21px}}
+.work-card:hover .work-go{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:700px){.work-body{flex-direction:column;padding:22px}.work-name{font-size:21px}}
 
-/* ── closing ── */
-.close-cta{text-align:center;padding:76px 0}
-.close-cta h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:-.01em}
+/* ── ugc ── */
+.plat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.plat{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);padding:26px;display:flex;flex-direction:column;gap:6px;transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.plat:hover{border-color:var(--accent);transform:translateY(-3px)}
+.plat img{width:34px;height:34px;object-fit:contain;margin-bottom:10px}
+.plat .nm{font-weight:600;font-size:17px}
+.plat .ct{font-family:var(--fm);font-size:12px;color:var(--dim);letter-spacing:.04em}
+.plat .go{margin-top:12px;font-size:14px;font-weight:600;color:var(--accent)}
+.brand-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.brand{background:rgba(255,255,255,.02);border:1px dashed var(--hair);border-radius:var(--r);padding:22px 24px}
+.brand .bn{font-weight:600;font-size:16px}
+.brand .bs{font-family:var(--fm);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+.ugc-more{text-align:center;margin-top:30px}
+@media(max-width:800px){.plat-grid,.brand-row{grid-template-columns:1fr}}
+
+/* ── compare ── */
+.cmp{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;font-size:15px}
+.cmp th,.cmp td{padding:18px 22px;text-align:left;border-bottom:1px solid var(--hair);vertical-align:top}
+.cmp tr:last-child td{border-bottom:0}
+.cmp th{font-family:var(--fm);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.cmp th.us{color:var(--accent)}
+.cmp td:first-child{font-weight:600;color:var(--white);width:26%}
+.cmp td.them{color:var(--dim)}
+.cmp td.us{color:var(--white);background:rgba(59,91,219,.08)}
+.table-wrap{overflow-x:auto;border-radius:var(--r)}
+.table-wrap .cmp{min-width:560px}
+
+/* ── closing / footer ── */
+.close-cta{text-align:center;padding:92px 0;background:radial-gradient(700px 320px at 50% 0%,rgba(59,91,219,.16),transparent 70%);border-top:1px solid var(--hair)}
+.close-cta h2{font-weight:700;font-size:clamp(28px,4.4vw,44px);letter-spacing:-.025em;text-wrap:balance}
 .close-cta p{margin-top:14px;color:var(--body)}
 .close-cta .hero-cta{justify-content:center;margin-top:26px}
-
-/* ── footer ── */
 footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
 .foot-in{max-width:var(--max);margin:0 auto;padding:0 26px;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center}
-.foot-logo{font-family:var(--fb);font-weight:700;font-size:18px;text-transform:uppercase;display:flex;align-items:center;gap:9px}
+.foot-logo{font-weight:700;font-size:18px;text-transform:uppercase;display:flex;align-items:center;gap:9px}
 .foot-logo img{width:22px;height:22px;object-fit:contain}
 .foot-links,.foot-social{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-size:14px;color:var(--dim)}
 .foot-links a:hover,.foot-social a:hover{color:var(--white)}
+.foot-contact{font-family:var(--fm);font-size:13px;color:var(--dim)}
 .foot-copy{font-family:var(--fm);font-size:11.5px;color:#4C4D52}
 
 .rv{opacity:0;transform:translateY(20px);transition:.75s var(--ease)}
@@ -117,42 +182,120 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="nav-in">
     <a href="/" class="logo"><img src="/logo-mark.png" alt="">Evan<b>·</b>Enterprises</a>
     <div class="nav-links">
-      <a href="/#marketing">Marketing</a>
-      <a href="/#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#websites">Websites</a>
+      <a href="#ugc">UGC</a>
+      <a href="/onboarding">Onboarding</a>
       <a href="/#contact" class="nav-cta">Book a call</a>
     </div>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="/#marketing">Marketing</a>
-    <a href="/#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#websites">Websites</a>
+    <a href="#ugc">UGC</a>
+    <a href="/onboarding">Onboarding</a>
     <a href="/#contact">Book a call →</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <header class="hero">
-  <div class="wrap">
-    <div class="hero-mask"><div class="eyebrow">Website Portfolio</div></div>
-    <div class="hero-mask"><h1 class="hero-h1">Sites I've <span class="accent-t">built from scratch</span> — no templates.</h1></div>
-    <div class="hero-mask"><p class="hero-sub">Every site below is live, built for a real business, and vibe-coded to fit the brand rather than pulled from a theme store. Click through to see any of them in action.</p></div>
-    <div class="hero-mask">
-      <div class="hero-cta">
-        <a href="/#contact" class="btn btn-p">Start a build →</a>
-        <a href="/onboarding" class="btn btn-s">See how it works →</a>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="hero-mask"><div class="eyebrow">Portfolio · Sean Evangelista</div></div>
+      <div class="hero-mask"><h1 class="hero-h1">Websites, ads and content — <span class="accent-t">built by one person</span> who does the work.</h1></div>
+      <div class="hero-mask"><p class="hero-sub">Custom-built sites for Austin businesses, Google Ads that get managed weekly, and UGC that has pulled 5.9M+ organic views. No account managers, no hand-offs.</p></div>
+      <div class="hero-mask">
+        <div class="hero-cta">
+          <a href="/#contact" class="btn btn-p">Book a call →</a>
+          <a href="#websites" class="btn btn-s">See the work ↓</a>
+        </div>
       </div>
+    </div>
+    <div class="hero-media hero-mask">
+      <img src="/ugc/img/sean-hero.jpg" alt="Sean Evangelista">
+      <div class="hero-badge"><i></i>Austin, TX · replies within 24 hours</div>
     </div>
   </div>
 </header>
 
-<!-- WORK -->
+<!-- STATS + LOGOS -->
 <section class="sec">
   <div class="wrap">
+    <div class="stats rv">
+      <div class="stat"><div class="n">5.9M+</div><div class="l">Organic views</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">Live sites built</div></div>
+      <div class="stat"><div class="n">$400K+</div><div class="l">E-commerce revenue</div></div>
+      <div class="stat"><div class="n">24h</div><div class="l">Response time</div></div>
+    </div>
+    <div style="margin-top:56px" class="rv">
+      <div class="logos-label">Built for &amp; worked with</div>
+      <div class="marquee">
+        <div class="marquee-track">
+          <span class="chip">Legacy Hardscape ATX</span><span class="chip">Sharp Air Mechanical</span><span class="chip">Studio 27</span><span class="chip">Dude Wipes</span><span class="chip">Clean Nutra</span><span class="chip">Yaynuts</span>
+          <span class="chip">Legacy Hardscape ATX</span><span class="chip">Sharp Air Mechanical</span><span class="chip">Studio 27</span><span class="chip">Dude Wipes</span><span class="chip">Clean Nutra</span><span class="chip">Yaynuts</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="sec alt" id="skills">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Skills</div>
+      <h2 class="sec-h2">What I actually do.</h2>
+      <p class="lede">Three services, one person. Everything below is something I do myself, not something I outsource.</p>
+    </div>
+    <div class="skills rv">
+      <div class="skill">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+        <h3>Google Ads &amp; LSA</h3>
+        <p>Search campaigns and Local Service Ads, built around calls and booked jobs, optimized weekly instead of set and forgotten.</p>
+      </div>
+      <div class="skill">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
+        <h3>Custom websites</h3>
+        <p>Hand-built to fit the brand — fast, mobile-first and written for search. Not a template, not a theme.</p>
+      </div>
+      <div class="skill">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3"/></svg></div>
+        <h3>UGC &amp; short-form video</h3>
+        <p>Native-feeling Reels, TikToks and UGC ad content that looks like a person, not a commercial.</p>
+      </div>
+      <div class="skill">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <h3>AI chatbots</h3>
+        <p>Optional lead-capture bots added to a site build, so questions get answered when you can't pick up.</p>
+      </div>
+      <div class="skill">
+        <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Tracking &amp; reporting</h3>
+        <p>Conversion tracking tied to real calls and form fills, with a monthly report that shows spend against leads.</p>
+      </div>
+      <div class="skill">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/></svg></div>
+        <h3>E-commerce operator</h3>
+        <p>Five years running Amazon FBA and Walmart, $400K+ in revenue — I understand the business behind the ad.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEBSITES -->
+<section class="sec" id="websites">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Websites</div>
+      <h2 class="sec-h2">Live sites, built from scratch.</h2>
+      <p class="lede">Every one is live for a real business. Click any card to open the site.</p>
+    </div>
     <div class="work-grid">
       <a href="https://legacyhardscapeatx.com" target="_blank" rel="noopener" class="work-card rv">
         <div class="work-shot-wrap"><img src="/portfolio/img/legacy-hardscape.jpg" alt="Legacy Hardscape ATX website" class="work-shot"></div>
@@ -162,7 +305,7 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
             <h3 class="work-name">Legacy Hardscape ATX</h3>
             <p class="work-desc">A lead-gen site for a patio and pergola builder — built around quote requests, real project photos, and local trust signals instead of stock imagery.</p>
           </div>
-          <span class="work-go">Visit site → legacyhardscapeatx.com</span>
+          <span class="work-go">Visit site →</span>
         </div>
       </a>
       <a href="https://sharp-air-mock.vercel.app" target="_blank" rel="noopener" class="work-card rv">
@@ -171,7 +314,7 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
           <div class="work-info">
             <div class="work-tag">Heating &amp; Air Conditioning · Austin, TX</div>
             <h3 class="work-name">Sharp Air Mechanical</h3>
-            <p class="work-desc">A service-business site built to earn trust fast — licensing front and center, real crew photos, and a click-to-call path for people who need a technician now, not a contact form.</p>
+            <p class="work-desc">A service-business site built to earn trust fast — licensing front and center, real crew photos, and a click-to-call path for people who need a technician now.</p>
           </div>
           <span class="work-go">Visit site →</span>
         </div>
@@ -184,9 +327,63 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
             <h3 class="work-name">Studio 27</h3>
             <p class="work-desc">A bold, motion-driven site for a multi-discipline creative studio — built to show off the space itself as much as the booking flow.</p>
           </div>
-          <span class="work-go">Visit site → studio27atx.com</span>
+          <span class="work-go">Visit site →</span>
         </div>
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- UGC -->
+<section class="sec alt" id="ugc">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">UGC &amp; content</div>
+      <h2 class="sec-h2">Content that pulls real views.</h2>
+      <p class="lede">5.9M+ combined views, 100% organic. Watch the work on the platforms where it lives.</p>
+    </div>
+    <div class="plat-grid rv">
+      <a class="plat" href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener">
+        <img src="/ugc/img/icon-tiktok.png" alt="">
+        <div class="nm">TikTok</div><div class="ct">30.9K followers</div>
+        <div class="go">@seanevangelista_ →</div>
+      </a>
+      <a class="plat" href="https://www.instagram.com/officialseanjayme" target="_blank" rel="noopener">
+        <img src="/ugc/img/icon-instagram.png" alt="">
+        <div class="nm">Instagram</div><div class="ct">12.7K followers</div>
+        <div class="go">@officialseanjayme →</div>
+      </a>
+      <a class="plat" href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener">
+        <img src="/ugc/img/icon-youtube.png" alt="">
+        <div class="nm">YouTube</div><div class="ct">Shorts &amp; long-form</div>
+        <div class="go">@seanjevangelista →</div>
+      </a>
+    </div>
+    <div class="brand-row rv">
+      <div class="brand"><div class="bn">Dude Wipes</div><div class="bs">Brand video coming soon</div></div>
+      <div class="brand"><div class="bn">Clean Nutra</div><div class="bs">Brand video coming soon</div></div>
+      <div class="brand"><div class="bn">Yaynuts</div><div class="bs">Brand video coming soon</div></div>
+    </div>
+    <div class="ugc-more rv"><a href="/ugc/" class="btn btn-s">Full media kit &amp; rates →</a></div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Why work with me</div>
+      <h2 class="sec-h2">A typical agency vs. working with me.</h2>
+    </div>
+    <div class="table-wrap rv">
+      <table class="cmp">
+        <tr><th></th><th>Typical agency</th><th class="us">Evan Enterprises</th></tr>
+        <tr><td>Who does the work</td><td class="them">An account manager relays your request to a team</td><td class="us">Me, directly — start to finish</td></tr>
+        <tr><td>Response time</td><td class="them">Whenever the queue clears</td><td class="us">Within 24 hours, always</td></tr>
+        <tr><td>Contract</td><td class="them">6–12 month retainers</td><td class="us">Month-to-month ad management, cancel anytime</td></tr>
+        <tr><td>Websites</td><td class="them">Themes and templates</td><td class="us">Custom-built to the brand</td></tr>
+        <tr><td>Pricing</td><td class="them">Quoted after a sales call</td><td class="us">Published on the <a href="/onboarding" style="color:var(--accent)">onboarding page</a></td></tr>
+      </table>
     </div>
   </div>
 </section>
@@ -194,8 +391,8 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
 <!-- CLOSING CTA -->
 <section class="close-cta">
   <div class="wrap">
-    <h2 class="rv">Want one of these for your business?</h2>
-    <p class="rv">Every site starts the same way — a short call to figure out what you actually need.</p>
+    <h2 class="rv">Want your site or ads handled like this?</h2>
+    <p class="rv">Every project starts with a short call to figure out what you actually need.</p>
     <div class="hero-cta rv">
       <a href="/#contact" class="btn btn-p">Book a call →</a>
       <a href="mailto:seanjayme@evanenterprise.com" class="btn btn-s">Email me →</a>
@@ -203,7 +400,6 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="foot-in">
     <a href="/" class="foot-logo"><img src="/logo-mark.png" alt="">Evan Enterprises LLC</a>
@@ -220,15 +416,12 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
       <a href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener">TikTok</a>
       <a href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener">YouTube</a>
     </div>
-    <div class="foot-contact" style="font-family:var(--fm);font-size:13px;color:var(--dim)">
-      Evan Enterprises LLC · Austin, TX · <a href="mailto:seanjayme@evanenterprise.com">seanjayme@evanenterprise.com</a> · (512) 905-0380
-    </div>
+    <div class="foot-contact">Evan Enterprises LLC · Austin, TX · <a href="mailto:seanjayme@evanenterprise.com">seanjayme@evanenterprise.com</a> · (512) 905-0380</div>
     <div class="foot-copy">© 2026 Evan Enterprises LLC. All rights reserved.</div>
   </div>
 </footer>
 
 <script>
-// ── mobile menu ──
 (function(){
   var b=document.getElementById('burger'), m=document.getElementById('mobileMenu');
   b.addEventListener('click',function(){
@@ -239,22 +432,18 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
     a.addEventListener('click',function(){m.classList.remove('open');b.setAttribute('aria-expanded','false');});
   });
 })();
-
-// ── page-load reveal (hero mask lines) ──
 (function(){
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ document.body.classList.add('is-ready'); return; }
   requestAnimationFrame(function(){ document.body.classList.add('is-ready'); });
 })();
-
-// ── magnetic buttons ──
 (function(){
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if(window.matchMedia('(hover: none)').matches) return;
   document.querySelectorAll('.btn').forEach(function(btn){
     btn.style.transition='transform .3s var(--ease)';
     btn.addEventListener('mousemove',function(e){
-      var rect=btn.getBoundingClientRect();
-      var x=e.clientX-rect.left-rect.width/2, y=e.clientY-rect.top-rect.height/2;
+      var r=btn.getBoundingClientRect();
+      var x=e.clientX-r.left-r.width/2, y=e.clientY-r.top-r.height/2;
       btn.style.transitionDuration='.15s';
       btn.style.transform='translate('+(x*0.25)+'px,'+(y*0.35)+'px)';
     });
@@ -265,8 +454,6 @@ footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
     });
   });
 })();
-
-// ── scroll reveal ──
 (function(){
   var io=new IntersectionObserver(function(es){
     es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });

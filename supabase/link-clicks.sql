@@ -13,3 +13,9 @@ ALTER TABLE link_clicks ENABLE ROW LEVEL SECURITY;
 
 -- Clicks per link, last 30 days:
 -- SELECT slug, count(*) FROM link_clicks WHERE clicked_at > now() - interval '30 days' GROUP BY slug ORDER BY 2 DESC;
+
+-- If the logs show "permission denied for table link_clicks" (error 42501), the server role is missing
+-- table privileges. Run this once. (RLS stays on, so public/anon visitors still cannot read or write.)
+GRANT USAGE ON SCHEMA public TO service_role;
+GRANT ALL ON TABLE public.link_clicks TO service_role;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;

@@ -6,3 +6,7 @@ create table if not exists public.finance_private (
   updated_at timestamptz not null default now()
 );
 alter table public.finance_private enable row level security;
+
+-- Needed on projects that do not grant new tables to the server role automatically.
+GRANT USAGE ON SCHEMA public TO service_role;
+GRANT ALL ON TABLE public.finance_private TO service_role;

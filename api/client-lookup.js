@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 // api/client-lookup.js
 // Looks up a client ID by website domain — used by client sites to auto-identify themselves
 // GET ?domain=premierlandscapingatx.com
@@ -146,7 +147,15 @@ async function handleStats(req, res) {
   const serviceKey = process.env.SUPABASE_SERVICE_KEY;
   if (!serviceKey) return res.status(500).json({ error: 'Server is missing SUPABASE_SERVICE_KEY' });
 
-  if (!(await isAdmin(req))) return res.status(401).json({ error: 'Sign in to the dashboard first' });
+  // Read-only access for the scheduled daily snapshot: a long random key in ANALYTICS_FEED_KEY (Vercel).
+  // It only unlocks this stats read, nothing else. Unset or short keys disable it.
+  const feedKey = String(process.env.ANALYTICS_FEED_KEY || '');
+  const bearer = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
+  let feedOk = false;
+  if (feedKey.length >= 32 && bearer.length === feedKey.length) {
+    try { feedOk = timingSafeEqual(Buffer.from(bearer), Buffer.from(feedKey)); } catch (e) { feedOk = false; }
+  }
+  if (!feedOk && !(await isAdmin(req))) return res.status(401).json({ error: 'Sign in to the dashboard first' });
 
   const days = Math.min(365, Math.max(1, parseInt(req.query.days, 10) || 30));
   const since = new Date(Date.now() - days * 864e5).toISOString();
@@ -205,7 +214,7 @@ async function handleStats(req, res) {
     const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10);
     series.push({ day: d, ...(byDay[d] || { pageViews: 0, linkClicks: 0, siteClicks: 0 }) });
   }
-  return res.status(200).json({ ok: true, days, totals, funnel, pages: top(pages), links: top(links), buttons: top(buttons, 15), referrers: top(referrers), countries: top(countries, 8), series });
+  return res.status(200).json({ ok: true, v: 1, at: new Date().toISOString(), days, totals, funnel, pages: top(pages), links: top(links), buttons: top(buttons, 15), referrers: top(referrers), countries: top(countries, 8), series });
 }
 
 // ── Admin check ───────────────────────────────────────────────────────────────

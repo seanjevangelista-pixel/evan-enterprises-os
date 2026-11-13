@@ -1688,6 +1688,7 @@ async function loadCallLeads() {
             <option value="90">Last 90 days</option>
           </select>
           <button class="btn btn-secondary" id="tr-refresh">↻ Refresh</button>
+          <button class="btn btn-secondary" id="tr-copy" title="Copy the current numbers so you can paste them into your traffic artifact">⧉ Copy snapshot</button>
         </div>
       </div>
       <div class="page-content">
@@ -3523,6 +3524,7 @@ function trList(id, rows, fmt){
     <div style="font-weight:700;font-size:14px;font-variant-numeric:tabular-nums">${r.count}</div></div>`).join('');
 }
 let trNoteHtml=null;
+let trLast=null;
 async function loadTraffic(){
   const note=document.getElementById('tr-note');
   if (trNoteHtml===null) trNoteHtml=note.innerHTML;
@@ -3551,6 +3553,7 @@ async function loadTraffic(){
     }).join('');
     document.getElementById('tr-bysrc').innerHTML=f.bySource.length?'<table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead><tr style="text-align:left;opacity:.65;font-size:12px"><th style="padding:4px 6px 4px 0">Source</th><th>Visits</th><th>Clicks</th><th>Reached out</th></tr></thead><tbody>'+f.bySource.map(r=>`<tr style="border-top:1px solid rgba(128,128,128,.15)"><td style="padding:6px 6px 6px 0;font-weight:600">${trEsc(r.source)}</td><td>${r.visitors}</td><td>${r.clicks}</td><td>${r.contacts}</td></tr>`).join('')+'</tbody></table>':'<div style="opacity:.6;font-size:13px">No data yet</div>';
     trList('tr-dest',f.destinations);
+    trLast=d;
     trList('tr-links',d.links);
     trList('tr-buttons',d.buttons,trPretty);
     trList('tr-pages',d.pages);
@@ -3560,6 +3563,14 @@ async function loadTraffic(){
     note.style.color='#c0392b'; note.textContent='Could not load traffic: '+e.message;
   }
 }
+document.getElementById('tr-copy').addEventListener('click', async () => {
+  const btn=document.getElementById('tr-copy');
+  if (!trLast) { btn.textContent='Load the numbers first'; setTimeout(()=>btn.textContent='⧉ Copy snapshot',2000); return; }
+  const snap={ v:1, at:new Date().toISOString(), days:trLast.days, totals:trLast.totals, funnel:trLast.funnel, pages:trLast.pages, links:trLast.links, buttons:trLast.buttons, referrers:trLast.referrers, countries:trLast.countries, series:trLast.series };
+  try { await navigator.clipboard.writeText(JSON.stringify(snap)); btn.textContent='Copied ✓'; }
+  catch (e) { btn.textContent='Copy blocked, try again'; }
+  setTimeout(()=>btn.textContent='⧉ Copy snapshot',2200);
+});
 document.getElementById('tr-days').addEventListener('change',loadTraffic);
 document.getElementById('tr-refresh').addEventListener('click',loadTraffic);
 

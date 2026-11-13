@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /go/
+Disallow: /dashboard
+Disallow: /portal
+Disallow: /admin
+Disallow: /leads
+Disallow: /demo
+
+Sitemap: https://evanenterprise.com/sitemap.xml

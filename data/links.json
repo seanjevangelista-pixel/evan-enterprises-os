@@ -7,7 +7,7 @@
   },
   "links": [
     { "slug": "book", "group": "start", "label": "Work with me", "desc": "Book a free call — lead systems for your business", "url": "/#contact", "color": "yellow", "icon": "calendar" },
-    { "slug": "discord", "group": "start", "label": "Join the Discord", "desc": "Editing, workflow & automation for creators", "url": "", "color": "lilac", "icon": "chat" },
+    { "slug": "discord", "group": "start", "label": "Add me on Discord", "desc": "Editing, workflow & automation help", "url": "https://discord.com/users/644541207095017502", "color": "lilac", "icon": "chat" },
 
     { "slug": "tiktok", "group": "watch", "label": "TikTok", "desc": "@seanevangelista_", "url": "https://www.tiktok.com/@seanevangelista_", "color": "pink", "icon": "/ugc/img/icon-tiktok.png" },
     { "slug": "instagram", "group": "watch", "label": "Instagram", "desc": "@officialseanjayme", "url": "https://www.instagram.com/officialseanjayme", "color": "pink", "icon": "/ugc/img/icon-instagram.png" },

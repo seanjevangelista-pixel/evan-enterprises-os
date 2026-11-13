@@ -56,6 +56,20 @@
 .stat-note{text-align:center;font-size:14px;margin-top:6px}
 @media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
 
+.snap{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.snap-card{padding:26px 24px}
+.snap-card h3{font:800 20px var(--font-display);letter-spacing:-.02em;margin-bottom:16px}
+.bar{display:grid;grid-template-columns:64px 1fr 56px;align-items:center;gap:12px;margin-bottom:11px;font-size:14px;font-weight:700}
+.bar-track{height:16px;border:var(--line);border-radius:999px;background:var(--paper-2);overflow:hidden}
+.bar-fill{height:100%;background:var(--blue);border-right:var(--line);width:0;transition:width 1s var(--ease)}
+.bar:nth-child(even) .bar-fill{background:var(--pink)}
+.bar-val{text-align:right;font-family:var(--font-display);font-weight:800}
+.big-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.big{border:var(--line);border-radius:14px;padding:14px 16px;background:var(--paper)}
+.big b{display:block;font:800 26px var(--font-display);letter-spacing:-.02em;line-height:1.1}
+.big span{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.asof{display:inline-block;margin-top:18px;font-size:13px;color:var(--ink-soft)}
+@media(max-width:820px){.snap{grid-template-columns:1fr}}
 .sec{padding:72px 0}
 .sec-head{margin-bottom:32px}
 .sec-head .label{display:inline-block;margin-bottom:12px}
@@ -177,8 +191,46 @@
     <div class="stat card"><div class="n">6.9%</div><div class="l">Interaction rate</div></div>
     <div class="stat card"><div class="n">61%</div><div class="l">Audience aged 18–34</div></div>
   </div>
-  <p class="stat-note muted rv">Source: Instagram Insights, Aug 14 – Nov 11 · 4.0M viewers · 973K interactions · 71% of followers are men</p>
+  <p class="stat-note muted rv">Instagram Insights as of Nov 12, 2026 · Aug 14 – Nov 11 · 4.0M viewers · 973K interactions · 71% of followers are men</p>
 </div>
+
+<!-- AUDIENCE SNAPSHOT -->
+<section class="sec" id="audience" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="label sticker sticker--mint">Audience snapshot</span><h2 class="display h2">The numbers behind the views.</h2>
+      <p class="muted" style="margin-top:12px">Instagram Insights · as of November 12, 2026 · last 90 days (Aug 14 – Nov 11)</p></div>
+    <div class="snap rv">
+      <div class="snap-card card">
+        <h3>Who's watching</h3>
+        <div id="ageBars">
+          <div class="bar"><span>13–17</span><div class="bar-track"><div class="bar-fill" data-w="0.9"></div></div><span class="bar-val">0.9%</span></div>
+          <div class="bar"><span>18–24</span><div class="bar-track"><div class="bar-fill" data-w="21.5"></div></div><span class="bar-val">21.5%</span></div>
+          <div class="bar"><span>25–34</span><div class="bar-track"><div class="bar-fill" data-w="39.9"></div></div><span class="bar-val">39.9%</span></div>
+          <div class="bar"><span>35–44</span><div class="bar-track"><div class="bar-fill" data-w="23.3"></div></div><span class="bar-val">23.3%</span></div>
+          <div class="bar"><span>45–54</span><div class="bar-track"><div class="bar-fill" data-w="9.4"></div></div><span class="bar-val">9.4%</span></div>
+          <div class="bar"><span>55–64</span><div class="bar-track"><div class="bar-fill" data-w="3.5"></div></div><span class="bar-val">3.5%</span></div>
+          <div class="bar"><span>65+</span><div class="bar-track"><div class="bar-fill" data-w="1.5"></div></div><span class="bar-val">1.5%</span></div>
+        </div>
+        <div class="big-row" style="margin-top:18px">
+          <div class="big"><b>71%</b><span>Men</span></div>
+          <div class="big"><b>29%</b><span>Women</span></div>
+        </div>
+      </div>
+      <div class="snap-card card">
+        <h3>What's working</h3>
+        <div class="big-row">
+          <div class="big"><b>14.1M</b><span>Views</span></div>
+          <div class="big"><b>4.0M</b><span>Viewers</span></div>
+          <div class="big"><b>973K</b><span>Interactions</span></div>
+          <div class="big"><b>6.9%</b><span>Interaction rate</span></div>
+          <div class="big"><b>+2,608</b><span>Net followers</span></div>
+          <div class="big"><b>79K</b><span>Profile visits</span></div>
+        </div>
+        <p class="asof">Reels drive about 99% of views and interactions. Followers: 16,395 (+18.9% in 90 days).</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- BRANDS -->
 <section class="sec" id="brands">
@@ -316,6 +368,14 @@
   }).catch(function(){
     document.getElementById('brandGrid').innerHTML='<p class="muted">Brands: Dude Wipes, Gray Matter, Clean Nutra.</p>';
   });
+})();
+
+// audience bars fill when scrolled into view
+(function(){
+  var box=document.getElementById('ageBars'); if(!box) return;
+  var fill=function(){[].forEach.call(box.querySelectorAll('.bar-fill'),function(b){b.style.width=(parseFloat(b.dataset.w)/40*100)+'%';});};
+  if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches){fill();return;}
+  new IntersectionObserver(function(es,io){if(es[0].isIntersecting){fill();io.disconnect();}},{threshold:.3}).observe(box);
 })();
 </script>
 </body>

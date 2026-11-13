@@ -22,7 +22,7 @@
       "desc": "Editing, workflow & automation help",
       "url": "https://discord.com/users/644541207095017502",
       "color": "lilac",
-      "icon": "chat"
+      "icon": "brand-discord"
     },
     {
       "slug": "creators",
@@ -34,13 +34,31 @@
       "icon": "video"
     },
     {
+      "slug": "text",
+      "group": "start",
+      "label": "Text me",
+      "desc": "iMessage or SMS · (512) 876-9751",
+      "url": "sms:+15128769751",
+      "color": "mint",
+      "icon": "brand-imessage"
+    },
+    {
+      "slug": "email",
+      "group": "start",
+      "label": "Email me",
+      "desc": "seanjevangelista@gmail.com",
+      "url": "mailto:seanjevangelista@gmail.com",
+      "color": "pink",
+      "icon": "brand-gmail"
+    },
+    {
       "slug": "tiktok",
       "group": "watch",
       "label": "TikTok",
       "desc": "@seanevangelista_",
       "url": "https://www.tiktok.com/@seanevangelista_",
       "color": "pink",
-      "icon": "/ugc/img/icon-tiktok.png"
+      "icon": "brand-tiktok"
     },
     {
       "slug": "instagram",
@@ -49,7 +67,7 @@
       "desc": "@officialseanjayme",
       "url": "https://www.instagram.com/officialseanjayme",
       "color": "pink",
-      "icon": "/ugc/img/icon-instagram.png"
+      "icon": "brand-instagram"
     },
     {
       "slug": "youtube",
@@ -58,7 +76,7 @@
       "desc": "@seanjevangelista",
       "url": "https://www.youtube.com/@seanjevangelista",
       "color": "pink",
-      "icon": "/ugc/img/icon-youtube.png"
+      "icon": "brand-youtube"
     },
     {
       "slug": "linkedin",
@@ -67,7 +85,7 @@
       "desc": "Connect with me",
       "url": "https://www.linkedin.com/in/seanjevangelista/",
       "color": "blue",
-      "icon": "/ugc/img/icon-linkedin.png"
+      "icon": "brand-linkedin"
     },
     {
       "slug": "portfolio",

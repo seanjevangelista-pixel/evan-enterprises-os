@@ -156,3 +156,28 @@ section[id]{scroll-margin-top:60px}
 .tq .who span{font-weight:400;color:var(--ink-soft)}
 .tq--lead{background:var(--yellow)}
 .tq--lead p{font:700 clamp(19px,2.2vw,23px) var(--font-display);letter-spacing:-.02em;line-height:1.3}
+
+/* ── custom packages callout ── */
+.custom{display:grid;grid-template-columns:1.25fr 1fr;gap:28px;align-items:center;padding:28px 30px;margin-top:22px;background:var(--lilac)}
+.custom h3{font:800 clamp(22px,2.8vw,28px) var(--font-display);letter-spacing:-.025em;margin:12px 0 8px}
+.custom p{color:var(--ink-soft);font-size:16.5px;max-width:52ch}
+.custom-actions{display:flex;flex-direction:column;gap:10px}
+.custom-actions .btn{width:100%}
+@media(max-width:820px){.custom{grid-template-columns:1fr;padding:24px 22px}}
+
+/* ── best performing content cards ── */
+.best-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.best{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:18px;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.best:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.best-poster{aspect-ratio:9/16;border-radius:14px;border:var(--line);background:var(--lilac) center/cover no-repeat;position:relative;display:grid;place-items:center;font:800 18px var(--font-display);text-align:center;padding:10px}
+.best-meta{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
+.best-views{font:800 clamp(28px,3.4vw,38px) var(--font-display);letter-spacing:-.03em;line-height:1.05;margin-top:6px}
+.best-views small{font:600 14px var(--font-body);letter-spacing:0;color:var(--ink-soft)}
+.best-stats{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.best-stat{padding:5px 11px;border:var(--line);border-radius:999px;font-size:13px;font-weight:700;background:var(--paper-2)}
+.best-stat b{color:var(--ink)}
+.best-stat.rate{background:var(--yellow);color:var(--accent-text)}
+.best-premise{font-size:15px;color:var(--ink-soft);line-height:1.55}
+.best-go{display:inline-block;margin-top:12px;font-weight:700;color:var(--accent-text);text-decoration:underline;text-underline-offset:4px}
+@media(max-width:1000px){.best-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.best{grid-template-columns:110px 1fr;gap:14px}}

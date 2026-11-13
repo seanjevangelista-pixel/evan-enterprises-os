@@ -1,9 +1,22 @@
 {
   "brands": [
-    { "name": "Dude Wipes", "logo": "", "note": "Brand partner" },
-    { "name": "Gray Matter", "logo": "", "note": "Brand partner" },
-    { "name": "Clean Nutra", "logo": "", "note": "Brand partner" }
+    {
+      "name": "Dude Wipes",
+      "logo": "",
+      "note": "Brand partner"
+    },
+    {
+      "name": "Gray Matter",
+      "logo": "",
+      "note": "Brand partner"
+    },
+    {
+      "name": "Clean Nutra",
+      "logo": "",
+      "note": "Brand partner"
+    }
   ],
   "testimonials": [],
-  "videos": []
+  "videos": [],
+  "best": []
 }

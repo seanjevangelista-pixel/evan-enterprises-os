@@ -189,6 +189,15 @@
   <p class="stat-note muted rv">Instagram Insights as of Nov 12, 2026 · Aug 14 – Nov 11 · 4.0M viewers · 973K interactions · 71% of followers are men</p>
 </div>
 
+<!-- BEST PERFORMING (fills from data/ugc.json "best") -->
+<section class="sec" id="top-content" hidden>
+  <div class="wrap">
+    <div class="sec-head rv"><span class="label sticker sticker--yellow">Best performing</span><h2 class="display h2">My top content, and why it worked.</h2>
+      <p>The premise, the numbers and the link for each, so you can see exactly how it performs.</p></div>
+    <div class="best-grid" id="bestGrid"></div>
+  </div>
+</section>
+
 <!-- INSIGHTS SCREENSHOTS -->
 <section class="sec" id="insights">
   <div class="wrap">
@@ -304,6 +313,18 @@
       <div class="pkg card rv" style="--i:1"><span class="sticker">Short</span><h3>YouTube Short</h3><p>Punchy vertical short, repurposable across TikTok and Reels.</p></div>
       <div class="pkg card rv" style="--i:2"><span class="sticker sticker--yellow">Ads</span><h3>UGC Ad Content</h3><p>Raw, authentic video created for your own paid ads. Ready to run on TikTok or Meta.</p></div>
     </div>
+    <div class="custom card rv">
+      <div>
+        <span class="label sticker sticker--yellow">Custom packages</span>
+        <h3>Need something different?</h3>
+        <p>I build custom packages — mix ads, a website, content and AI to fit your business and budget. Tell me what you're after and I'll put a plan together.</p>
+      </div>
+      <div class="custom-actions">
+        <a class="btn btn--blue" href="mailto:seanjevangelista@gmail.com?subject=Custom%20package" data-magnet>Email me</a>
+        <a class="btn btn--ghost" href="https://ig.me/m/officialseanjayme" target="_blank" rel="noopener" data-magnet>DM me on Instagram</a>
+        <a class="btn btn--ghost" href="sms:+15128769751" data-magnet>Text (512) 876-9751</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -367,6 +388,25 @@
       tabs.innerHTML=cats.map(function(c){return '<button class="tab" type="button">'+esc(c)+'</button>';}).join('');
       tabs.addEventListener('click',function(e){if(e.target.classList.contains('tab'))render(e.target.textContent);});
       tabs.hidden=cats.length<3; grid.hidden=false; document.getElementById('vidEmpty').hidden=true; render('All');
+    }
+    // best performing content: add entries to data/ugc.json under "best"
+    var B=d.best||[];
+    if(B.length){
+      var num=function(v){ if(typeof v==='number') return v; var m=String(v||'').replace(/,/g,'').match(/^([\d.]+)\s*([KkMm]?)/); if(!m) return NaN; return parseFloat(m[1])*({K:1e3,M:1e6}[m[2].toUpperCase()]||1); };
+      document.getElementById('bestGrid').innerHTML=B.map(function(v){
+        var views=num(v.views), eng=['likes','comments','shares','reposts'].reduce(function(a,k){var n=num(v[k]);return a+(isNaN(n)?0:n);},0);
+        var rate=(!isNaN(views)&&views>0&&v.likes&&v.comments&&v.shares)?(eng/views*100):null;
+        var stat=function(k,l){return v[k]?'<span class="best-stat"><b>'+esc(v[k])+'</b> '+l+'</span>':'';};
+        var bg=v.poster?' style="background-image:url('+esc(v.poster)+')"':'';
+        return '<article class="best card rv"><div class="best-poster"'+bg+'>'+(v.poster?'':esc(v.brand||v.platform||'Video'))+'</div><div>'+
+          '<div class="best-meta">'+esc(v.platform||'')+(v.date?' · '+esc(v.date):'')+(v.brand?' · '+esc(v.brand):'')+'</div>'+
+          '<div class="best-views">'+esc(v.views)+' <small>views</small></div>'+
+          '<div class="best-stats">'+stat('likes','likes')+stat('comments','comments')+stat('shares','shares')+stat('reposts','reposts')+(rate?'<span class="best-stat rate"><b>'+rate.toFixed(1)+'%</b> engagement</span>':'')+'</div>'+
+          (v.premise?'<p class="best-premise">'+esc(v.premise)+'</p>':'')+
+          (v.url?'<a class="best-go" href="'+esc(safeUrl(v.url))+'" target="_blank" rel="noopener">Watch it →</a>':'')+
+          '</div></article>';
+      }).join('');
+      document.getElementById('top-content').hidden=false;
     }
     window.siteReveal();
   }).catch(function(){

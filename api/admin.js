@@ -52,17 +52,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, leads });
   }
 
-  // ── PRIVATE FINANCE PAGE ───────────────────────────────────────────────────
-  // The personal finance dashboard (HTML containing private numbers) is stored in the
-  // finance_private table, never in the public repo, and only served to a signed-in admin.
-  if (action === 'finance_get') {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/finance_private?id=eq.main&select=html,updated_at&limit=1`, { headers: sb.headers });
-    const rows = await r.json();
-    if (!Array.isArray(rows)) return res.status(502).json({ error: 'Finance table is missing. Run the finance_private SQL in Supabase first.' });
-    if (!rows[0]) return res.status(200).json({ ok: true, html: '' });
-    return res.status(200).json({ ok: true, html: rows[0].html, updated_at: rows[0].updated_at });
-  }
-
   if (action === 'list_invoices') {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/invoices?select=*,clients(business_name)&order=created_at.desc&limit=200`, { headers: sb.headers });
     const invoices = await r.json();
@@ -74,17 +63,6 @@ export default async function handler(req, res) {
 
   const body = req.body || {};
 
-  if (action === 'finance_save') {
-    const html = String(body.html || '');
-    if (html.length < 1000 || html.length > 2000000 || !/<html/i.test(html)) return res.status(400).json({ error: 'That does not look like the finance page (expected a full HTML file).' });
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/finance_private?on_conflict=id`, {
-      method: 'POST',
-      headers: { ...sb.headers, Prefer: 'resolution=merge-duplicates,return=minimal' },
-      body: JSON.stringify({ id: 'main', html, updated_at: new Date().toISOString() }),
-    });
-    if (!r.ok) return res.status(502).json({ error: 'Could not save (is the finance_private table created?)' });
-    return res.status(200).json({ ok: true });
-  }
 
   // ── CREATE CLIENT ──────────────────────────────────────────────────────────
   if (action === 'create_client') {

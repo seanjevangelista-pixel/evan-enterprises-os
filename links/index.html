@@ -123,7 +123,7 @@ body{min-height:100vh;position:relative;background:transparent}
     var on=!!l.url;
     var tag=on?'a':'div';
     var direct=/^(mailto|sms|tel):/i.test(l.url||'');
-    var attrs=on?' href="'+(direct?esc(l.url):'/go/'+esc(l.slug)+'?s=links'+(window.siteSource&&siteSource()?'&r='+encodeURIComponent(siteSource()):''))+'"':' aria-disabled="true"';
+    var attrs=on?' href="'+(direct?esc(l.url):'/go/'+esc(l.slug)+'?s=links'+(window.siteSource&&siteSource()?'&r='+encodeURIComponent(siteSource()):'')+(window.siteLanding?'&l='+encodeURIComponent(siteLanding()):''))+'"':' aria-disabled="true"';
     return '<'+tag+' class="lnk card lnk--'+esc(l.color||'mint')+(on?'':' is-off')+' rv" style="--i:'+n+'"'+attrs+'>'+
       '<span class="lnk-ic">'+icon(l.icon)+'</span>'+
       '<span class="lnk-t"><span class="lnk-name">'+esc(l.label)+'</span><span class="lnk-desc">'+esc(l.desc||'')+'</span></span>'+

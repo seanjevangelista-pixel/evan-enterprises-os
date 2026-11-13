@@ -91,9 +91,15 @@ window.siteAnalytics=function(env){
     if(src) sessionStorage.setItem('ee_src',src); else src=sessionStorage.getItem('ee_src')||'';
     first=!sessionStorage.getItem('ee_seen'); sessionStorage.setItem('ee_seen','1');
   }catch(e){}
+  // The link this visit started on (first page of the session), e.g. "/links" or "/#contact".
+  var hash=(/^#[a-z0-9_-]{1,30}$/i.test(env.hash||'')?env.hash.toLowerCase():''), landing=path+hash;
+  try{
+    if(first) sessionStorage.setItem('ee_land',landing); else landing=sessionStorage.getItem('ee_land')||landing;
+  }catch(e){}
   window.siteSource=function(){ return src; };
-  window.siteTrack=function(k){ send('click',String(k).slice(0,60),'&r='+encodeURIComponent(src)); };
-  send('pv','','&r='+encodeURIComponent(src)+'&s='+encodeURIComponent(utm.toLowerCase())+(first?'&e=1':''));
+  window.siteLanding=function(){ return landing; };
+  window.siteTrack=function(k){ send('click',String(k).slice(0,60),'&r='+encodeURIComponent(src)+'&l='+encodeURIComponent(landing)); };
+  send('pv','','&r='+encodeURIComponent(src)+'&s='+encodeURIComponent(utm.toLowerCase())+(first?'&e=1&h='+encodeURIComponent(hash.slice(1)):''));
   function slug(t){ return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,30); }
   document.addEventListener('click',function(e){
     var a=e.target.closest&&e.target.closest('a[href]'); if(!a) return;
@@ -107,7 +113,7 @@ window.siteAnalytics=function(env){
     else if(/^https?:/i.test(h)){ try{ var u=new URL(h,env.hostname?'https://'+env.hostname:undefined); if(u.hostname!==env.hostname) label='out:'+u.hostname.replace(/^www\./,'')+u.pathname.replace(/\/+$/,'').slice(0,26); }catch(x){} }
     else if(h.charAt(0)==='#') label='jump:'+slug(h.slice(1));
     else if(h.charAt(0)==='/') label='nav:'+h.replace(/[?#].*$/,'').slice(0,40);
-    if(label) send('click',label.slice(0,60),'&r='+encodeURIComponent(src));
+    if(label) send('click',label.slice(0,60),'&r='+encodeURIComponent(src)+'&l='+encodeURIComponent(landing));
   });
 };
 window.siteAnalytics({hostname:location.hostname,pathname:location.pathname,search:location.search,hash:location.hash,referrer:document.referrer});

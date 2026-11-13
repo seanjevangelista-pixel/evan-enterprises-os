@@ -71,7 +71,8 @@ async function handleGo(req, res) {
         headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
         body: JSON.stringify({
           slug,
-          source: String(req.query.s || '').slice(0, 40) || null,
+          // "links>/landing": which page the tap came from and the session's landing link
+          source: (String(req.query.s || '').slice(0, 40) + (/^\/[A-Za-z0-9/_.#-]{1,70}$/.test(String(req.query.l || '')) && !String(req.query.l).includes('..') ? '>' + req.query.l : '')) || null,
           referrer: referrer.slice(0, 80) || null,
           country: String(req.headers['x-vercel-ip-country'] || '').slice(0, 2) || null,
         }),
@@ -122,12 +123,16 @@ async function handleHit(req, res) {
     const supabaseUrl = process.env.SUPABASE_URL || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
     const key = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
     const src = String(req.query.s || '').toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40);
+    // Landing link of this visit, e.g. "/links" or "/#contact" (the first page of the browsing session).
+    const landRaw = String(req.query.l || '');
+    const landing = /^\/[A-Za-z0-9/_.-]{0,60}(#[a-z0-9_-]{1,30})?$/.test(landRaw) && !landRaw.includes('..') ? landRaw : '';
+    const hash = /^[a-z0-9_-]{1,30}$/.test(String(req.query.h || '')) ? String(req.query.h) : '';
     await fetch(`${supabaseUrl}/rest/v1/link_clicks`, {
       method: 'POST',
       headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify({
         slug: t === 'pv' ? `${req.query.e === '1' ? 'visit' : 'pv'}:${path}` : `click:${label}`,
-        source: t === 'pv' ? (src || null) : path,
+        source: t === 'pv' ? (hash ? '#' + hash : (src || null)) : (landing ? `${path}>${landing}` : path),
         referrer: normSrc(cleanHost(req.query.r)) || null,
         country: String(req.headers['x-vercel-ip-country'] || '').slice(0, 2) || null,
       }),
@@ -176,7 +181,8 @@ async function handleStats(req, res) {
   const CONTACT_CLICKS = ['email', 'call', 'text', 'ig-dm', 'form:contact'];
   const CONTACT_GO = ['discord'];
   const SOCIAL_GO = ['tiktok', 'instagram', 'youtube', 'linkedin', 'discord'];
-  const mix = {}, methods = {};
+  const mix = {}, methods = {}, byLand = {};
+  const land = (k, key) => { byLand[k] = byLand[k] || { visitors: 0, clicks: 0, contacts: 0 }; byLand[k][key]++; };
   const addContact = (src, method) => { mix[src] = mix[src] || {}; mix[src][method] = (mix[src][method] || 0) + 1; methods[method] = (methods[method] || 0) + 1; };
   const bump = (src, key) => { bySource[src] = bySource[src] || { visitors: 0, clicks: 0, contacts: 0 }; bySource[src][key]++; };
   for (const row of rows) {
@@ -184,20 +190,22 @@ async function handleStats(req, res) {
     byDay[day] = byDay[day] || { pageViews: 0, linkClicks: 0, siteClicks: 0 };
     if (row.slug.startsWith('pv:') || row.slug.startsWith('visit:')) {
       const isVisit = row.slug.startsWith('visit:');
-      const src = normSrc(row.referrer) || normSrc(row.source) || 'direct';
+      const src = normSrc(row.referrer) || (String(row.source || '').startsWith('#') ? '' : normSrc(row.source)) || 'direct';
       totals.pageViews++; byDay[day].pageViews++; tally(pages, row.slug.slice(row.slug.indexOf(':') + 1)); tally(referrers, src);
-      if (isVisit) { totals.visits++; bump(src, 'visitors'); }
+      if (isVisit) { totals.visits++; bump(src, 'visitors'); const pth = row.slug.slice(row.slug.indexOf(':') + 1); land(pth + (String(row.source || '').startsWith('#') ? row.source : ''), 'visitors'); }
     } else if (row.slug.startsWith('click:')) {
       const label = row.slug.slice(6), src = normSrc(row.referrer) || 'direct';
       totals.siteClicks++; byDay[day].siteClicks++; tally(buttons, label);
       bump(src, 'clicks');
-      if (CONTACT_CLICKS.includes(label)) { totals.contacts++; bump(src, 'contacts'); addContact(src, label); }
+      const lk = String(row.source || '').includes('>') ? String(row.source).split('>')[1] : 'unknown'; land(lk, 'clicks');
+      if (CONTACT_CLICKS.includes(label)) { totals.contacts++; bump(src, 'contacts'); addContact(src, label); land(lk, 'contacts'); }
       if (label.startsWith('out:')) tally(dest, normSrc(label.slice(4).split('/')[0]));
     } else {
       const src = normSrc(row.referrer) || 'direct';
       totals.linkClicks++; byDay[day].linkClicks++; tally(links, row.slug);
       bump(src, 'clicks');
-      if (CONTACT_GO.includes(row.slug)) { totals.contacts++; bump(src, 'contacts'); addContact(src, row.slug); }
+      const gl = String(row.source || '').includes('>') ? String(row.source).split('>')[1] : '/links'; land(gl, 'clicks');
+      if (CONTACT_GO.includes(row.slug)) { totals.contacts++; bump(src, 'contacts'); addContact(src, row.slug); land(gl, 'contacts'); }
       if (SOCIAL_GO.includes(row.slug)) tally(dest, row.slug);
     }
     tally(countries, row.country);
@@ -210,6 +218,7 @@ async function handleStats(req, res) {
     ],
     bySource: Object.entries(bySource).map(([source, v]) => ({ source, ...v })).sort((a, b) => b.visitors - a.visitors || b.clicks - a.clicks).slice(0, 12),
     destinations: top(dest, 8),
+    byLanding: Object.entries(byLand).map(([landing, v]) => ({ landing, ...v })).sort((a, b) => b.visitors - a.visitors || b.clicks - a.clicks).slice(0, 12),
     contactMethods: top(methods, 8),
     contactMix: Object.entries(mix).map(([source, m]) => ({ source, total: Object.values(m).reduce((a, b) => a + b, 0), methods: m })).sort((a, b) => b.total - a.total).slice(0, 12),
   };

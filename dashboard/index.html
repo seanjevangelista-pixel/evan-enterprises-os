@@ -1716,6 +1716,11 @@ async function loadCallLeads() {
           </div>
         </div></div>
         <div class="card" style="margin-bottom:16px"><div class="card-body">
+          <div class="stat-label" style="margin-bottom:4px">By landing link: which of your links people started on</div>
+          <div style="font-size:12.5px;opacity:.65;margin-bottom:12px">The first page of each visit, including #sections like /#contact. Clicks and reach-outs are credited to the link the visit started on. Tag your bio links (for example /links?s=instagram) to also see the source.</div>
+          <div id="tr-land" style="overflow-x:auto"></div>
+        </div></div>
+        <div class="card" style="margin-bottom:16px"><div class="card-body">
           <div class="stat-label" style="margin-bottom:10px">Page views per day</div>
           <div id="tr-chart" style="min-height:120px"></div>
         </div></div>
@@ -3561,6 +3566,8 @@ async function loadTraffic(){
     }).join('');
     document.getElementById('tr-bysrc').innerHTML=f.bySource.length?'<table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead><tr style="text-align:left;opacity:.65;font-size:12px"><th style="padding:4px 6px 4px 0">Source</th><th>Visits</th><th>Clicks</th><th>Reached out</th></tr></thead><tbody>'+f.bySource.map(r=>`<tr style="border-top:1px solid rgba(128,128,128,.15)"><td style="padding:6px 6px 6px 0;font-weight:600">${trEsc(r.source)}</td><td>${r.visitors}</td><td>${r.clicks}</td><td>${r.contacts}</td></tr>`).join('')+'</tbody></table>':'<div style="opacity:.6;font-size:13px">No data yet</div>';
     trList('tr-dest',f.destinations);
+    const land=f.byLanding||[];
+    document.getElementById('tr-land').innerHTML=land.length?'<table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead><tr style="text-align:left;opacity:.65;font-size:12px"><th style="padding:4px 8px 4px 0">Landing link</th><th style="padding:4px 8px">Visits</th><th style="padding:4px 8px">Clicks</th><th style="padding:4px 8px">Reached out</th></tr></thead><tbody>'+land.map(r=>`<tr style="border-top:1px solid rgba(128,128,128,.15)"><td style="padding:6px 8px 6px 0;font-weight:600">${trEsc(r.landing)}</td><td style="padding:6px 8px">${r.visitors}</td><td style="padding:6px 8px">${r.clicks}</td><td style="padding:6px 8px">${r.contacts}</td></tr>`).join('')+'</tbody></table>':'<div style="opacity:.6;font-size:13px">No data yet</div>';
     // reach-out methods
     const MN={ 'email':'Email','call':'Phone call','text':'Text / iMessage','ig-dm':'Instagram DM','form:contact':'Contact form','discord':'Discord' };
     trList('tr-methods',(f.contactMethods||[]),n=>MN[n]||n);

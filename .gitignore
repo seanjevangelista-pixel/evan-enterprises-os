@@ -6,3 +6,5 @@ node_modules/
 js/env.js
 .vercel
 .env*
+video-editor/
+private/

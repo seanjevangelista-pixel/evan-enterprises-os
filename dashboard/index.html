@@ -1095,6 +1095,9 @@ async function loadCallLeads() {
       <button class="nav-item" data-tab="traffic">
         <span class="nav-icon">📈</span> Traffic
       </button>
+      <button class="nav-item" data-tab="finance">
+        <span class="nav-icon">💎</span> Finance
+      </button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-pill">
@@ -1717,6 +1720,25 @@ async function loadCallLeads() {
           <div class="card"><div class="card-body"><div class="stat-label" style="margin-bottom:8px">Where visitors come from</div><div id="tr-refs"></div></div></div>
         </div>
         <p id="tr-note" style="margin-top:16px;font-size:12.5px;opacity:.7;line-height:1.5">Counts every page view and click without cookies or IP addresses, so it measures activity, not unique people. Visits from your own browser are excluded after you open the site once with <b>#notrack</b> on the end of the address.</p>
+      </div>
+    </section>
+    <section class="tab-section" data-section="finance">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Finance</div>
+          <div class="page-sub">Your personal finance dashboard, with your live website funnel. Private: stored behind your login.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn btn-secondary" id="fin-replace" style="display:none">Replace file</button>
+        </div>
+      </div>
+      <div class="page-content" style="padding:0">
+        <div id="fin-empty" style="display:none;padding:28px;max-width:560px">
+          <div style="font-weight:700;font-size:16px;margin-bottom:8px" id="fin-empty-title">Add your finance dashboard</div>
+          <div style="font-size:13.5px;line-height:1.6;opacity:.8;margin-bottom:14px" id="fin-empty-msg">Choose your finance dashboard file once. It is saved in your private database, never in the public site code.</div>
+          <input type="file" id="fin-file" accept=".html,text/html">
+        </div>
+        <iframe id="fin-frame" title="Finance dashboard" style="display:none;width:100%;border:0;height:calc(100vh - 120px);min-height:640px;background:#030308"></iframe>
       </div>
     </section>
 
@@ -3563,6 +3585,42 @@ async function loadTraffic(){
 document.getElementById('tr-days').addEventListener('change',loadTraffic);
 document.getElementById('tr-refresh').addEventListener('click',loadTraffic);
 
+// ── FINANCE (private page served from Supabase through the API) ──
+window.__bizStats = async function(days){
+  const { data:{ session } } = await sb.auth.getSession();
+  if (!session) throw new Error('Sign in again');
+  const res = await fetch('/api/client-lookup?action=stats&days='+encodeURIComponent(days||30), { headers:{ Authorization:'Bearer '+session.access_token }});
+  const d = await res.json();
+  if (!res.ok) throw new Error(d.error || ('HTTP '+res.status));
+  return d;
+};
+async function loadFinance(){
+  const empty=$('fin-empty'), frame=$('fin-frame'), rep=$('fin-replace');
+  try {
+    const res=await fetch('/api/admin?action=finance_get');
+    const d=await res.json();
+    if (!res.ok) throw new Error(d.error||('HTTP '+res.status));
+    if (!d.html) { empty.style.display='block'; frame.style.display='none'; rep.style.display='none'; return; }
+    empty.style.display='none'; rep.style.display='';
+    if (frame.dataset.loaded!==d.updated_at) { frame.srcdoc=d.html; frame.dataset.loaded=d.updated_at||'1'; }
+    frame.style.display='block';
+  } catch (e) {
+    empty.style.display='block'; frame.style.display='none';
+    $('fin-empty-title').textContent='Finance is not set up yet';
+    $('fin-empty-msg').textContent=e.message;
+  }
+}
+$('fin-file').addEventListener('change', async (ev) => {
+  const f=ev.target.files[0]; if (!f) return;
+  const html=await f.text();
+  const res=await fetch('/api/admin?action=finance_save',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ html }) });
+  const d=await res.json().catch(()=>({}));
+  ev.target.value='';
+  if (!res.ok) { $('fin-empty-title').textContent='That did not save'; $('fin-empty-msg').textContent=d.error||('HTTP '+res.status); $('fin-empty').style.display='block'; return; }
+  $('fin-frame').dataset.loaded=''; loadFinance();
+});
+$('fin-replace').addEventListener('click',()=>{ $('fin-empty-title').textContent='Replace your finance dashboard'; $('fin-empty-msg').textContent='Choose the updated file. It replaces the saved copy.'; $('fin-empty').style.display='block'; });
+
 // ── TABS ──
 let tabSwitching = false;
 document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
@@ -3591,6 +3649,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='pipeline')   renderPipeline();
       if (tab==='clients')    renderClients();
       if (tab==='traffic')    loadTraffic();
+      if (tab==='finance')    loadFinance();
       if (tab==='revenue')    renderVisits($('v-filter').value);
       if (tab==='monthly')    renderMonthly();
       if (tab==='payments')   initPaymentsTab();

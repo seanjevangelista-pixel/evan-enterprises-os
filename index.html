@@ -3,226 +3,250 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Evan Enterprises LLC — Marketing built by one person who does the work</title>
+<title>Websites, Ads &amp; AI Lead Systems in Austin, TX | Sean Jayme · Evan Enterprises</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0A0A0C">
-<meta name="description" content="Ad management, website builds, and UGC — all done personally by Sean Evangelista. No account managers, no hand-offs. Evan Enterprises LLC, Austin TX.">
-<meta property="og:title" content="Evan Enterprises LLC — Marketing built by one person who does the work">
-<meta property="og:description" content="Ad management, website builds, and UGC — all done personally. No account managers, no hand-offs.">
+<meta name="theme-color" content="#FBFAF6">
+<meta name="description" content="Lead systems for Austin businesses: custom websites, Google Ads and AI follow-up, plus UGC content for brands. One person does the work — Sean Evangelista (Sean Jayme). Replies within 24 hours.">
+<link rel="canonical" href="https://evanenterprise.com/">
+<meta property="og:title" content="Websites, Ads & AI Lead Systems — Sean Jayme">
+<meta property="og:description" content="Custom websites, Google Ads and AI follow-up for Austin businesses. One person, no account managers.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://evanenterprise.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/site.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"ProfessionalService","@id":"https://evanenterprise.com/#business","name":"Evan Enterprises LLC","url":"https://evanenterprise.com/","image":"https://evanenterprise.com/logo-mark.png","description":"Lead systems for local businesses: custom websites, Google Ads and AI follow-up, plus UGC content for brands.","telephone":"+1-512-905-0380","email":"seanjayme@evanenterprise.com","address":{"@type":"PostalAddress","addressLocality":"Austin","addressRegion":"TX","addressCountry":"US"},"areaServed":"Austin, TX","founder":{"@id":"https://evanenterprise.com/#sean"}},
+{"@type":"Person","@id":"https://evanenterprise.com/#sean","name":"Sean Evangelista","alternateName":"Sean Jayme","jobTitle":"Founder, lead systems and UGC creator","worksFor":{"@id":"https://evanenterprise.com/#business"},"sameAs":["https://www.tiktok.com/@seanevangelista_","https://www.instagram.com/officialseanjayme","https://www.youtube.com/@seanjevangelista","https://www.linkedin.com/in/seanjevangelista/"]}
+]}
+</script>
 <style>
-/* ═══════════ TOKENS · black / navy / white ═══════════ */
-:root{
-  --ink:#0A0A0C;         /* ground — near-black */
-  --panel:#0F1B33;       /* navy panel */
-  --white:#F7F7F5;       /* primary type — white */
-  --body:#9A9C9F;        /* running text */
-  --dim:#7A7C80;         /* muted */
-  --accent:#3B5BDB;      /* accent — blue */
-  --on-accent:#F7F7F5;   /* text on accent fills */
-  --hair:rgba(247,247,245,.10);
-  --ease:cubic-bezier(.22,1,.36,1);
-  --ease-back:cubic-bezier(.34,1.56,.64,1);
-  --fd:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
-  --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
-  --fm:'IBM Plex Mono',ui-monospace,monospace;
-  --max:1180px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--ink);color:var(--white);font-family:var(--fb);font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-img{max-width:100%;display:block}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
-.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
-.lede{color:var(--body)}
+.top{position:sticky;top:0;z-index:50;background:rgba(251,250,246,.92);backdrop-filter:blur(10px);border-bottom:var(--line)}
+.top-in{max-width:var(--max);margin:0 auto;padding:10px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand-logo{display:flex;align-items:center;gap:9px;font:800 18px var(--font-display);letter-spacing:-.02em}
+.brand-logo img{width:26px;height:26px;object-fit:contain}
+.top-nav{display:flex;align-items:center;gap:22px;font-weight:500;font-size:15px}
+.top-nav a:not(.btn):hover{text-decoration:underline;text-underline-offset:4px}
+.top .btn{padding:9px 18px;font-size:14px;box-shadow:3px 3px 0 var(--ink)}
+@media(max-width:760px){.top-nav a:not(.btn){display:none}}
 
-/* ═══════════ NAV ═══════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
-.nav-in{max-width:var(--max);margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-.logo{font-family:var(--fd);font-size:19px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
-.logo img{width:26px;height:26px;object-fit:contain}
-.logo b{color:var(--accent);font-weight:400}
-.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--dim);font-weight:500}
-.nav-links a:hover{color:var(--white)}
-.nav-links > *{opacity:0;transform:translateY(-10px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
-.nav-links > *:nth-child(1){transition-delay:.15s}
-.nav-links > *:nth-child(2){transition-delay:.24s}
-.nav-links > *:nth-child(3){transition-delay:.33s}
-.nav-links > *:nth-child(4){transition-delay:.42s}
-body.is-ready .nav-links > *{opacity:1;transform:none}
-.nav-cta{background:var(--accent);color:var(--on-accent);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
-.nav-cta:hover{background:#4A6BF0;color:var(--on-accent)}
-.burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
-.burger span{display:block;width:23px;height:2px;background:var(--white)}
-.mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--hair);background:var(--panel)}
-.mobile-menu.open{display:flex}
-.mobile-menu a{padding:15px 26px;border-bottom:1px solid var(--hair);font-size:15px;font-weight:500}
-@media(max-width:880px){.nav-links{display:none}.burger{display:flex}}
+.hero{padding:60px 0 70px}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:44px;align-items:center}
+.hero h1{margin-top:16px}
+.hero .sub{margin-top:20px;font-size:19px;max-width:38ch;color:var(--ink-soft)}
+.hero-cta{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
+.photo-wrap{position:relative;max-width:380px;margin-left:auto}
+.photo{border:var(--line);border-radius:28px;box-shadow:var(--shadow-lg);overflow:hidden;background:var(--lilac);transform:rotate(2.5deg)}
+.photo img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 15%}
+.photo-wrap .sticker{position:absolute;animation:wiggle 3.4s ease-in-out infinite}
+.photo-wrap .s1{left:-20px;top:28px}
+.photo-wrap .s2{right:-12px;bottom:34px;animation-delay:-1.5s}
+@media(max-width:820px){.hero-grid{grid-template-columns:1fr}.photo-wrap{margin:8px auto 0}}
 
-/* ═══════════ HERO ═══════════ */
-.hero{padding:148px 0 88px}
-.hero-h1{font-family:var(--fb);font-weight:700;font-size:clamp(38px,6vw,64px);line-height:1.15;margin:18px 0 0;letter-spacing:-.01em;max-width:16ch}
-.accent-t{color:var(--accent)}
-.hero-sub{margin-top:22px;max-width:52ch;font-size:18px;color:var(--body)}
-.hero-cta{margin-top:32px;display:flex;flex-wrap:wrap;gap:12px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15.5px;padding:14px 25px;border:0;cursor:pointer;transition:.16s}
-.btn-p{background:var(--white);color:var(--ink);font-weight:700}
-.btn-p:hover{opacity:.85;transform:translateY(-2px)}
-.btn-p:disabled{opacity:.6;cursor:default;transform:none}
-.btn-s{border:1px solid var(--hair);color:var(--white);background:transparent}
-.btn-s:hover{border-color:var(--dim);background:var(--panel)}
-@media(max-width:940px){.hero{padding:124px 0 72px}}
-.hero-mask{overflow:hidden}
-.hero-mask>*{transform:translateY(100%);opacity:0;transition:transform 1s var(--ease),opacity .8s var(--ease)}
-.hero-mask:nth-of-type(1)>*{transition-delay:.05s}
-.hero-mask:nth-of-type(2)>*{transition-delay:.16s}
-.hero-mask:nth-of-type(3)>*{transition-delay:.27s}
-.hero-mask:nth-of-type(4)>*{transition-delay:.38s}
-body.is-ready .hero-mask>*{transform:none;opacity:1}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:46px 0 8px}
+.stat{padding:22px 18px;text-align:center}
+.stat:nth-child(1){background:var(--yellow)}
+.stat:nth-child(2){background:#fff}
+.stat:nth-child(3){background:var(--mint)}
+.stat:nth-child(4){background:#fff}
+.stat .n{font:800 clamp(28px,4vw,42px) var(--font-display);letter-spacing:-.03em;line-height:1}
+.stat .l{margin-top:8px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.stat-note{text-align:center;font-size:13px;margin-top:8px}
+@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
 
-/* ═══════════ SECTIONS ═══════════ */
-.sec{padding:92px 0;border-top:1px solid var(--hair)}
-.sec-head{margin-bottom:46px}
-.sec-head h2{margin-top:13px}
-.sec-head .lede{margin-top:16px;max-width:58ch}
-.sec-h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4.2vw,42px);margin-top:13px;letter-spacing:-.01em;line-height:1.15}
+.sec{padding:78px 0}
+section[id]{scroll-margin-top:60px}
+.sec-head{margin-bottom:34px;max-width:640px}
+.sec-head .label{display:inline-block;margin-bottom:12px}
+.sec-head p{margin-top:12px;font-size:18px;color:var(--ink-soft)}
 
-/* ── marketing grid ── */
-.mkt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.mkt-card{background:var(--panel);border:1px solid var(--hair);padding:30px 26px;display:flex;flex-direction:column}
-.svc-tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
-.mkt-card h3{font-family:var(--fb);font-weight:600;font-size:22px;margin:12px 0 11px;letter-spacing:-.01em}
-.mkt-card p{font-size:15px;color:var(--body);flex:1}
-.mkt-stats{display:flex;gap:22px;margin:18px 0}
-.mkt-stat{display:flex;flex-direction:column}
-.mkt-stat .n{font-family:var(--fb);font-weight:700;font-size:26px;color:var(--white);line-height:1}
-.mkt-stat .l{font-family:var(--fm);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-top:6px}
-.svc-go{font-size:14px;font-weight:600;color:var(--accent)}
-.svc-go:hover{text-decoration:underline;text-underline-offset:4px}
-@media(max-width:900px){.mkt-grid{grid-template-columns:1fr}}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{padding:28px 24px}
+.step:nth-child(1){background:var(--yellow)}
+.step:nth-child(2){background:var(--pink)}
+.step:nth-child(3){background:var(--mint)}
+.step .num{display:inline-grid;place-items:center;width:42px;height:42px;border:var(--line);border-radius:50%;background:#fff;font:800 18px var(--font-display)}
+.step h3{font:800 24px var(--font-display);letter-spacing:-.025em;margin:16px 0 8px}
+.step p{font-size:16px}
+@media(max-width:820px){.steps{grid-template-columns:1fr}}
 
-/* ── about ── */
-.about-in{display:grid;grid-template-columns:.34fr .66fr;gap:52px;align-items:start}
-.about-photo{width:100%;max-width:250px;aspect-ratio:4/5;object-fit:cover;filter:grayscale(1) contrast(1.05);border:1px solid var(--hair)}
-.about-name{font-family:var(--fd);font-size:25px;text-transform:uppercase;margin-top:18px;letter-spacing:.01em}
-.about-role{font-family:var(--fm);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);margin-top:5px}
-.about-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
-.tag{font-family:var(--fm);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border:1px solid var(--hair);padding:4px 8px}
-.about-ugc{display:inline-block;font-family:var(--fm);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-top:16px;text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:2px;transition:opacity .15s}
-.about-ugc:hover{opacity:.75}
-.about-q{font-size:22px;line-height:1.45;color:var(--white);font-weight:500;text-wrap:balance}
-.about-q em{font-style:normal;color:var(--accent)}
-.about-body{margin-top:22px;display:flex;flex-direction:column;gap:15px;color:var(--body);font-size:16px;max-width:62ch}
-@media(max-width:860px){.about-in{grid-template-columns:1fr;gap:34px}}
+.svcs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.svc{padding:28px 24px;display:flex;flex-direction:column;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.svc:hover{transform:translate(-3px,-3px) rotate(-.6deg);box-shadow:var(--shadow-lg)}
+.svc h3{font:800 24px var(--font-display);letter-spacing:-.025em;margin:14px 0 8px}
+.svc p{color:var(--ink-soft);flex:1}
+.svc ul{list-style:none;margin:14px 0 18px;display:flex;flex-direction:column;gap:7px;font-size:15px}
+.svc li{padding-left:22px;position:relative}
+.svc li:before{content:"";position:absolute;left:0;top:.55em;width:10px;height:10px;border:var(--line);border-radius:50%;background:var(--yellow)}
+.svc .go{font-weight:700;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:900px){.svcs{grid-template-columns:1fr}}
 
-/* ── contact ── */
-.contact-in{max-width:760px;margin:0 auto}
-.contact h2{margin-top:13px}
-.contact-sub{margin-top:16px;color:var(--body);max-width:54ch}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.field{display:flex;flex-direction:column;gap:6px}
-.field label{font-family:var(--fm);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
-.field input,.field textarea{background:var(--panel);border:1px solid var(--hair);padding:13px 14px;color:var(--white);font-family:var(--fb);font-size:15.5px;resize:vertical}
-.field input:focus,.field textarea:focus{border-color:var(--accent);outline:none}
-.field input::placeholder,.field textarea::placeholder{color:#4C4D52}
-#contactForm{margin-top:30px}
-#contactForm .btn{width:100%;margin-top:18px}
-.form-ok{display:none;background:rgba(61,209,127,.11);border:1px solid rgba(61,209,127,.35);color:#3DD17F;padding:18px;text-align:center;font-weight:600;margin-top:8px}
-.form-ok.show{display:block}
-.form-err{display:none;background:rgba(228,85,62,.11);border:1px solid rgba(228,85,62,.35);color:#E4553E;padding:14px;text-align:center;font-size:14.5px;margin-top:12px}
+.work{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.wcard{display:block;overflow:hidden;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.wcard:hover{transform:translate(-3px,-3px) rotate(-.6deg);box-shadow:var(--shadow-lg)}
+.wcard img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;border-bottom:var(--line)}
+.wcard div{padding:16px 18px}
+.wcard b{display:block;font:800 19px var(--font-display);letter-spacing:-.02em}
+.wcard span{font-size:14px;color:var(--ink-soft)}
+.more{margin-top:26px;text-align:center}
+@media(max-width:900px){.work{grid-template-columns:1fr}}
+
+.ugc-band{background:var(--lilac);border-block:var(--line)}
+.ugc-in{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 26px}
+.chip{padding:9px 18px;border:var(--line);border-radius:999px;background:#fff;font:800 16px var(--font-display);letter-spacing:-.01em}
+.ugc-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ugc-stats .stat{background:#fff!important}
+@media(max-width:820px){.ugc-in{grid-template-columns:1fr}}
+
+.about-in{display:grid;grid-template-columns:.8fr 1.2fr;gap:44px;align-items:center}
+.about-photo{border:var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;max-width:300px;transform:rotate(-2deg);background:var(--yellow)}
+.about-photo img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 15%}
+.about-list{list-style:none;display:flex;flex-direction:column;gap:13px;margin-top:20px;font-size:18px}
+.about-list li{padding-left:30px;position:relative}
+.about-list li:before{content:"";position:absolute;left:0;top:.5em;width:14px;height:14px;border:var(--line);border-radius:50%;background:var(--mint)}
+.about-list li:nth-child(even):before{background:var(--pink)}
+@media(max-width:820px){.about-in{grid-template-columns:1fr}.about-photo{margin:0 auto}}
+
+.contact{background:var(--yellow);border-block:var(--line)}
+.contact-in{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:start}
+.contact-sub{margin-top:14px;font-size:18px}
+.alt-ways{display:flex;flex-direction:column;gap:8px;margin-top:22px;font-weight:700}
+.alt-ways a{text-decoration:underline;text-underline-offset:4px}
+.formcard{padding:28px 26px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-weight:700;font-size:14px}
+.field input,.field textarea{font:500 16px var(--font-body);padding:12px 14px;border:var(--line);border-radius:12px;background:var(--paper);color:var(--ink);width:100%}
+.field input:focus,.field textarea:focus{outline:3px solid var(--blue);outline-offset:1px;background:#fff}
+.formcard .btn{width:100%;margin-top:6px}
+.form-err{display:none;margin-top:14px;padding:12px 14px;border:var(--line);border-radius:12px;background:var(--pink);font-weight:500;font-size:14.5px}
 .form-err.show{display:block}
-@media(max-width:700px){.frow{grid-template-columns:1fr}}
+.form-ok{display:none;padding:28px 26px;font:800 24px var(--font-display);letter-spacing:-.02em;text-align:center}
+.form-ok.show{display:block}
+@media(max-width:860px){.contact-in{grid-template-columns:1fr}.frow{grid-template-columns:1fr}}
 
-/* ── footer ── */
-footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#050506}
-.foot-in{max-width:var(--max);margin:0 auto;padding:0 26px;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center}
-.foot-logo{font-family:var(--fd);font-size:18px;text-transform:uppercase;display:flex;align-items:center;gap:9px}
-.foot-logo img{width:24px;height:24px;object-fit:contain}
-.foot-links,.foot-social{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-size:14px;color:var(--dim)}
-.foot-links a:hover,.foot-social a:hover{color:var(--white)}
-.foot-contact{font-family:var(--fm);font-size:12.5px;color:var(--dim)}
-.foot-contact a:hover{color:var(--accent)}
-.foot-copy{font-family:var(--fm);font-size:11.5px;color:#4C4D52}
-
-/* ── motion ── */
-.rv{opacity:0;transform:translateY(20px);transition:.75s cubic-bezier(.22,1,.36,1)}
-.rv.in{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+.foot{padding:44px 0 36px;text-align:center}
+.foot-links,.foot-social{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-weight:500;font-size:15px;margin-top:14px}
+.foot a:hover{text-decoration:underline;text-underline-offset:4px}
+.foot-contact,.foot-copy{margin-top:16px;font-size:13.5px;color:var(--ink-soft)}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-in">
-    <a href="/" class="logo"><img src="logo-mark.png" alt="">Evan<b>·</b>Enterprises</a>
-    <div class="nav-links">
-      <a href="#marketing">Marketing</a>
-      <a href="/ugc/">UGC</a>
-      <a href="#about">About</a>
-      <a href="#contact" class="nav-cta">Book a call</a>
-    </div>
-    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
-  </div>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#marketing">Marketing</a>
-    <a href="/ugc/">UGC</a>
-    <a href="#about">About</a>
-    <a href="#contact">Book a call →</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<header class="hero">
-  <div class="wrap">
-    <div class="hero-mask"><div class="eyebrow">Evan Enterprises LLC — Sean Evangelista</div></div>
-    <div class="hero-mask"><h1 class="hero-h1">Marketing built by <span class="accent-t">one person</span> who does the work.</h1></div>
-    <div class="hero-mask"><p class="hero-sub">Ad management, website builds, and UGC. No account managers, no hand-offs — every video, every ad account, every site, I build it myself.</p></div>
-    <div class="hero-mask">
-      <div class="hero-cta">
-        <a href="#marketing" class="btn btn-p">See my work →</a>
-        <a href="#contact" class="btn btn-s">Book a call →</a>
-      </div>
-    </div>
+<header class="top">
+  <div class="top-in">
+    <a href="/" class="brand-logo"><img src="/logo-mark.png" alt="">Evan Enterprises</a>
+    <nav class="top-nav" aria-label="Main">
+      <a href="#marketing">Services</a>
+      <a href="#work">Work</a>
+      <a href="/ugc">UGC</a>
+      <a href="/links">Links</a>
+      <a href="#contact" class="btn btn--blue" data-magnet>Book a call</a>
+    </nav>
   </div>
 </header>
 
-<!-- MARKETING -->
-<section class="sec" id="marketing">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">What I do</div>
-      <h2 class="sec-h2">One person. Every part<br>of your marketing.</h2>
-      <p class="lede">Ad management, website builds, and UGC — no account managers, no hand-offs. You work directly with me on every part of it.</p>
+<main>
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="sticker rv">Austin, TX · one person, no hand-offs</span>
+      <h1 class="display h1 rv" style="--i:1">Websites, ads &amp; AI that turn clicks into <mark class="hl">booked calls.</mark></h1>
+      <p class="sub rv" style="--i:2">I build your website, run your Google Ads, and set up AI that follows up with every lead — so you stop losing customers to slow replies.</p>
+      <div class="hero-cta rv" style="--i:3">
+        <a href="#contact" class="btn btn--blue" data-magnet>Tell me what's leaking →</a>
+        <a href="#work" class="btn btn--ghost" data-magnet>See the work ↓</a>
+      </div>
     </div>
-    <div class="mkt-grid rv">
-      <div class="mkt-card">
-        <div class="svc-tag">Ad Management</div>
-        <h3>Google Ads, Local Service Ads &amp; Instagram, run end to end</h3>
-        <p>Strategy, creative, and daily optimization — managed personally, not handed off to a junior account rep. Real numbers, no fluff.</p>
-      </div>
-      <div class="mkt-card">
-        <div class="svc-tag">Website Building</div>
-        <h3>Custom sites, built from the ground up</h3>
-        <p>Vibe-coded to fit your brand, not a template — with the option to add an AI chatbot to the build for lead capture or customer questions.</p>
-        <a href="/portfolio" class="svc-go">See the portfolio →</a>
-      </div>
-      <div class="mkt-card">
-        <div class="svc-tag">UGC Work</div>
-        <h3>Video content, backed by my own numbers</h3>
-        <p>I create UGC and personal content across Instagram, TikTok, and YouTube — this isn't theoretical:</p>
-        <div class="mkt-stats">
-          <div class="mkt-stat"><span class="n">14.1M</span><span class="l">IG views, 90 days</span></div>
-          <div class="mkt-stat"><span class="n">30.9K</span><span class="l">TikTok followers</span></div>
-        </div>
-        <a href="/ugc/" class="svc-go">See full media kit →</a>
-      </div>
+    <div class="photo-wrap rv" style="--i:2">
+      <div class="photo"><img src="/ugc/img/sean-hero.jpg" alt="Sean Evangelista, founder of Evan Enterprises" width="400" height="500"></div>
+      <span class="sticker sticker--pink s1">Replies in 24h</span>
+      <span class="sticker sticker--yellow s2">Sean Jayme</span>
+    </div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="marquee-track">
+  <span>Custom websites</span><span>Google Ads</span><span>AI follow-up</span><span>Local Service Ads</span><span>UGC content</span>
+  <span>Custom websites</span><span>Google Ads</span><span>AI follow-up</span><span>Local Service Ads</span><span>UGC content</span>
+</div></div>
+
+<!-- PROOF -->
+<div class="wrap">
+  <div class="stats rv">
+    <div class="stat card"><div class="n">14.1M</div><div class="l">Instagram views · 90 days</div></div>
+    <div class="stat card"><div class="n">3</div><div class="l">Live sites built</div></div>
+    <div class="stat card"><div class="n">24h</div><div class="l">Reply time</div></div>
+    <div class="stat card"><div class="n">$400K+</div><div class="l">E-commerce revenue</div></div>
+  </div>
+  <p class="stat-note muted rv">Instagram Insights as of Nov 12, 2026.</p>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="sec" id="system">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="label sticker sticker--lilac">The lead system</span><h2 class="display h2">Three parts. One person. No gaps.</h2>
+      <p>Most businesses lose leads between the click and the call. I build the whole path.</p></div>
+    <div class="steps">
+      <div class="step card rv"><span class="num">1</span><h3>Get found</h3><p>A fast, custom website plus Google Ads and Local Service Ads that put you in front of people already searching for you.</p></div>
+      <div class="step card rv" style="--i:1"><span class="num">2</span><h3>Capture every lead</h3><p>Forms, click-to-call and an optional AI chatbot, with tracking so you know which ad produced which call.</p></div>
+      <div class="step card rv" style="--i:2"><span class="num">3</span><h3>Follow up fast</h3><p>AI and automation reply, remind and route leads for you, and a monthly report shows spend against real leads.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES (id kept as #marketing so older links still work) -->
+<section class="sec" id="marketing" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="label sticker">What I do</span><h2 class="display h2">Pick what you need.</h2>
+      <p>Start with one piece or take the whole system. Pricing is published on the <a href="/onboarding" style="text-decoration:underline;text-underline-offset:4px;font-weight:700">how it works</a> page.</p></div>
+    <div class="svcs">
+      <div class="svc card rv"><span class="sticker sticker--yellow">Websites &amp; ads</span><h3>Lead systems</h3><p>Hand-built websites and managed ad campaigns for local businesses.</p>
+        <ul><li>Custom site, not a template</li><li>Google Ads &amp; Local Service Ads</li><li>Conversion tracking and monthly report</li></ul>
+        <a class="go" href="/portfolio">See the portfolio →</a></div>
+      <div class="svc card rv" style="--i:1"><span class="sticker sticker--pink">AI &amp; automation</span><h3>AI solutions</h3><p>AI that saves you time and stops leads slipping through.</p>
+        <ul><li>AI chatbot for your site</li><li>Automatic lead follow-up</li><li>Workflow automation for repeat tasks</li></ul>
+        <a class="go" href="#contact">Ask what's possible →</a></div>
+      <div class="svc card rv" style="--i:2"><span class="sticker sticker--lilac">UGC &amp; content</span><h3>Content for brands</h3><p>Top-of-funnel UGC that gets your brand in front of new people.</p>
+        <ul><li>Reels, TikToks and UGC ads</li><li>Personalized content strategy</li><li>Gifted and paid collabs</li></ul>
+        <a class="go" href="/ugc">See the media kit →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section class="sec" id="work" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="label sticker sticker--pink">Recent work</span><h2 class="display h2">Live sites, built from scratch.</h2></div>
+    <div class="work">
+      <a class="wcard card rv" href="https://legacyhardscapeatx.com" target="_blank" rel="noopener"><img src="/portfolio/img/legacy-hardscape.jpg" alt="Legacy Hardscape ATX website" loading="lazy"><div><b>Legacy Hardscape ATX</b><span>Patios &amp; outdoor living · Austin</span></div></a>
+      <a class="wcard card rv" style="--i:1" href="https://sharp-air-mock.vercel.app" target="_blank" rel="noopener"><img src="/portfolio/img/sharp-air.jpg" alt="Sharp Air Mechanical website" loading="lazy"><div><b>Sharp Air Mechanical</b><span>Heating &amp; air · Austin</span></div></a>
+      <a class="wcard card rv" style="--i:2" href="https://studio27atx.com" target="_blank" rel="noopener"><img src="/portfolio/img/studio27.jpg" alt="Studio 27 website" loading="lazy"><div><b>Studio 27</b><span>Creative studio · Austin</span></div></a>
+    </div>
+    <div class="more"><a href="/portfolio" class="btn btn--ghost" data-magnet>Full portfolio →</a></div>
+  </div>
+</section>
+
+<!-- UGC BAND -->
+<section class="sec ugc-band">
+  <div class="wrap ugc-in">
+    <div class="rv">
+      <span class="label sticker sticker--yellow">Also a creator</span>
+      <h2 class="display h2" style="margin-top:14px">I make the content, too.</h2>
+      <p style="margin-top:12px;font-size:18px">UGC and short-form video for brands, built to stop the scroll.</p>
+      <div class="chips"><span class="chip">Dude Wipes</span><span class="chip">Gray Matter</span><span class="chip">Clean Nutra</span></div>
+      <a href="/ugc" class="btn btn--blue" data-magnet>See my UGC work →</a>
+    </div>
+    <div class="ugc-stats rv" style="--i:1">
+      <div class="stat card"><div class="n">14.1M</div><div class="l">Views · 90 days</div></div>
+      <div class="stat card"><div class="n">6.9%</div><div class="l">Interaction rate</div></div>
+      <div class="stat card"><div class="n">16.4K</div><div class="l">IG followers</div></div>
+      <div class="stat card"><div class="n">61%</div><div class="l">Audience 18–34</div></div>
     </div>
   </div>
 </section>
@@ -230,21 +254,16 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#050506}
 <!-- ABOUT -->
 <section class="sec" id="about">
   <div class="wrap about-in">
-    <div class="rv">
-      <img src="sean.jpg" alt="Sean Evangelista" class="about-photo">
-      <div class="about-name">Sean Evangelista</div>
-      <div class="about-role">Founder — Evan Enterprises LLC</div>
-      <div class="about-tags">
-        <span class="tag">Ad Management</span><span class="tag">Website Building</span><span class="tag">UGC</span>
-      </div>
-      <a href="/ugc/" class="about-ugc">See my UGC work →</a>
-    </div>
-    <div class="rv">
-      <p class="about-q">"I help brands <em>show up like a real person made it</em> — the ad that actually converts, the site that actually loads fast, the content that doesn't look like an ad."</p>
-      <div class="about-body">
-        <p>I keep my roster small on purpose. Every client works directly with me — no account managers, no hand-offs, no junior reps learning on your budget.</p>
-        <p>Whether it's an ad account that actually turns a profit, a site built from scratch, or UGC that pulls real views, the standard is the same: full transparency, real numbers, no fluff. You can text me when something comes up.</p>
-      </div>
+    <div class="about-photo rv"><img src="/sean.jpg" alt="Sean Evangelista" width="300" height="375" loading="lazy"></div>
+    <div class="rv" style="--i:1">
+      <span class="label sticker sticker--mint">About</span>
+      <h2 class="display h2" style="margin-top:14px">Hi, I'm Sean.</h2>
+      <ul class="about-list">
+        <li>Founder of Evan Enterprises LLC in Austin, TX</li>
+        <li>I do the work myself — no account managers, no junior reps</li>
+        <li>5 years running e-commerce on Amazon FBA and Walmart, $400K+ in revenue</li>
+        <li>Creator with a real audience, so I know what actually gets attention</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -253,102 +272,60 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#050506}
 <section class="sec contact" id="contact">
   <div class="wrap contact-in">
     <div class="rv">
-      <div class="eyebrow">Next step</div>
-      <h2 class="sec-h2">Tell me what's leaking.</h2>
+      <span class="label sticker sticker--pink">Next step</span>
+      <h2 class="display h2" style="margin-top:14px">Tell me what's leaking.</h2>
       <p class="contact-sub">Tell me a bit about your situation. I follow up within 24 hours — you, me, no middlemen.</p>
+      <div class="alt-ways">
+        <a href="mailto:seanjayme@evanenterprise.com">seanjayme@evanenterprise.com</a>
+        <a href="tel:+15129050380">(512) 905-0380</a>
+        <a href="/go/discord?s=home">Add me on Discord</a>
+      </div>
     </div>
-    <form id="contactForm" class="rv" novalidate>
-      <input type="hidden" id="svcType" name="service_type" value="marketing">
-      <div class="frow">
-        <div class="field"><label for="cf-name">Your name</label><input id="cf-name" name="name" placeholder="John Smith" required></div>
-        <div class="field"><label for="cf-email">Email</label><input id="cf-email" name="email" type="email" placeholder="you@yourbiz.com" required></div>
-      </div>
-      <div class="frow">
-        <div class="field"><label for="cf-business">Business name</label><input id="cf-business" name="business" placeholder="Your Business"></div>
-        <div class="field"><label for="cf-phone">Phone (optional)</label><input id="cf-phone" name="phone" type="tel" placeholder="(512) 555-0100"></div>
-      </div>
-      <div class="field"><label for="cf-message">What do you need?</label><textarea id="cf-message" name="message" rows="3" placeholder="Tell me about your business and what you're trying to fix or grow..."></textarea></div>
-      <button type="submit" class="btn btn-p" id="submitBtn">Send message →</button>
-      <div class="form-err" id="formErr">That didn't send. Email me directly at seanjayme@evanenterprise.com or call (512) 905-0380.</div>
-    </form>
-    <div class="form-ok" id="formOk">Got it — I'll be in touch within 24 hours.</div>
+    <div class="rv" style="--i:1">
+      <form id="contactForm" class="formcard card" novalidate>
+        <input type="hidden" id="svcType" name="service_type" value="marketing">
+        <div class="frow">
+          <div class="field"><label for="cf-name">Your name</label><input id="cf-name" name="name" placeholder="John Smith" autocomplete="name" required></div>
+          <div class="field"><label for="cf-email">Email</label><input id="cf-email" name="email" type="email" placeholder="you@yourbiz.com" autocomplete="email" required></div>
+        </div>
+        <div class="frow">
+          <div class="field"><label for="cf-business">Business name</label><input id="cf-business" name="business" placeholder="Your Business" autocomplete="organization"></div>
+          <div class="field"><label for="cf-phone">Phone (optional)</label><input id="cf-phone" name="phone" type="tel" placeholder="(512) 555-0100" autocomplete="tel"></div>
+        </div>
+        <div class="field"><label for="cf-message">What do you need?</label><textarea id="cf-message" name="message" rows="3" placeholder="Tell me about your business and what you're trying to fix or grow..."></textarea></div>
+        <button type="submit" class="btn btn--blue" id="submitBtn">Send message →</button>
+        <div class="form-err" id="formErr" role="alert">That didn't send. Email me directly at seanjayme@evanenterprise.com or call (512) 905-0380.</div>
+      </form>
+      <div class="form-ok card" id="formOk" role="status">Got it — I'll be in touch within 24 hours.</div>
+    </div>
   </div>
 </section>
+</main>
 
-<!-- FOOTER -->
-<footer>
-  <div class="foot-in">
-    <a href="/" class="foot-logo"><img src="logo-mark.png" alt="">Evan Enterprises LLC</a>
-    <div class="foot-links">
-      <a href="#marketing">Marketing</a>
-      <a href="#about">About</a>
-      <a href="/portfolio">Portfolio</a>
-      <a href="/onboarding">Onboarding</a>
-      <a href="/privacy.html">Privacy</a>
-      <a href="/terms.html">Terms</a>
-    </div>
-    <div class="foot-social">
-      <a href="https://www.instagram.com/officialseanjayme" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener">TikTok</a>
-      <a href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener">YouTube</a>
-    </div>
-    <div class="foot-contact">
-      Evan Enterprises LLC · Austin, TX · <a href="mailto:seanjayme@evanenterprise.com">seanjayme@evanenterprise.com</a> · (512) 905-0380
-    </div>
-    <div class="foot-copy">© 2026 Evan Enterprises LLC. All rights reserved.</div>
+<footer class="foot wrap">
+  <a href="/" class="brand-logo" style="justify-content:center"><img src="/logo-mark.png" alt="">Evan Enterprises LLC</a>
+  <div class="foot-links">
+    <a href="#marketing">Services</a>
+    <a href="#about">About</a>
+    <a href="/portfolio">Portfolio</a>
+    <a href="/ugc">UGC</a>
+    <a href="/links">Links</a>
+    <a href="/onboarding">Onboarding</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
   </div>
+  <div class="foot-social">
+    <a href="https://www.instagram.com/officialseanjayme" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener">TikTok</a>
+    <a href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener">YouTube</a>
+    <a href="https://www.linkedin.com/in/seanjevangelista/" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+  <div class="foot-contact">Evan Enterprises LLC · Austin, TX · <a href="mailto:seanjayme@evanenterprise.com" style="text-decoration:underline">seanjayme@evanenterprise.com</a> · (512) 905-0380</div>
+  <div class="foot-copy">© 2026 Evan Enterprises LLC. All rights reserved.</div>
 </footer>
 
+<script src="/js/site.js"></script>
 <script>
-// ── mobile menu ──
-(function(){
-  var b=document.getElementById('burger'), m=document.getElementById('mobileMenu');
-  b.addEventListener('click',function(){
-    var open=m.classList.toggle('open');
-    b.setAttribute('aria-expanded',open?'true':'false');
-  });
-  m.querySelectorAll('a').forEach(function(a){
-    a.addEventListener('click',function(){m.classList.remove('open');b.setAttribute('aria-expanded','false');});
-  });
-})();
-
-// ── page-load reveal (hero mask lines + nav stagger) ──
-(function(){
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ document.body.classList.add('is-ready'); return; }
-  requestAnimationFrame(function(){ document.body.classList.add('is-ready'); });
-})();
-
-// ── magnetic buttons ──
-(function(){
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if(window.matchMedia('(hover: none)').matches) return;
-  document.querySelectorAll('.btn').forEach(function(btn){
-    btn.style.transition='transform .3s '+getComputedStyle(document.documentElement).getPropertyValue('--ease');
-    btn.addEventListener('mousemove',function(e){
-      var rect=btn.getBoundingClientRect();
-      var x=e.clientX-rect.left-rect.width/2, y=e.clientY-rect.top-rect.height/2;
-      btn.style.transitionDuration='.15s';
-      btn.style.transform='translate('+(x*0.25)+'px,'+(y*0.35)+'px)';
-    });
-    btn.addEventListener('mouseleave',function(){
-      btn.style.transitionDuration='.5s';
-      btn.style.transitionTimingFunction='var(--ease-back)';
-      btn.style.transform='translate(0,0)';
-    });
-  });
-})();
-
-// ── scroll reveal ──
-(function(){
-  // No IntersectionObserver (older in-app browsers): show everything instead of
-  // throwing and leaving every .rv block at opacity:0.
-  if(!("IntersectionObserver" in window)){ document.querySelectorAll(".rv").forEach(function(el){ el.classList.add("in"); }); return; }
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  },{threshold:.12});
-  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
-})();
-
 // ── contact form → /api/contact-site ──
 (function(){
   var form=document.getElementById('contactForm');
@@ -384,6 +361,5 @@ footer{border-top:1px solid var(--hair);padding:44px 0 34px;background:#050506}
   });
 })();
 </script>
-
 </body>
 </html>

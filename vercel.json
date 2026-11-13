@@ -35,6 +35,10 @@
   ],
   "rewrites": [
     {
+      "source": "/go/:slug",
+      "destination": "/api/client-lookup?action=go&slug=:slug"
+    },
+    {
       "source": "/dashboard",
       "destination": "/dashboard/index.html"
     },

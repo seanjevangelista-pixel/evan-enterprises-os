@@ -1,0 +1,71 @@
+/* Sean Jayme design system — bold & playful. Shared by every new-look page. */
+:root{
+  --paper:#FBFAF6;
+  --paper-2:#F2EFE7;
+  --ink:#101013;
+  --ink-soft:#4A4A52;
+  --blue:#3B5BDB;
+  --pink:#FF5C93;
+  --yellow:#FFD43B;
+  --mint:#2ED3A3;
+  --lilac:#B8A4FF;
+  --on-blue:#FFFFFF;
+  --line:2.5px solid var(--ink);
+  --r:18px;
+  --shadow:5px 5px 0 var(--ink);
+  --shadow-lg:8px 8px 0 var(--ink);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --pop:cubic-bezier(.34,1.56,.64,1);
+  --font-display:'Bricolage Grotesque',system-ui,-apple-system,sans-serif;
+  --font-body:'DM Sans',system-ui,-apple-system,sans-serif;
+  --max:1120px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
+
+/* type */
+.display{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.02;text-wrap:balance}
+.h1{font-size:clamp(40px,8vw,84px)}
+.h2{font-size:clamp(30px,5vw,52px)}
+.label{font-family:var(--font-body);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.muted{color:var(--ink-soft)}
+mark.hl{background:var(--yellow);color:inherit;padding:0 .18em;border-radius:.2em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:700 16px var(--font-body);padding:14px 26px;border:var(--line);border-radius:999px;background:var(--yellow);color:var(--ink);box-shadow:var(--shadow);cursor:pointer;transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-lg)}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.btn--blue{background:var(--blue);color:var(--on-blue)}
+.btn--ghost{background:var(--paper)}
+
+/* cards & stickers */
+.card{background:#fff;border:var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.sticker{display:inline-block;padding:6px 14px;border:var(--line);border-radius:999px;background:var(--mint);font:700 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;transform:rotate(-3deg)}
+.sticker--pink{background:var(--pink)}
+.sticker--yellow{background:var(--yellow)}
+.sticker--lilac{background:var(--lilac)}
+
+/* marquee */
+.marquee{overflow:hidden;border-block:var(--line);background:var(--ink);color:var(--paper)}
+.marquee-track{display:flex;gap:34px;width:max-content;padding:12px 0;font:800 18px var(--font-display);letter-spacing:-.01em;text-transform:uppercase;animation:slide 26s linear infinite}
+.marquee-track span::after{content:"✦";margin-left:34px;color:var(--yellow)}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* footer */
+.site-foot{padding:40px 0 34px;text-align:center;font-size:14px;color:var(--ink-soft)}
+.site-foot a{text-decoration:underline;text-underline-offset:3px}
+
+/* motion */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:calc(var(--i,0) * 70ms)}
+.rv.in{opacity:1;transform:none}
+@keyframes float{50%{transform:translateY(-12px) rotate(var(--rot,0deg))}}
+@keyframes wiggle{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rv{opacity:1;transform:none}
+}

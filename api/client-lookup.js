@@ -62,6 +62,8 @@ async function handleGo(req, res) {
     const key = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
     let referrer = '';
     try { referrer = req.headers.referer ? new URL(req.headers.referer).hostname : ''; } catch (e) { /* ignore bad referer */ }
+    // The links page passes the visitor's original source (instagram, tiktok ...) as r=
+    referrer = normSrc(req.query.r) || referrer;
     try {
       const w = await fetch(`${supabaseUrl}/rest/v1/link_clicks`, {
         method: 'POST',
@@ -87,6 +89,15 @@ async function handleGo(req, res) {
 // Called by js/site.js on every page view and tracked click. Rows go into link_clicks with a
 // namespaced slug: "pv:/path" for page views, "click:<label>" for site button/link clicks
 // (plain slugs are /go/ tracked links). No cookies, no IP address, no personal data stored.
+
+// Maps a referrer host or utm source to a short channel name (instagram, tiktok, linkedin ...).
+const SRC_RULES = [[/instagram|^ig$|^l\.instagram/, 'instagram'], [/tiktok/, 'tiktok'], [/linkedin|lnkd\.in/, 'linkedin'], [/youtube|youtu\.be/, 'youtube'], [/facebook|^fb\.|^m\.facebook|^l\.facebook/, 'facebook'], [/discord/, 'discord'], [/^t\.co$|twitter|^x\.com$/, 'x'], [/google/, 'google'], [/bing|duckduckgo|yahoo|ecosia/, 'search'], [/evanenterprise/, 'direct']];
+function normSrc(v) {
+  v = String(v || '').toLowerCase().replace(/^www\./, '').trim();
+  if (!v) return '';
+  for (const [re, name] of SRC_RULES) if (re.test(v)) return name;
+  return v.slice(0, 30);
+}
 const SITE_HOSTS = /(^|\.)evanenterprise\.com$/i;
 function cleanHost(v) { v = String(v || '').toLowerCase().slice(0, 80); return /^[a-z0-9.-]+$/.test(v) ? v : ''; }
 
@@ -114,9 +125,9 @@ async function handleHit(req, res) {
       method: 'POST',
       headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify({
-        slug: t === 'pv' ? `pv:${path}` : `click:${label}`,
+        slug: t === 'pv' ? `${req.query.e === '1' ? 'visit' : 'pv'}:${path}` : `click:${label}`,
         source: t === 'pv' ? (src || null) : path,
-        referrer: cleanHost(req.query.r) || null,
+        referrer: normSrc(cleanHost(req.query.r)) || null,
         country: String(req.headers['x-vercel-ip-country'] || '').slice(0, 2) || null,
       }),
       signal: AbortSignal.timeout(1500),
@@ -151,22 +162,50 @@ async function handleStats(req, res) {
 
   const tally = (map, k) => { if (k) map[k] = (map[k] || 0) + 1; };
   const top = (map, n = 12) => Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, n).map(([name, count]) => ({ name, count }));
-  const pages = {}, links = {}, buttons = {}, referrers = {}, countries = {}, byDay = {};
-  const totals = { pageViews: 0, linkClicks: 0, siteClicks: 0 };
+  const pages = {}, links = {}, buttons = {}, referrers = {}, countries = {}, byDay = {}, bySource = {}, dest = {};
+  const totals = { pageViews: 0, visits: 0, linkClicks: 0, siteClicks: 0, contacts: 0 };
+  const CONTACT_CLICKS = ['email', 'call', 'text', 'ig-dm', 'form:contact'];
+  const CONTACT_GO = ['book', 'discord'];
+  const SOCIAL_GO = ['tiktok', 'instagram', 'youtube', 'linkedin', 'discord'];
+  const bump = (src, key) => { bySource[src] = bySource[src] || { visitors: 0, clicks: 0, contacts: 0 }; bySource[src][key]++; };
   for (const row of rows) {
     const day = String(row.clicked_at).slice(0, 10);
     byDay[day] = byDay[day] || { pageViews: 0, linkClicks: 0, siteClicks: 0 };
-    if (row.slug.startsWith('pv:')) { totals.pageViews++; byDay[day].pageViews++; tally(pages, row.slug.slice(3)); tally(referrers, row.referrer || 'direct'); }
-    else if (row.slug.startsWith('click:')) { totals.siteClicks++; byDay[day].siteClicks++; tally(buttons, row.slug.slice(6)); }
-    else { totals.linkClicks++; byDay[day].linkClicks++; tally(links, row.slug); if (row.referrer) tally(referrers, row.referrer); }
+    if (row.slug.startsWith('pv:') || row.slug.startsWith('visit:')) {
+      const isVisit = row.slug.startsWith('visit:');
+      const src = normSrc(row.referrer) || normSrc(row.source) || 'direct';
+      totals.pageViews++; byDay[day].pageViews++; tally(pages, row.slug.slice(row.slug.indexOf(':') + 1)); tally(referrers, src);
+      if (isVisit) { totals.visits++; bump(src, 'visitors'); }
+    } else if (row.slug.startsWith('click:')) {
+      const label = row.slug.slice(6), src = normSrc(row.referrer) || 'direct';
+      totals.siteClicks++; byDay[day].siteClicks++; tally(buttons, label);
+      bump(src, 'clicks');
+      if (CONTACT_CLICKS.includes(label)) { totals.contacts++; bump(src, 'contacts'); }
+      if (label.startsWith('out:')) tally(dest, normSrc(label.slice(4).split('/')[0]));
+    } else {
+      const src = normSrc(row.referrer) || 'direct';
+      totals.linkClicks++; byDay[day].linkClicks++; tally(links, row.slug);
+      bump(src, 'clicks');
+      if (CONTACT_GO.includes(row.slug)) { totals.contacts++; bump(src, 'contacts'); }
+      if (SOCIAL_GO.includes(row.slug)) tally(dest, row.slug);
+    }
     tally(countries, row.country);
   }
+  const funnel = {
+    stages: [
+      { name: 'Visits', count: totals.visits },
+      { name: 'Clicked something', count: totals.linkClicks + totals.siteClicks },
+      { name: 'Reached out', count: totals.contacts },
+    ],
+    bySource: Object.entries(bySource).map(([source, v]) => ({ source, ...v })).sort((a, b) => b.visitors - a.visitors || b.clicks - a.clicks).slice(0, 12),
+    destinations: top(dest, 8),
+  };
   const series = [];
   for (let i = days - 1; i >= 0; i--) {
     const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10);
     series.push({ day: d, ...(byDay[d] || { pageViews: 0, linkClicks: 0, siteClicks: 0 }) });
   }
-  return res.status(200).json({ ok: true, days, totals, pages: top(pages), links: top(links), buttons: top(buttons, 15), referrers: top(referrers), countries: top(countries, 8), series });
+  return res.status(200).json({ ok: true, days, totals, funnel, pages: top(pages), links: top(links), buttons: top(buttons, 15), referrers: top(referrers), countries: top(countries, 8), series });
 }
 
 // ── Admin check ───────────────────────────────────────────────────────────────

@@ -174,8 +174,10 @@ async function handleStats(req, res) {
   const pages = {}, links = {}, buttons = {}, referrers = {}, countries = {}, byDay = {}, bySource = {}, dest = {};
   const totals = { pageViews: 0, visits: 0, linkClicks: 0, siteClicks: 0, contacts: 0 };
   const CONTACT_CLICKS = ['email', 'call', 'text', 'ig-dm', 'form:contact'];
-  const CONTACT_GO = ['book', 'discord'];
+  const CONTACT_GO = ['discord'];
   const SOCIAL_GO = ['tiktok', 'instagram', 'youtube', 'linkedin', 'discord'];
+  const mix = {}, methods = {};
+  const addContact = (src, method) => { mix[src] = mix[src] || {}; mix[src][method] = (mix[src][method] || 0) + 1; methods[method] = (methods[method] || 0) + 1; };
   const bump = (src, key) => { bySource[src] = bySource[src] || { visitors: 0, clicks: 0, contacts: 0 }; bySource[src][key]++; };
   for (const row of rows) {
     const day = String(row.clicked_at).slice(0, 10);
@@ -189,13 +191,13 @@ async function handleStats(req, res) {
       const label = row.slug.slice(6), src = normSrc(row.referrer) || 'direct';
       totals.siteClicks++; byDay[day].siteClicks++; tally(buttons, label);
       bump(src, 'clicks');
-      if (CONTACT_CLICKS.includes(label)) { totals.contacts++; bump(src, 'contacts'); }
+      if (CONTACT_CLICKS.includes(label)) { totals.contacts++; bump(src, 'contacts'); addContact(src, label); }
       if (label.startsWith('out:')) tally(dest, normSrc(label.slice(4).split('/')[0]));
     } else {
       const src = normSrc(row.referrer) || 'direct';
       totals.linkClicks++; byDay[day].linkClicks++; tally(links, row.slug);
       bump(src, 'clicks');
-      if (CONTACT_GO.includes(row.slug)) { totals.contacts++; bump(src, 'contacts'); }
+      if (CONTACT_GO.includes(row.slug)) { totals.contacts++; bump(src, 'contacts'); addContact(src, row.slug); }
       if (SOCIAL_GO.includes(row.slug)) tally(dest, row.slug);
     }
     tally(countries, row.country);
@@ -208,6 +210,8 @@ async function handleStats(req, res) {
     ],
     bySource: Object.entries(bySource).map(([source, v]) => ({ source, ...v })).sort((a, b) => b.visitors - a.visitors || b.clicks - a.clicks).slice(0, 12),
     destinations: top(dest, 8),
+    contactMethods: top(methods, 8),
+    contactMix: Object.entries(mix).map(([source, m]) => ({ source, total: Object.values(m).reduce((a, b) => a + b, 0), methods: m })).sort((a, b) => b.total - a.total).slice(0, 12),
   };
   const series = [];
   for (let i = days - 1; i >= 0; i--) {

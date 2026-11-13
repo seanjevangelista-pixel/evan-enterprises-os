@@ -1708,6 +1708,14 @@ async function loadCallLeads() {
           </div>
         </div></div>
         <div class="card" style="margin-bottom:16px"><div class="card-body">
+          <div class="stat-label" style="margin-bottom:4px">How people reached out, and from where</div>
+          <div style="font-size:12.5px;opacity:.65;margin-bottom:12px">Email, call, text, Instagram DM and Discord are counted when someone taps the button. They leave the site from there, so a tap shows intent, not a confirmed message. Contact form sends are confirmed.</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+            <div><div class="stat-label" style="margin-bottom:8px">By method</div><div id="tr-methods"></div></div>
+            <div><div class="stat-label" style="margin-bottom:8px">Source × method</div><div id="tr-mix" style="overflow-x:auto"></div></div>
+          </div>
+        </div></div>
+        <div class="card" style="margin-bottom:16px"><div class="card-body">
           <div class="stat-label" style="margin-bottom:10px">Page views per day</div>
           <div id="tr-chart" style="min-height:120px"></div>
         </div></div>
@@ -3553,6 +3561,12 @@ async function loadTraffic(){
     }).join('');
     document.getElementById('tr-bysrc').innerHTML=f.bySource.length?'<table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead><tr style="text-align:left;opacity:.65;font-size:12px"><th style="padding:4px 6px 4px 0">Source</th><th>Visits</th><th>Clicks</th><th>Reached out</th></tr></thead><tbody>'+f.bySource.map(r=>`<tr style="border-top:1px solid rgba(128,128,128,.15)"><td style="padding:6px 6px 6px 0;font-weight:600">${trEsc(r.source)}</td><td>${r.visitors}</td><td>${r.clicks}</td><td>${r.contacts}</td></tr>`).join('')+'</tbody></table>':'<div style="opacity:.6;font-size:13px">No data yet</div>';
     trList('tr-dest',f.destinations);
+    // reach-out methods
+    const MN={ 'email':'Email','call':'Phone call','text':'Text / iMessage','ig-dm':'Instagram DM','form:contact':'Contact form','discord':'Discord' };
+    trList('tr-methods',(f.contactMethods||[]),n=>MN[n]||n);
+    const mix=f.contactMix||[], cols=[...new Set(mix.flatMap(r=>Object.keys(r.methods)))];
+    document.getElementById('tr-mix').innerHTML=mix.length?'<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left;opacity:.65;font-size:12px"><th style="padding:4px 8px 4px 0">Source</th>'+cols.map(c=>`<th style="padding:4px 8px">${trEsc(MN[c]||c)}</th>`).join('')+'<th style="padding:4px 8px">Total</th></tr></thead><tbody>'+mix.map(r=>`<tr style="border-top:1px solid rgba(128,128,128,.15)"><td style="padding:6px 8px 6px 0;font-weight:600">${trEsc(r.source)}</td>${cols.map(c=>`<td style="padding:6px 8px">${r.methods[c]||'·'}</td>`).join('')}<td style="padding:6px 8px;font-weight:700">${r.total}</td></tr>`).join('')+'</tbody></table>':'<div style="opacity:.6;font-size:13px">No reach-outs yet</div>';
+
     trLast=d;
     trList('tr-links',d.links);
     trList('tr-buttons',d.buttons,trPretty);

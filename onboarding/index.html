@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Client Onboarding — Evan Enterprises LLC</title>
+<title>How Working Together Works — Pricing &amp; Process | Evan Enterprises</title>
+<meta name="description" content="How working with Evan Enterprises works: the four-step process, plain-English pricing for websites, ad management and UGC, and answers to common questions. Austin, TX.">
 <link rel="canonical" href="https://evanenterprise.com/onboarding">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<meta name="theme-color" content="#0A0A0C">
-<meta name="description" content="How working with Evan Enterprises works — ad management, website builds, and UGC. Payment terms, kickoff process, timelines, and rates, all in one place.">
-<meta property="og:title" content="Client Onboarding — Evan Enterprises LLC">
-<meta property="og:description" content="How working together goes — payment terms, kickoff process, timelines, and rates for ad management, website builds, and UGC.">
+<meta name="theme-color" content="#FAFAF8">
+<meta property="og:title" content="How working together works — Evan Enterprises">
+<meta property="og:description" content="Process, plain-English pricing and FAQ for websites, ad management and UGC.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://evanenterprise.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -18,398 +18,186 @@
 <meta name="twitter:image" content="https://evanenterprise.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/site.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How fast do you respond?","acceptedAnswer":{"@type":"Answer","text":"Within 24 hours, always, and it is always Sean replying, not a rep relaying messages."}},
+{"@type":"Question","name":"I'm not sure which service I need — is that okay?","acceptedAnswer":{"@type":"Answer","text":"Completely normal. The first call is for talking through your business and getting an honest recommendation."}},
+{"@type":"Question","name":"Can I cancel ad management if it's not working out?","acceptedAnswer":{"@type":"Answer","text":"Yes. Ad management is month-to-month with no contract lock-in and no early termination fee."}},
+{"@type":"Question","name":"Do one-time projects come with any ongoing commitment?","acceptedAnswer":{"@type":"Answer","text":"No. Websites and UGC work wrap up at final delivery with no retainer or automatic renewal."}},
+{"@type":"Question","name":"What if I want changes after the first draft?","acceptedAnswer":{"@type":"Answer","text":"Revision rounds are part of the scope agreed at kickoff, so changes are not a surprise bill."}}
+]}
+</script>
 <style>
-:root{
-  --ink:#0A0A0C;
-  --panel:#0F1B33;
-  --white:#F7F7F5;
-  --body:#9A9C9F;
-  --dim:#7A7C80;
-  --accent:#3B5BDB;
-  --on-accent:#F7F7F5;
-  --hair:rgba(247,247,245,.10);
-  --ease:cubic-bezier(.22,1,.36,1);
-  --ease-back:cubic-bezier(.34,1.56,.64,1);
-  --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
-  --fm:'IBM Plex Mono',ui-monospace,monospace;
-  --max:1180px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--ink);color:var(--white);font-family:var(--fb);font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-img{max-width:100%;display:block}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
-.eyebrow{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
-.lede{color:var(--body)}
-.sec{padding:88px 0;border-top:1px solid var(--hair)}
-.sec-head{margin-bottom:44px}
-.sec-h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4.2vw,42px);margin-top:13px;letter-spacing:-.01em;line-height:1.15}
-.sec-head .lede{margin-top:16px;max-width:58ch}
+.hero{padding:64px 0 56px}
+.hero h1{margin-top:16px;max-width:15ch}
+.hero .sub{margin-top:20px;font-size:19px;max-width:48ch;color:var(--ink-soft)}
+.hero-cta{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
 
-/* ── nav ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:70;background:rgba(10,10,12,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
-.nav-in{max-width:var(--max);margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-.logo{font-family:var(--fb);font-weight:700;font-size:19px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px}
-.logo img{width:26px;height:26px;object-fit:contain}
-.logo b{color:var(--accent);font-weight:400}
-.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--dim);font-weight:500}
-.nav-links a:hover{color:var(--white)}
-.nav-cta{background:var(--accent);color:var(--on-accent);padding:9px 17px;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.04em;transition:.16s}
-.nav-cta:hover{background:#4A6BF0}
-.burger{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
-.burger span{display:block;width:23px;height:2px;background:var(--white)}
-.mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--hair);background:var(--panel)}
-.mobile-menu.open{display:flex}
-.mobile-menu a{padding:15px 26px;border-bottom:1px solid var(--hair);font-size:15px;font-weight:500}
-@media(max-width:880px){.nav-links{display:none}.burger{display:flex}}
+.note-in{display:grid;grid-template-columns:.32fr .68fr;gap:44px;align-items:center}
+.note-photo{border:var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;max-width:240px;background:var(--lilac)}
+.note-photo img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 20%}
+.note-q{font:700 clamp(21px,2.6vw,28px) var(--font-display);letter-spacing:-.02em;line-height:1.35;margin-top:14px;text-wrap:balance}
+.note-sign{margin-top:16px;font-size:14px;color:var(--ink-soft)}
+@media(max-width:760px){.note-in{grid-template-columns:1fr;gap:26px}.note-photo{max-width:170px}}
 
-/* ── hero ── */
-.hero{padding:148px 0 76px}
-.hero-h1{font-family:var(--fb);font-weight:700;font-size:clamp(34px,5.6vw,58px);line-height:1.15;margin:16px 0 0;letter-spacing:-.01em;max-width:18ch}
-.accent-t{color:var(--accent)}
-.hero-sub{margin-top:20px;max-width:56ch;font-size:17px;color:var(--body)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:15px;padding:14px 24px;border:0;cursor:pointer;transition:.16s}
-.btn-p{background:var(--white);color:var(--ink);font-weight:700}
-.btn-p:hover{opacity:.85}
-.btn-s{border:1px solid var(--hair);color:var(--white);background:transparent}
-.btn-s:hover{border-color:var(--dim);background:var(--panel)}
-.hero-cta{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
-.hero-mask{overflow:hidden}
-.hero-mask>*{transform:translateY(100%);opacity:0;transition:transform 1s var(--ease),opacity .8s var(--ease)}
-.hero-mask:nth-of-type(1)>*{transition-delay:.05s}
-.hero-mask:nth-of-type(2)>*{transition-delay:.16s}
-.hero-mask:nth-of-type(3)>*{transition-delay:.27s}
-.hero-mask:nth-of-type(4)>*{transition-delay:.38s}
-body.is-ready .hero-mask>*{transform:none;opacity:1}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.step{padding:26px 22px}
+.step .num{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--blue);color:#fff;font:800 16px var(--font-display)}
+.step h3{font:800 19px var(--font-display);letter-spacing:-.02em;margin:16px 0 8px}
+.step p{font-size:15px;color:var(--ink-soft)}
+@media(max-width:960px){.steps{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.steps{grid-template-columns:1fr}}
 
-/* ── welcome note ── */
-.note-in{display:grid;grid-template-columns:.3fr .7fr;gap:44px;align-items:center}
-.note-photo{width:100%;max-width:210px;aspect-ratio:4/5;object-fit:cover;object-position:center 20%;filter:grayscale(1) contrast(1.05);border:1px solid var(--hair)}
-.note-q{font-size:21px;line-height:1.55;color:var(--white);font-weight:500;text-wrap:balance}
-.note-sign{margin-top:18px;font-family:var(--fm);font-size:12.5px;letter-spacing:.05em;color:var(--dim)}
-@media(max-width:700px){.note-in{grid-template-columns:1fr;gap:26px}.note-photo{max-width:160px}}
-
-/* ── faq ── */
-.faq-list{display:flex;flex-direction:column;border-top:1px solid var(--hair)}
-.faq-item{border-bottom:1px solid var(--hair)}
-.faq-item summary{padding:22px 0;font-weight:600;font-size:16px;color:var(--white);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.faq-item summary::-webkit-details-marker{display:none}
-.faq-item summary .ic{font-family:var(--fm);color:var(--accent);font-size:18px;transition:transform .25s var(--ease);flex:none}
-.faq-item[open] summary .ic{transform:rotate(45deg)}
-.faq-item p{padding-bottom:22px;color:var(--body);font-size:15px;line-height:1.65;max-width:62ch}
-
-/* ── payment cards ── */
-.pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.pay-card{background:var(--panel);border:1px solid var(--hair);padding:24px 22px;display:flex;flex-direction:column;gap:7px}
-.pay-card .svc{font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
-.pay-card .split{font-family:var(--fb);font-weight:700;font-size:20px;color:var(--white)}
-.pay-card .note{font-size:13.5px;color:var(--body);line-height:1.55}
+.pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pay{padding:28px 24px;display:flex;flex-direction:column;gap:8px}
+.pay:nth-child(2){background:var(--yellow)}
+.pay .svc{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+.pay .split{font:800 30px var(--font-display);letter-spacing:-.03em}
+.pay p{font-size:15px;color:var(--ink-soft)}
 @media(max-width:900px){.pay-grid{grid-template-columns:1fr}}
 
-/* ── kickoff steps ── */
-.step-list{display:flex;flex-direction:column}
-.step{display:grid;grid-template-columns:40px 1fr;gap:18px;padding:22px 0;border-top:1px solid var(--hair)}
-.step:first-child{border-top:0}
-.step .n{font-family:var(--fm);font-size:14px;color:var(--accent);padding-top:3px}
-.step .svc-name{font-weight:600;font-size:16.5px;color:var(--white);margin-bottom:6px}
-.step .items{font-size:15px;color:var(--body);line-height:1.65}
+.table-wrap{overflow-x:auto;padding-bottom:8px}
+.rates{width:100%;min-width:520px;border-collapse:collapse;background:#fff;border:var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.rates th{text-align:left;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;padding:16px 22px;border-bottom:var(--line);background:var(--paper-2)}
+.rates td{padding:16px 22px;border-bottom:var(--line);vertical-align:top;font-size:15.5px}
+.rates tr:last-child td{border-bottom:0}
+.rates td:first-child{font-weight:700}
+.rates td.price{font:800 18px var(--font-display);white-space:nowrap}
+.rates td.desc{color:var(--ink-soft)}
+.rates tbody tr:hover td{background:var(--paper)}
 
-/* ── rate table ── */
-.rate-table{width:100%;border-collapse:collapse;font-size:15px}
-.rate-table th{text-align:left;font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:500;padding:0 0 12px;border-bottom:1px solid var(--hair)}
-.rate-table td{padding:15px 0;border-bottom:1px solid var(--hair);vertical-align:top}
-.rate-table td.price{font-family:var(--fm);color:var(--accent);white-space:nowrap;padding-right:20px}
-.rate-table td.desc{color:var(--body)}
-.rate-table tr:last-child td{border-bottom:0}
-.table-wrap{overflow-x:auto}
-
-/* ── two col ── */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:36px}
-@media(max-width:700px){.two-col{grid-template-columns:1fr}}
-.two-col h3{font-size:16px;font-weight:600;margin-bottom:10px;color:var(--white)}
-.two-col p{color:var(--body);font-size:15px;line-height:1.65}
-
-/* ── closing / contact ── */
-.close-cta{text-align:center;padding:76px 0}
-.close-cta h2{font-family:var(--fb);font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:-.01em}
-.close-cta p{margin-top:14px;color:var(--body)}
-.close-cta .hero-cta{justify-content:center;margin-top:26px}
-
-/* ── footer ── */
-footer{padding:48px 0 36px;border-top:1px solid var(--hair)}
-.foot-in{max-width:var(--max);margin:0 auto;padding:0 26px;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center}
-.foot-logo{font-family:var(--fb);font-weight:700;font-size:18px;text-transform:uppercase;display:flex;align-items:center;gap:9px}
-.foot-logo img{width:22px;height:22px;object-fit:contain}
-.foot-links,.foot-social{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-size:14px;color:var(--dim)}
-.foot-links a:hover,.foot-social a:hover{color:var(--white)}
-.foot-copy{font-family:var(--fm);font-size:11.5px;color:#4C4D52}
-
-.rv{opacity:0;transform:translateY(20px);transition:.75s var(--ease)}
-.rv.in{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.hero-mask>*{opacity:1;transform:none}}
+.faq{border-top:var(--line);max-width:760px}
+.faq details{border-bottom:var(--line)}
+.faq summary{padding:22px 0;font:700 18px var(--font-display);letter-spacing:-.015em;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .ic{flex:none;width:30px;height:30px;border-radius:50%;background:var(--yellow);color:var(--blue);display:grid;place-items:center;font:700 20px var(--font-body);transition:transform .25s var(--ease)}
+.faq details[open] summary .ic{transform:rotate(45deg)}
+.faq p{padding-bottom:22px;color:var(--ink-soft);font-size:16px;max-width:62ch}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-in">
-    <a href="/" class="logo"><img src="/logo-mark.png" alt="">Evan<b>·</b>Enterprises</a>
-    <div class="nav-links">
-      <a href="/#marketing">Marketing</a>
-      <a href="/#about">About</a>
-      <a href="/#contact" class="nav-cta">Book a call</a>
-    </div>
-    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
-  </div>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="/#marketing">Marketing</a>
-    <a href="/#about">About</a>
-    <a href="/#contact">Book a call →</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<header class="hero">
-  <div class="wrap">
-    <div class="hero-mask"><div class="eyebrow">Welcome</div></div>
-    <div class="hero-mask"><h1 class="hero-h1">Glad you're here — <span class="accent-t">here's how this goes</span> from here.</h1></div>
-    <div class="hero-mask"><p class="hero-sub">No fine print, no surprises. Just what to expect, what it costs, and answers to the stuff most people wonder about before working with someone new. If anything's still unclear after reading, just ask — that's what I'm here for.</p></div>
-    <div class="hero-mask">
-      <div class="hero-cta">
-        <a href="/#contact" class="btn btn-p">Book a call →</a>
-        <a href="#payment" class="btn btn-s">See pricing →</a>
-      </div>
-    </div>
+<header class="top">
+  <div class="top-in">
+    <a href="/" class="brand-logo"><img src="/logo-mark.png" alt="">Evan Enterprises</a>
+    <nav class="top-nav" aria-label="Main">
+      <a href="/portfolio">Portfolio</a>
+      <a href="/ugc">UGC</a>
+      <a href="/links">Links</a>
+      <a href="/#contact" class="btn btn--blue" data-magnet>Book a call</a>
+    </nav>
   </div>
 </header>
 
-<!-- WELCOME NOTE -->
-<section class="sec">
+<main>
+<section class="hero">
   <div class="wrap">
-    <div class="note-in rv">
-      <img src="/sean.jpg" alt="Sean Evangelista" class="note-photo">
-      <div>
-        <div class="eyebrow">A quick note from me</div>
-        <p class="note-q" style="margin-top:14px">"You're working with me — not an account manager, not a junior rep learning on your budget. From your first message to the day we wrap, I'm the one doing the work and the one you text when something comes up."</p>
-        <div class="note-sign">— Sean, Evan Enterprises LLC</div>
-      </div>
+    <span class="sticker rv">Welcome</span>
+    <h1 class="display h1 rv" style="--i:1">Glad you're here. <mark class="hl">Here's how this goes.</mark></h1>
+    <p class="sub rv" style="--i:2">No fine print, no surprises. Just what to expect, what it costs, and answers to the stuff most people wonder about before working with someone new. If anything's still unclear after reading, just ask.</p>
+    <div class="hero-cta rv" style="--i:3">
+      <a href="/#contact" class="btn btn--blue" data-magnet>Book a call →</a>
+      <a href="#pricing" class="btn btn--ghost" data-magnet>See pricing ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- NOTE -->
+<section class="sec sec--tint">
+  <div class="wrap note-in">
+    <div class="note-photo rv"><img src="/sean.jpg" alt="Sean Evangelista" width="240" height="300" loading="lazy"></div>
+    <div class="rv" style="--i:1">
+      <span class="label sticker sticker--lilac">A quick note from me</span>
+      <p class="note-q">"You're working with me — not an account manager, not a junior rep learning on your budget. From your first message to the day we wrap, I'm the one doing the work and the one you text when something comes up."</p>
+      <div class="note-sign">— Sean, Evan Enterprises LLC</div>
     </div>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
-<section class="sec">
+<section class="sec" id="process">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">How it works</div>
-      <h2 class="sec-h2">Four steps, start to finish.</h2>
-      <p class="lede">Same shape every time, whether it's ads, a website, or content.</p>
-    </div>
-    <div class="step-list rv">
-      <div class="step">
-        <div class="n">01</div>
-        <div>
-          <div class="svc-name">A quick call</div>
-          <div class="items">15–20 minutes, no pressure — we talk through what you need and lock in scope, budget, and timeline together.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="n">02</div>
-        <div>
-          <div class="svc-name">Deposit, then I get moving</div>
-          <div class="items">A 50% deposit gets things started (ad management works a little differently — see pricing below). Then I'm heads-down on your project.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="n">03</div>
-        <div>
-          <div class="svc-name">You see it before it's final</div>
-          <div class="items">A site walkthrough, a campaign screen-share, or content sent for approval — nothing goes live without you seeing it first.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="n">04</div>
-        <div>
-          <div class="svc-name">Launch</div>
-          <div class="items">Remaining balance, then we're live. Websites and content wrap here; ad management keeps going with ongoing reporting and optimization.</div>
-        </div>
-      </div>
+    <div class="sec-head rv"><span class="label sticker">How it works</span><h2 class="display h2">Four steps, start to finish.</h2>
+      <p>Same shape every time, whether it's ads, a website, or content.</p></div>
+    <div class="steps">
+      <div class="step card rv"><span class="num">1</span><h3>A quick call</h3><p>15–20 minutes, no pressure. We talk through what you need and lock in scope, budget and timeline together.</p></div>
+      <div class="step card rv" style="--i:1"><span class="num">2</span><h3>Deposit, then I get moving</h3><p>A 50% deposit gets things started (ad management works a little differently — see pricing). Then I'm heads-down on your project.</p></div>
+      <div class="step card rv" style="--i:2"><span class="num">3</span><h3>You see it before it's final</h3><p>A site walkthrough, a campaign screen-share, or content sent for approval. Nothing goes live without you seeing it first.</p></div>
+      <div class="step card rv" style="--i:3"><span class="num">4</span><h3>Launch</h3><p>Remaining balance, then we're live. Websites and content wrap here; ad management continues with reporting and optimization.</p></div>
     </div>
   </div>
 </section>
 
-<!-- PAYMENT -->
-<section class="sec" id="payment">
+<!-- PRICING -->
+<section class="sec sec--tint" id="pricing">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">Pricing</div>
-      <h2 class="sec-h2">What it costs, in plain terms.</h2>
-      <p class="lede">Straightforward on purpose — here's what you'd pay and when, no hidden fees.</p>
-    </div>
-    <div class="pay-grid rv">
-      <div class="pay-card">
-        <div class="svc">Website Building</div>
-        <div class="split">50% → 50%</div>
-        <div class="note">Half to start, half when it launches. Bigger builds split into three — we'll map it out on the call.</div>
-      </div>
-      <div class="pay-card">
-        <div class="svc">Ad Management</div>
-        <div class="split">$400/mo</div>
-        <div class="note">$200 to start, $200 before ads go live, then $400/mo — cancel anytime. Ad spend itself ($500/mo min.) goes straight to Google, separate from my fee.</div>
-      </div>
-      <div class="pay-card">
-        <div class="svc">UGC Work</div>
-        <div class="split">50% → 50%</div>
-        <div class="note">Half to start production, half when the final content's delivered. Per-piece pricing below if you just want one-off content.</div>
-      </div>
+    <div class="sec-head rv"><span class="label sticker sticker--yellow">Pricing</span><h2 class="display h2">What it costs, in plain terms.</h2>
+      <p>Straightforward on purpose — here's what you'd pay and when, no hidden fees.</p></div>
+    <div class="pay-grid">
+      <div class="pay card rv"><div class="svc">Website building</div><div class="split">50% → 50%</div><p>Half to start, half when it launches. Bigger builds split into three — we'll map it out on the call.</p></div>
+      <div class="pay card rv" style="--i:1"><div class="svc">Ad management</div><div class="split">$400/mo</div><p>$200 to start, $200 before ads go live, then $400/mo — cancel anytime. Ad spend itself ($500/mo minimum) goes straight to Google, separate from my fee.</p></div>
+      <div class="pay card rv" style="--i:2"><div class="svc">UGC work</div><div class="split">50% → 50%</div><p>Half to start production, half when the final content's delivered. Per-piece pricing below if you just want one-off content.</p></div>
     </div>
   </div>
 </section>
 
-<!-- UGC RATES -->
+<!-- RATES -->
 <section class="sec">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">Just need content?</div>
-      <h2 class="sec-h2">Content, à la carte.</h2>
-      <p class="lede">No need to book a full project — these run on their own too.</p>
-    </div>
+    <div class="sec-head rv"><span class="label sticker sticker--pink">Just need content?</span><h2 class="display h2">Content, à la carte.</h2>
+      <p>No need to book a full project — these run on their own too.</p></div>
     <div class="table-wrap rv">
-      <table class="rate-table">
-        <tr><th>Format</th><th>Rate</th><th>What it is</th></tr>
+      <table class="rates">
+        <thead><tr><th>Format</th><th>Rate</th><th>What it is</th></tr></thead>
+        <tbody>
         <tr><td>Sponsored Reel (IG)</td><td class="price">$150–$300</td><td class="desc">Brand integration in an Instagram Reel</td></tr>
         <tr><td>Sponsored TikTok</td><td class="price">$200–$400</td><td class="desc">Dedicated TikTok video</td></tr>
         <tr><td>Story Mention</td><td class="price">$50–$100</td><td class="desc">IG or TikTok story shoutout</td></tr>
         <tr><td>UGC Ad Content</td><td class="price">$100–$250</td><td class="desc">Content for your brand's own use in paid ads</td></tr>
         <tr><td>Multi-Platform Bundle</td><td class="price">$400–$700</td><td class="desc">IG + TikTok + Facebook</td></tr>
+        </tbody>
       </table>
     </div>
   </div>
 </section>
 
 <!-- FAQ -->
-<section class="sec">
+<section class="sec sec--tint">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">Common questions</div>
-      <h2 class="sec-h2">Things people usually ask.</h2>
-    </div>
-    <div class="faq-list rv">
-      <details class="faq-item">
-        <summary>How fast do you respond?<span class="ic">+</span></summary>
-        <p>Within 24 hours, always — and it's always me replying, not a rep relaying things back and forth. Most of the time it's a lot faster than that.</p>
-      </details>
-      <details class="faq-item">
-        <summary>I'm not sure which service I need — is that okay?<span class="ic">+</span></summary>
-        <p>Completely normal. That's what the first call is for — tell me what's going on with your business and I'll tell you honestly what would actually help, even if it's not the thing you asked about.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Can I cancel ad management if it's not working out?<span class="ic">+</span></summary>
-        <p>Yes — it's month-to-month with no contract lock-in and no early termination fee. Cancel anytime.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Do one-time projects come with any ongoing commitment?<span class="ic">+</span></summary>
-        <p>No. Websites and UGC work wrap up at final delivery — no retainer, no renewal, nothing automatic.</p>
-      </details>
-      <details class="faq-item">
-        <summary>What if I want changes after the first draft?<span class="ic">+</span></summary>
-        <p>Revision rounds are part of the scope we agree on at kickoff, so this isn't a surprise bill — we'll talk through exactly how many rounds are included before anything starts.</p>
-      </details>
+    <div class="sec-head rv"><span class="label sticker">Common questions</span><h2 class="display h2">Things people usually ask.</h2></div>
+    <div class="faq rv">
+      <details><summary>How fast do you respond?<span class="ic">+</span></summary><p>Within 24 hours, always — and it's always me replying, not a rep relaying things back and forth. Most of the time it's a lot faster than that.</p></details>
+      <details><summary>I'm not sure which service I need — is that okay?<span class="ic">+</span></summary><p>Completely normal. That's what the first call is for — tell me what's going on with your business and I'll tell you honestly what would actually help, even if it's not the thing you asked about.</p></details>
+      <details><summary>Can I cancel ad management if it's not working out?<span class="ic">+</span></summary><p>Yes — it's month-to-month with no contract lock-in and no early termination fee. Cancel anytime.</p></details>
+      <details><summary>Do one-time projects come with any ongoing commitment?<span class="ic">+</span></summary><p>No. Websites and UGC work wrap up at final delivery — no retainer, no renewal, nothing automatic.</p></details>
+      <details><summary>What if I want changes after the first draft?<span class="ic">+</span></summary><p>Revision rounds are part of the scope we agree on at kickoff, so this isn't a surprise bill — we'll talk through exactly how many rounds are included before anything starts.</p></details>
     </div>
   </div>
 </section>
 
-<!-- CLOSING CTA -->
-<section class="close-cta">
+<section class="band">
   <div class="wrap">
-    <h2 class="rv">Ready when you are.</h2>
-    <p class="rv">Book a call, or just email me — either way, we'll figure out what fits.</p>
-    <div class="hero-cta rv">
-      <a href="/#contact" class="btn btn-p">Book a call →</a>
-      <a href="mailto:seanjayme@evanenterprise.com" class="btn btn-s">Email me →</a>
+    <h2 class="display h2 rv">Ready when you are.</h2>
+    <p class="rv" style="--i:1">Book a call, or just email me — either way, we'll figure out what fits.</p>
+    <div class="row rv" style="--i:2">
+      <a href="/#contact" class="btn btn--blue" data-magnet>Book a call →</a>
+      <a href="mailto:seanjayme@evanenterprise.com" class="btn btn--ghost" data-magnet>Email me →</a>
     </div>
   </div>
 </section>
+</main>
 
-<!-- FOOTER -->
-<footer>
-  <div class="foot-in">
-    <a href="/" class="foot-logo"><img src="/logo-mark.png" alt="">Evan Enterprises LLC</a>
-    <div class="foot-links">
-      <a href="/#marketing">Marketing</a>
-      <a href="/#about">About</a>
-      <a href="/portfolio">Portfolio</a>
-      <a href="/onboarding">Onboarding</a>
-      <a href="/privacy.html">Privacy</a>
-      <a href="/terms.html">Terms</a>
-    </div>
-    <div class="foot-social">
-      <a href="https://www.instagram.com/officialseanjayme" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener">TikTok</a>
-      <a href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener">YouTube</a>
-    </div>
-    <div class="foot-contact" style="font-family:var(--fm);font-size:13px;color:var(--dim)">
-      Evan Enterprises LLC · Austin, TX · <a href="mailto:seanjayme@evanenterprise.com">seanjayme@evanenterprise.com</a> · (512) 905-0380
-    </div>
-    <div class="foot-copy">© 2026 Evan Enterprises LLC. All rights reserved.</div>
-  </div>
+<footer class="foot wrap">
+  <a href="/" class="brand-logo" style="justify-content:center"><img src="/logo-mark.png" alt="">Evan Enterprises LLC</a>
+  <div class="foot-links"><a href="/#marketing">Services</a><a href="/#about">About</a><a href="/portfolio">Portfolio</a><a href="/ugc">UGC</a><a href="/links">Links</a><a href="/onboarding">Onboarding</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
+  <div class="foot-social"><a href="https://www.instagram.com/officialseanjayme" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener">TikTok</a><a href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener">YouTube</a><a href="https://www.linkedin.com/in/seanjevangelista/" target="_blank" rel="noopener">LinkedIn</a></div>
+  <div class="foot-contact">Evan Enterprises LLC · Austin, TX · <a href="mailto:seanjayme@evanenterprise.com" style="text-decoration:underline">seanjayme@evanenterprise.com</a> · (512) 905-0380</div>
+  <div class="foot-copy">© 2026 Evan Enterprises LLC. All rights reserved.</div>
 </footer>
 
-<script>
-// ── mobile menu ──
-(function(){
-  var b=document.getElementById('burger'), m=document.getElementById('mobileMenu');
-  b.addEventListener('click',function(){
-    var open=m.classList.toggle('open');
-    b.setAttribute('aria-expanded',open?'true':'false');
-  });
-  m.querySelectorAll('a').forEach(function(a){
-    a.addEventListener('click',function(){m.classList.remove('open');b.setAttribute('aria-expanded','false');});
-  });
-})();
-
-// ── page-load reveal (hero mask lines) ──
-(function(){
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ document.body.classList.add('is-ready'); return; }
-  requestAnimationFrame(function(){ document.body.classList.add('is-ready'); });
-})();
-
-// ── magnetic buttons ──
-(function(){
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if(window.matchMedia('(hover: none)').matches) return;
-  document.querySelectorAll('.btn').forEach(function(btn){
-    btn.style.transition='transform .3s var(--ease)';
-    btn.addEventListener('mousemove',function(e){
-      var rect=btn.getBoundingClientRect();
-      var x=e.clientX-rect.left-rect.width/2, y=e.clientY-rect.top-rect.height/2;
-      btn.style.transitionDuration='.15s';
-      btn.style.transform='translate('+(x*0.25)+'px,'+(y*0.35)+'px)';
-    });
-    btn.addEventListener('mouseleave',function(){
-      btn.style.transitionDuration='.5s';
-      btn.style.transitionTimingFunction='var(--ease-back)';
-      btn.style.transform='translate(0,0)';
-    });
-  });
-})();
-
-// ── scroll reveal ──
-(function(){
-  // No IntersectionObserver (older in-app browsers): show everything instead of
-  // throwing and leaving every .rv block at opacity:0.
-  if(!("IntersectionObserver" in window)){ document.querySelectorAll(".rv").forEach(function(el){ el.classList.add("in"); }); return; }
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  },{threshold:.12});
-  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
-})();
-</script>
-
+<script src="/js/site.js"></script>
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>

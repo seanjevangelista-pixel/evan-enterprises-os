@@ -1092,6 +1092,9 @@ async function loadCallLeads() {
       <button class="nav-item" data-tab="distribution">
         <span class="nav-icon">📦</span> Distribution
       </button>
+      <button class="nav-item" data-tab="traffic">
+        <span class="nav-icon">📈</span> Traffic
+      </button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-pill">
@@ -1672,6 +1675,42 @@ async function loadCallLeads() {
     </section>
 
     <!-- ── DISTRIBUTION ── -->
+    <section class="tab-section" data-section="traffic">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Traffic</div>
+          <div class="page-sub">Visits and clicks on evanenterprise.com, plus your /links page</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select class="form-control" id="tr-days" style="width:150px">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+          </select>
+          <button class="btn btn-secondary" id="tr-refresh">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Page views</div><div class="stat-value blue" id="tr-pv">—</div><div class="stat-sub">All pages on the site</div></div>
+          <div class="stat-card"><div class="stat-label">Links-page clicks</div><div class="stat-value" id="tr-links-n">—</div><div class="stat-sub">Taps on your /links buttons</div></div>
+          <div class="stat-card"><div class="stat-label">Site clicks</div><div class="stat-value green" id="tr-site-n">—</div><div class="stat-sub">Buttons, calls, texts, DMs, emails</div></div>
+          <div class="stat-card"><div class="stat-label">Top source</div><div class="stat-value" id="tr-src" style="font-size:20px">—</div><div class="stat-sub">Where most visits come from</div></div>
+        </div>
+        <div class="card" style="margin-bottom:16px"><div class="card-body">
+          <div class="stat-label" style="margin-bottom:10px">Page views per day</div>
+          <div id="tr-chart" style="min-height:120px"></div>
+        </div></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+          <div class="card"><div class="card-body"><div class="stat-label" style="margin-bottom:8px">Links page: what people tap</div><div id="tr-links"></div></div></div>
+          <div class="card"><div class="card-body"><div class="stat-label" style="margin-bottom:8px">Site buttons &amp; contact clicks</div><div id="tr-buttons"></div></div></div>
+          <div class="card"><div class="card-body"><div class="stat-label" style="margin-bottom:8px">Top pages</div><div id="tr-pages"></div></div></div>
+          <div class="card"><div class="card-body"><div class="stat-label" style="margin-bottom:8px">Where visitors come from</div><div id="tr-refs"></div></div></div>
+        </div>
+        <p id="tr-note" style="margin-top:16px;font-size:12.5px;opacity:.7;line-height:1.5">Counts every page view and click without cookies or IP addresses, so it measures activity, not unique people. Visits from your own browser are excluded after you open the site once with <b>#notrack</b> on the end of the address.</p>
+      </div>
+    </section>
+
     <section class="tab-section" data-section="distribution">
       <div class="page-header">
         <div>
@@ -3441,6 +3480,57 @@ $('save-client').addEventListener('click', saveClient);
 document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeModal(b.dataset.close)));
 document.querySelectorAll('.modal-bg').forEach(bg => bg.addEventListener('click', e => { if (e.target===bg) closeModal(bg.id); }));
 
+// ── TRAFFIC (site analytics) ──
+function trEsc(v){ return String(v==null?'':v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function trPretty(k){
+  const fixed={ 'email':'Email link','call':'Phone call link','text':'Text-message link','ig-dm':'Instagram DM','form:contact':'Contact form sent','form:review':'Review form sent' };
+  if (fixed[k]) return fixed[k];
+  if (k.startsWith('btn:')) return 'Button: '+k.slice(4).replace(/-/g,' ');
+  if (k.startsWith('out:')) return 'Outbound: '+k.slice(4);
+  if (k.startsWith('nav:')) return 'Link to '+k.slice(4);
+  if (k.startsWith('jump:')) return 'Jump to #'+k.slice(5);
+  return k;
+}
+function trList(id, rows, fmt){
+  const el=document.getElementById(id);
+  if (!rows||!rows.length){ el.innerHTML='<div style="opacity:.6;font-size:13px">No data yet</div>'; return; }
+  const max=Math.max(...rows.map(r=>r.count));
+  el.innerHTML=rows.map(r=>`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid rgba(128,128,128,.15)">
+    <div style="flex:1;min-width:0"><div style="font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${trEsc(fmt?fmt(r.name):r.name)}</div>
+    <div style="height:4px;border-radius:2px;background:rgba(59,91,219,.18);margin-top:4px"><div style="height:4px;border-radius:2px;background:#3B5BDB;width:${Math.max(3,Math.round(r.count/max*100))}%"></div></div></div>
+    <div style="font-weight:700;font-size:14px;font-variant-numeric:tabular-nums">${r.count}</div></div>`).join('');
+}
+let trNoteHtml=null;
+async function loadTraffic(){
+  const note=document.getElementById('tr-note');
+  if (trNoteHtml===null) trNoteHtml=note.innerHTML;
+  try {
+    const { data:{ session } } = await sb.auth.getSession();
+    if (!session) throw new Error('Sign in again');
+    const days=document.getElementById('tr-days').value;
+    const res=await fetch('/api/client-lookup?action=stats&days='+encodeURIComponent(days),{ headers:{ Authorization:'Bearer '+session.access_token }});
+    const d=await res.json();
+    if (!res.ok) throw new Error(d.error||('HTTP '+res.status));
+    document.getElementById('tr-pv').textContent=d.totals.pageViews.toLocaleString();
+    document.getElementById('tr-links-n').textContent=d.totals.linkClicks.toLocaleString();
+    document.getElementById('tr-site-n').textContent=d.totals.siteClicks.toLocaleString();
+    const src=(d.referrers||[])[0]; document.getElementById('tr-src').textContent=src?src.name+' ('+src.count+')':'—';
+    const max=Math.max(1,...d.series.map(x=>x.pageViews)); const w=100/d.series.length;
+    document.getElementById('tr-chart').innerHTML='<svg viewBox="0 0 100 40" preserveAspectRatio="none" style="width:100%;height:120px;display:block">'+
+      d.series.map((x,i)=>`<rect x="${(i*w+w*0.12).toFixed(2)}" y="${(40-(x.pageViews/max*38)).toFixed(2)}" width="${(w*0.76).toFixed(2)}" height="${(x.pageViews/max*38).toFixed(2)}" rx="0.6" fill="#3B5BDB"><title>${x.day}: ${x.pageViews} views, ${x.linkClicks+x.siteClicks} clicks</title></rect>`).join('')+'</svg>'+
+      `<div style="display:flex;justify-content:space-between;font-size:11.5px;opacity:.6;margin-top:4px"><span>${d.series[0].day}</span><span>${d.series[d.series.length-1].day}</span></div>`;
+    trList('tr-links',d.links);
+    trList('tr-buttons',d.buttons,trPretty);
+    trList('tr-pages',d.pages);
+    trList('tr-refs',d.referrers);
+    note.style.color=''; note.innerHTML=trNoteHtml;
+  } catch (e) {
+    note.style.color='#c0392b'; note.textContent='Could not load traffic: '+e.message;
+  }
+}
+document.getElementById('tr-days').addEventListener('change',loadTraffic);
+document.getElementById('tr-refresh').addEventListener('click',loadTraffic);
+
 // ── TABS ──
 let tabSwitching = false;
 document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
@@ -3468,6 +3558,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       tabSwitching = false;
       if (tab==='pipeline')   renderPipeline();
       if (tab==='clients')    renderClients();
+      if (tab==='traffic')    loadTraffic();
       if (tab==='revenue')    renderVisits($('v-filter').value);
       if (tab==='monthly')    renderMonthly();
       if (tab==='payments')   initPaymentsTab();

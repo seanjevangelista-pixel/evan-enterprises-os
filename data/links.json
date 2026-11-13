@@ -25,6 +25,15 @@
       "icon": "chat"
     },
     {
+      "slug": "creators",
+      "group": "start",
+      "label": "Grow as a creator",
+      "desc": "60-day launch program & paid community",
+      "url": "/#creators",
+      "color": "yellow",
+      "icon": "video"
+    },
+    {
       "slug": "tiktok",
       "group": "watch",
       "label": "TikTok",

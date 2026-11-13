@@ -17,6 +17,105 @@
     }
   ],
   "testimonials": [],
-  "videos": [],
-  "best": []
+  "videos": [
+    {
+      "cat": "More reels",
+      "platform": "Instagram",
+      "brand": "attracting a God Fearing Woman",
+      "product": "Nov 8, 2026",
+      "url": "https://www.instagram.com/reel/DfgbuLXuwnL/",
+      "poster": "/ugc/img/reels/DfgbuLXuwnL.jpg"
+    },
+    {
+      "cat": "More reels",
+      "platform": "Instagram",
+      "brand": "sorry mom and dad",
+      "product": "Nov 10, 2026",
+      "url": "https://www.instagram.com/reel/DflRObfRCnG/",
+      "poster": "/ugc/img/reels/DflRObfRCnG.jpg"
+    },
+    {
+      "cat": "More reels",
+      "platform": "Instagram",
+      "brand": "@eatkatya 👀",
+      "product": "Sep 26, 2026",
+      "url": "https://www.instagram.com/reel/DdxjcK3OK6e/",
+      "poster": "/ugc/img/reels/DdxjcK3OK6e.jpg"
+    },
+    {
+      "cat": "More reels",
+      "platform": "Instagram",
+      "brand": "Reel",
+      "product": "Nov 4, 2026",
+      "url": "https://www.instagram.com/reel/DfWN-HjuR4O/",
+      "poster": "/ugc/img/reels/DfWN-HjuR4O.jpg"
+    },
+    {
+      "cat": "More reels",
+      "platform": "Instagram",
+      "brand": "@eatkatya @fypatx 🫡❤️",
+      "product": "Oct 11, 2026",
+      "url": "https://www.instagram.com/reel/DeXncb0xK0R/",
+      "poster": "/ugc/img/reels/DeXncb0xK0R.jpg"
+    },
+    {
+      "cat": "More reels",
+      "platform": "Instagram",
+      "brand": "No Bloat: for the food baby nobody",
+      "product": "Sep 24, 2026",
+      "url": "https://www.instagram.com/reel/DdsE12zRlJu/",
+      "poster": "/ugc/img/reels/DdsE12zRlJu.jpg"
+    },
+    {
+      "cat": "More reels",
+      "platform": "Instagram",
+      "brand": "Reel",
+      "product": "Sep 22, 2026",
+      "url": "https://www.instagram.com/reel/Ddl-rVNOZk-/",
+      "poster": "/ugc/img/reels/Ddl-rVNOZk-.jpg"
+    },
+    {
+      "cat": "More reels",
+      "platform": "Instagram",
+      "brand": "@eatkatya",
+      "product": "Aug 23, 2026",
+      "url": "https://www.instagram.com/reel/DcZkYPdxGnh/",
+      "poster": "/ugc/img/reels/DcZkYPdxGnh.jpg"
+    }
+  ],
+  "best": [
+    {
+      "platform": "Instagram",
+      "date": "Jan 14, 2026",
+      "url": "https://www.instagram.com/reel/DTfoHHJkSNt/",
+      "poster": "/ugc/img/reels/DTfoHHJkSNt.jpg",
+      "caption": "😭😭😭",
+      "likes": "83K",
+      "comments": "312",
+      "views": "1.8M",
+      "shares": "22K",
+      "reposts": "952"
+    },
+    {
+      "platform": "Instagram",
+      "date": "Aug 23, 2026",
+      "url": "https://www.instagram.com/reel/DcZkiXJxQX6/",
+      "poster": "/ugc/img/reels/DcZkiXJxQX6.jpg",
+      "caption": "So Good",
+      "likes": "49K",
+      "comments": "77",
+      "views": "729K",
+      "shares": "9K",
+      "reposts": "1.1K"
+    },
+    {
+      "platform": "Instagram",
+      "date": "Aug 16, 2024",
+      "url": "https://www.instagram.com/reel/C-uzmRdOcsT/",
+      "poster": "/ugc/img/reels/C-uzmRdOcsT.jpg",
+      "caption": "in the lowest of lows, i challenge you not to quit not because it’s hard, but to take a moment and think of your “why”.",
+      "likes": "73K",
+      "comments": "250"
+    }
+  ]
 }

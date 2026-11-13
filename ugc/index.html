@@ -396,13 +396,13 @@
       document.getElementById('bestGrid').innerHTML=B.map(function(v){
         var views=num(v.views), eng=['likes','comments','shares','reposts'].reduce(function(a,k){var n=num(v[k]);return a+(isNaN(n)?0:n);},0);
         var rate=(!isNaN(views)&&views>0&&v.likes&&v.comments&&v.shares)?(eng/views*100):null;
-        var stat=function(k,l){return v[k]?'<span class="best-stat"><b>'+esc(v[k])+'</b> '+l+'</span>':'';};
+        var stat=function(k,l){return v[k]&&!(k==='likes'&&!v.views)?'<span class="best-stat"><b>'+esc(v[k])+'</b> '+l+'</span>':'';};
         var bg=v.poster?' style="background-image:url('+esc(v.poster)+')"':'';
         return '<article class="best card rv"><div class="best-poster"'+bg+'>'+(v.poster?'':esc(v.brand||v.platform||'Video'))+'</div><div>'+
           '<div class="best-meta">'+esc(v.platform||'')+(v.date?' · '+esc(v.date):'')+(v.brand?' · '+esc(v.brand):'')+'</div>'+
-          '<div class="best-views">'+esc(v.views)+' <small>views</small></div>'+
+          '<div class="best-views">'+(v.views?esc(v.views)+' <small>views</small>':(v.likes?esc(v.likes)+' <small>likes</small>':'Reel'))+'</div>'+
           '<div class="best-stats">'+stat('likes','likes')+stat('comments','comments')+stat('shares','shares')+stat('reposts','reposts')+(rate?'<span class="best-stat rate"><b>'+rate.toFixed(1)+'%</b> engagement</span>':'')+'</div>'+
-          (v.premise?'<p class="best-premise">'+esc(v.premise)+'</p>':'')+
+          (v.premise?'<p class="best-premise">'+esc(v.premise)+'</p>':(v.caption?'<p class="best-premise"><i>Caption:</i> “'+esc(v.caption)+'”</p>':''))+
           (v.url?'<a class="best-go" href="'+esc(safeUrl(v.url))+'" target="_blank" rel="noopener">Watch it →</a>':'')+
           '</div></article>';
       }).join('');

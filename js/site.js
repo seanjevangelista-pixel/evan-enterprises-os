@@ -60,3 +60,41 @@ window.siteTestimonials=function(gridId,sectionId){
     if(sectionId&&(items.length||document.querySelector('#'+gridId+' .tq--lead'))){var sec=document.getElementById(sectionId); if(sec) sec.hidden=false;}
   }).catch(function(){});
 };
+
+// ── lightweight first-party analytics (no cookies, no IP stored) ──────────────────────
+// Logs page views and clicks to /api/client-lookup?action=hit. /go/ links are logged server-side.
+// Add #notrack to any URL once to exclude this browser from the counts.
+window.siteAnalytics=function(env){
+  if(!/(^|\.)evanenterprise\.com$/i.test(env.hostname)) return;
+  try{
+    if(/[?&#]notrack\b/.test(env.search+env.hash)) localStorage.setItem('ee_notrack','1');
+    if(localStorage.getItem('ee_notrack')==='1') return;
+  }catch(e){}
+  if(navigator.doNotTrack==='1'||window.doNotTrack==='1') return;
+  var path=(env.pathname.replace(/\/+$/,'')||'/').replace(/\/index\.html$/,'')||'/';
+  function send(t,k,extra){
+    var u='/api/client-lookup?action=hit&t='+t+'&p='+encodeURIComponent(path)+(k?'&k='+encodeURIComponent(k):'')+(extra||'');
+    try{ fetch(u,{keepalive:true,credentials:'omit'}).catch(function(){}); }catch(e){}
+  }
+  window.siteTrack=function(k){ send('click',String(k).slice(0,60)); };
+  var ref=''; try{ ref=env.referrer?new URL(env.referrer).hostname.replace(/^www\./,''):''; }catch(e){}
+  if(/evanenterprise\.com$/i.test(ref)) ref='';
+  var qs=new URLSearchParams(env.search), src=qs.get('utm_source')||qs.get('s')||'';
+  send('pv','','&r='+encodeURIComponent(ref)+'&s='+encodeURIComponent(src));
+  function slug(t){ return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,30); }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href]'); if(!a) return;
+    var h=a.getAttribute('href')||''; if(h.indexOf('/go/')===0) return;
+    var label='';
+    if(/^mailto:/i.test(h)) label='email';
+    else if(/^tel:/i.test(h)) label='call';
+    else if(/^sms:/i.test(h)) label='text';
+    else if(/ig\.me\//i.test(h)) label='ig-dm';
+    else if(a.classList.contains('btn')) label='btn:'+slug(a.textContent);
+    else if(/^https?:/i.test(h)){ try{ var u=new URL(h,env.hostname?'https://'+env.hostname:undefined); if(u.hostname!==env.hostname) label='out:'+u.hostname.replace(/^www\./,'')+u.pathname.replace(/\/+$/,'').slice(0,26); }catch(x){} }
+    else if(h.charAt(0)==='#') label='jump:'+slug(h.slice(1));
+    else if(h.charAt(0)==='/') label='nav:'+h.replace(/[?#].*$/,'').slice(0,40);
+    if(label) send('click',label.slice(0,60));
+  });
+};
+window.siteAnalytics({hostname:location.hostname,pathname:location.pathname,search:location.search,hash:location.hash,referrer:document.referrer});

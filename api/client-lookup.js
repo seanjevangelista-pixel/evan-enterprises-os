@@ -8,6 +8,8 @@ export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'HEAD') return res.status(405).json({ error: 'Method not allowed' });
 
   if (req.query.action === 'go') return handleGo(req, res);
+  if (req.query.action === 'hit') return handleHit(req, res);
+  if (req.query.action === 'stats') return handleStats(req, res);
 
   const supabaseUrl = process.env.SUPABASE_URL || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
   const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
@@ -78,4 +80,101 @@ async function handleGo(req, res) {
     }
   }
   return res.redirect(302, dest);
+}
+
+// ── Site analytics ─────────────────────────────────────────────────────────────
+// GET /api/client-lookup?action=hit&t=pv|click&k=<label>&p=<path>&r=<referrer host>&s=<source>
+// Called by js/site.js on every page view and tracked click. Rows go into link_clicks with a
+// namespaced slug: "pv:/path" for page views, "click:<label>" for site button/link clicks
+// (plain slugs are /go/ tracked links). No cookies, no IP address, no personal data stored.
+const SITE_HOSTS = /(^|\.)evanenterprise\.com$/i;
+function cleanHost(v) { v = String(v || '').toLowerCase().slice(0, 80); return /^[a-z0-9.-]+$/.test(v) ? v : ''; }
+
+async function handleHit(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+  try {
+    // Only accept beacons that come from our own pages (cuts casual spam from other sites).
+    let from = '';
+    try { from = new URL(req.headers.origin || req.headers.referer || '').hostname; } catch (e) { /* none */ }
+    if (!SITE_HOSTS.test(from)) return res.status(204).end();
+    const agent = String(req.headers['user-agent'] || '');
+    if (/bot|crawl|spider|preview|facebookexternalhit|slurp|headless/i.test(agent)) return res.status(204).end();
+
+    const t = String(req.query.t || '');
+    const path = String(req.query.p || '');
+    const label = String(req.query.k || '');
+    if (t !== 'pv' && t !== 'click') return res.status(204).end();
+    if (!/^\/[A-Za-z0-9/_.-]{0,60}$/.test(path) || path.includes('..')) return res.status(204).end();
+    if (t === 'click' && !/^[A-Za-z0-9:/._@+-]{1,60}$/.test(label)) return res.status(204).end();
+
+    const supabaseUrl = process.env.SUPABASE_URL || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
+    const key = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+    const src = String(req.query.s || '').toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40);
+    await fetch(`${supabaseUrl}/rest/v1/link_clicks`, {
+      method: 'POST',
+      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({
+        slug: t === 'pv' ? `pv:${path}` : `click:${label}`,
+        source: t === 'pv' ? (src || null) : path,
+        referrer: cleanHost(req.query.r) || null,
+        country: String(req.headers['x-vercel-ip-country'] || '').slice(0, 2) || null,
+      }),
+      signal: AbortSignal.timeout(1500),
+    }).then((w) => { if (!w.ok) console.error('hit: not logged, Supabase said', w.status); });
+  } catch (e) {
+    console.error('hit: not logged:', e.message);
+  }
+  return res.status(204).end();
+}
+
+// GET /api/client-lookup?action=stats&days=30 — private: needs Sean's signed-in Supabase session.
+const STATS_ALLOWED = String(process.env.STATS_ALLOWED_EMAILS || 'seanjevangelista@gmail.com,seanjayme@evanenterprise.com').toLowerCase().split(',').map((e) => e.trim()).filter(Boolean);
+
+async function handleStats(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+  const supabaseUrl = process.env.SUPABASE_URL || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
+  const serviceKey = process.env.SUPABASE_SERVICE_KEY;
+  if (!serviceKey) return res.status(500).json({ error: 'Server is missing SUPABASE_SERVICE_KEY' });
+
+  const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
+  if (!token) return res.status(401).json({ error: 'Sign in to the dashboard first' });
+  try {
+    const who = await fetch(`${supabaseUrl}/auth/v1/user`, { headers: { apikey: serviceKey, Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(4000) });
+    if (!who.ok) return res.status(401).json({ error: 'Session expired — sign in again' });
+    const email = String((await who.json()).email || '').toLowerCase();
+    if (!STATS_ALLOWED.includes(email)) return res.status(403).json({ error: 'Not allowed' });
+  } catch (e) {
+    return res.status(502).json({ error: 'Could not verify session: ' + e.message });
+  }
+
+  const days = Math.min(365, Math.max(1, parseInt(req.query.days, 10) || 30));
+  const since = new Date(Date.now() - days * 864e5).toISOString();
+  let rows;
+  try {
+    const r = await fetch(`${supabaseUrl}/rest/v1/link_clicks?clicked_at=gte.${encodeURIComponent(since)}&select=slug,source,referrer,country,clicked_at&order=clicked_at.desc&limit=50000`,
+      { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` }, signal: AbortSignal.timeout(8000) });
+    rows = await r.json();
+    if (!Array.isArray(rows)) return res.status(502).json({ error: 'Could not read analytics (is the link_clicks table created?)' });
+  } catch (e) {
+    return res.status(502).json({ error: 'Could not read analytics: ' + e.message });
+  }
+
+  const tally = (map, k) => { if (k) map[k] = (map[k] || 0) + 1; };
+  const top = (map, n = 12) => Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, n).map(([name, count]) => ({ name, count }));
+  const pages = {}, links = {}, buttons = {}, referrers = {}, countries = {}, byDay = {};
+  const totals = { pageViews: 0, linkClicks: 0, siteClicks: 0 };
+  for (const row of rows) {
+    const day = String(row.clicked_at).slice(0, 10);
+    byDay[day] = byDay[day] || { pageViews: 0, linkClicks: 0, siteClicks: 0 };
+    if (row.slug.startsWith('pv:')) { totals.pageViews++; byDay[day].pageViews++; tally(pages, row.slug.slice(3)); tally(referrers, row.referrer || 'direct'); }
+    else if (row.slug.startsWith('click:')) { totals.siteClicks++; byDay[day].siteClicks++; tally(buttons, row.slug.slice(6)); }
+    else { totals.linkClicks++; byDay[day].linkClicks++; tally(links, row.slug); if (row.referrer) tally(referrers, row.referrer); }
+    tally(countries, row.country);
+  }
+  const series = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10);
+    series.push({ day: d, ...(byDay[d] || { pageViews: 0, linkClicks: 0, siteClicks: 0 }) });
+  }
+  return res.status(200).json({ ok: true, days, totals, pages: top(pages), links: top(links), buttons: top(buttons, 15), referrers: top(referrers), countries: top(countries, 8), series });
 }

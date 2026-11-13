@@ -75,6 +75,20 @@ section[id]{scroll-margin-top:60px}
 .phones .shot-wrap:nth-child(2){margin-top:38px}
 .phones .shot{box-shadow:var(--shadow-lg)}
 .ugc-note{margin-top:12px;font-size:13px;color:var(--ink-soft);text-align:center;grid-column:1/-1}
+.cr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.cr{padding:30px 28px;display:flex;flex-direction:column}
+.cr .sticker{align-self:flex-start}
+.cr h3{font:800 clamp(24px,3vw,30px) var(--font-display);letter-spacing:-.03em;margin:14px 0 4px}
+.cr .price{font:800 clamp(34px,4.4vw,48px) var(--font-display);letter-spacing:-.04em;line-height:1.05;margin-top:6px}
+.cr .price small{font:600 15px var(--font-body);letter-spacing:0;color:var(--ink-soft)}
+.cr p.lead{margin-top:10px;color:var(--ink-soft);font-size:16.5px}
+.cr ul{list-style:none;margin:16px 0 22px;display:flex;flex-direction:column;gap:9px;font-size:15.5px}
+.cr li{padding-left:24px;position:relative}
+.cr li:before{content:"";position:absolute;left:0;top:.58em;width:9px;height:9px;border-radius:50%;background:var(--blue)}
+.cr .cr-actions{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap}
+.cr--soon{background:var(--lilac)}
+.cr-note{margin-top:16px;font-size:13.5px;color:var(--ink-soft);max-width:70ch}
+@media(max-width:820px){.cr-grid{grid-template-columns:1fr}}
 .ai-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .ai{padding:26px 22px}
 .ai h3{font:800 19px var(--font-display);letter-spacing:-.02em;margin:14px 0 8px}
@@ -272,7 +286,7 @@ section[id]{scroll-margin-top:60px}
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <a href="/ugc" class="btn btn--blue" data-magnet>See my UGC work →</a>
-        <a href="/ugc#insights" class="btn btn--ghost" data-magnet>All analytics →</a>
+        <a href="/ugc#top-content" class="btn btn--ghost" data-magnet>Top videos &amp; analytics →</a>
       </div>
     </div>
     <div class="phones rv" style="--i:1">
@@ -295,6 +309,38 @@ section[id]{scroll-margin-top:60px}
       <div class="ai card rv" style="--i:3"><span class="sticker sticker--lilac">Content</span><h3>Content, outsourced</h3><p>Hand the content work to me — ideas, production and a plan built around your business.</p></div>
     </div>
     <div class="more rv" style="margin-top:28px"><a href="#contact" class="btn btn--blue" data-magnet>Ask what's possible →</a></div>
+  </div>
+</section>
+
+<!-- FOR CREATORS -->
+<section class="sec sec--tint" id="creators">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="label sticker sticker--yellow">For creators</span><h2 class="display h2">Want to grow your own audience?</h2>
+      <p>I built mine from scratch. If you're starting out, here's how I can help.</p></div>
+    <div class="cr-grid">
+      <div class="cr card rv">
+        <span class="sticker sticker--yellow">Program</span>
+        <h3>Creator Launch</h3>
+        <div class="price">$2,000 <small>one-time</small></div>
+        <p class="lead">Start from the ground up with me, hands-on.</p>
+        <ul><li>60 days working directly with me</li><li>Built around one goal: your first 1,000 followers</li><li>Learn from someone who's done it: 14.1M Instagram views in the last 90 days</li></ul>
+        <div class="cr-actions">
+          <a class="btn btn--blue" href="mailto:seanjevangelista@gmail.com?subject=Creator%20Launch" data-magnet>Apply for Creator Launch</a>
+          <a class="btn btn--ghost" href="https://ig.me/m/officialseanjayme" target="_blank" rel="noopener" data-magnet>DM me</a>
+        </div>
+      </div>
+      <div class="cr cr--soon card rv" style="--i:1">
+        <span class="sticker sticker--lilac">Opening soon</span>
+        <h3>Creator Community</h3>
+        <div class="price">$50 <small>per month</small></div>
+        <p class="lead">A paid Discord for creators who want to level up.</p>
+        <ul><li>Meet and network with other creators</li><li>Connect with entrepreneurs</li><li>Trends on what type of content to make</li></ul>
+        <div class="cr-actions">
+          <a class="btn btn--ghost" href="mailto:seanjevangelista@gmail.com?subject=Creator%20Community%20waitlist" data-magnet>Join the waitlist</a>
+        </div>
+      </div>
+    </div>
+    <p class="cr-note rv">Creator Launch is a hands-on program. The 1,000-follower target is the goal we work toward together, not a guarantee, since results depend on the work put in.</p>
   </div>
 </section>
 
@@ -414,6 +460,7 @@ section[id]{scroll-margin-top:60px}
       if(!r.ok) throw new Error('failed');
       form.style.display='none';
       ok.classList.add('show');
+      if(window.siteTrack) siteTrack('form:contact');
     }catch(e2){
       btn.disabled=false; btn.textContent='Send message →';
       err.textContent='That didn’t send. Email me directly at seanjevangelista@gmail.com or call (512) 876-9751.';

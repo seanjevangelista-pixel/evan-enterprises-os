@@ -24,21 +24,13 @@
 {"@context":"https://schema.org","@type":"Person","name":"Sean Evangelista","alternateName":"Sean Jayme","jobTitle":"UGC creator","address":{"@type":"PostalAddress","addressLocality":"Austin","addressRegion":"TX","addressCountry":"US"},"email":"seanjevangelista@gmail.com","sameAs":["https://www.tiktok.com/@seanevangelista_","https://www.instagram.com/officialseanjayme","https://www.youtube.com/@seanjevangelista","https://www.linkedin.com/in/seanjevangelista/"]}
 </script>
 <style>
-.top{position:sticky;top:0;z-index:50;background:rgba(251,250,246,.92);backdrop-filter:blur(10px);border-bottom:var(--line)}
-.top-in{max-width:var(--max);margin:0 auto;padding:10px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px}
-.brand-logo{display:flex;align-items:center;gap:9px;font:800 18px var(--font-display);letter-spacing:-.02em}
-.brand-logo img{width:26px;height:26px;object-fit:contain}
-.top-nav{display:flex;align-items:center;gap:22px;font-weight:500;font-size:15px}
-.top-nav a:not(.btn):hover{text-decoration:underline;text-underline-offset:4px}
-.top .btn{padding:9px 18px;font-size:14px;box-shadow:0 6px 16px -8px rgba(14,14,18,.3)}
-@media(max-width:720px){.top-nav a:not(.btn){display:none}}
 
 .cover{padding:56px 0 64px}
 .cover-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
 .cover h1{margin:14px 0 0}
 .cover .niche{margin-top:18px;font-size:18px;max-width:34ch}
 .socials{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
-.soc{width:56px;height:56px;border:var(--line);border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 6px 16px -8px rgba(14,14,18,.3);transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
+.soc{width:56px;height:56px;border:var(--line);border-radius:50%;background:var(--card);display:grid;place-items:center;box-shadow:0 6px 16px -8px rgba(14,14,18,.3);transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
 .soc:hover{transform:translateY(-3px);box-shadow:0 6px 16px -8px rgba(14,14,18,.3)}
 .soc img{width:26px;height:26px;object-fit:contain}
 .cover-cta{margin-top:26px}
@@ -53,9 +45,9 @@
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:44px 0 12px}
 .stat{padding:22px 20px;text-align:center}
 .stat:nth-child(1){background:var(--yellow)}
-.stat:nth-child(2){background:#fff}
+.stat:nth-child(2){background:var(--card)}
 .stat:nth-child(3){background:var(--mint)}
-.stat:nth-child(4){background:#fff}
+.stat:nth-child(4){background:var(--card)}
 .stat .n{font:800 clamp(30px,4.4vw,46px) var(--font-display);letter-spacing:-.03em;line-height:1}
 .stat .l{margin-top:8px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .stat-note{text-align:center;font-size:14px;margin-top:6px}
@@ -96,8 +88,8 @@
 .tq .who span{font-weight:400;color:var(--ink-soft)}
 
 .tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:26px}
-.tab{font:700 14px var(--font-body);padding:9px 18px;border:var(--line);border-radius:999px;background:#fff;cursor:pointer;transition:.15s}
-.tab[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.tab{font:700 14px var(--font-body);padding:9px 18px;border:var(--line);border-radius:999px;background:var(--card);cursor:pointer;transition:.15s}
+.tab[aria-pressed="true"]{background:var(--paper-2);border-block:var(--line)}
 .vid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
 .vid{display:block}
 .vid-poster{aspect-ratio:9/16;border:var(--line);border-radius:20px;box-shadow:var(--shadow);background:var(--lilac) center/cover no-repeat;position:relative;display:grid;place-items:center;font:800 28px var(--font-display);text-align:center;padding:14px;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
@@ -105,7 +97,7 @@
 .vid:nth-child(4n+2) .vid-poster{background-color:var(--yellow)}
 .vid:nth-child(4n+3) .vid-poster{background-color:var(--mint)}
 .vid:nth-child(4n+4) .vid-poster{background-color:var(--pink)}
-.play{position:absolute;right:12px;bottom:12px;width:44px;height:44px;border:var(--line);border-radius:50%;background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23101013'%3E%3Cpath d='M9 6.5v11l9-5.5z'/%3E%3C/svg%3E") center/22px no-repeat}
+.play{position:absolute;right:12px;bottom:12px;width:44px;height:44px;border:var(--line);border-radius:50%;background:rgba(247,247,245,.95) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23101013'%3E%3Cpath d='M9 6.5v11l9-5.5z'/%3E%3C/svg%3E") center/22px no-repeat}
 .vid-brand{margin-top:14px;font:800 17px var(--font-display);letter-spacing:-.01em}
 .vid-prod{font-size:14px;color:var(--ink-soft)}
 .vid-views{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
@@ -125,7 +117,7 @@
 .pkg p{margin-top:8px;font-size:15px;color:var(--ink-soft)}
 .pkg .sticker{transform:none}
 
-.rates{width:100%;border-collapse:collapse;background:#fff;border:var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.rates{width:100%;border-collapse:collapse;background:var(--card);border:var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
 .rates td{padding:16px 20px;border-bottom:1px solid var(--hairline);vertical-align:top}
 .rates tr:last-child td{border-bottom:0}
 .rates td:first-child{font-weight:700}
@@ -135,11 +127,10 @@
 .tbl{overflow-x:auto;padding:0 6px 8px 0}
 .tbl .rates{min-width:520px}
 
-.close{margin:20px 0 0;padding:72px 0;text-align:center;background:var(--ink);color:var(--paper)}
+.close{margin:20px 0 0;padding:72px 0;text-align:center;background:var(--paper-2);border-block:var(--line)}
 .close h2{margin-bottom:14px}
 .close p{font-size:18px;margin-bottom:26px}
 .close .row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.close .btn--ghost{background:#fff;color:var(--ink);border-color:#fff}
 </style>
 </head>
 <body>
@@ -289,7 +280,7 @@
 <!-- DELIVERABLES -->
 <section class="sec" id="packages">
   <div class="wrap">
-    <div class="sec-head rv"><span class="label sticker sticker--pink">What I deliver</span><h2 class="display h2">Content packages.</h2></div>
+    <div class="sec-head rv"><span class="label sticker sticker--pink">What I deliver</span><h2 class="display h2">Content packages.</h2><p>Brands, or businesses that want to outsource their content: I make it for you.</p></div>
     <div class="pkgs">
       <div class="pkg card rv"><span class="sticker">Story</span><h3>Instagram Story</h3><p>Casual, behind-the-scenes moment featuring your product in my daily life. Best for launches and limited-time offers.</p></div>
       <div class="pkg card rv" style="--i:1"><span class="sticker sticker--yellow">Post</span><h3>Instagram Post</h3><p>Polished lifestyle-forward image or carousel with an authentic caption. Lives permanently on my profile.</p></div>

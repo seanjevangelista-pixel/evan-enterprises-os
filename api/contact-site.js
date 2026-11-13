@@ -114,7 +114,7 @@ export default async function handler(req, res) {
         ${message ? `
         <tr>
           <td style="padding: 10px 0; color: #64748B; vertical-align: top;">Message</td>
-          <td style="padding: 10px 0; line-height: 1.6;">${escHtml(message)}</td>
+          <td style="padding: 10px 0; line-height: 1.6; white-space: pre-wrap;">${escHtml(message)}</td>
         </tr>` : ''}
       </table>
 

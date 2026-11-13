@@ -2260,6 +2260,19 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const sb = createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_ANON, { auth: { storageKey: 'ee-admin-auth' } });
 window._sb = sb; // expose for non-module scripts (invite, call leads)
+// Every call to our own /api/ carries the signed-in admin's session token (the server checks it).
+const _fetch = window.fetch.bind(window);
+window.fetch = async (input, init = {}) => {
+  try {
+    const url = typeof input === 'string' ? input : (input && input.url) || '';
+    if (url.startsWith('/api/')) {
+      const { data } = await sb.auth.getSession();
+      const t = data && data.session && data.session.access_token;
+      if (t) init = { ...init, headers: { ...(init.headers || {}), Authorization: 'Bearer ' + t } };
+    }
+  } catch (e) { /* fall through unauthenticated */ }
+  return _fetch(input, init);
+};
 
 // ── STATE ── (clients/visits declared globally above so non-module scripts can read them)
 let invoices = [];
@@ -3050,7 +3063,7 @@ $('send-report-btn').addEventListener('click', async () => {
   const btn = $('send-report-btn');
   btn.textContent = 'Sending…'; btn.disabled = true;
   try {
-    const res  = await fetch('/api/integrations?action=monthly-report', { method: 'POST', headers: { 'x-internal-key': 'dashboard' } });
+    const res  = await fetch('/api/integrations?action=monthly-report', { method: 'POST', headers: {  } });
     const data = await res.json();
     if (data.configured === false) {
       toast('RESEND_API_KEY not configured in Vercel', 'err');
@@ -3074,7 +3087,7 @@ $('send-client-reports-btn').addEventListener('click', async () => {
   if (!confirm(`Send this month's report to ${activeCount} client(s)?`)) return;
   btn.textContent = 'Sending…'; btn.disabled = true;
   try {
-    const res  = await fetch('/api/email?action=client-report', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' }, body: JSON.stringify({}) });
+    const res  = await fetch('/api/email?action=client-report', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
     const data = await res.json();
     if (data.ok) {
       // The handler answers ok:true even when every individual send failed
@@ -3100,7 +3113,7 @@ $('run-reminders-btn').addEventListener('click', async () => {
   const btn = $('run-reminders-btn');
   btn.textContent = 'Checking…'; btn.disabled = true;
   try {
-    const res  = await fetch('/api/email?action=invoice-reminders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' } });
+    const res  = await fetch('/api/email?action=invoice-reminders', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
     const data = await res.json();
     if (data.ok) {
       // Failed sends come back inside results with ok:false, so sent:0 used to
@@ -3123,7 +3136,7 @@ $('run-health-btn').addEventListener('click', async () => {
   const btn = $('run-health-btn');
   btn.textContent = 'Checking…'; btn.disabled = true;
   try {
-    const res  = await fetch('/api/email?action=health-check', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' } });
+    const res  = await fetch('/api/email?action=health-check', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
     const data = await res.json();
     if (data.ok) {
       if (data.healthy) {
@@ -3168,7 +3181,7 @@ $('review-send-btn').addEventListener('click', async () => {
   try {
     const res  = await fetch('/api/email?action=review-request', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ clientId: _reviewClientId, customerName, customerEmail, jobDescription }),
     });
     const data = await res.json();
@@ -3234,7 +3247,7 @@ async function saveClient() {
     try {
       const r = await fetch('/api/email?action=welcome-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ businessName: biz, ownerName: ownerName, ownerEmail: email }),
       });
       const d = await r.json().catch(() => ({}));
@@ -3600,7 +3613,7 @@ $('load-payments-btn').addEventListener('click', async () => {
 
   try {
     const params = new URLSearchParams({ action:'square', endpoint:'payments', begin_time:begin, end_time:end });
-    const res  = await fetch(`/api/integrations?${params}`, { headers: { 'x-internal-key': 'dashboard' } });
+    const res  = await fetch(`/api/integrations?${params}`, { headers: {  } });
     const data = await res.json();
     // A failed lookup is NOT the same as a month with no revenue. A missing
     // SQUARE_ACCESS_TOKEN answers 500 {error}, and an expired or revoked token
@@ -4160,7 +4173,7 @@ $('send-outreach-btn').addEventListener('click', async () => {
   try {
     const res = await fetch('/api/integrations?action=outreach', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         leads: pending.map(l => ({
           businessName: l.business_name,
@@ -4412,7 +4425,7 @@ function distTab(tab) {
 async function loadDistLeads() {
   const grid = document.getElementById('dist-leads-grid');
   try {
-    const r = await fetch('/api/distribution?action=leads', { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch('/api/distribution?action=leads', { headers: {  } });
     const d = await r.json();
     // A rejected request carries no `leads` key, so it used to render as an empty
     // catalogue — "No leads yet, click Add Lead to get started" — which reads as
@@ -4429,7 +4442,7 @@ async function loadDistLeads() {
 async function loadDistSubs() {
   const tbody = document.getElementById('dist-subs-tbody');
   try {
-    const r = await fetch('/api/distribution?action=subscribers', { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch('/api/distribution?action=subscribers', { headers: {  } });
     const d = await r.json();
     // Same as loadDistLeads above — a failed load used to render "No subscribers
     // yet", which is exactly what a paying subscriber list looks like when the
@@ -4536,7 +4549,7 @@ async function saveDistLead() {
   if (btn.disabled) return;
   btn.disabled = true;
   try {
-    const r = await fetch('/api/distribution?action=add-lead', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'}, body:JSON.stringify(body) });
+    const r = await fetch('/api/distribution?action=add-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'save failed'), 'err');
   } catch (e) {
@@ -4551,7 +4564,7 @@ async function saveDistLead() {
 
 async function archiveDistLead(id) {
   try {
-    const r = await fetch('/api/distribution?action=delete-lead', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'}, body:JSON.stringify({id}) });
+    const r = await fetch('/api/distribution?action=delete-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id}) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'delete failed'), 'err');
   } catch (e) {
@@ -4578,7 +4591,7 @@ async function saveDistSub() {
   if (btn.disabled) return;
   btn.disabled = true;
   try {
-    const r = await fetch('/api/distribution?action=add-subscriber', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'}, body:JSON.stringify(body) });
+    const r = await fetch('/api/distribution?action=add-subscriber', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'save failed'), 'err');
   } catch (e) {
@@ -4594,7 +4607,7 @@ async function saveDistSub() {
 async function toggleDistSubStatus(id, current) {
   const status = current === 'active' ? 'paused' : 'active';
   try {
-    const r = await fetch('/api/distribution?action=update-subscriber', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'}, body:JSON.stringify({id, status}) });
+    const r = await fetch('/api/distribution?action=update-subscriber', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id, status}) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || d.ok === false) return toast('Error: ' + (d.error || 'update failed'), 'err');
   } catch (e) {
@@ -4644,7 +4657,7 @@ async function fetchAmazonProduct() {
   btn.textContent = 'Fetching…'; btn.disabled = true;
   status.textContent = 'Looking up product on Amazon…'; status.style.display = 'block'; status.style.color = '#94a3b8';
   try {
-    const res  = await fetch('/api/distribution?action=fetch-amazon', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' }, body: JSON.stringify({ url }) });
+    const res  = await fetch('/api/distribution?action=fetch-amazon', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
     const data = await res.json();
     if (data.ok) {
       if (data.title)     document.getElementById('dl-title').value     = data.title;
@@ -4677,7 +4690,7 @@ document.getElementById('dist-blast-btn').addEventListener('click', async () => 
   if (!confirm('Send the monthly blast to all active subscribers now?')) return;
   btn.textContent = 'Sending…'; btn.disabled = true;
   try {
-    const r = await fetch('/api/distribution?action=send-blast', { method:'POST', headers:{'Content-Type':'application/json','x-internal-key':'dashboard'} });
+    const r = await fetch('/api/distribution?action=send-blast', { method:'POST', headers:{'Content-Type':'application/json'} });
     const d = await r.json();
     if (d.ok) toast(d.sent > 0 ? `Blast sent to ${d.sent} subscriber(s)!` : d.message || 'No subscribers');
     else toast('Error: ' + d.error, 'err');

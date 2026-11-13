@@ -635,6 +635,15 @@ const API_BASE = '/api/admin';
 
 let sb = null;
 let currentUser = null;
+// Every call to our own /api/ carries the signed-in admin's session token (the server checks it).
+const _fetch = window.fetch.bind(window);
+window.fetch = (input, init = {}) => {
+  const url = typeof input === 'string' ? input : (input && input.url) || '';
+  if (url.startsWith('/api/') && currentUser && currentUser.access_token) {
+    init = { ...init, headers: { ...(init.headers || {}), Authorization: 'Bearer ' + currentUser.access_token } };
+  }
+  return _fetch(input, init);
+};
 let pendingLoginClientId = null;
 let portalEnabled = false;
 
@@ -756,7 +765,7 @@ async function loadClients() {
   const el = document.getElementById('clients-list');
   el.innerHTML = '<div class="spinner"></div>';
   try {
-    const r = await fetch(`${API_BASE}?action=list_clients`, { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch(`${API_BASE}?action=list_clients`, { headers: {  } });
     const { clients } = await r.json();
     _clientsCache = clients || [];
     renderClients(_clientsCache);
@@ -893,7 +902,7 @@ async function saveClient() {
 
   try {
     const r = await fetch(`${API_BASE}?action=create_client`, {
-      method: 'POST', headers: {'Content-Type':'application/json', 'x-internal-key':'dashboard'}, body: JSON.stringify(payload),
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload),
     });
     const data = await r.json();
     if (!r.ok || !data.ok) throw new Error(data.error || 'Failed');
@@ -906,7 +915,7 @@ async function saveClient() {
       if (portalEmail && newClient?.id) {
         const lr = await fetch(`${API_BASE}?action=create_portal_login`, {
           method: 'POST',
-          headers: {'Content-Type':'application/json', 'x-internal-key':'dashboard'},
+          headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ client_id: newClient.id, email: portalEmail, send_welcome: true }),
         });
         const ld = await lr.json();
@@ -948,7 +957,7 @@ async function createLogin() {
 
   try {
     const r = await fetch(`${API_BASE}?action=create_portal_login`, {
-      method: 'POST', headers: {'Content-Type':'application/json', 'x-internal-key':'dashboard'},
+      method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         client_id: pendingLoginClientId, email,
         send_welcome: document.getElementById('lf-send-welcome').checked,
@@ -991,7 +1000,7 @@ async function loadInvoicesTab() {
   const el = document.getElementById('invoices-list');
   el.innerHTML = '<div class="spinner"></div>';
   try {
-    const r = await fetch(`${API_BASE}?action=list_invoices`, { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch(`${API_BASE}?action=list_invoices`, { headers: {  } });
     const data = await r.json();
     const rows = data.invoices;
     if (!Array.isArray(rows) || !rows.length) {
@@ -1034,7 +1043,7 @@ async function loadInvoicesTab() {
 async function openAddInvoice() {
   // Load clients for dropdown
   if (!_clientsCache.length) {
-    const r = await fetch(`${API_BASE}?action=list_clients`, { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch(`${API_BASE}?action=list_clients`, { headers: {  } });
     const d = await r.json();
     _clientsCache = d.clients || [];
   }
@@ -1059,7 +1068,7 @@ async function saveInvoice() {
   try {
     const r = await fetch(`${API_BASE}?action=create_invoice`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         client_id, title, amount: parseFloat(amount),
         due_date: document.getElementById('inv-due').value || null,
@@ -1081,7 +1090,7 @@ async function saveInvoice() {
 async function markPaid(id) {
   await fetch(`${API_BASE}?action=mark_paid`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id }),
   });
   showToast('✓ Marked as paid');
@@ -1092,7 +1101,7 @@ async function deleteInvoice(id) {
   if (!confirm('Delete this invoice? This cannot be undone.')) return;
   await fetch(`${API_BASE}?action=delete_invoice`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id }),
   });
   showToast('Invoice deleted');
@@ -1104,7 +1113,7 @@ async function loadLeadsTab() {
   const el = document.getElementById('leads-list');
   el.innerHTML = '<div class="spinner"></div>';
   try {
-    const r = await fetch('/api/admin?action=list_leads', { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch('/api/admin?action=list_leads', { headers: {  } });
     const data = await r.json();
     const rows = data.leads;
     if (!Array.isArray(rows) || !rows.length) {
@@ -1162,7 +1171,7 @@ async function saveEditClient() {
   try {
     const r = await fetch(`${API_BASE}?action=update_client`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         id,
         business_name:     document.getElementById('edit-biz').value.trim(),
@@ -1189,7 +1198,7 @@ async function populateContactsClientFilter() {
   const sel = document.getElementById('contacts-client-filter');
   if (!sel || sel.dataset.populated) return;
   if (!_clientsCache.length) {
-    const r = await fetch(`${API_BASE}?action=list_clients`, { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch(`${API_BASE}?action=list_clients`, { headers: {  } });
     const d = await r.json();
     _clientsCache = d.clients || [];
   }
@@ -1204,7 +1213,7 @@ async function loadContactsTab() {
   const clientId = document.getElementById('contacts-client-filter')?.value || '';
   const url = '/api/messenger?action=list_contacts' + (clientId ? `&client_id=${clientId}` : '');
   try {
-    const r = await fetch(url, { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch(url, { headers: {  } });
     const payload = await r.json();
     // A failed load used to fall through to the "No contacts yet" empty state,
     // which reads as "the table is fine, it's just empty" and points Sean at a
@@ -1252,7 +1261,7 @@ async function syncLSA() {
     const clientId = document.getElementById('contacts-client-filter')?.value || '';
     const r = await fetch('/api/messenger?action=sync_lsa', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ client_id: clientId || undefined }),
     });
     const data = await r.json();
@@ -1280,7 +1289,7 @@ async function loadCampaignsTab() {
   const el = document.getElementById('campaigns-list');
   el.innerHTML = '<div class="spinner"></div>';
   try {
-    const r = await fetch('/api/messenger?action=list_campaigns', { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch('/api/messenger?action=list_campaigns', { headers: {  } });
     const payload = await r.json();
     if (!r.ok || payload.error) {
       el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Couldn't load campaigns.<div style="margin-top:8px;font-size:12px;color:var(--muted)">${payload.error || `HTTP ${r.status}`}</div></div>`;
@@ -1326,7 +1335,7 @@ async function openCompose() {
   const sel = document.getElementById('compose-client');
   sel.innerHTML = '<option value="">Loading…</option>';
   try {
-    const r = await fetch('/api/admin?action=list_clients', { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch('/api/admin?action=list_clients', { headers: {  } });
     const { clients } = await r.json();
     sel.innerHTML = (clients || []).map(c => `<option value="${c.id}">${c.business_name}</option>`).join('');
   } catch(e) {
@@ -1350,7 +1359,7 @@ async function updateComposeContactCount() {
   if (!clientId) return;
   const countEl = document.getElementById('compose-contact-count');
   try {
-    const r = await fetch(`/api/messenger?action=list_contacts&client_id=${clientId}`, { headers: { 'x-internal-key': 'dashboard' } });
+    const r = await fetch(`/api/messenger?action=list_contacts&client_id=${clientId}`, { headers: {  } });
     const payload = await r.json();
     // "0 active contacts will receive this message" was shown both when the
     // client genuinely has none and when the lookup failed outright — the two
@@ -1395,7 +1404,7 @@ async function sendCampaign() {
   try {
     const r = await fetch('/api/messenger?action=send_campaign', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-internal-key': 'dashboard' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ client_id, name, channel, subject, body_sms, body_email }),
     });
     const data = await r.json();

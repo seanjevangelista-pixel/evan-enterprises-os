@@ -459,8 +459,7 @@ async function handle_monthly_report(req, res) {
   // anything — so any caller could satisfy it with a junk value, no knowledge
   // of the dashboard's actual 'dashboard' value required. Require the real
   // shared value (matches the check agent.js already uses).
-  const internalKey = req.headers['x-internal-key'];
-  if (internalKey !== (process.env.INTERNAL_API_KEY || 'dashboard')) return res.status(401).json({ error: 'Unauthorized' });
+  if (!(await isAdmin(req))) return res.status(401).json({ error: 'Unauthorized' });
 
   const resendKey      = process.env.RESEND_API_KEY;
   const supabaseUrl    = process.env.SUPABASE_URL    || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
@@ -864,8 +863,7 @@ async function handle_outreach_send(req, res) {
   // Same guard as monthly-report — this endpoint fires real emails from
   // Sean's domain, so it can't be left open to any caller. Requires the value
   // to actually match (not just be present) — see monthly-report above.
-  const internalKey = req.headers['x-internal-key'];
-  if (internalKey !== (process.env.INTERNAL_API_KEY || 'dashboard')) return res.status(401).json({ error: 'Unauthorized' });
+  if (!(await isAdmin(req))) return res.status(401).json({ error: 'Unauthorized' });
 
   const { leads = [], followUp = false } = req.body || {};
   if (!leads.length) return res.status(400).json({ error: 'No leads provided' });
@@ -968,7 +966,7 @@ async function handle_media(req, res) {
   // Had no auth check — sub=upload writes arbitrary files straight into
   // Sean's Supabase storage bucket with no auth, and sub=sign hands out a
   // signed upload URL for the same. Same guard as the rest of this file.
-  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
+  if (!(await isAdmin(req))) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -1066,7 +1064,7 @@ async function handle_buffer(req, res) {
   // Had no auth check — sub=post publishes to Sean's connected social
   // channels and sub=delete removes scheduled posts, both with no auth.
   // Same guard as the rest of this file.
-  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
+  if (!(await isAdmin(req))) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -1199,7 +1197,7 @@ async function handle_square(req, res) {
   // data (amounts, customer names, receipt info), so anyone who found the
   // URL could pull Sean's transaction history with a plain GET. Same guard
   // as the rest of this file.
-  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
+  if (!(await isAdmin(req))) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -1282,4 +1280,30 @@ export default async function handler(req, res) {
   if (action === 'buffer') return handle_buffer(req, res);
   if (action === 'media') return handle_media(req, res);
   return res.status(400).json({ error: 'Unknown action' });
+}
+
+// ── Admin check ───────────────────────────────────────────────────────────────
+// Real authentication: the caller must send a signed-in admin's Supabase session token
+// (Authorization: Bearer ...). An admin is a user with a confirmed allow-listed email, or a
+// row in public.users with role = 'admin'. The old shared "dashboard" header sat in the public
+// page source, so it protected nothing. INTERNAL_API_KEY, if set in Vercel, still works for
+// server-to-server calls, but there is no built-in default any more.
+const ADMIN_EMAILS = String(process.env.ADMIN_EMAILS || process.env.STATS_ALLOWED_EMAILS || 'seanjevangelista@gmail.com,seanjayme@evanenterprise.com').toLowerCase().split(',').map((e) => e.trim()).filter(Boolean);
+async function isAdmin(req) {
+  const url = process.env.SUPABASE_URL || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
+  const svc = process.env.SUPABASE_SERVICE_KEY;
+  const secret = process.env.INTERNAL_API_KEY;
+  if (secret && req.headers['x-internal-key'] === secret) return true;
+  const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
+  if (!token || !svc) return false;
+  try {
+    const w = await fetch(`${url}/auth/v1/user`, { headers: { apikey: svc, Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(4000) });
+    if (!w.ok) return false;
+    const u = await w.json();
+    if (!u || !u.id) return false;
+    if (u.email_confirmed_at && ADMIN_EMAILS.includes(String(u.email || '').toLowerCase())) return true;
+    const r = await fetch(`${url}/rest/v1/users?id=eq.${encodeURIComponent(u.id)}&select=role&limit=1`, { headers: { apikey: svc, Authorization: `Bearer ${svc}` }, signal: AbortSignal.timeout(4000) });
+    const rows = await r.json();
+    return Array.isArray(rows) && !!rows[0] && rows[0].role === 'admin';
+  } catch (e) { return false; }
 }

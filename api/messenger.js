@@ -48,7 +48,7 @@ export default async function handler(req, res) {
   // anything — so any caller could satisfy it by sending any junk value at all,
   // no knowledge of the dashboard's actual 'dashboard' value required. Require
   // the real shared value (matches the check agent.js already uses).
-  if (req.headers['x-internal-key'] !== (process.env.INTERNAL_API_KEY || 'dashboard')) {
+  if (!(await isAdmin(req))) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -308,4 +308,30 @@ export default async function handler(req, res) {
     return res.status(e.status && e.status >= 400 && e.status < 500 ? 400 : 500)
       .json({ error: e.message || 'Messenger request failed' });
   }
+}
+
+// ── Admin check ───────────────────────────────────────────────────────────────
+// Real authentication: the caller must send a signed-in admin's Supabase session token
+// (Authorization: Bearer ...). An admin is a user with a confirmed allow-listed email, or a
+// row in public.users with role = 'admin'. The old shared "dashboard" header sat in the public
+// page source, so it protected nothing. INTERNAL_API_KEY, if set in Vercel, still works for
+// server-to-server calls, but there is no built-in default any more.
+const ADMIN_EMAILS = String(process.env.ADMIN_EMAILS || process.env.STATS_ALLOWED_EMAILS || 'seanjevangelista@gmail.com,seanjayme@evanenterprise.com').toLowerCase().split(',').map((e) => e.trim()).filter(Boolean);
+async function isAdmin(req) {
+  const url = process.env.SUPABASE_URL || 'https://hzcgdnhecgewqpcnumwm.supabase.co';
+  const svc = process.env.SUPABASE_SERVICE_KEY;
+  const secret = process.env.INTERNAL_API_KEY;
+  if (secret && req.headers['x-internal-key'] === secret) return true;
+  const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
+  if (!token || !svc) return false;
+  try {
+    const w = await fetch(`${url}/auth/v1/user`, { headers: { apikey: svc, Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(4000) });
+    if (!w.ok) return false;
+    const u = await w.json();
+    if (!u || !u.id) return false;
+    if (u.email_confirmed_at && ADMIN_EMAILS.includes(String(u.email || '').toLowerCase())) return true;
+    const r = await fetch(`${url}/rest/v1/users?id=eq.${encodeURIComponent(u.id)}&select=role&limit=1`, { headers: { apikey: svc, Authorization: `Bearer ${svc}` }, signal: AbortSignal.timeout(4000) });
+    const rows = await r.json();
+    return Array.isArray(rows) && !!rows[0] && rows[0].role === 'admin';
+  } catch (e) { return false; }
 }

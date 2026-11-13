@@ -6,7 +6,7 @@
 <title>Creator &amp; Builder — Content, Ads, Websites &amp; AI in Austin, TX | Sean Jayme</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FBFAF6">
+<meta name="theme-color" content="#0B0D14">
 <meta name="description" content="Creator and builder in Austin, TX: content that gets seen, custom websites, CRM and AI lead systems, and Google, Meta and Instagram ads. One person does the work — Sean Evangelista (Sean Jayme).">
 <link rel="canonical" href="https://evanenterprise.com/">
 <meta property="og:title" content="Creator & Builder — Content, Ads, Websites & AI — Sean Jayme">
@@ -20,7 +20,7 @@
 <meta property="og:url" content="https://evanenterprise.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/site.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -28,425 +28,256 @@
 {"@type":"Person","@id":"https://evanenterprise.com/#sean","name":"Sean Evangelista","alternateName":"Sean Jayme","jobTitle":"Creator and builder — content, websites, AI and ads","worksFor":{"@id":"https://evanenterprise.com/#business"},"sameAs":["https://www.tiktok.com/@seanevangelista_","https://www.instagram.com/officialseanjayme","https://www.youtube.com/@seanjevangelista","https://www.linkedin.com/in/seanjevangelista/"]}
 ]}
 </script>
-<style>
-
-/* brand icons */
-.ico{width:1.15em;height:1.15em;flex:none;fill:currentColor;vertical-align:-.2em;margin-right:.5em}
-.ico--instagram{color:#F0507A}.ico--tiktok{color:#F7F7F5}.ico--discord{color:#7C88FF}.ico--gmail{color:#F05545}.ico--imessage{color:#34C759}.ico--youtube{color:#FF4B4B}.ico--linkedin{color:#4A9BF5}
-.alt-ways a,.foot-social a,.custom-actions .btn{display:inline-flex;align-items:center}
-.foot-social a .ico{margin-right:.4em}
-.social-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.social-row a{display:inline-grid;place-items:center;width:46px;height:46px;border:var(--line);border-radius:14px;background:var(--card);transition:transform .2s var(--ease)}
-.social-row a:hover{transform:translateY(-3px)}
-.social-row .ico{margin:0;width:22px;height:22px}
-
-/* hero glow + limited spots */
-.hero{position:relative;overflow:hidden}
-.hero:before{content:"";position:absolute;width:520px;height:520px;right:-120px;top:-140px;border-radius:50%;background:radial-gradient(circle,rgba(59,91,219,.28),transparent 68%);animation:drift 14s ease-in-out infinite alternate;pointer-events:none}
-.hero>.wrap{position:relative}
-@keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-60px,50px,0)}}
-.spots{display:inline-flex;align-items:center;gap:9px;margin-top:20px;padding:8px 14px;border:var(--line);border-radius:999px;font-weight:700;font-size:14px;background:var(--card)}
-.spots i{width:8px;height:8px;border-radius:50%;background:#34C759;animation:blink 2s ease-in-out infinite}
-@keyframes blink{50%{opacity:.35}}
-
-/* lead system */
-.sys-flow{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
-.sys-flow:before{content:"";position:absolute;left:8%;right:8%;top:30px;height:2px;background:repeating-linear-gradient(90deg,rgba(247,247,245,.25) 0 8px,transparent 8px 16px)}
-.sys-flow .dot{position:absolute;left:8%;top:25px;width:12px;height:12px;border-radius:50%;background:var(--accent-text);box-shadow:0 0 14px var(--accent-text);opacity:0}
-.sys-flow.in .dot{animation:travel 4.5s ease-in-out infinite}
-@keyframes travel{0%{transform:translateX(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateX(calc(var(--span,640px)));opacity:0}}
-.fnode{position:relative;text-align:center}
-.fnode .fi{display:grid;place-items:center;width:60px;height:60px;margin:0 auto 10px;border:var(--line);border-radius:18px;background:var(--card);font:800 22px var(--font-display);position:relative}
-.fnode b{display:block;font:800 15px var(--font-display)}
-.fnode span{font-size:13px;color:var(--ink-soft)}
-.parts{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.part{padding:24px 20px}
-.part h3{font:800 20px var(--font-display);letter-spacing:-.02em;margin:12px 0 8px}
-.part p{font-size:15px;color:var(--ink-soft)}
-.part .sticker{font-size:12px}
-.strat{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}
-.strat>div{padding:28px 26px}
-.strat h3{font:800 24px var(--font-display);letter-spacing:-.025em;margin:12px 0 6px}
-.strat ul{list-style:none;margin:14px 0 0;display:flex;flex-direction:column;gap:9px;font-size:15.5px}
-.strat li{padding-left:24px;position:relative}
-.strat li:before{content:"";position:absolute;left:0;top:.58em;width:9px;height:9px;border-radius:50%;background:var(--blue)}
-.strat .entry{background:var(--lilac);display:flex;flex-direction:column}
-.strat .entry p{color:var(--ink-soft);margin-top:8px}
-.strat .entry .btn{margin-top:auto;align-self:flex-start}
-.strat .entry .qt{font:800 28px var(--font-display);letter-spacing:-.03em;margin-top:14px}
-.sys-cta{margin-top:26px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.sys-cta small{color:var(--ink-soft);font-size:14px}
-@media(max-width:900px){.parts{grid-template-columns:1fr 1fr}.strat{grid-template-columns:1fr}}
-@media(max-width:620px){
-  .parts{grid-template-columns:1fr}
-  .sys-flow{grid-template-columns:1fr;gap:6px;padding-left:4px}
-  .sys-flow:before{left:34px;right:auto;top:30px;bottom:30px;width:2px;height:auto;background:repeating-linear-gradient(180deg,rgba(247,247,245,.25) 0 8px,transparent 8px 16px)}
-  .sys-flow .dot{display:none}
-  .fnode{display:flex;align-items:center;gap:14px;text-align:left}
-  .fnode .fi{margin:0;width:56px;height:56px}
-}
-@media(prefers-reduced-motion:reduce){.hero:before,.spots i,.sys-flow .dot{animation:none!important}.sys-flow .dot{display:none}}
-
-.hero{padding:60px 0 70px}
-.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:44px;align-items:center}
-.hero h1{margin-top:16px}
-.hero .sub{margin-top:20px;font-size:19px;max-width:38ch;color:var(--ink-soft)}
-.hero-cta{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
-.photo-wrap{position:relative;max-width:380px;margin-left:auto}
-.photo{border:var(--line);border-radius:28px;box-shadow:var(--shadow-lg);overflow:hidden;background:var(--lilac);transform:none}
-.photo img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 15%}
-.photo-wrap .sticker{position:absolute;animation:wiggle 3.4s ease-in-out infinite}
-.photo-wrap .s1{left:-20px;top:28px}
-.photo-wrap .s2{right:-12px;bottom:34px;animation-delay:-1.5s}
-@media(max-width:820px){.hero-grid{grid-template-columns:1fr}.photo-wrap{margin:8px auto 0}}
-
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:46px 0 8px}
-.stat{padding:22px 18px;text-align:center}
-.stat:nth-child(1){background:var(--yellow)}
-.stat:nth-child(2){background:var(--card)}
-.stat:nth-child(3){background:var(--mint)}
-.stat:nth-child(4){background:var(--card)}
-.stat .n{font:800 clamp(28px,4vw,42px) var(--font-display);letter-spacing:-.03em;line-height:1}
-.stat .l{margin-top:8px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.stat-note{text-align:center;font-size:13px;margin-top:8px}
-@media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
-
-.sec{padding:78px 0}
-section[id]{scroll-margin-top:60px}
-.sec-head{margin-bottom:34px;max-width:640px}
-.sec-head .label{display:inline-block;margin-bottom:12px}
-.sec-head p{margin-top:12px;font-size:18px;color:var(--ink-soft)}
-
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.step{padding:28px 24px}
-.step:nth-child(1){background:var(--yellow)}
-.step:nth-child(2){background:var(--pink)}
-.step:nth-child(3){background:var(--mint)}
-.step .num{display:inline-grid;place-items:center;width:42px;height:42px;border:var(--line);border-radius:50%;background:var(--card);font:800 18px var(--font-display)}
-.step h3{font:800 24px var(--font-display);letter-spacing:-.025em;margin:16px 0 8px}
-.step p{font-size:16px}
-@media(max-width:820px){.steps{grid-template-columns:1fr}}
-
-.svcs{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.phones{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:420px;margin-left:auto}
-.phones .shot-wrap:nth-child(2){margin-top:38px}
-.phones .shot{box-shadow:var(--shadow-lg)}
-.ugc-note{margin-top:12px;font-size:13px;color:var(--ink-soft);text-align:center;grid-column:1/-1}
-.cr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.cr{padding:30px 28px;display:flex;flex-direction:column}
-.cr .sticker{align-self:flex-start}
-.cr h3{font:800 clamp(24px,3vw,30px) var(--font-display);letter-spacing:-.03em;margin:14px 0 4px}
-.cr .price{font:800 clamp(34px,4.4vw,48px) var(--font-display);letter-spacing:-.04em;line-height:1.05;margin-top:6px}
-.cr .price small{font:600 15px var(--font-body);letter-spacing:0;color:var(--ink-soft)}
-.cr p.lead{margin-top:10px;color:var(--ink-soft);font-size:16.5px}
-.cr ul{list-style:none;margin:16px 0 22px;display:flex;flex-direction:column;gap:9px;font-size:15.5px}
-.cr li{padding-left:24px;position:relative}
-.cr li:before{content:"";position:absolute;left:0;top:.58em;width:9px;height:9px;border-radius:50%;background:var(--blue)}
-.cr .cr-actions{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap}
-.cr--soon{background:var(--lilac)}
-.cr-note{margin-top:16px;font-size:13.5px;color:var(--ink-soft);max-width:70ch}
-@media(max-width:820px){.cr-grid{grid-template-columns:1fr}}
-.ai-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.ai{padding:26px 22px}
-.ai h3{font:800 19px var(--font-display);letter-spacing:-.02em;margin:14px 0 8px}
-.ai p{font-size:15px;color:var(--ink-soft)}
-@media(max-width:1000px){.ai-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.ai-grid{grid-template-columns:1fr}}
-@media(max-width:820px){.phones{margin:0 auto}}
-
-.svc{padding:28px 24px;display:flex;flex-direction:column;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
-.svc:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
-.svc .sticker{align-self:flex-start}
-.svc h3{font:800 24px var(--font-display);letter-spacing:-.025em;margin:14px 0 8px}
-.svc p{color:var(--ink-soft);flex:1}
-.svc ul{list-style:none;margin:14px 0 18px;display:flex;flex-direction:column;gap:7px;font-size:15px}
-.svc li{padding-left:22px;position:relative}
-.svc li:before{content:"";position:absolute;left:0;top:.6em;width:8px;height:8px;border-radius:50%;background:var(--blue)}
-.svc .go{font-weight:700;text-decoration:underline;text-underline-offset:4px}
-@media(max-width:760px){.svcs{grid-template-columns:1fr}}
-
-.work{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.wcard{display:block;overflow:hidden;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
-.wcard:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
-.wcard img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;border-bottom:var(--line)}
-.wcard div{padding:16px 18px}
-.wcard b{display:block;font:800 19px var(--font-display);letter-spacing:-.02em}
-.wcard span{font-size:14px;color:var(--ink-soft)}
-.more{margin-top:26px;text-align:center}
-@media(max-width:900px){.work{grid-template-columns:1fr}}
-
-.ugc-band{background:var(--lilac);border-block:var(--line)}
-.ugc-in{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
-.chips{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 26px}
-.chip{padding:9px 18px;border:var(--line);border-radius:999px;background:var(--card);font:800 16px var(--font-display);letter-spacing:-.01em}
-.ugc-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.ugc-stats .stat{background:var(--card)!important}
-@media(max-width:820px){.ugc-in{grid-template-columns:1fr}}
-
-.about-in{display:grid;grid-template-columns:.8fr 1.2fr;gap:44px;align-items:center}
-.about-photo{border:var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;max-width:300px;transform:none;background:var(--yellow)}
-.about-photo img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 15%}
-.about-list{list-style:none;display:flex;flex-direction:column;gap:13px;margin-top:20px;font-size:18px}
-.about-list li{padding-left:30px;position:relative}
-.about-list li:before{content:"";position:absolute;left:0;top:.55em;width:10px;height:10px;border-radius:50%;background:var(--blue)}
-@media(max-width:820px){.about-in{grid-template-columns:1fr}.about-photo{margin:0 auto}}
-
-.contact{background:var(--paper-2);border-block:var(--line)}
-.contact .sticker{color:var(--ink)}
-.formcard,.form-ok{color:var(--ink)}
-.contact-in{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:start}
-.contact-sub{margin-top:14px;font-size:18px}
-.alt-ways{display:flex;flex-direction:column;gap:8px;margin-top:22px;font-weight:700}
-.alt-ways a{text-decoration:underline;text-underline-offset:4px}
-.formcard{padding:28px 26px}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.field label{font-weight:700;font-size:14px}
-.field input,.field textarea{font:500 16px var(--font-body);padding:12px 14px;border:var(--line);border-radius:12px;background:var(--paper);color:var(--ink);width:100%}
-.field input:focus,.field textarea:focus{outline:3px solid var(--accent-text);outline-offset:1px;background:var(--paper-2)}
-.formcard .btn{width:100%;margin-top:6px}
-.form-err{display:none;margin-top:14px;padding:12px 14px;border:var(--line);border-radius:12px;background:var(--pink);font-weight:500;font-size:14.5px}
-.form-err.show{display:block}
-.form-ok{display:none;padding:28px 26px;font:800 24px var(--font-display);letter-spacing:-.02em;text-align:center}
-.form-ok.show{display:block}
-@media(max-width:860px){.contact-in{grid-template-columns:1fr}.frow{grid-template-columns:1fr}}
-
-.foot{padding:44px 0 36px;text-align:center}
-.foot-links,.foot-social{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;font-weight:500;font-size:15px;margin-top:14px}
-.foot a:hover{text-decoration:underline;text-underline-offset:4px}
-.foot-contact,.foot-copy{margin-top:16px;font-size:13.5px;color:var(--ink-soft)}
-</style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-instagram" viewBox="0 0 24 24"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></symbol><symbol id="i-tiktok" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></symbol><symbol id="i-discord" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></symbol><symbol id="i-gmail" viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></symbol><symbol id="i-imessage" viewBox="0 0 24 24"><path d="M5.285 0A5.273 5.273 0 0 0 0 5.285v13.43A5.273 5.273 0 0 0 5.285 24h13.43A5.273 5.273 0 0 0 24 18.715V5.285A5.273 5.273 0 0 0 18.715 0ZM12 4.154a8.809 7.337 0 0 1 8.809 7.338A8.809 7.337 0 0 1 12 18.828a8.809 7.337 0 0 1-2.492-.303A8.656 7.337 0 0 1 5.93 19.93a9.929 7.337 0 0 0 1.54-2.155 8.809 7.337 0 0 1-4.279-6.283A8.809 7.337 0 0 1 12 4.154"/></symbol><symbol id="i-youtube" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></symbol><symbol id="i-linkedin" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></symbol></defs></svg>
 
 <header class="top">
   <div class="top-in">
-    <a href="/" class="brand-logo"><img src="/logo-mark.png" alt="">Evan Enterprises</a>
-    <nav class="top-nav" aria-label="Main">
-      <a href="#marketing">Services</a>
-      <a href="#work">Work</a>
-      <a href="/ugc">UGC</a>
-      <a href="/links">Links</a>
-      <a href="#contact" class="btn btn--blue" data-magnet>Book a call</a>
-    </nav>
+    <a href="/" class="brand-logo"><svg class="mark" viewBox="0 0 104 84" aria-hidden="true"><path d="M0,20 L14,0 L86,0 Q104,0 104,10 Q104,20 86,20 Z M0,52 L14,32 L86,32 Q104,32 104,42 Q104,52 86,52 Z M0,84 L14,64 L86,64 Q104,64 104,74 Q104,84 86,84 Z"/></svg>Evan Enterprises</a>
+    <div class="top-right">
+      <nav class="top-nav" id="site-nav" popover aria-label="Main">
+        <a href="#marketing">Services</a>
+        <a href="#work">Work</a>
+        <a href="/ugc">UGC</a>
+        <a href="/links">Links</a>
+      </nav>
+      <a href="#contact" class="btn">Book a call</a>
+      <button type="button" class="menu-btn" popovertarget="site-nav" aria-label="Menu"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-menu"/></svg></button>
+    </div>
   </div>
 </header>
 
 <main>
-<!-- HERO -->
+<!-- HERO: the reel covers and their numbers come from data/ugc.json ("best"). Update both together.
+     With a mouse, hovering a reel swaps the cover for Instagram's own player so one click plays it in place;
+     on touch and keyboard the link opens the popup instead. Both live in js/site.js. -->
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="sticker rv">Austin, TX · creator + builder</span>
-      <h1 class="display h1 rv" style="--i:1">I make the content, build the systems, and <mark class="hl">run the ads.</mark></h1>
-      <p class="sub rv" style="--i:2">A creator and builder in Austin, TX. I make content that gets seen, build websites, CRMs and AI that capture every lead, and run your Google, Meta and Instagram ads — all myself, no account managers.</p>
-      <div class="hero-cta rv" style="--i:3">
-        <a href="#contact" class="btn btn--blue" data-magnet data-svc="Lead System">Apply for a spot →</a>
-        <a href="#work" class="btn btn--ghost" data-magnet>See the work ↓</a>
+      <div class="byline rv">
+        <img src="/ugc/img/sean-hero.jpg" alt="Sean Evangelista, founder of Evan Enterprises" width="44" height="44">
+        <div><b>Sean Jayme</b><span class="eyebrow">Austin, TX · creator + builder</span></div>
       </div>
-      <div class="spots rv" style="--i:4"><i></i>Limited spots · taking a few Lead System clients at a time</div>
+      <h1 class="h1 rv" style="--i:1">I make the content, build the systems, and run the ads.</h1>
+      <p class="lead rv" style="--i:2">A creator and builder in Austin, TX. I make content that gets seen, build websites, CRMs and AI that capture every lead, and run your Google, Meta and Instagram ads — all myself, no account managers.</p>
+      <div class="actions rv" style="--i:3">
+        <a href="#contact" class="btn" data-svc="Lead System">Apply for a spot →</a>
+        <a href="#work" class="btn btn--ghost">See the work ↓</a>
+      </div>
+      <p class="status rv" style="--i:4"><span><i class="dot" aria-hidden="true"></i>Limited spots · taking a few Lead System clients at a time</span><span>Replies in 24h</span></p>
     </div>
-    <div class="photo-wrap rv" style="--i:2">
-      <div class="photo"><img src="/ugc/img/sean-hero.jpg" alt="Sean Evangelista, founder of Evan Enterprises" width="400" height="500"></div>
-      <span class="sticker sticker--pink s1">Replies in 24h</span>
-      <span class="sticker sticker--yellow s2">Sean Jayme</span>
+    <div class="reels rv" style="--i:2">
+      <div class="reel"><a class="reel-link" data-reel href="https://www.instagram.com/reel/DcZkiXJxQX6/" target="_blank" rel="noopener">
+        <div class="reel-frame"><img src="/ugc/img/reels/DcZkiXJxQX6.jpg" alt="Instagram reel, Aug 23, 2026" width="360" height="640"></div>
+        <span class="reel-cap"><b>729K views</b>Aug 23, 2026</span>
+      </a></div>
+      <div class="reel reel--top"><a class="reel-link" data-reel href="https://www.instagram.com/reel/DTfoHHJkSNt/" target="_blank" rel="noopener">
+        <div class="reel-frame"><img src="/ugc/img/reels/DTfoHHJkSNt.jpg" alt="Instagram reel, Jan 14, 2026" width="360" height="640" fetchpriority="high"></div>
+        <span class="reel-cap"><b>1.8M views</b>Jan 14, 2026</span>
+      </a></div>
+      <div class="reel"><a class="reel-link" data-reel href="https://www.instagram.com/reel/C-uzmRdOcsT/" target="_blank" rel="noopener">
+        <div class="reel-frame"><img src="/ugc/img/reels/C-uzmRdOcsT.jpg" alt="Instagram reel, Aug 16, 2024" width="360" height="640"></div>
+        <span class="reel-cap"><b>73K likes</b>Aug 16, 2024</span>
+      </a></div>
     </div>
   </div>
 </section>
 
-<div class="marquee" aria-hidden="true"><div class="marquee-track">
-  <span>Google Ads</span><span>Meta Ads</span><span>Instagram Ads</span><span>Custom websites</span><span>UGC content</span><span>CRM &amp; lead systems</span><span>AI automation</span>
-  <span>Google Ads</span><span>Meta Ads</span><span>Instagram Ads</span><span>Custom websites</span><span>UGC content</span><span>CRM &amp; lead systems</span><span>AI automation</span>
-</div></div>
+<div class="strip"><ul class="wrap">
+  <li>Google Ads</li><li>Meta Ads</li><li>Instagram Ads</li><li>Custom websites</li><li>UGC content</li><li>CRM &amp; lead systems</li><li>AI automation</li>
+</ul></div>
 
 <!-- PROOF -->
-<div class="wrap">
-  <div class="stats rv">
-    <div class="stat card"><div class="n">14.1M</div><div class="l">Instagram views · 90 days</div></div>
-    <div class="stat card"><div class="n">3</div><div class="l">Live sites built</div></div>
-    <div class="stat card"><div class="n">24h</div><div class="l">Reply time</div></div>
-    <div class="stat card"><div class="n">$400K+</div><div class="l">E-commerce revenue</div></div>
+<div class="wrap" style="padding-top:64px">
+  <div class="stats">
+    <div class="stat"><div class="n">14.1M</div><div class="l">Instagram views · 90 days</div></div>
+    <div class="stat"><div class="n">3</div><div class="l">Live sites built</div></div>
+    <div class="stat"><div class="n">24h</div><div class="l">Reply time</div></div>
+    <div class="stat"><div class="n">$400K+</div><div class="l">E-commerce revenue</div></div>
   </div>
-  <p class="stat-note muted rv">Instagram Insights as of Nov 12, 2026.</p>
+  <p class="stat-note src">Instagram Insights as of Nov 12, 2026.</p>
 </div>
 
 <!-- THE OFFER: LEAD SYSTEM -->
 <section class="sec" id="system">
   <div class="wrap">
-    <div class="sec-head rv"><span class="label sticker sticker--lilac">The Lead System</span> <span class="sticker sticker--yellow">Limited spots</span><h2 class="display h2">One system, from first click to booked call.</h2>
+    <div class="head"><div class="eyebrows"><span class="eyebrow">The Lead System</span><span class="eyebrow">Limited spots</span></div><h2 class="h2">One system, from first click to booked call.</h2>
       <p>A website, ads and AI follow-up that work together, with a personalized content strategy included. I take a limited number of clients so every system gets built properly.</p></div>
-    <div class="sys-flow rv" aria-label="How a lead moves through the system">
-      <span class="dot" aria-hidden="true"></span>
-      <div class="fnode"><div class="fi">1</div><div><b>Ads</b><span>Right people see you</span></div></div>
-      <div class="fnode"><div class="fi">2</div><div><b>Website</b><span>Visitor becomes a lead</span></div></div>
-      <div class="fnode"><div class="fi">3</div><div><b>AI follow-up</b><span>Reply in minutes</span></div></div>
-      <div class="fnode"><div class="fi">4</div><div><b>Booked call</b><span>You talk to a real lead</span></div></div>
-    </div>
-    <div class="parts">
-      <div class="part card rv"><span class="sticker sticker--yellow">Website</span><h3>Built to capture leads</h3><p>Fast, custom, mobile-first, with forms and click-to-call that actually get used.</p></div>
-      <div class="part card rv" style="--i:1"><span class="sticker sticker--pink">Ads</span><h3>Google &amp; Meta</h3><p>Setup and management, with tracking so you see which ad produced which lead.</p></div>
-      <div class="part card rv" style="--i:2"><span class="sticker sticker--mint">AI follow-up</span><h3>No lead left waiting</h3><p>Automatic replies, reminders and a simple CRM so every inquiry is followed up fast.</p></div>
-      <div class="part card rv" style="--i:3"><span class="sticker sticker--lilac">Included</span><h3>Content strategy</h3><p>A personalized plan for what to post and why. The piece nobody else bundles.</p></div>
+    <div class="sys-grid">
+      <div class="phone" data-seq>
+        <div class="phone-in">
+          <ol class="thread" aria-label="How a lead moves through the system">
+            <li class="note" data-step style="--n:0"><span class="note-n">1</span><div><b>Ads</b><span>Right people see you</span></div></li>
+            <li class="note" data-step style="--n:1"><span class="note-n">2</span><div><b>Website</b><span>Visitor becomes a lead</span></div></li>
+            <li class="note" data-step style="--n:2"><span class="note-n">3</span><div><b>AI follow-up</b><span>Reply in minutes</span></div></li>
+            <li class="note" data-step style="--n:3"><span class="note-n">4</span><div><b>Booked call</b><span>You talk to a real lead</span></div></li>
+          </ol>
+        </div>
+      </div>
+      <div class="parts">
+        <div class="part"><span class="eyebrow">Website</span><h3 class="h3">Built to capture leads</h3><p>Fast, custom, mobile-first, with forms and click-to-call that actually get used.</p></div>
+        <div class="part"><span class="eyebrow">Ads</span><h3 class="h3">Google &amp; Meta</h3><p>Setup and management, with tracking so you see which ad produced which lead.</p></div>
+        <div class="part"><span class="eyebrow">AI follow-up</span><h3 class="h3">No lead left waiting</h3><p>Automatic replies, reminders and a simple CRM so every inquiry is followed up fast.</p></div>
+        <div class="part"><span class="eyebrow">Included</span><h3 class="h3">Content strategy</h3><p>A personalized plan for what to post and why. The piece nobody else bundles.</p></div>
+      </div>
     </div>
     <div class="strat">
-      <div class="card rv">
-        <span class="sticker sticker--lilac">Inside the package</span>
-        <h3>What the content strategy contains</h3>
-        <ul><li>A short audit of what you post now</li><li>A 30-day plan for each platform</li><li>Hook ideas to open every post</li><li>A shoot list, so you know what to film</li><li>A review after your first month</li></ul>
+      <div class="card">
+        <span class="eyebrow">Inside the package</span>
+        <h3 class="h3">What the content strategy contains</h3>
+        <ul class="ticks"><li>A short audit of what you post now</li><li>A 30-day plan for each platform</li><li>Hook ideas to open every post</li><li>A shoot list, so you know what to film</li><li>A review after your first month</li></ul>
       </div>
-      <div class="card entry rv" style="--i:1">
-        <span class="sticker sticker--yellow">Smaller starting point</span>
-        <h3>Strategy only</h3>
+      <div class="card entry">
+        <span class="eyebrow">Smaller starting point</span>
+        <h3 class="h3">Strategy only</h3>
         <p>Just want the plan? Get the content strategy as a one-time purchase. If you want the full system later, we build on it.</p>
         <div class="qt">Quote after a quick chat</div>
-        <a class="btn btn--ghost" href="#contact" data-magnet data-svc="Content Strategy" style="margin-top:20px">Ask about the strategy →</a>
+        <a class="btn btn--ghost" href="#contact" data-svc="Content Strategy">Ask about the strategy →</a>
       </div>
     </div>
-    <div class="sys-cta rv">
-      <a class="btn btn--blue" href="#contact" data-magnet data-svc="Lead System">Apply for a Lead System spot →</a>
+    <div class="sys-cta">
+      <a class="btn" href="#contact" data-svc="Lead System">Apply for a Lead System spot →</a>
       <small>Limited spots. Priced to your business after a short call.</small>
     </div>
   </div>
 </section>
 
-<!-- SERVICES (id kept as #marketing so older links still work) -->
-<section class="sec" id="marketing" style="padding-top:0">
+<!-- SERVICES (id kept as #marketing so older links still work). The AI solutions block lives here too, #ai still jumps to it. -->
+<section class="sec sec--flush" id="marketing">
   <div class="wrap">
-    <div class="sec-head rv"><span class="label sticker">What I do</span><h2 class="display h2">Pick what you need.</h2>
-      <p>Start with one piece or take the whole system. Pricing is published on the <a href="/onboarding" style="text-decoration:underline;text-underline-offset:4px;font-weight:700">how it works</a> page.</p></div>
-    <div class="svcs">
-      <div class="svc card rv"><span class="sticker sticker--yellow">1 · Marketing</span><h3>Ads that bring leads</h3><p>Paid campaigns on the platforms your customers actually use.</p>
-        <ul><li>Google setup, ads &amp; Local Service Ads</li><li>Meta &amp; Instagram Ads</li><li>Meta Pixel &amp; Conversions API</li><li>Tracking and a monthly report</li></ul>
-        <a class="go" href="#contact">Get an ads plan →</a></div>
-      <div class="svc card rv" style="--i:1"><span class="sticker sticker--yellow">1 · Marketing</span><h3>Custom websites</h3><p>Hand-built to fit your brand and made to turn visitors into calls.</p>
-        <ul><li>Custom design, not a template</li><li>Fast, mobile-first, search-ready</li><li>Optional AI chatbot and integrations</li><li>From $500</li></ul>
-        <a class="go" href="/portfolio">See the portfolio →</a></div>
-      <div class="svc card rv" style="--i:2"><span class="sticker sticker--pink">2 · UGC</span><h3>UGC &amp; content for brands</h3><p>Content that gets a brand in front of new people.</p>
-        <ul><li>Reels, TikToks and UGC ads</li><li>Gifted and paid brand collabs</li><li>Personalized content strategy</li><li>Outsource your content to me</li></ul>
-        <a class="go" href="/ugc">See my UGC work →</a></div>
-      <div class="svc card rv" style="--i:3"><span class="sticker sticker--lilac">3 · AI solutions</span><h3>AI, CRM &amp; lead systems</h3><p>Systems that capture leads, follow up, and save you time.</p>
-        <ul><li>CRM building</li><li>Lead systems &amp; front-end lead generation</li><li>AI chatbots and follow-up automation</li></ul>
-        <a class="go" href="#ai">See what's possible →</a></div>
+    <div class="head"><span class="eyebrow">What I do</span><h2 class="h2">Pick what you need.</h2>
+      <p>Start with one piece or take the whole system. Pricing is published on the <a href="/onboarding" class="link">how it works</a> page.</p></div>
+    <div class="svc-list">
+      <div class="svc"><div><span class="eyebrow">1 · Marketing</span><h3 class="h3">Ads that bring leads</h3><p>Paid campaigns on the platforms your customers actually use.</p></div>
+        <ul class="ticks"><li>Google setup, ads &amp; Local Service Ads</li><li>Meta &amp; Instagram Ads</li><li>Meta Pixel &amp; Conversions API</li><li>Tracking and a monthly report</li></ul>
+        <a class="more" href="#contact">Get an ads plan →</a></div>
+      <div class="svc"><div><span class="eyebrow">1 · Marketing</span><h3 class="h3">Custom websites</h3><p>Hand-built to fit your brand and made to turn visitors into calls.</p></div>
+        <ul class="ticks"><li>Custom design, not a template</li><li>Fast, mobile-first, search-ready</li><li>Optional AI chatbot and integrations</li><li>From $500</li></ul>
+        <a class="more" href="/portfolio">See the portfolio →</a></div>
+      <div class="svc"><div><span class="eyebrow">2 · UGC</span><h3 class="h3">UGC &amp; content for brands</h3><p>Content that gets a brand in front of new people.</p></div>
+        <ul class="ticks"><li>Reels, TikToks and UGC ads</li><li>Gifted and paid brand collabs</li><li>Personalized content strategy</li><li>Outsource your content to me</li></ul>
+        <a class="more" href="/ugc">See my UGC work →</a></div>
+      <div class="svc"><div><span class="eyebrow">3 · AI solutions</span><h3 class="h3">AI, CRM &amp; lead systems</h3><p>Systems that capture leads, follow up, and save you time.</p></div>
+        <ul class="ticks"><li>CRM building</li><li>Lead systems &amp; front-end lead generation</li><li>AI chatbots and follow-up automation</li></ul>
+        <a class="more" href="#ai">See what's possible →</a></div>
     </div>
-    <div class="custom card rv">
+
+    <!-- AI SOLUTIONS (priority 3) -->
+    <div class="ai" id="ai" data-anchor>
+      <div class="head"><span class="eyebrow">AI solutions</span><h2 class="h2">AI that saves you time and catches every lead.</h2>
+        <p>Built around how your business actually runs, so the busywork stops landing on you.</p></div>
+      <div class="parts parts--4">
+        <div class="part"><span class="eyebrow">CRM</span><h3 class="h3">CRM building</h3><p>A simple system that keeps every lead, conversation and follow-up in one place.</p></div>
+        <div class="part"><span class="eyebrow">Leads</span><h3 class="h3">Lead systems &amp; lead generation</h3><p>The front end that brings leads in and routes them to you the moment they arrive.</p></div>
+        <div class="part"><span class="eyebrow">Automation</span><h3 class="h3">Chatbots &amp; follow-up</h3><p>AI that answers questions, books calls and follows up so no lead goes cold.</p></div>
+        <div class="part"><span class="eyebrow">Content</span><h3 class="h3">Content, outsourced</h3><p>Hand the content work to me — ideas, production and a plan built around your business.</p></div>
+      </div>
+      <div class="actions"><a href="#contact" class="btn btn--ghost">Ask what's possible →</a></div>
+    </div>
+
+    <div class="custom card">
       <div>
-        <span class="label sticker sticker--yellow">Custom packages</span>
-        <h3>Need something different?</h3>
+        <span class="eyebrow">Custom packages</span>
+        <h3 class="h3">Need something different?</h3>
         <p>I build custom packages — mix ads, a website, content and AI to fit your business and budget. Tell me what you're after and I'll put a plan together.</p>
       </div>
       <div class="custom-actions">
-        <a class="btn btn--blue" href="mailto:seanjevangelista@gmail.com?subject=Custom%20package" data-magnet><svg class="ico ico--gmail" aria-hidden="true"><use href="#i-gmail"/></svg>Email me</a>
-        <a class="btn btn--ghost" href="https://ig.me/m/officialseanjayme" target="_blank" rel="noopener" data-magnet><svg class="ico ico--instagram" aria-hidden="true"><use href="#i-instagram"/></svg>DM me on Instagram</a>
-        <a class="btn btn--ghost" href="sms:+15128769751" data-magnet><svg class="ico ico--imessage" aria-hidden="true"><use href="#i-imessage"/></svg>Text (512) 876-9751</a>
+        <a class="btn" href="mailto:seanjevangelista@gmail.com?subject=Custom%20package"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-gmail"/></svg>Email me</a>
+        <a class="btn btn--ghost" href="https://ig.me/m/officialseanjayme" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-instagram"/></svg>DM me on Instagram</a>
+        <a class="btn btn--ghost" href="sms:+15128769751"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-imessage"/></svg>Text (512) 876-9751</a>
       </div>
     </div>
   </div>
 </section>
 
 <!-- WORK -->
-<section class="sec" id="work" style="padding-top:0">
+<section class="sec sec--flush" id="work">
   <div class="wrap">
-    <div class="sec-head rv"><span class="label sticker sticker--pink">Recent work</span><h2 class="display h2">Live sites, built from scratch.</h2></div>
+    <div class="head"><span class="eyebrow">Recent work</span><h2 class="h2">Live sites, built from scratch.</h2></div>
     <div class="work">
-      <a class="wcard card rv" href="https://legacyhardscapeatx.com" target="_blank" rel="noopener"><img src="/portfolio/img/legacy-hardscape.jpg" alt="Legacy Hardscape ATX website" loading="lazy"><div><b>Legacy Hardscape ATX</b><span>Patios &amp; outdoor living · Austin</span></div></a>
-      <a class="wcard card rv" style="--i:1" href="https://sharp-air-mock.vercel.app" target="_blank" rel="noopener"><img src="/portfolio/img/sharp-air.jpg" alt="Sharp Air Mechanical website" loading="lazy"><div><b>Sharp Air Mechanical</b><span>Heating &amp; air · Austin</span></div></a>
-      <a class="wcard card rv" style="--i:2" href="https://studio27atx.com" target="_blank" rel="noopener"><img src="/portfolio/img/studio27.jpg" alt="Studio 27 website" loading="lazy"><div><b>Studio 27</b><span>Creative studio · Austin</span></div></a>
+      <a class="wcard" href="https://legacyhardscapeatx.com" target="_blank" rel="noopener"><img src="/portfolio/img/legacy-hardscape.jpg" alt="Legacy Hardscape ATX website" width="1600" height="1000" loading="lazy"><div><b>Legacy Hardscape ATX</b><span>Patios &amp; outdoor living · Austin</span></div></a>
+      <a class="wcard" href="https://sharp-air-mock.vercel.app" target="_blank" rel="noopener"><img src="/portfolio/img/sharp-air.jpg" alt="Sharp Air Mechanical website" width="1600" height="1000" loading="lazy"><div><b>Sharp Air Mechanical</b><span>Heating &amp; air · Austin</span></div></a>
+      <a class="wcard" href="https://studio27atx.com" target="_blank" rel="noopener"><img src="/portfolio/img/studio27.jpg" alt="Studio 27 website" width="1600" height="1000" loading="lazy"><div><b>Studio 27</b><span>Creative studio · Austin</span></div></a>
     </div>
-    <div class="more"><a href="/portfolio" class="btn btn--ghost" data-magnet>Full portfolio →</a></div>
+    <div class="more-row"><a href="/portfolio" class="btn btn--ghost">Full portfolio →</a></div>
   </div>
 </section>
 
 <!-- UGC (priority 2) -->
-<section class="sec ugc-band" id="ugc">
+<section class="sec sec--deep" id="ugc">
   <div class="wrap ugc-in">
-    <div class="rv">
-      <span class="label sticker sticker--yellow">UGC &amp; content</span>
-      <h2 class="display h2" style="margin-top:14px">Content that actually gets seen.</h2>
-      <p style="margin-top:12px;font-size:18px">UGC and short-form video for brands — and content production for businesses that want to outsource it to me. These are my real Instagram numbers.</p>
-      <div class="chips"><span class="chip">Dude Wipes</span><span class="chip">Gray Matter</span><span class="chip">Clean Nutra</span></div>
-      <div class="ugc-stats" style="margin-bottom:26px">
-        <div class="stat card"><div class="n">14.1M</div><div class="l">Views · 90 days</div></div>
-        <div class="stat card"><div class="n">6.9%</div><div class="l">Interaction rate</div></div>
+    <div>
+      <span class="eyebrow">UGC &amp; content</span>
+      <h2 class="h2">Content that actually gets seen.</h2>
+      <p class="lead">UGC and short-form video for brands — and content production for businesses that want to outsource it to me. These are my real Instagram numbers.</p>
+      <div class="tags"><span class="chip">Dude Wipes</span><span class="chip">Gray Matter</span><span class="chip">Clean Nutra</span></div>
+      <div class="stats stats--2">
+        <div class="stat"><div class="n">14.1M</div><div class="l">Views · 90 days</div></div>
+        <div class="stat"><div class="n">6.9%</div><div class="l">Interaction rate</div></div>
       </div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <a href="/ugc" class="btn btn--blue" data-magnet>See my UGC work →</a>
-        <a href="/ugc#top-content" class="btn btn--ghost" data-magnet>Top videos &amp; analytics →</a>
+      <div class="actions">
+        <a href="/ugc" class="btn">See my UGC work →</a>
+        <a href="/ugc#top-content" class="btn btn--ghost">Top videos &amp; analytics →</a>
       </div>
     </div>
-    <div class="phones rv" style="--i:1">
+    <div class="phones">
       <div class="shot-wrap"><button type="button" class="shot" data-lightbox aria-label="Enlarge Instagram Insights overview"><img src="/ugc/img/insights-overview.jpg" alt="Instagram Insights overview: 14.1M views in 90 days" width="640" height="1314" loading="lazy"></button></div>
       <div class="shot-wrap"><button type="button" class="shot" data-lightbox aria-label="Enlarge top videos by views"><img src="/ugc/img/insights-content.jpg" alt="Instagram Insights: top videos ranked by views" width="640" height="1314" loading="lazy"></button></div>
-      <p class="ugc-note">Real Instagram Insights, Nov 12, 2026 — tap to enlarge.</p>
+      <p class="ugc-note src">Real Instagram Insights, Nov 12, 2026 — tap to enlarge.</p>
     </div>
-  </div>
-</section>
-
-<!-- AI SOLUTIONS (priority 3) -->
-<section class="sec" id="ai">
-  <div class="wrap">
-    <div class="sec-head rv"><span class="label sticker sticker--lilac">AI solutions</span><h2 class="display h2">AI that saves you time and catches every lead.</h2>
-      <p>Built around how your business actually runs, so the busywork stops landing on you.</p></div>
-    <div class="ai-grid">
-      <div class="ai card rv"><span class="sticker sticker--lilac">CRM</span><h3>CRM building</h3><p>A simple system that keeps every lead, conversation and follow-up in one place.</p></div>
-      <div class="ai card rv" style="--i:1"><span class="sticker sticker--lilac">Leads</span><h3>Lead systems &amp; lead generation</h3><p>The front end that brings leads in and routes them to you the moment they arrive.</p></div>
-      <div class="ai card rv" style="--i:2"><span class="sticker sticker--lilac">Automation</span><h3>Chatbots &amp; follow-up</h3><p>AI that answers questions, books calls and follows up so no lead goes cold.</p></div>
-      <div class="ai card rv" style="--i:3"><span class="sticker sticker--lilac">Content</span><h3>Content, outsourced</h3><p>Hand the content work to me — ideas, production and a plan built around your business.</p></div>
-    </div>
-    <div class="more rv" style="margin-top:28px"><a href="#contact" class="btn btn--blue" data-magnet>Ask what's possible →</a></div>
   </div>
 </section>
 
 <!-- FOR CREATORS -->
-<section class="sec sec--tint" id="creators">
+<section class="sec" id="creators">
   <div class="wrap">
-    <div class="sec-head rv"><span class="label sticker sticker--yellow">For creators</span><h2 class="display h2">Want to grow your own audience?</h2>
+    <div class="head"><span class="eyebrow">For creators</span><h2 class="h2">Want to grow your own audience?</h2>
       <p>I built mine from scratch. If you're starting out, here's how I can help.</p></div>
-    <div class="cr-grid">
-      <div class="cr card rv">
-        <span class="sticker sticker--yellow">Program</span>
+    <div class="plans">
+      <div class="plan card">
+        <span class="eyebrow">Program</span>
         <h3>Creator Launch</h3>
         <div class="price">$2,000 <small>one-time</small></div>
         <p class="lead">Start from the ground up with me, hands-on.</p>
-        <ul><li>60 days working directly with me</li><li>Built around one goal: your first 1,000 followers</li><li>Learn from someone who's done it: 14.1M Instagram views in the last 90 days</li></ul>
-        <div class="cr-actions">
-          <a class="btn btn--blue" href="mailto:seanjevangelista@gmail.com?subject=Creator%20Launch" data-magnet>Apply for Creator Launch</a>
-          <a class="btn btn--ghost" href="https://ig.me/m/officialseanjayme" target="_blank" rel="noopener" data-magnet>DM me</a>
+        <ul class="ticks"><li>60 days working directly with me</li><li>Built around one goal: your first 1,000 followers</li><li>Learn from someone who's done it: 14.1M Instagram views in the last 90 days</li></ul>
+        <div class="actions">
+          <a class="btn" href="mailto:seanjevangelista@gmail.com?subject=Creator%20Launch">Apply for Creator Launch</a>
+          <a class="btn btn--ghost" href="https://ig.me/m/officialseanjayme" target="_blank" rel="noopener">DM me</a>
         </div>
       </div>
-      <div class="cr cr--soon card rv" style="--i:1">
-        <span class="sticker sticker--lilac">Opening soon</span>
+      <div class="plan plan--soon card">
+        <span class="eyebrow">Opening soon</span>
         <h3>Creator Community</h3>
         <div class="price">$50 <small>per month</small></div>
         <p class="lead">A paid Discord for creators who want to level up.</p>
-        <ul><li>Meet and network with other creators</li><li>Connect with entrepreneurs</li><li>Trends on what type of content to make</li></ul>
-        <div class="cr-actions">
-          <a class="btn btn--ghost" href="/go/discord?s=creators" data-magnet>Add me on Discord to join</a>
+        <ul class="ticks"><li>Meet and network with other creators</li><li>Connect with entrepreneurs</li><li>Trends on what type of content to make</li></ul>
+        <div class="actions">
+          <a class="btn btn--ghost" href="/go/discord?s=creators">Add me on Discord to join</a>
         </div>
       </div>
     </div>
-    <p class="cr-note rv">Creator Launch is a hands-on program. The 1,000-follower target is the goal we work toward together, not a guarantee, since results depend on the work put in.</p>
+    <p class="plan-note">Creator Launch is a hands-on program. The 1,000-follower target is the goal we work toward together, not a guarantee, since results depend on the work put in.</p>
   </div>
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="sec sec--tint" id="reviews">
+<section class="sec sec--deep" id="reviews">
   <div class="wrap">
-    <div class="sec-head rv"><span class="label sticker sticker--pink">What clients say</span><h2 class="display h2">Results, in their words.</h2></div>
+    <div class="head"><span class="eyebrow">What clients say</span><h2 class="h2">Results, in their words.</h2></div>
     <div class="tq-grid" id="tqGrid">
-      <figure class="tq tq--lead card rv"><p>Clients tell me they earned back what they paid me within the first months of running ads.</p><figcaption class="who">A common result <span>· paraphrased from client feedback</span></figcaption></figure>
+      <figure class="tq tq--lead"><p>Clients tell me they earned back what they paid me within the first months of running ads.</p><figcaption class="who">A common result <span>· paraphrased from client feedback</span></figcaption></figure>
     </div>
-    <div class="more rv" style="margin-top:28px;text-align:center"><a href="/review" class="btn btn--ghost" data-magnet>Worked with me? Leave a review →</a></div>
+    <div class="more-row"><a href="/review" class="btn btn--ghost">Worked with me? Leave a review →</a></div>
   </div>
 </section>
 
 <!-- ABOUT -->
 <section class="sec" id="about">
   <div class="wrap about-in">
-    <div class="about-photo rv"><img src="/sean.jpg" alt="Sean Evangelista" width="300" height="375" loading="lazy"></div>
-    <div class="rv" style="--i:1">
-      <span class="label sticker sticker--mint">About</span>
-      <h2 class="display h2" style="margin-top:14px">Hi, I'm Sean.</h2>
+    <div class="about-photo"><img src="/sean.jpg" alt="Sean Evangelista" width="240" height="300" loading="lazy"></div>
+    <div>
+      <span class="eyebrow">About</span>
+      <h2 class="h2">Hi, I'm Sean.</h2>
       <ul class="about-list">
         <li>Founder of Evan Enterprises LLC in Austin, TX</li>
         <li>I do the work myself — no account managers, no junior reps</li>
@@ -458,21 +289,21 @@ section[id]{scroll-margin-top:60px}
 </section>
 
 <!-- CONTACT -->
-<section class="sec contact" id="contact">
+<section class="sec sec--deep" id="contact">
   <div class="wrap contact-in">
-    <div class="rv">
-      <span class="label sticker sticker--pink">Next step</span>
-      <h2 class="display h2" style="margin-top:14px">Tell me what's leaking.</h2>
+    <div>
+      <span class="eyebrow">Next step</span>
+      <h2 class="h2">Tell me what's leaking.</h2>
       <p class="contact-sub">Tell me a bit about your situation. I follow up within 24 hours — you, me, no middlemen.</p>
       <div class="alt-ways">
-        <a href="mailto:seanjevangelista@gmail.com"><svg class="ico ico--gmail" aria-hidden="true"><use href="#i-gmail"/></svg>seanjevangelista@gmail.com</a>
-        <a href="tel:+15128769751">(512) 876-9751</a>
-        <a href="sms:+15128769751"><svg class="ico ico--imessage" aria-hidden="true"><use href="#i-imessage"/></svg>Text me (iMessage)</a>
-        <a href="https://ig.me/m/officialseanjayme" target="_blank" rel="noopener"><svg class="ico ico--instagram" aria-hidden="true"><use href="#i-instagram"/></svg>DM me on Instagram</a>
-        <a href="/go/discord?s=home"><svg class="ico ico--discord" aria-hidden="true"><use href="#i-discord"/></svg>Add me on Discord</a>
+        <a href="mailto:seanjevangelista@gmail.com"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-gmail"/></svg>seanjevangelista@gmail.com</a>
+        <a href="tel:+15128769751"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-phone"/></svg>(512) 876-9751</a>
+        <a href="sms:+15128769751"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-imessage"/></svg>Text me (iMessage)</a>
+        <a href="https://ig.me/m/officialseanjayme" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-instagram"/></svg>DM me on Instagram</a>
+        <a href="/go/discord?s=home"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-discord"/></svg>Add me on Discord</a>
       </div>
     </div>
-    <div class="rv" style="--i:1">
+    <div>
       <form id="contactForm" class="formcard card" novalidate>
         <input type="hidden" id="svcType" name="service_type" value="marketing">
         <div class="frow">
@@ -484,7 +315,7 @@ section[id]{scroll-margin-top:60px}
           <div class="field"><label for="cf-phone">Phone (optional)</label><input id="cf-phone" name="phone" type="tel" placeholder="(512) 555-0100" autocomplete="tel"></div>
         </div>
         <div class="field"><label for="cf-message">What do you need?</label><textarea id="cf-message" name="message" rows="3" placeholder="Tell me about your business and what you're trying to fix or grow..."></textarea></div>
-        <button type="submit" class="btn btn--blue" id="submitBtn">Send message →</button>
+        <button type="submit" class="btn" id="submitBtn">Send message →</button>
         <div class="form-err" id="formErr" role="alert">That didn't send. Email me directly at seanjevangelista@gmail.com or call (512) 876-9751.</div>
       </form>
       <div class="form-ok card" id="formOk" role="status">Got it — I'll be in touch within 24 hours.</div>
@@ -493,39 +324,41 @@ section[id]{scroll-margin-top:60px}
 </section>
 </main>
 
-<footer class="foot wrap">
-  <a href="/" class="brand-logo" style="justify-content:center"><img src="/logo-mark.png" alt="">Evan Enterprises LLC</a>
-  <div class="foot-links">
-    <a href="#marketing">Services</a>
-    <a href="#about">About</a>
-    <a href="/portfolio">Portfolio</a>
-    <a href="/ugc">UGC</a>
-    <a href="/links">Links</a>
-    <a href="/onboarding">Onboarding</a>
-    <a href="/privacy.html">Privacy</a>
-    <a href="/terms.html">Terms</a>
+<footer class="foot"><div class="wrap">
+  <div class="foot-top">
+    <a href="/" class="brand-logo"><svg class="mark" viewBox="0 0 104 84" aria-hidden="true"><path d="M0,20 L14,0 L86,0 Q104,0 104,10 Q104,20 86,20 Z M0,52 L14,32 L86,32 Q104,32 104,42 Q104,52 86,52 Z M0,84 L14,64 L86,64 Q104,64 104,74 Q104,84 86,84 Z"/></svg>Evan Enterprises LLC</a>
+    <div class="foot-links">
+      <a href="#marketing">Services</a>
+      <a href="#about">About</a>
+      <a href="/portfolio">Portfolio</a>
+      <a href="/ugc">UGC</a>
+      <a href="/links">Links</a>
+      <a href="/onboarding">Onboarding</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </div>
   </div>
   <div class="foot-social">
-    <a href="https://www.instagram.com/officialseanjayme" target="_blank" rel="noopener"><svg class="ico ico--instagram" aria-hidden="true"><use href="#i-instagram"/></svg>Instagram</a>
-    <a href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener"><svg class="ico ico--tiktok" aria-hidden="true"><use href="#i-tiktok"/></svg>TikTok</a>
-    <a href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener"><svg class="ico ico--youtube" aria-hidden="true"><use href="#i-youtube"/></svg>YouTube</a>
-    <a href="https://www.linkedin.com/in/seanjevangelista/" target="_blank" rel="noopener"><svg class="ico ico--linkedin" aria-hidden="true"><use href="#i-linkedin"/></svg>LinkedIn</a>
+    <a href="https://www.instagram.com/officialseanjayme" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-instagram"/></svg>Instagram</a>
+    <a href="https://www.tiktok.com/@seanevangelista_" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-tiktok"/></svg>TikTok</a>
+    <a href="https://www.youtube.com/@seanjevangelista" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-youtube"/></svg>YouTube</a>
+    <a href="https://www.linkedin.com/in/seanjevangelista/" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-linkedin"/></svg>LinkedIn</a>
   </div>
-  <div class="foot-contact">Evan Enterprises LLC · Austin, TX · <a href="mailto:seanjevangelista@gmail.com" style="text-decoration:underline">seanjevangelista@gmail.com</a> · (512) 876-9751</div>
-  <div class="foot-copy">© 2026 Evan Enterprises LLC. All rights reserved.</div>
-</footer>
+  <div class="foot-base">
+    <div class="foot-contact">Evan Enterprises LLC · Austin, TX · <a href="mailto:seanjevangelista@gmail.com">seanjevangelista@gmail.com</a> · (512) 876-9751</div>
+    <div class="foot-copy">© 2026 Evan Enterprises LLC. All rights reserved.</div>
+  </div>
+</div></footer>
 
 <script src="/js/site.js"></script>
 <script>window.siteTestimonials("tqGrid","reviews");</script>
 <script>
-// offer buttons tag the inquiry; flow dot travel distance
+// offer buttons tag the inquiry with the service they came from
 (function(){
   document.addEventListener('click',function(e){
     var a=e.target.closest&&e.target.closest('[data-svc]'); if(!a) return;
     var v=document.getElementById('svcType'); if(v) v.value=a.getAttribute('data-svc');
   });
-  function span(){var f=document.querySelector('.sys-flow'); if(f) f.style.setProperty('--span',Math.max(0,f.clientWidth*.84-12)+'px');}
-  span(); window.addEventListener('resize',span);
 })();
 </script>
 

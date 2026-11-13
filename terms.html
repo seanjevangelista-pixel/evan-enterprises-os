@@ -7,22 +7,25 @@
 <meta name="description" content="Terms of Service for Evan Enterprises LLC.">
 <link rel="canonical" href="https://evanenterprise.com/terms">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<meta name="theme-color" content="#0A0A0C">
+<meta name="theme-color" content="#0B0D14">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
 <header class="top">
   <div class="top-in">
-    <a href="/" class="brand-logo"><img src="/logo-mark.png" alt="">Evan Enterprises</a>
-    <nav class="top-nav" aria-label="Main">
-      <a href="/portfolio">Portfolio</a>
-      <a href="/ugc">UGC</a>
-      <a href="/links">Links</a>
-      <a href="/#contact" class="btn btn--blue">Book a call</a>
-    </nav>
+    <a href="/" class="brand-logo"><svg class="mark" viewBox="0 0 104 84" aria-hidden="true"><path d="M0,20 L14,0 L86,0 Q104,0 104,10 Q104,20 86,20 Z M0,52 L14,32 L86,32 Q104,32 104,42 Q104,52 86,52 Z M0,84 L14,64 L86,64 Q104,64 104,74 Q104,84 86,84 Z"/></svg>Evan Enterprises</a>
+    <div class="top-right">
+      <nav class="top-nav" id="site-nav" popover aria-label="Main">
+        <a href="/portfolio">Portfolio</a>
+        <a href="/ugc">UGC</a>
+        <a href="/links">Links</a>
+      </nav>
+      <a href="/#contact" class="btn">Book a call</a>
+      <button type="button" class="menu-btn" popovertarget="site-nav" aria-label="Menu"><svg class="ico" aria-hidden="true"><use href="/icons.svg#i-menu"/></svg></button>
+    </div>
   </div>
 </header>
 <main class="legal">
@@ -64,10 +67,10 @@ Email: <a href="mailto:seanjevangelista@gmail.com">seanjevangelista@gmail.com</a
 Phone: (512) 876-9751
 </p>
 </main>
-<footer class="foot wrap">
+<footer class="foot"><div class="wrap">
   <div class="foot-links"><a href="/">Home</a><a href="/portfolio">Portfolio</a><a href="/ugc">UGC</a><a href="/onboarding">Onboarding</a><a href="/privacy.html">Privacy Policy</a></div>
-  <div class="foot-copy">© 2026 Evan Enterprises LLC · Austin, TX</div>
-</footer>
+  <div class="foot-base"><div class="foot-copy">© 2026 Evan Enterprises LLC · Austin, TX</div></div>
+</div></footer>
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>

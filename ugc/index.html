@@ -189,6 +189,21 @@
   <p class="stat-note muted rv">Instagram Insights as of Nov 12, 2026 · Aug 14 – Nov 11 · 4.0M viewers · 973K interactions · 71% of followers are men</p>
 </div>
 
+<!-- INSIGHTS SCREENSHOTS -->
+<section class="sec" id="insights">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="label sticker sticker--pink">Proof</span><h2 class="display h2">My real Instagram Insights.</h2>
+      <p>Straight from my account, as of Nov 12, 2026 (last 90 days; top videos cover 2 years). Tap any screenshot to enlarge.</p></div>
+    <div class="shots rv">
+      <div class="shot-wrap"><button type="button" class="shot" data-lightbox aria-label="Enlarge overview"><img src="/ugc/img/insights-overview.jpg" alt="Instagram Insights overview: 14.1M views, 973K interactions, +2,608 followers in 90 days" width="640" height="1314" loading="lazy"></button><div class="shot-cap">Views &amp; reach</div></div>
+      <div class="shot-wrap"><button type="button" class="shot" data-lightbox aria-label="Enlarge top videos"><img src="/ugc/img/insights-content.jpg" alt="Instagram Insights: best performing videos ranked by views" width="640" height="1314" loading="lazy"></button><div class="shot-cap">Best performing videos</div></div>
+      <div class="shot-wrap"><button type="button" class="shot" data-lightbox aria-label="Enlarge followers"><img src="/ugc/img/insights-followers.jpg" alt="Instagram Insights: 16,395 followers, up 18.9%" width="640" height="1314" loading="lazy"></button><div class="shot-cap">Followers &amp; growth</div></div>
+      <div class="shot-wrap"><button type="button" class="shot" data-lightbox aria-label="Enlarge audience"><img src="/ugc/img/insights-audience.jpg" alt="Instagram Insights: audience by gender and age range" width="640" height="1314" loading="lazy"></button><div class="shot-cap">Audience age &amp; gender</div></div>
+      <div class="shot-wrap"><button type="button" class="shot" data-lightbox aria-label="Enlarge profile activity"><img src="/ugc/img/insights-activity.jpg" alt="Instagram Insights: interactions by content type and profile activity" width="640" height="1314" loading="lazy"></button><div class="shot-cap">Interactions &amp; profile visits</div></div>
+    </div>
+  </div>
+</section>
+
 <!-- AUDIENCE SNAPSHOT -->
 <section class="sec" id="audience" style="padding-bottom:0">
   <div class="wrap">
@@ -336,13 +351,7 @@
       var face=b.logo?'<img src="'+esc(b.logo)+'" alt="'+esc(b.name)+'">':'<div class="bname">'+esc(b.name)+'</div>';
       return '<div class="bcard card">'+face+'<div class="bnote">'+esc(b.note||'Brand partner')+'</div></div>';
     }).join('');
-    var q=d.testimonials||[];
-    if(q.length){
-      document.getElementById('quoteGrid').innerHTML=q.map(function(t){
-        return '<figure class="tq card"><p>“'+esc(t.quote)+'”</p><figcaption class="who">'+esc(t.name)+(t.title?' <span>· '+esc(t.title)+'</span>':'')+'</figcaption></figure>';
-      }).join('');
-      document.getElementById('quotes').hidden=false;
-    }
+    window.siteTestimonials('quoteGrid','quotes');
     var V=d.videos||[];
     if(V.length){
       var cats=['All'].concat(V.map(function(v){return v.cat;}).filter(function(c,i,a){return c&&a.indexOf(c)===i;}));

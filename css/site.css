@@ -132,3 +132,27 @@ section[id]{scroll-margin-top:60px}
 .legal strong{color:var(--ink)}
 .legal .sms{background:var(--card);border:var(--line);border-radius:var(--r);padding:22px 26px;margin:26px 0;box-shadow:var(--shadow)}
 .legal .sms h2{margin-top:0}
+
+/* ── screenshot gallery + lightbox ── */
+.shots{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.shot-wrap{display:flex;flex-direction:column;gap:10px}
+.shot{display:block;padding:0;border:var(--line);border-radius:var(--r);overflow:hidden;background:var(--card);box-shadow:var(--shadow);cursor:zoom-in;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.shot:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.shot img{width:100%;height:auto;aspect-ratio:640/1314;object-fit:cover}
+.shot-cap{font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--ink-soft);text-align:center}
+@media(max-width:1000px){.shots{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){.shots{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;-webkit-overflow-scrolling:touch}.shot-wrap{flex:0 0 68%;scroll-snap-align:start}}
+.lb{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
+.lb.open{display:flex}
+.lb img{max-height:92vh;max-width:min(92vw,520px);width:auto;height:auto;border-radius:18px;border:var(--line)}
+.lb-x{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;border:var(--line);background:var(--card);color:var(--ink);font:700 22px var(--font-body);cursor:pointer}
+
+/* ── testimonials ── */
+.tq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.tq{padding:26px 24px;display:flex;flex-direction:column;gap:14px}
+.tq p{font-size:17.5px;line-height:1.55;color:var(--ink)}
+.tq .stars{color:var(--accent-text);letter-spacing:.14em;font-size:15px}
+.tq .who{margin-top:auto;font-weight:700;font-size:14px}
+.tq .who span{font-weight:400;color:var(--ink-soft)}
+.tq--lead{background:var(--yellow)}
+.tq--lead p{font:700 clamp(19px,2.2vw,23px) var(--font-display);letter-spacing:-.02em;line-height:1.3}

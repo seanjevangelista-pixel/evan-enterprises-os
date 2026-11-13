@@ -27,3 +27,36 @@
     });
   }
 })();
+
+// ── tap-to-enlarge screenshots: any <button class="shot" data-lightbox> opens its image full size ──
+(function(){
+  var lb=document.createElement('div'); lb.className='lb'; lb.setAttribute('role','dialog'); lb.setAttribute('aria-modal','true'); lb.setAttribute('aria-label','Enlarged screenshot');
+  lb.innerHTML='<button class="lb-x" type="button" aria-label="Close">×</button><img alt="">';
+  document.body.appendChild(lb);
+  var img=lb.querySelector('img'), last=null;
+  function close(){lb.classList.remove('open'); if(last) last.focus();}
+  document.addEventListener('click',function(e){
+    var t=e.target.closest&&e.target.closest('[data-lightbox]');
+    if(t){var i=t.querySelector('img'); img.src=t.getAttribute('data-full')||i.src; img.alt=i.alt; last=t; lb.classList.add('open'); lb.querySelector('.lb-x').focus(); return;}
+    if(lb.classList.contains('open')&&(e.target===lb||e.target.classList.contains('lb-x'))) close();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb.classList.contains('open')) close();});
+})();
+
+// ── testimonials: fills a grid from /data/testimonials.json and unhides its section when there are entries ──
+window.siteTestimonials=function(gridId,sectionId){
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  fetch('/data/testimonials.json').then(function(r){return r.json();}).then(function(d){
+    var items=(d.items||[]).filter(function(t){return t&&t.quote&&t.name;});
+    var grid=document.getElementById(gridId); if(!grid) return;
+    if(items.length){
+      grid.insertAdjacentHTML('beforeend',items.map(function(t){
+        var n=Math.max(0,Math.min(5,parseInt(t.rating,10)||0));
+        return '<figure class="tq card rv">'+(n?'<div class="stars" aria-label="'+n+' out of 5">'+'★'.repeat(n)+'</div>':'')+
+          '<p>“'+esc(t.quote)+'”</p><figcaption class="who">'+esc(t.name)+(t.business?' <span>· '+esc(t.business)+'</span>':'')+'</figcaption></figure>';
+      }).join(''));
+      window.siteReveal(grid);
+    }
+    if(sectionId&&(items.length||document.querySelector('#'+gridId+' .tq--lead'))){var sec=document.getElementById(sectionId); if(sec) sec.hidden=false;}
+  }).catch(function(){});
+};

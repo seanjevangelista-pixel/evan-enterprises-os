@@ -7,5 +7,6 @@ Disallow: /portal
 Disallow: /admin
 Disallow: /leads
 Disallow: /demo
+Disallow: /review
 
 Sitemap: https://evanenterprise.com/sitemap.xml

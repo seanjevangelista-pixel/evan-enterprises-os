@@ -70,7 +70,19 @@ section[id]{scroll-margin-top:60px}
 .step p{font-size:16px}
 @media(max-width:820px){.steps{grid-template-columns:1fr}}
 
-.svcs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.svcs{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.phones{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:420px;margin-left:auto}
+.phones .shot-wrap:nth-child(2){margin-top:38px}
+.phones .shot{box-shadow:var(--shadow-lg)}
+.ugc-note{margin-top:12px;font-size:13px;color:var(--ink-soft);text-align:center;grid-column:1/-1}
+.ai-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.ai{padding:26px 22px}
+.ai h3{font:800 19px var(--font-display);letter-spacing:-.02em;margin:14px 0 8px}
+.ai p{font-size:15px;color:var(--ink-soft)}
+@media(max-width:1000px){.ai-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.ai-grid{grid-template-columns:1fr}}
+@media(max-width:820px){.phones{margin:0 auto}}
+
 .svc{padding:28px 24px;display:flex;flex-direction:column;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
 .svc:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
 .svc .sticker{align-self:flex-start}
@@ -80,7 +92,7 @@ section[id]{scroll-margin-top:60px}
 .svc li{padding-left:22px;position:relative}
 .svc li:before{content:"";position:absolute;left:0;top:.6em;width:8px;height:8px;border-radius:50%;background:var(--blue)}
 .svc .go{font-weight:700;text-decoration:underline;text-underline-offset:4px}
-@media(max-width:900px){.svcs{grid-template-columns:1fr}}
+@media(max-width:760px){.svcs{grid-template-columns:1fr}}
 
 .work{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .wcard{display:block;overflow:hidden;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
@@ -171,8 +183,8 @@ section[id]{scroll-margin-top:60px}
 </section>
 
 <div class="marquee" aria-hidden="true"><div class="marquee-track">
-  <span>Google Ads</span><span>Meta Ads</span><span>Instagram Ads</span><span>Custom websites</span><span>CRM &amp; lead systems</span><span>AI automation</span><span>Content production</span>
-  <span>Google Ads</span><span>Meta Ads</span><span>Instagram Ads</span><span>Custom websites</span><span>CRM &amp; lead systems</span><span>AI automation</span><span>Content production</span>
+  <span>Google Ads</span><span>Meta Ads</span><span>Instagram Ads</span><span>Custom websites</span><span>UGC content</span><span>CRM &amp; lead systems</span><span>AI automation</span>
+  <span>Google Ads</span><span>Meta Ads</span><span>Instagram Ads</span><span>Custom websites</span><span>UGC content</span><span>CRM &amp; lead systems</span><span>AI automation</span>
 </div></div>
 
 <!-- PROOF -->
@@ -184,7 +196,6 @@ section[id]{scroll-margin-top:60px}
     <div class="stat card"><div class="n">$400K+</div><div class="l">E-commerce revenue</div></div>
   </div>
   <p class="stat-note muted rv">Instagram Insights as of Nov 12, 2026.</p>
-  <p class="rv" style="text-align:center;margin:22px auto 0;max-width:46ch;font:700 clamp(18px,2.2vw,22px) var(--font-display);letter-spacing:-.02em">Clients tell me they earned back what they paid me within the first months of running ads.</p>
 </div>
 
 <!-- HOW IT WORKS -->
@@ -206,15 +217,18 @@ section[id]{scroll-margin-top:60px}
     <div class="sec-head rv"><span class="label sticker">What I do</span><h2 class="display h2">Pick what you need.</h2>
       <p>Start with one piece or take the whole system. Pricing is published on the <a href="/onboarding" style="text-decoration:underline;text-underline-offset:4px;font-weight:700">how it works</a> page.</p></div>
     <div class="svcs">
-      <div class="svc card rv"><span class="sticker sticker--yellow">Marketing</span><h3>Ads that bring leads</h3><p>Paid campaigns on the platforms your customers actually use.</p>
+      <div class="svc card rv"><span class="sticker sticker--yellow">1 · Marketing</span><h3>Ads that bring leads</h3><p>Paid campaigns on the platforms your customers actually use.</p>
         <ul><li>Google setup, ads &amp; Local Service Ads</li><li>Meta &amp; Instagram Ads</li><li>Meta Pixel &amp; Conversions API</li><li>Tracking and a monthly report</li></ul>
         <a class="go" href="#contact">Get an ads plan →</a></div>
-      <div class="svc card rv" style="--i:1"><span class="sticker sticker--pink">Websites</span><h3>Custom websites</h3><p>Hand-built to fit your brand and made to turn visitors into calls.</p>
+      <div class="svc card rv" style="--i:1"><span class="sticker sticker--yellow">1 · Marketing</span><h3>Custom websites</h3><p>Hand-built to fit your brand and made to turn visitors into calls.</p>
         <ul><li>Custom design, not a template</li><li>Fast, mobile-first, search-ready</li><li>Optional AI chatbot and integrations</li><li>From $500</li></ul>
         <a class="go" href="/portfolio">See the portfolio →</a></div>
-      <div class="svc card rv" style="--i:2"><span class="sticker sticker--lilac">AI solutions</span><h3>AI, CRM &amp; content</h3><p>Systems that capture leads, follow up, and keep your content going.</p>
-        <ul><li>CRM building and lead systems</li><li>Front-end lead generation</li><li>AI follow-up and automation</li><li>Content production — outsource it to me</li></ul>
-        <a class="go" href="#contact">Ask what's possible →</a></div>
+      <div class="svc card rv" style="--i:2"><span class="sticker sticker--pink">2 · UGC</span><h3>UGC &amp; content for brands</h3><p>Content that gets a brand in front of new people.</p>
+        <ul><li>Reels, TikToks and UGC ads</li><li>Gifted and paid brand collabs</li><li>Personalized content strategy</li><li>Outsource your content to me</li></ul>
+        <a class="go" href="/ugc">See my UGC work →</a></div>
+      <div class="svc card rv" style="--i:3"><span class="sticker sticker--lilac">3 · AI solutions</span><h3>AI, CRM &amp; lead systems</h3><p>Systems that capture leads, follow up, and save you time.</p>
+        <ul><li>CRM building</li><li>Lead systems &amp; front-end lead generation</li><li>AI chatbots and follow-up automation</li></ul>
+        <a class="go" href="#ai">See what's possible →</a></div>
     </div>
   </div>
 </section>
@@ -232,22 +246,54 @@ section[id]{scroll-margin-top:60px}
   </div>
 </section>
 
-<!-- UGC BAND -->
-<section class="sec ugc-band">
+<!-- UGC (priority 2) -->
+<section class="sec ugc-band" id="ugc">
   <div class="wrap ugc-in">
     <div class="rv">
-      <span class="label sticker sticker--yellow">Also a creator</span>
-      <h2 class="display h2" style="margin-top:14px">I make the content, too.</h2>
-      <p style="margin-top:12px;font-size:18px">UGC and short-form video for brands — and content production for businesses that want to outsource it to me.</p>
+      <span class="label sticker sticker--yellow">UGC &amp; content</span>
+      <h2 class="display h2" style="margin-top:14px">Content that actually gets seen.</h2>
+      <p style="margin-top:12px;font-size:18px">UGC and short-form video for brands — and content production for businesses that want to outsource it to me. These are my real Instagram numbers.</p>
       <div class="chips"><span class="chip">Dude Wipes</span><span class="chip">Gray Matter</span><span class="chip">Clean Nutra</span></div>
-      <a href="/ugc" class="btn btn--blue" data-magnet>See my UGC work →</a>
+      <div class="ugc-stats" style="margin-bottom:26px">
+        <div class="stat card"><div class="n">14.1M</div><div class="l">Views · 90 days</div></div>
+        <div class="stat card"><div class="n">6.9%</div><div class="l">Interaction rate</div></div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a href="/ugc" class="btn btn--blue" data-magnet>See my UGC work →</a>
+        <a href="/ugc#insights" class="btn btn--ghost" data-magnet>All analytics →</a>
+      </div>
     </div>
-    <div class="ugc-stats rv" style="--i:1">
-      <div class="stat card"><div class="n">14.1M</div><div class="l">Views · 90 days</div></div>
-      <div class="stat card"><div class="n">6.9%</div><div class="l">Interaction rate</div></div>
-      <div class="stat card"><div class="n">16.4K</div><div class="l">IG followers</div></div>
-      <div class="stat card"><div class="n">61%</div><div class="l">Audience 18–34</div></div>
+    <div class="phones rv" style="--i:1">
+      <div class="shot-wrap"><button type="button" class="shot" data-lightbox aria-label="Enlarge Instagram Insights overview"><img src="/ugc/img/insights-overview.jpg" alt="Instagram Insights overview: 14.1M views in 90 days" width="640" height="1314" loading="lazy"></button></div>
+      <div class="shot-wrap"><button type="button" class="shot" data-lightbox aria-label="Enlarge top videos by views"><img src="/ugc/img/insights-content.jpg" alt="Instagram Insights: top videos ranked by views" width="640" height="1314" loading="lazy"></button></div>
+      <p class="ugc-note">Real Instagram Insights, Nov 12, 2026 — tap to enlarge.</p>
     </div>
+  </div>
+</section>
+
+<!-- AI SOLUTIONS (priority 3) -->
+<section class="sec" id="ai">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="label sticker sticker--lilac">AI solutions</span><h2 class="display h2">AI that saves you time and catches every lead.</h2>
+      <p>Built around how your business actually runs, so the busywork stops landing on you.</p></div>
+    <div class="ai-grid">
+      <div class="ai card rv"><span class="sticker sticker--lilac">CRM</span><h3>CRM building</h3><p>A simple system that keeps every lead, conversation and follow-up in one place.</p></div>
+      <div class="ai card rv" style="--i:1"><span class="sticker sticker--lilac">Leads</span><h3>Lead systems &amp; lead generation</h3><p>The front end that brings leads in and routes them to you the moment they arrive.</p></div>
+      <div class="ai card rv" style="--i:2"><span class="sticker sticker--lilac">Automation</span><h3>Chatbots &amp; follow-up</h3><p>AI that answers questions, books calls and follows up so no lead goes cold.</p></div>
+      <div class="ai card rv" style="--i:3"><span class="sticker sticker--lilac">Content</span><h3>Content, outsourced</h3><p>Hand the content work to me — ideas, production and a plan built around your business.</p></div>
+    </div>
+    <div class="more rv" style="margin-top:28px"><a href="#contact" class="btn btn--blue" data-magnet>Ask what's possible →</a></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="sec sec--tint" id="reviews">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="label sticker sticker--pink">What clients say</span><h2 class="display h2">Results, in their words.</h2></div>
+    <div class="tq-grid" id="tqGrid">
+      <figure class="tq tq--lead card rv"><p>Clients tell me they earned back what they paid me within the first months of running ads.</p><figcaption class="who">A common result <span>· paraphrased from client feedback</span></figcaption></figure>
+    </div>
+    <div class="more rv" style="margin-top:28px;text-align:center"><a href="/review" class="btn btn--ghost" data-magnet>Worked with me? Leave a review →</a></div>
   </div>
 </section>
 
@@ -325,6 +371,7 @@ section[id]{scroll-margin-top:60px}
 </footer>
 
 <script src="/js/site.js"></script>
+<script>window.siteTestimonials("tqGrid","reviews");</script>
 <script>
 // ── contact form → /api/contact-site ──
 (function(){

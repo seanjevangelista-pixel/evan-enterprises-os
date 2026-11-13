@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Leave a Review — Evan Enterprises</title>
+<meta name="description" content="Share your experience working with Sean at Evan Enterprises.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/site.css">
+<style>
+.rev{max-width:640px;margin:0 auto;padding:56px 22px 70px}
+.rev h1{margin-top:14px}
+.rev .sub{margin-top:14px;font-size:18px;color:var(--ink-soft)}
+.formcard{margin-top:30px;padding:28px 26px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field label,.field legend{font-weight:700;font-size:14px}
+.field .hint{font-size:13px;color:var(--ink-soft);font-weight:400}
+.field input[type=text],.field input[type=email],.field select,.field textarea{font:500 16px var(--font-body);padding:12px 14px;border:var(--line);border-radius:12px;background:var(--paper);color:var(--ink);width:100%}
+.field textarea{min-height:130px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:3px solid var(--accent-text);outline-offset:1px;background:var(--paper-2)}
+fieldset.field{border:0;padding:0;min-width:0}
+.stars-in{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:4px}
+.stars-in input{position:absolute;opacity:0;width:1px;height:1px}
+.stars-in label{font-size:34px;line-height:1;cursor:pointer;color:rgba(247,247,245,.22);transition:color .12s,transform .12s;padding:2px}
+.stars-in label:hover,.stars-in label:hover~label,.stars-in input:checked~label{color:var(--accent-text)}
+.stars-in label:hover{transform:scale(1.12)}
+.stars-in input:focus-visible+label{outline:3px solid var(--accent-text);outline-offset:2px;border-radius:6px}
+.check{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:var(--ink-soft);margin:6px 0 20px}
+.check input{margin-top:4px;width:18px;height:18px;accent-color:var(--blue);flex:none}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.formcard .btn{width:100%}
+.form-err{display:none;margin-top:14px;padding:12px 14px;border:var(--line);border-radius:12px;background:var(--pink);font-size:14.5px}
+.form-err.show{display:block}
+.form-ok{display:none;margin-top:30px;padding:34px 26px;text-align:center}
+.form-ok.show{display:block}
+.form-ok h2{font:800 28px var(--font-display);letter-spacing:-.025em;margin-bottom:10px}
+.form-ok p{color:var(--ink-soft)}
+@media(max-width:560px){.frow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <a href="/" class="brand-logo"><img src="/logo-mark.png" alt="">Evan Enterprises</a>
+  </div>
+</header>
+
+<main class="rev">
+  <span class="sticker">Client review</span>
+  <h1 class="display h2">How did working together go?</h1>
+  <p class="sub">A few honest sentences helps more than you'd think. It takes about two minutes, and it means a lot.</p>
+
+  <form id="reviewForm" class="formcard card" novalidate>
+    <div class="hp" aria-hidden="true"><label for="rv-site">Leave this empty</label><input id="rv-site" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+    <fieldset class="field">
+      <legend>Your rating</legend>
+      <div class="stars-in" role="radiogroup" aria-label="Rating out of 5">
+        <input type="radio" id="st5" name="rating" value="5" checked><label for="st5" title="5 stars">★</label>
+        <input type="radio" id="st4" name="rating" value="4"><label for="st4" title="4 stars">★</label>
+        <input type="radio" id="st3" name="rating" value="3"><label for="st3" title="3 stars">★</label>
+        <input type="radio" id="st2" name="rating" value="2"><label for="st2" title="2 stars">★</label>
+        <input type="radio" id="st1" name="rating" value="1"><label for="st1" title="1 star">★</label>
+      </div>
+    </fieldset>
+    <div class="field">
+      <label for="rv-use">What did you work with me on?</label>
+      <select id="rv-use" name="use">
+        <option>Google / Meta / Instagram ads</option>
+        <option>Website</option>
+        <option>UGC / content</option>
+        <option>AI / CRM / lead system</option>
+        <option>Something else</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="rv-text">Your review</label>
+      <textarea id="rv-text" name="text" required placeholder="What was it like working together? Any results you've seen (more calls, leads, sales)?"></textarea>
+    </div>
+    <div class="frow">
+      <div class="field"><label for="rv-name">Your name</label><input id="rv-name" name="name" type="text" autocomplete="name" required placeholder="Jane Smith"></div>
+      <div class="field"><label for="rv-biz">Business <span class="hint">(optional)</span></label><input id="rv-biz" name="business" type="text" autocomplete="organization" placeholder="Smith Landscaping"></div>
+    </div>
+    <div class="field">
+      <label for="rv-email">Your email <span class="hint">(so I can thank you — never published)</span></label>
+      <input id="rv-email" name="email" type="email" autocomplete="email" required placeholder="you@yourbiz.com">
+    </div>
+    <label class="check"><input type="checkbox" id="rv-ok" name="ok"><span>It's okay to publish my review, my name and my business on Sean's website.</span></label>
+    <button type="submit" class="btn btn--blue" id="rvBtn">Send review →</button>
+    <div class="form-err" id="rvErr" role="alert"></div>
+  </form>
+
+  <div class="form-ok card" id="rvOk" role="status">
+    <h2>Thank you!</h2>
+    <p>I read every one of these. I'll be in touch, and I really appreciate you taking the time.</p>
+  </div>
+</main>
+
+<script src="/js/site.js"></script>
+<script>
+(function(){
+  var form=document.getElementById('reviewForm'), btn=document.getElementById('rvBtn'), err=document.getElementById('rvErr'), ok=document.getElementById('rvOk');
+  function fail(m){err.textContent=m; err.classList.add('show');}
+  form.addEventListener('submit',async function(e){
+    e.preventDefault();
+    if(form.website.value) { form.style.display='none'; ok.classList.add('show'); return; }
+    var name=form.name.value.trim(), email=form.email.value.trim(), text=form.text.value.trim();
+    var rating=(form.querySelector('input[name=rating]:checked')||{}).value||'5';
+    if(!name||!email||!text){ fail('Please add your name, email and a few words about the experience.'); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fail('That email address doesn’t look right.'); return; }
+    if(!form.ok.checked){ fail('Please tick the box so I know I can publish it. If you’d rather not, just email me your feedback.'); return; }
+    err.classList.remove('show'); btn.disabled=true; btn.textContent='Sending…';
+    // The business name goes inside the message on purpose: the form handler routes by its "business" field,
+    // so a client typing their own company there would send the review to themselves.
+    var message='TESTIMONIAL — '+rating+'/5 — '+form.use.value+'\nBusiness: '+(form.business.value.trim()||'(none given)')+'\nOK to publish: yes\n\n'+text;
+    try{
+      var r=await fetch('/api/contact-site',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,email:email,service:'Testimonial',message:message})});
+      if(!r.ok) throw new Error('failed');
+      form.style.display='none'; ok.classList.add('show'); window.scrollTo({top:0,behavior:'smooth'});
+    }catch(x){
+      btn.disabled=false; btn.textContent='Send review →';
+      fail('That didn’t send. Please email your review to seanjevangelista@gmail.com instead.');
+    }
+  });
+})();
+</script>
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

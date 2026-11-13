@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>How Working Together Works — Pricing &amp; Process | Evan Enterprises</title>
-<meta name="description" content="How working with Evan Enterprises works: the four-step process, plain-English pricing for ads, websites, AI solutions and content, and answers to common questions. Austin, TX.">
+<meta name="description" content="How working with Evan Enterprises works: the four-step process, plain-English pricing for ad setup and management, websites, AI solutions and content, and answers to common questions. Austin, TX.">
 <link rel="canonical" href="https://evanenterprise.com/onboarding">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="theme-color" content="#0A0A0C">
@@ -24,6 +24,7 @@
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"How fast do you respond?","acceptedAnswer":{"@type":"Answer","text":"Within 24 hours, always, and it is always Sean replying, not a rep relaying messages."}},
 {"@type":"Question","name":"I'm not sure which service I need — is that okay?","acceptedAnswer":{"@type":"Answer","text":"Completely normal. The first call is for talking through your business and getting an honest recommendation."}},
+{"@type":"Question","name":"Do I need to provide creative for my ads?","acceptedAnswer":{"@type":"Answer","text":"Yes. Ads need content such as photos, video and your offer. If you do not have any, Sean can produce it as a separate, quoted project."}},
 {"@type":"Question","name":"Can I cancel ad management if it's not working out?","acceptedAnswer":{"@type":"Answer","text":"Yes. Ad management is month-to-month with no contract lock-in and no early termination fee."}},
 {"@type":"Question","name":"Do one-time projects come with any ongoing commitment?","acceptedAnswer":{"@type":"Answer","text":"No. Websites and UGC work wrap up at final delivery with no retainer or automatic renewal."}},
 {"@type":"Question","name":"What if I want changes after the first draft?","acceptedAnswer":{"@type":"Answer","text":"Revision rounds are part of the scope agreed at kickoff, so changes are not a surprise bill."}}
@@ -50,13 +51,21 @@
 @media(max-width:960px){.steps{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.steps{grid-template-columns:1fr}}
 
-.pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.needs{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.need{padding:24px 22px}
+.need h3{font:800 18px var(--font-display);letter-spacing:-.02em;margin-bottom:8px}
+.need p{font-size:15px;color:var(--ink-soft)}
+@media(max-width:1000px){.needs{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.needs{grid-template-columns:1fr}}
+.pay-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.proof{margin-top:26px;font:700 clamp(18px,2.2vw,22px) var(--font-display);letter-spacing:-.02em;color:var(--ink);max-width:60ch}
 .pay{padding:28px 24px;display:flex;flex-direction:column;gap:8px}
-.pay:nth-child(2){background:var(--yellow)}
+.pay:nth-child(3){background:var(--yellow)}
 .pay .svc{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
 .pay .split{font:800 30px var(--font-display);letter-spacing:-.03em}
 .pay p{font-size:15px;color:var(--ink-soft)}
-@media(max-width:900px){.pay-grid{grid-template-columns:1fr}}
+@media(max-width:1000px){.pay-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.pay-grid{grid-template-columns:1fr}}
 
 .table-wrap{overflow-x:auto;padding-bottom:8px}
 .rates{width:100%;min-width:520px;border-collapse:collapse;background:var(--card);border:var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
@@ -130,16 +139,32 @@
   </div>
 </section>
 
+<!-- WHAT I NEED -->
+<section class="sec" id="needs">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="label sticker sticker--pink">For ads</span><h2 class="display h2">What I need from you.</h2>
+      <p>Ads only work with good creative, so this is the main thing I ask for.</p></div>
+    <div class="needs">
+      <div class="need card rv"><h3>Creative to run</h3><p>Photos, video and content showing your work and offer. Don't have any? I can make it for you as a separate, quoted project.</p></div>
+      <div class="need card rv" style="--i:1"><h3>Account access</h3><p>Admin access to your Google and Meta accounts, Business Profile, Facebook Page and Instagram — or I set them up from scratch.</p></div>
+      <div class="need card rv" style="--i:2"><h3>Who you want to reach</h3><p>Your service area, ideal customer and what a good lead looks like, so I can target the right audience.</p></div>
+      <div class="need card rv" style="--i:3"><h3>An ad budget</h3><p>Your monthly ad spend (from $500/mo), paid straight to Google and Meta, separate from my fee.</p></div>
+    </div>
+  </div>
+</section>
+
 <!-- PRICING -->
 <section class="sec sec--tint" id="pricing">
   <div class="wrap">
     <div class="sec-head rv"><span class="label sticker sticker--yellow">Pricing</span><h2 class="display h2">What it costs, in plain terms.</h2>
       <p>Straightforward on purpose — here's what you'd pay and when, no hidden fees.</p></div>
     <div class="pay-grid">
-      <div class="pay card rv"><div class="svc">Website building</div><div class="split">50% → 50%</div><p>Half to start, half when it launches. Bigger builds split into three — we'll map it out on the call.</p></div>
-      <div class="pay card rv" style="--i:1"><div class="svc">Ad management · Google &amp; Meta</div><div class="split">$750/mo</div><p>Covers Google and Meta ads, including Instagram. $375 to start and $375 before ads go live (your first month), then $750/mo — cancel anytime. Ad spend (from $500/mo) goes straight to the platforms, separate from my fee.</p></div>
-      <div class="pay card rv" style="--i:2"><div class="svc">AI solutions &amp; content</div><div class="split">Custom quote</div><p>CRM builds, lead systems, lead generation and content production (including ongoing outsourced content) are quoted per project after a call. Half to start, half on delivery.</p></div>
+      <div class="pay card rv"><div class="svc">Website building</div><div class="split">From $500</div><p>Base price for a custom-built site. The more AI integrations (chatbot, CRM, automations), the more it costs — quoted on the call. Half to start, half at launch.</p></div>
+      <div class="pay card rv" style="--i:1"><div class="svc">Ad setup · one time</div><div class="split">$500 + $500</div><p>Only if you don't have ads running yet: $500 for Google, $500 for Meta. Covers your accounts, audience targeting, Meta Pixel and Conversions API tracking, and campaign build. You provide the creative.</p></div>
+      <div class="pay card rv" style="--i:2"><div class="svc">Monthly management</div><div class="split">$750/mo</div><p>Both platforms together, Instagram included, once ads are live. Month-to-month, cancel anytime. Ad spend (from $500/mo) goes straight to the platforms, separate from my fee.</p></div>
+      <div class="pay card rv" style="--i:3"><div class="svc">AI solutions &amp; content</div><div class="split">Custom quote</div><p>CRM builds, lead systems, lead generation and content production (including ongoing outsourced content) are quoted per project after a call. Half to start, half on delivery.</p></div>
     </div>
+    <p class="proof rv">Clients tell me they earned back what they paid me within the first months of running ads.</p>
   </div>
 </section>
 
@@ -170,6 +195,7 @@
     <div class="faq rv">
       <details><summary>How fast do you respond?<span class="ic">+</span></summary><p>Within 24 hours, always — and it's always me replying, not a rep relaying things back and forth. Most of the time it's a lot faster than that.</p></details>
       <details><summary>I'm not sure which service I need — is that okay?<span class="ic">+</span></summary><p>Completely normal. That's what the first call is for — tell me what's going on with your business and I'll tell you honestly what would actually help, even if it's not the thing you asked about.</p></details>
+      <details><summary>Do I need to provide creative for my ads?<span class="ic">+</span></summary><p>Yes — I need content to run ads: photos, video and your offer. If you don't have any, I can produce it for you as a separate, quoted project.</p></details>
       <details><summary>Can I cancel ad management if it's not working out?<span class="ic">+</span></summary><p>Yes — it's month-to-month with no contract lock-in and no early termination fee. Cancel anytime.</p></details>
       <details><summary>Do one-time projects come with any ongoing commitment?<span class="ic">+</span></summary><p>No. Websites and UGC work wrap up at final delivery — no retainer, no renewal, nothing automatic.</p></details>
       <details><summary>What if I want changes after the first draft?<span class="ic">+</span></summary><p>Revision rounds are part of the scope we agree on at kickoff, so this isn't a surprise bill — we'll talk through exactly how many rounds are included before anything starts.</p></details>

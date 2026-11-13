@@ -174,6 +174,13 @@ async function handleStats(req, res) {
     return res.status(502).json({ error: 'Could not read analytics: ' + e.message });
   }
 
+  // Days follow Sean's local calendar (Austin) instead of UTC, so an evening visit lands on the right day.
+  let tz = String(req.query.tz || 'America/Chicago');
+  try { new Intl.DateTimeFormat('en-CA', { timeZone: tz }); } catch (e) { tz = 'America/Chicago'; }
+  const dayFmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' });
+  const dayOf = (d) => dayFmt.format(new Date(d));
+  const daily = {};
+  const mkDay = () => ({ visits: 0, pageViews: 0, linkClicks: 0, siteClicks: 0, contacts: 0, sources: {}, landings: {}, methods: {}, mix: {}, pages: {}, links: {}, buttons: {} });
   const tally = (map, k) => { if (k) map[k] = (map[k] || 0) + 1; };
   const top = (map, n = 12) => Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, n).map(([name, count]) => ({ name, count }));
   const pages = {}, links = {}, buttons = {}, referrers = {}, countries = {}, byDay = {}, bySource = {}, dest = {};
@@ -186,26 +193,28 @@ async function handleStats(req, res) {
   const addContact = (src, method) => { mix[src] = mix[src] || {}; mix[src][method] = (mix[src][method] || 0) + 1; methods[method] = (methods[method] || 0) + 1; };
   const bump = (src, key) => { bySource[src] = bySource[src] || { visitors: 0, clicks: 0, contacts: 0 }; bySource[src][key]++; };
   for (const row of rows) {
-    const day = String(row.clicked_at).slice(0, 10);
+    const day = dayOf(row.clicked_at);
     byDay[day] = byDay[day] || { pageViews: 0, linkClicks: 0, siteClicks: 0 };
+    const dd = daily[day] = daily[day] || mkDay();
     if (row.slug.startsWith('pv:') || row.slug.startsWith('visit:')) {
       const isVisit = row.slug.startsWith('visit:');
       const src = normSrc(row.referrer) || (String(row.source || '').startsWith('#') ? '' : normSrc(row.source)) || 'direct';
-      totals.pageViews++; byDay[day].pageViews++; tally(pages, row.slug.slice(row.slug.indexOf(':') + 1)); tally(referrers, src);
-      if (isVisit) { totals.visits++; bump(src, 'visitors'); const pth = row.slug.slice(row.slug.indexOf(':') + 1); land(pth + (String(row.source || '').startsWith('#') ? row.source : ''), 'visitors'); }
+      const pth = row.slug.slice(row.slug.indexOf(':') + 1);
+      totals.pageViews++; byDay[day].pageViews++; dd.pageViews++; tally(pages, pth); tally(dd.pages, pth); tally(referrers, src);
+      if (isVisit) { totals.visits++; dd.visits++; tally(dd.sources, src); bump(src, 'visitors'); const lkey = pth + (String(row.source || '').startsWith('#') ? row.source : ''); land(lkey, 'visitors'); tally(dd.landings, lkey); }
     } else if (row.slug.startsWith('click:')) {
       const label = row.slug.slice(6), src = normSrc(row.referrer) || 'direct';
-      totals.siteClicks++; byDay[day].siteClicks++; tally(buttons, label);
+      totals.siteClicks++; byDay[day].siteClicks++; dd.siteClicks++; tally(buttons, label); tally(dd.buttons, label);
       bump(src, 'clicks');
       const lk = String(row.source || '').includes('>') ? String(row.source).split('>')[1] : 'unknown'; land(lk, 'clicks');
-      if (CONTACT_CLICKS.includes(label)) { totals.contacts++; bump(src, 'contacts'); addContact(src, label); land(lk, 'contacts'); }
+      if (CONTACT_CLICKS.includes(label)) { totals.contacts++; bump(src, 'contacts'); addContact(src, label); land(lk, 'contacts'); dd.contacts++; tally(dd.methods, label); dd.mix[src] = dd.mix[src] || {}; dd.mix[src][label] = (dd.mix[src][label] || 0) + 1; }
       if (label.startsWith('out:')) tally(dest, normSrc(label.slice(4).split('/')[0]));
     } else {
       const src = normSrc(row.referrer) || 'direct';
-      totals.linkClicks++; byDay[day].linkClicks++; tally(links, row.slug);
+      totals.linkClicks++; byDay[day].linkClicks++; dd.linkClicks++; tally(links, row.slug); tally(dd.links, row.slug);
       bump(src, 'clicks');
       const gl = String(row.source || '').includes('>') ? String(row.source).split('>')[1] : '/links'; land(gl, 'clicks');
-      if (CONTACT_GO.includes(row.slug)) { totals.contacts++; bump(src, 'contacts'); addContact(src, row.slug); land(gl, 'contacts'); }
+      if (CONTACT_GO.includes(row.slug)) { totals.contacts++; bump(src, 'contacts'); addContact(src, row.slug); land(gl, 'contacts'); dd.contacts++; tally(dd.methods, row.slug); dd.mix[src] = dd.mix[src] || {}; dd.mix[src][row.slug] = (dd.mix[src][row.slug] || 0) + 1; }
       if (SOCIAL_GO.includes(row.slug)) tally(dest, row.slug);
     }
     tally(countries, row.country);
@@ -224,10 +233,11 @@ async function handleStats(req, res) {
   };
   const series = [];
   for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10);
+    const d = dayOf(Date.now() - i * 864e5);
     series.push({ day: d, ...(byDay[d] || { pageViews: 0, linkClicks: 0, siteClicks: 0 }) });
   }
-  return res.status(200).json({ ok: true, v: 1, at: new Date().toISOString(), days, totals, funnel, pages: top(pages), links: top(links), buttons: top(buttons, 15), referrers: top(referrers), countries: top(countries, 8), series });
+  const dailyList = req.query.detail === '1' ? Object.entries(daily).map(([day, v]) => ({ day, ...v })).sort((a, b) => a.day.localeCompare(b.day)) : undefined;
+  return res.status(200).json({ ok: true, v: 1, at: new Date().toISOString(), tz, days, daily: dailyList, totals, funnel, pages: top(pages), links: top(links), buttons: top(buttons, 15), referrers: top(referrers), countries: top(countries, 8), series });
 }
 
 // ── Admin check ───────────────────────────────────────────────────────────────

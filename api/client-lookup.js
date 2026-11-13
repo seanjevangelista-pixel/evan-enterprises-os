@@ -99,7 +99,7 @@ function normSrc(v) {
   for (const [re, name] of SRC_RULES) if (re.test(v)) return name;
   return v.slice(0, 30);
 }
-const SITE_HOSTS = /(^|\.)evanenterprise\.com$/i;
+const SITE_HOSTS = /^(www\.)?evanenterprise\.com$/i; // only the real site counts
 function cleanHost(v) { v = String(v || '').toLowerCase().slice(0, 80); return /^[a-z0-9.-]+$/.test(v) ? v : ''; }
 
 async function handleHit(req, res) {

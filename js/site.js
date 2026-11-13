@@ -65,7 +65,7 @@ window.siteTestimonials=function(gridId,sectionId){
 // Logs page views and clicks to /api/client-lookup?action=hit. /go/ links are logged server-side.
 // Add #notrack to any URL once to exclude this browser from the counts.
 window.siteAnalytics=function(env){
-  if(!/(^|\.)evanenterprise\.com$/i.test(env.hostname)) return;
+  if(!/^(www\.)?evanenterprise\.com$/i.test(env.hostname)) return;   // only the real site: not previews, localhost or other domains
   try{
     if(/[?&#]notrack\b/.test(env.search+env.hash)) localStorage.setItem('ee_notrack','1');
     if(localStorage.getItem('ee_notrack')==='1') return;

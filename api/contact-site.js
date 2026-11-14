@@ -126,21 +126,26 @@ export default async function handler(req, res) {
     </div>
   `;
 
+  const send = (fromAddr) => fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ from: fromAddr, to, reply_to: replyTo, subject, html }),
+  });
+
   try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from,
-        to,
-        reply_to: replyTo,
-        subject,
-        html,
-      }),
-    });
+    let response = await send(from);
+
+    // If the sending domain has not been verified in Resend (403), do not lose the lead:
+    // retry from Resend's shared address, which delivers to the Resend account owner's own inbox.
+    if (!response.ok && response.status === 403) {
+      const first = await response.text();
+      console.error('Resend error (primary sender):', first);
+      response = await send('Evan Enterprises Website <onboarding@resend.dev>');
+      if (response.ok) console.error('contact-site: delivered through the fallback sender. Verify evanenterprise.com in Resend to restore the normal sender.');
+    }
 
     if (!response.ok) {
       const err = await response.text();

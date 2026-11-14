@@ -37,7 +37,10 @@ export default async function handler(req, res) {
   };
   const emailConfig = EMAIL_CONFIG_BY_BUSINESS[business] || {
     to: ['seanjevangelista@gmail.com'],
-    from: 'Evan Enterprises Website <noreply@evanenterprise.com>',
+    // Sent from Resend's shared address, which delivers straight to the Resend account owner's Gmail with
+    // no domain setup. Replies still go to the visitor (reply_to). Switch to an @evanenterprise.com sender
+    // only after the domain is verified in Resend.
+    from: 'Evan Enterprises Website <onboarding@resend.dev>',
     siteLabel: 'evanenterprise.com',
   };
   const { to, from, siteLabel } = emailConfig;

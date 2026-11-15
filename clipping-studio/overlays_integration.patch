@@ -1,8 +1,8 @@
 diff --git a/engine/modes/clip_extract.py b/engine/modes/clip_extract.py
-index 71eea5a..6270714 100644
+index 71eea5a..8cbf520 100644
 --- a/engine/modes/clip_extract.py
 +++ b/engine/modes/clip_extract.py
-@@ -340,6 +340,36 @@ def run(args, target_bitrate, target_preset):
+@@ -340,6 +340,38 @@ def run(args, target_bitrate, target_preset):
                                          caption_y=caption_y, hook_overlay=hook_on, events=broll_events[clip_file])
              print(f"[Log] B-roll: {placed} cutaway(s) added across {len(extracted_files)} clip(s).")
  
@@ -33,22 +33,25 @@ index 71eea5a..6270714 100644
 +                    break
 +                placed += apply_overlays(clip_file, words, hook_overlay=hook_on,
 +                                         position=getattr(args, "overlay_position", "top"),
-+                                         text_fallback=getattr(args, "overlay_text_fallback", False))
++                                         text_fallback=getattr(args, "overlay_text_fallback", False),
++                                         face_aware=not getattr(args, "no_overlay_face_aware", False),
++                                         caption_y=args.subtitle_y_pos if args.use_remotion else 1150)
 +            print(f"[Log] Overlays: {placed} graphic(s) added across {len(extracted_files)} clip(s).")
 +
      # Audio clean-up (noise reduction + loudness normalisation); runs on the finished clips of every render path
      if getattr(args, "clean_audio", False) and extracted_files:
          from engine.audio_clean import clean_clips
 diff --git a/shortsflow/_main.py b/shortsflow/_main.py
-index 9a07abe..d0c0687 100644
+index 9a07abe..5d1f44b 100644
 --- a/shortsflow/_main.py
 +++ b/shortsflow/_main.py
-@@ -170,6 +170,9 @@ def parse_args():
+@@ -170,6 +170,10 @@ def parse_args():
      parser.add_argument("--srt", action="store_true", help="Export SRT subtitle file alongside each video.")
      parser.add_argument("--use_chapters", action="store_true", help="Boost scores for segments overlapping YouTube chapters.")
      parser.add_argument("--broll", action="store_true", help="Auto B-roll: short stock cutaways (about 2 s) over the upper part of the frame when a concrete noun is spoken. Needs PEXELS_API_KEY or clips in assets/backgrounds/local; skipped otherwise.")
 +    parser.add_argument("--overlays", action="store_true", help="Word-synced transparent graphics: a heart on 'love', a clock on 'time', a Lego set on 'Lego' pop in near the top of the frame (about 2 s). Uses your PNGs in assets/overlays/, or generates them when OPENAI_API_KEY is set.")
 +    parser.add_argument("--overlay_position", choices=["top", "left", "right", "center"], default="top", help="Where --overlays graphics sit (default top, clear of the speaker's face).")
++    parser.add_argument("--no_overlay_face_aware", action="store_true", help="With --overlays: do not look for the speaker's face; always use --overlay_position. By default graphics move to a spot clear of the face and are skipped when none fits.")
 +    parser.add_argument("--overlay_text_fallback", action="store_true", help="With --overlays: when no graphic is available for a word, show the word on a small card instead.")
      parser.add_argument("--preview", action="store_true", help="Render a low-res 3fps proxy video for quick preview.")
      

@@ -41,7 +41,7 @@ ASSET_SIDE = 768        # px, longest side of a prepared graphic
 
 # Placement: (centre x offset as a share of frame width, centre y as a share of frame height).
 # "top" keeps clear of the speaker's face in a typical 9:16 talking-head shot; captions sit lower.
-POSITIONS = {"top": (0.0, 0.17), "left": (-0.26, 0.20), "right": (0.26, 0.20), "center": (0.0, 0.36)}
+POSITIONS = {"top": (0.0, 0.17), "left": (-0.21, 0.20), "right": (0.21, 0.20), "center": (0.0, 0.36)}
 
 # spoken word(s) -> image subject. Abstract ideas map to a symbol people recognise at a glance.
 CONCEPTS = {
@@ -304,6 +304,91 @@ def resolve_asset(keyword, subject, library_dir=LIBRARY_DIR, cache_dir=CACHE_DIR
     return None
 
 
+# ------------------------------------------------------------------------------------------ face-aware placement
+
+# Candidate spots, as (name, centre x offset from the middle as a share of frame width, centre y as a share of height).
+SLOTS = [("top", 0.0, 0.17), ("left", -0.21, 0.20), ("right", 0.21, 0.20),
+         ("upper_left", -0.21, 0.11), ("upper_right", 0.21, 0.11),
+         ("mid_left", -0.21, 0.36), ("mid_right", 0.21, 0.36), ("center", 0.0, 0.36)]
+SCALES = (1.0, 0.8, 0.65)      # try the full size in every spot before shrinking the graphic
+POP_GROW = 1.15                # the pop-in overshoots; keep clear of the face at the biggest moment
+EDGE = 0.04                    # keep this share of the frame width free at the sides
+FACE_PAD = (0.25, 0.45, 0.15)          # extra room around a face as shares of its size: each side, above (hair), below (neck)
+SAMPLES_PER_ITEM = 5
+MIN_FACE_DIV = 14              # a face counts when it is at least 1/14 of the frame wide
+
+
+def sample_faces(video, start, end, samples=SAMPLES_PER_ITEM, min_face_div=MIN_FACE_DIV):
+    """Face boxes seen between `start` and `end` seconds, as [(x0, y0, x1, y1)] shares of the frame (0..1).
+    Uses the same detector as the speaker crop (YuNet, else Haar). Returns [] when no face is found or detection fails."""
+    try:
+        import cv2
+        from engine.speaker_focus import _detect_faces, _make_detector
+        cap = cv2.VideoCapture(video)
+        det = _make_detector()
+        boxes = []
+        for i in range(samples):
+            t = start + (end - start) * (i + 0.5) / samples
+            cap.set(cv2.CAP_PROP_POS_MSEC, t * 1000.0)
+            ok, frame = cap.read()
+            if not ok:
+                continue
+            h, w = frame.shape[:2]
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            for x, y, fw, fh in _detect_faces(frame, gray, det):
+                if fw >= w // min_face_div:
+                    boxes.append((x / w, y / h, (x + fw) / w, (y + fh) / h))
+        cap.release()
+        return boxes
+    except Exception as e:
+        print(f"[Warning] Overlay face detection failed ({str(e)[:120]}); using the fixed position.")
+        return []
+
+
+def face_zone(boxes, pad=FACE_PAD):
+    """One padded keep-clear box (x0, y0, x1, y1 as shares) around every face seen; None when there are none.
+    Padding adds room for hair above, shoulders at the sides and a bit of neck below."""
+    if not boxes:
+        return None
+    x0, y0 = min(b[0] for b in boxes), min(b[1] for b in boxes)
+    x1, y1 = max(b[2] for b in boxes), max(b[3] for b in boxes)
+    fw, fh = x1 - x0, y1 - y0
+    return (max(0.0, x0 - pad[0] * fw), max(0.0, y0 - pad[1] * fh), min(1.0, x1 + pad[0] * fw), min(1.0, y1 + pad[2] * fh))
+
+
+def _overlap(a, b):
+    return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
+
+
+def place_graphic(frame, aspect, zone, preferred="top", size_frac=SIZE_FRAC, bottom_limit=None):
+    """Pick where a graphic goes so it never covers the face.
+    frame: (width, height) px; aspect: graphic height / width; zone: padded face box in shares, or None when no face was
+    seen; bottom_limit: lowest pixel row the graphic may reach (the caption line). Returns
+    {'cx','cy','w','slot'} in pixels, or None when no spot clears the face (the graphic is then skipped).
+    With no face information the preferred spot is used (shrunk if it does not fit)."""
+    width, height = frame
+    limit = bottom_limit if bottom_limit else height * 0.6
+    names = [slot[0] for slot in SLOTS]
+    order = sorted(SLOTS, key=lambda slot: -1 if slot[0] == preferred else names.index(slot[0]))
+    by_name = {slot[0]: slot for slot in SLOTS}
+    tries = []
+    if zone is None and preferred in by_name:
+        tries += [(by_name[preferred], scale) for scale in SCALES]
+    tries += [(slot, scale) for scale in SCALES for slot in order]       # full size in every spot before shrinking
+    for (name, dx, cy_share), scale in tries:
+        gw = size_frac * width * scale
+        gh = gw * aspect
+        cx, cy = width / 2 + dx * width, cy_share * height
+        half_w, half_h = gw * POP_GROW / 2, gh * POP_GROW / 2 + 8        # +8: the float animation
+        x0, x1, y0, y1 = cx - half_w, cx + half_w, cy - half_h, cy + half_h
+        if x0 < EDGE * width or x1 > width * (1 - EDGE) or y0 < 0 or y1 > limit:
+            continue
+        if zone is not None and _overlap((x0 / width, y0 / height, x1 / width, y1 / height), zone):
+            continue
+        return {"cx": round(cx, 1), "cy": round(cy, 1), "w": round(gw, 1), "slot": name}
+    return None
+
+
 # ------------------------------------------------------------------------------------------------ rendering
 
 def _pop(p="min(t/%.2f,1)" % POP_SECONDS):
@@ -319,10 +404,9 @@ def build_overlay_command(ffmpeg, video, items, frame, output, fps=30, position=
     chain, last = [], "0:v"
     for n, it in enumerate(items, start=1):
         length = it["end"] - it["start"]
-        # alternate sides a little when the position is "top" would hide the speaker; keep to the chosen spot
-        cx = width / 2 + dx_share * width
-        cy = cy_share * height
-        base = size_frac * width
+        cx = it.get("cx", width / 2 + dx_share * width)       # face-aware placement sets cx, cy, w per graphic
+        cy = it.get("cy", cy_share * height)
+        base = it.get("w", size_frac * width)
         cmd += ["-loop", "1", "-framerate", str(fps), "-t", f"{length:.3f}", "-i", it["asset"]]
         chain.append(
             f"[{n}:v]format=rgba,"
@@ -357,8 +441,19 @@ def render_overlays(video, items, frame, ffmpeg=None, position="top"):
             os.remove(tmp)
 
 
+def _aspect(path):
+    """Height / width of a graphic (1.0 when it cannot be read)."""
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            return im.height / max(1, im.width)
+    except Exception:
+        return 1.0
+
+
 def apply_to_clip(video, words, hook_overlay=False, ask=None, position="top", text_fallback=False,
-                  resolve=resolve_asset, events=None):
+                  resolve=resolve_asset, events=None, face_aware=True, detect=sample_faces,
+                  caption_y=broll.DEFAULT_CAPTION_Y):
     """Graphics for one finished clip. Returns the number placed (0 = clip untouched). Never raises.
     `events`, when given, receives {"t", "kind", "keyword"} per graphic (for sound effects)."""
     try:
@@ -369,10 +464,21 @@ def apply_to_clip(video, words, hook_overlay=False, ask=None, position="top", te
             return 0
         picks = pick_overlays(words, duration, min_start=HOOK_MIN_START if hook_overlay else MIN_START, ask=ask)
         items = []
+        region = broll.cutaway_region(width, height, "single", caption_y)
+        bottom_limit = region[3] if region else None
         for p in picks:
             asset = resolve(p["keyword"], p["subject"], text_fallback=text_fallback)
-            if asset:
-                items.append(dict(p, asset=asset))
+            if not asset:
+                continue
+            item = dict(p, asset=asset)
+            if face_aware:
+                zone = face_zone(detect(video, p["start"], p["end"]))
+                spot = place_graphic((width, height), _aspect(asset), zone, preferred=position, bottom_limit=bottom_limit)
+                if spot is None:
+                    print(f"[Log] Overlays: no spot clear of the face for '{p['keyword']}'; skipped.")
+                    continue
+                item.update(cx=spot["cx"], cy=spot["cy"], w=spot["w"], slot=spot["slot"])
+            items.append(item)
         if not items:
             print("[Log] Overlays: no matching moments or no graphics available (add transparent PNGs to "
                   f"{LIBRARY_DIR}, set OPENAI_API_KEY, or use text fallback); clip left as it was.")

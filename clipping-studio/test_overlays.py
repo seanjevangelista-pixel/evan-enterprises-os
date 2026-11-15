@@ -137,3 +137,114 @@ def test_end_to_end_render_keeps_duration_and_audio(tmp_path):
 
 def test_apply_never_raises_on_bad_input():
     assert overlays.apply_to_clip("does-not-exist.mp4", [W("love", 3.0)]) == 0
+
+
+# ---------------------------------------------------------------------------------- face-aware placement
+
+FRAME = (1080, 1920)
+CAPTION_LIMIT = int((1150 - 170) * 1920 / 1920)   # the lowest row a graphic may reach with default captions
+
+
+def test_face_zone_pads_and_unions_faces():
+    assert overlays.face_zone([]) is None
+    zone = overlays.face_zone([(0.4, 0.3, 0.6, 0.45)])
+    assert zone[0] < 0.4 and zone[1] < 0.3 and zone[2] > 0.6 and zone[3] > 0.45     # padded all round
+    two = overlays.face_zone([(0.1, 0.3, 0.3, 0.45), (0.7, 0.3, 0.9, 0.45)])
+    assert two[0] <= 0.1 and two[2] >= 0.9                                           # one box around both people
+
+
+def test_no_face_information_uses_the_preferred_spot():
+    spot = overlays.place_graphic(FRAME, 1.0, None, preferred="top", bottom_limit=CAPTION_LIMIT)
+    assert spot["slot"] == "top" and spot["cx"] == 540
+    right = overlays.place_graphic(FRAME, 1.0, None, preferred="right", bottom_limit=CAPTION_LIMIT)
+    assert right["slot"] == "right" and right["cx"] > 540
+
+
+def test_graphic_moves_off_a_face_and_never_overlaps_it():
+    face = (0.38, 0.06, 0.62, 0.20)            # a head sitting high in the frame, right where "top" would go
+    zone = overlays.face_zone([face])
+    spot = overlays.place_graphic(FRAME, 1.0, zone, preferred="top", bottom_limit=CAPTION_LIMIT)
+    assert spot is not None and spot["slot"] != "top"
+    half = spot["w"] * overlays.POP_GROW / 2
+    box = ((spot["cx"] - half) / 1080, (spot["cy"] - half) / 1920, (spot["cx"] + half) / 1080, (spot["cy"] + half) / 1920)
+    assert not overlays._overlap(box, zone)
+
+
+def test_graphic_shrinks_when_only_a_small_gap_is_free():
+    zone = (0.10, 0.0, 0.90, 0.40)             # people fill the top: the full-size spots all collide
+    spot = overlays.place_graphic(FRAME, 1.0, zone, preferred="top", bottom_limit=CAPTION_LIMIT)
+    if spot is not None:                       # if anything fits it must be clear, and smaller than full size
+        assert spot["w"] < overlays.SIZE_FRAC * 1080
+
+
+def test_graphic_is_skipped_when_every_spot_hits_the_face():
+    zone = (0.0, 0.0, 1.0, 1.0)                # a face that fills the frame
+    assert overlays.place_graphic(FRAME, 1.0, zone, bottom_limit=CAPTION_LIMIT) is None
+
+
+def test_tall_graphic_stays_above_the_caption_line():
+    spot = overlays.place_graphic(FRAME, 2.5, None, preferred="center", bottom_limit=CAPTION_LIMIT)
+    if spot is not None:
+        assert spot["cy"] + spot["w"] * 2.5 * overlays.POP_GROW / 2 <= CAPTION_LIMIT
+
+
+def test_sample_faces_on_a_video_without_faces_returns_nothing(tmp_path):
+    if not shutil.which("ffmpeg"):
+        pytest.skip("ffmpeg missing")
+    v = tmp_path / "plain.mp4"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=green:s=540x960:d=3", str(v)], check=True)
+    assert overlays.sample_faces(str(v), 0.5, 2.5) == []
+    assert overlays.sample_faces("missing.mp4", 0, 1) == []          # failure is a warning, not a crash
+
+
+def _clip(tmp_path, seconds=8):
+    v = tmp_path / "clip.mp4"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", f"color=c=gray:s=540x960:r=30:d={seconds}",
+                    "-f", "lavfi", "-i", f"sine=frequency=300:duration={seconds}", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+                    "-c:a", "aac", "-shortest", str(v)], check=True)
+    return v
+
+
+def test_apply_places_each_graphic_by_the_faces_found(tmp_path):
+    if not shutil.which("ffmpeg"):
+        pytest.skip("ffmpeg missing")
+    v, art = _clip(tmp_path, 14), tmp_path / "art.png"
+    _opaque_white_heart(art)
+    seen = []
+    # head high in frame for the first graphic (top is blocked), nowhere in sight for the second
+    faces = {3.0: [(0.38, 0.06, 0.62, 0.20)]}
+    detect = lambda video, start, end: faces.get(round(start + overlays.LEAD, 1), [])
+    items_seen = []
+    real = overlays.render_overlays
+    overlays.render_overlays = lambda video, items, frame, ffmpeg=None, position="top": (items_seen.extend(items) or real(video, items, frame, ffmpeg, position))
+    try:
+        n = overlays.apply_to_clip(str(v), [W("love", 3.0), W("time", 10.0)], face_aware=True, detect=detect,
+                                   resolve=lambda kw, subj, text_fallback=False: str(art))
+    finally:
+        overlays.render_overlays = real
+    assert n == 2
+    by_kw = {i["keyword"]: i for i in items_seen}
+    assert by_kw["love"]["slot"] != "top"          # moved off the face
+    assert by_kw["time"]["slot"] == "top"          # no face there: preferred spot
+
+
+def test_apply_skips_a_graphic_that_would_cover_the_face(tmp_path):
+    if not shutil.which("ffmpeg"):
+        pytest.skip("ffmpeg missing")
+    v, art = _clip(tmp_path), tmp_path / "art.png"
+    _opaque_white_heart(art)
+    before = v.read_bytes()
+    big_face = lambda video, start, end: [(0.0, 0.0, 1.0, 1.0)]
+    assert overlays.apply_to_clip(str(v), [W("love", 3.0)], detect=big_face,
+                                  resolve=lambda kw, subj, text_fallback=False: str(art)) == 0
+    assert v.read_bytes() == before                # nothing placed, clip untouched
+
+
+def test_face_aware_can_be_turned_off(tmp_path):
+    if not shutil.which("ffmpeg"):
+        pytest.skip("ffmpeg missing")
+    v, art = _clip(tmp_path), tmp_path / "art.png"
+    _opaque_white_heart(art)
+    boom = lambda *a, **k: (_ for _ in ()).throw(AssertionError("detector must not run"))
+    assert overlays.apply_to_clip(str(v), [W("love", 3.0)], face_aware=False, detect=boom,
+                                  resolve=lambda kw, subj, text_fallback=False: str(art)) == 1

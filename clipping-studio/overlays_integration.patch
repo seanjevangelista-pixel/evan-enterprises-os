@@ -1,0 +1,55 @@
+diff --git a/engine/modes/clip_extract.py b/engine/modes/clip_extract.py
+index 71eea5a..6270714 100644
+--- a/engine/modes/clip_extract.py
++++ b/engine/modes/clip_extract.py
+@@ -340,6 +340,36 @@ def run(args, target_bitrate, target_preset):
+                                         caption_y=caption_y, hook_overlay=hook_on, events=broll_events[clip_file])
+             print(f"[Log] B-roll: {placed} cutaway(s) added across {len(extracted_files)} clip(s).")
+ 
++    # Word-synced transparent graphics (engine/overlays.py): a heart on "love", a clock on "time"
++    if getattr(args, "overlays", False) and extracted_files:
++        if args.extract_mode == "long" or getattr(args, "mashup", False):
++            print("[Log] Overlays apply to short vertical clips; skipped for the highlights video.")
++        else:
++            from engine.broll import clip_words
++            from engine.overlays import apply_to_clip as apply_overlays
++            words_source = os.path.join(session_dir, "transcript.json")  # original language: the word list is English
++            if not os.path.exists(words_source):
++                words_source = transcript_path
++            try:
++                with open(words_source, 'r', encoding='utf-8') as f:
++                    overlay_transcript = json.load(f)
++            except (OSError, ValueError):
++                overlay_transcript = {}
++            hook_on = bool(getattr(args, "hook_overlay", False) and args.use_remotion)
++            placed = 0
++            for i, clip_file in enumerate(extracted_files):
++                if i >= len(highlights):
++                    break
++                words = clip_words(overlay_transcript, highlights[i]['start'], highlights[i]['end'], final_silence,
++                                   tighten_mode=args.tighten_mode, remove_fillers=getattr(args, "remove_fillers", False))
++                if words is None:
++                    print("[Warning] Overlay timing needs --tighten_mode cut when tightening; skipped.")
++                    break
++                placed += apply_overlays(clip_file, words, hook_overlay=hook_on,
++                                         position=getattr(args, "overlay_position", "top"),
++                                         text_fallback=getattr(args, "overlay_text_fallback", False))
++            print(f"[Log] Overlays: {placed} graphic(s) added across {len(extracted_files)} clip(s).")
++
+     # Audio clean-up (noise reduction + loudness normalisation); runs on the finished clips of every render path
+     if getattr(args, "clean_audio", False) and extracted_files:
+         from engine.audio_clean import clean_clips
+diff --git a/shortsflow/_main.py b/shortsflow/_main.py
+index 9a07abe..d0c0687 100644
+--- a/shortsflow/_main.py
++++ b/shortsflow/_main.py
+@@ -170,6 +170,9 @@ def parse_args():
+     parser.add_argument("--srt", action="store_true", help="Export SRT subtitle file alongside each video.")
+     parser.add_argument("--use_chapters", action="store_true", help="Boost scores for segments overlapping YouTube chapters.")
+     parser.add_argument("--broll", action="store_true", help="Auto B-roll: short stock cutaways (about 2 s) over the upper part of the frame when a concrete noun is spoken. Needs PEXELS_API_KEY or clips in assets/backgrounds/local; skipped otherwise.")
++    parser.add_argument("--overlays", action="store_true", help="Word-synced transparent graphics: a heart on 'love', a clock on 'time', a Lego set on 'Lego' pop in near the top of the frame (about 2 s). Uses your PNGs in assets/overlays/, or generates them when OPENAI_API_KEY is set.")
++    parser.add_argument("--overlay_position", choices=["top", "left", "right", "center"], default="top", help="Where --overlays graphics sit (default top, clear of the speaker's face).")
++    parser.add_argument("--overlay_text_fallback", action="store_true", help="With --overlays: when no graphic is available for a word, show the word on a small card instead.")
+     parser.add_argument("--preview", action="store_true", help="Render a low-res 3fps proxy video for quick preview.")
+     
+     # Cartoon/Persona Flags

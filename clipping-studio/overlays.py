@@ -236,8 +236,8 @@ def text_card(word, dst, side=ASSET_SIDE):
     w, h = int(tw + 120), 300
     card = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(card)
-    d.rounded_rectangle((0, 0, w - 1, h - 1), radius=60, fill=(255, 214, 0, 255))
-    d.text((w / 2, h / 2), word, font=font, fill=(20, 20, 20, 255), anchor="mm")
+    d.rounded_rectangle((0, 0, w - 1, h - 1), radius=60, fill=(124, 58, 237, 255))
+    d.text((w / 2, h / 2), word, font=font, fill=(255, 255, 255, 255), anchor="mm")
     tmp = dst + ".raw.png"
     card.save(tmp)
     try:

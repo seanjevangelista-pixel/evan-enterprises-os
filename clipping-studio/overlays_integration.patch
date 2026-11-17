@@ -1,8 +1,32 @@
 diff --git a/engine/modes/clip_extract.py b/engine/modes/clip_extract.py
-index 71eea5a..8cbf520 100644
+index 71eea5a..ed832ee 100644
 --- a/engine/modes/clip_extract.py
 +++ b/engine/modes/clip_extract.py
-@@ -340,6 +340,38 @@ def run(args, target_bitrate, target_preset):
+@@ -184,6 +184,15 @@ def run(args, target_bitrate, target_preset):
+     )
+     
+     timing.mark("analysis done (all of process_source_video)")
++    if getattr(args, "clip_plan", None):
++        from engine import screen_cam as _screen_cam
++        try:
++            plan = _screen_cam.parse_clip_plan(args.clip_plan)
++        except (OSError, ValueError) as e:
++            print(f"[Error] --clip_plan: {e}")
++            sys.exit(2)
++        highlights = _screen_cam.plan_to_highlights(plan)
++        print(f"[Log] Clip plan: cutting {len(highlights)} chosen moment(s) instead of the automatic picks.")
+     # The filler pass needs the words as spoken: a translated transcript has no "um" in it
+     spoken_transcript_path = transcript_path
+ 
+@@ -296,6 +305,7 @@ def run(args, target_bitrate, target_preset):
+         max_workers=getattr(args, 'max_workers', None),
+         layout=args.layout,
+         filler_video=getattr(args, 'filler_video', None),
++        cam_box=(__import__('engine.screen_cam', fromlist=['parse_cam_box']).parse_cam_box(args.cam_box) if getattr(args, 'cam_box', None) else None),
+         remove_fillers=getattr(args, 'remove_fillers', False),
+         reel_captions=getattr(args, 'reel_captions', False),
+         transitions=reel_transition,
+@@ -340,6 +350,38 @@ def run(args, target_bitrate, target_preset):
                                          caption_y=caption_y, hook_overlay=hook_on, events=broll_events[clip_file])
              print(f"[Log] B-roll: {placed} cutaway(s) added across {len(extracted_files)} clip(s).")
  
@@ -41,11 +65,112 @@ index 71eea5a..8cbf520 100644
      # Audio clean-up (noise reduction + loudness normalisation); runs on the finished clips of every render path
      if getattr(args, "clean_audio", False) and extracted_files:
          from engine.audio_clean import clean_clips
+diff --git a/engine/video_gen.py b/engine/video_gen.py
+index 9676800..3bb8ffe 100644
+--- a/engine/video_gen.py
++++ b/engine/video_gen.py
+@@ -2784,7 +2784,7 @@ def write_segment_key(path, key):
+         pass
+ 
+ 
+-def extract_segments(source_path, highlights, transcript_path, output_dir, mode="shorts", bitrate="12M", preset="slow", codec="libx264", is_challenge=False, use_hq=False, use_superres=False, editing_style=None, gif_dir=None, interest_points=None, silence_intervals=None, tighten_mode="cut", use_remotion=False, use_cache=False, mashup=False, mashup_mode="edit", orientation="landscape", letterbox_crop=None, caption_style="HORMOZI", subtitle_y_pos=1150, video_filter=None, user_context=None, max_workers=None, layout="single", remove_fillers=False, reel_captions=False, filler_video=None, enhance="off", enhance_strength="medium", transitions="none", aspect_ratio="9:16"):
++def extract_segments(source_path, highlights, transcript_path, output_dir, mode="shorts", bitrate="12M", preset="slow", codec="libx264", is_challenge=False, use_hq=False, use_superres=False, editing_style=None, gif_dir=None, interest_points=None, silence_intervals=None, tighten_mode="cut", use_remotion=False, use_cache=False, mashup=False, mashup_mode="edit", orientation="landscape", letterbox_crop=None, caption_style="HORMOZI", subtitle_y_pos=1150, video_filter=None, user_context=None, max_workers=None, layout="single", remove_fillers=False, reel_captions=False, filler_video=None, enhance="off", enhance_strength="medium", transitions="none", aspect_ratio="9:16", cam_box=None):
+     """Parallel extraction of segments using direct FFmpeg for performance."""
+     if not os.path.exists(transcript_path):
+         print(f"[Warning] Transcript not found at {transcript_path}. Subtitles will be skipped.")
+@@ -2827,6 +2827,9 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
+ 
+     if layout == "fit" and mode == "shorts":
+         subtitle_y_pos = fit_caption_y(subtitle_y_pos)       # captions below the centred picture
++    if layout == "screen_cam" and mode == "shorts":
++        from engine import screen_cam as _screen_cam
++        subtitle_y_pos = _screen_cam.CAPTION_Y if subtitle_y_pos in (None, 1150) else subtitle_y_pos   # the gap under the webcam
+ 
+     # clips cut with the plain one-person crop (smart or centre): their animated captions may move off a close-up face
+     single_crop_clips = set()
+@@ -2835,7 +2838,7 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
+     seg_keys = {}
+     for i, hi in enumerate(highlights):
+         target = os.path.join(output_dir, "temp_segments", f"seg_{i}.mp4")
+-        seg_keys[i] = segment_key(source_path, hi, mode=mode, layout=layout, aspect=aspect_ratio, orientation=orientation,
++        seg_keys[i] = segment_key(source_path, hi, mode=mode, layout=(f"screen_cam:{cam_box}" if layout == "screen_cam" else layout), aspect=aspect_ratio, orientation=orientation,
+                                   letterbox=letterbox_crop, filler=bool(filler_path), enhance=enhance, enhance_strength=enhance_strength)
+         if use_cache and segment_is_cached(target, seg_keys[i]):
+             if mode == "shorts" and layout == "single" and not filler_path:
+@@ -2880,6 +2883,17 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
+                 fit_clips.add(i)
+                 print(f"[Log] Clip {i+1}: no face on screen (slides / screen recording?), fitting the whole picture instead of cropping it. (auto layout: fit)")
+ 
++        clip_layout, sc_cam = layout, None
++        if mode == "shorts" and layout == "screen_cam":
++            from engine import screen_cam as _sc
++            sc_cam = _sc.detect_cam(source_path, hi['start'], hi['end'], cam_box, w, _sc._even(round(h * _sc.CAM_FRAC)))
++            if sc_cam == "talking_head":
++                clip_layout = "single"
++                print(f"[Log] Clip {i+1}: the speaker fills the frame (no screen share), using the normal face crop.")
++            elif sc_cam is None:
++                clip_layout = "fit"
++                print(f"[Warning] Clip {i+1}: no webcam face found and no --cam_box; using the fit layout for this clip.")
++
+         if mode == "shorts":
+             if filler_path:
+                 # chain for the clip half only; the full graph is assembled below once colour grades are prepended
+@@ -2889,7 +2903,16 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
+                 vf_filter = build_active_speaker_filter(active_shots, w, h)
+             elif layout == "split":
+                 vf_filter = generate_ffmpeg_split_screen_filter(w, h)
+-            elif layout == "fit" or auto_fit:
++            elif clip_layout == "screen_cam":
++                sc_zoom, window = None, None
++                if not letterbox_crop:
++                    from engine.screen_region import active_region as _active_region, crop_filter as _zoom_filter
++                    window = _active_region(source_path, hi['start'], hi['end'])
++                    if window:
++                        sc_zoom = _zoom_filter(window)
++                vf_filter = _sc.generate_filter(w, h, sc_cam, sc_zoom, letterbox_crop=letterbox_crop)
++                print(f"[Log] Clip {i+1}: screen_cam layout (webcam on top, screen below" + (f", zoomed {1 / window[0]:.2f}x" if sc_zoom else "") + ").")
++            elif clip_layout == "fit" or auto_fit:
+                 zoom = None
+                 if auto_fit and not letterbox_crop:        # a screen recording / slide deck: zoom in on the part that changes
+                     from engine.screen_region import active_region, crop_filter
+diff --git a/remotion-video/src/ShortFlow.tsx b/remotion-video/src/ShortFlow.tsx
+index fc038bd..5bd5841 100644
+--- a/remotion-video/src/ShortFlow.tsx
++++ b/remotion-video/src/ShortFlow.tsx
+@@ -268,7 +268,7 @@ const HookOverlay: React.FC<{ text: string; seconds: number; fps: number; frame:
+         style={{
+           transform: `scale(${0.6 + 0.4 * pop}) rotate(${(1 - pop) * -4}deg)`,
+           background: "rgba(0, 0, 0, 0.78)",
+-          border: "6px solid #FFEA00",
++          border: "6px solid #A855F7",
+           borderRadius: "28px",
+           padding: "26px 44px",
+           boxShadow: "0 14px 40px rgba(0,0,0,0.6)",
+@@ -279,7 +279,7 @@ const HookOverlay: React.FC<{ text: string; seconds: number; fps: number; frame:
+             fontFamily: "Anton, NotoDevanagari, NotoCyrillic, Impact, Arial Black, sans-serif",
+             fontSize: `${fontSize}px`,
+             lineHeight: 1.08,
+-            color: "#FFEA00",
++            color: "#FFFFFF",
+             textTransform: "uppercase",
+             textAlign: "center",
+             letterSpacing: "1px",
 diff --git a/shortsflow/_main.py b/shortsflow/_main.py
-index 9a07abe..5d1f44b 100644
+index 9a07abe..51f5b2e 100644
 --- a/shortsflow/_main.py
 +++ b/shortsflow/_main.py
-@@ -170,6 +170,10 @@ def parse_args():
+@@ -159,7 +159,9 @@ def parse_args():
+     # 🟢 Auto-Editor & AutoClip Flags
+     parser.add_argument("--tighten", action="store_true", help="Remove silences from the final video.")
+     parser.add_argument("--tighten_mode", choices=["cut", "speed"], default="cut", help="How to handle silences: 'cut' them or 'speed' them up.")
+-    parser.add_argument("--layout", choices=["single", "split", "active", "auto", "split_filler", "fit"], default="single", help="Vertical framing for clips: fit (the whole picture centred over a blurred copy of itself, nothing cropped off the sides), split_filler (clip on top, looping gameplay/satisfying footage below; see --filler_video), single (face/center crop), split (two speakers stacked), active (cut to whoever is talking, stacked when unsure), auto (picks per clip: active for a two-person shot, fit when no face shows on screen, as in slides or a screen recording, otherwise the tracked single crop).")
++    parser.add_argument("--layout", choices=["single", "split", "active", "auto", "split_filler", "fit", "screen_cam"], default="single", help="Vertical framing for clips: screen_cam (screen recording with a webcam: the webcam on the top third, the whole screen below it, zoomed on what changes; see --cam_box), fit (the whole picture centred over a blurred copy of itself, nothing cropped off the sides), split_filler (clip on top, looping gameplay/satisfying footage below; see --filler_video), single (face/center crop), split (two speakers stacked), active (cut to whoever is talking, stacked when unsure), auto (picks per clip: active for a two-person shot, fit when no face shows on screen, as in slides or a screen recording, otherwise the tracked single crop).")
++    parser.add_argument("--cam_box", type=str, default=None, help="With --layout screen_cam: where the webcam sits in the source frame as x,y,w,h shares (0-1), e.g. 0.02,0.62,0.30,0.36. Default: found with the face detector.")
++    parser.add_argument("--clip_plan", type=str, default=None, help="Cut exactly these moments instead of letting the program choose. A text file with one \"start-end title\" per line (e.g. 4:12-4:41 Claude objections) or a JSON list of {start, end, title}.")
+     parser.add_argument("--filler_video", type=str, default=None, help="Footage for the bottom half of --layout split_filler. Default: a video from assets/backgrounds/local/, else a Pexels stock clip.")
+     parser.add_argument("--smart_crop", action="store_true", help="Enabled AI-powered face/interest tracking for vertical cropping.")
+     parser.add_argument("--add_commentary", action="store_true", help="Generate an AI voiceover intro commentary hook for third-party clips to ensure 100%% YouTube policy compliance.")
+@@ -170,6 +172,10 @@ def parse_args():
      parser.add_argument("--srt", action="store_true", help="Export SRT subtitle file alongside each video.")
      parser.add_argument("--use_chapters", action="store_true", help="Boost scores for segments overlapping YouTube chapters.")
      parser.add_argument("--broll", action="store_true", help="Auto B-roll: short stock cutaways (about 2 s) over the upper part of the frame when a concrete noun is spoken. Needs PEXELS_API_KEY or clips in assets/backgrounds/local; skipped otherwise.")

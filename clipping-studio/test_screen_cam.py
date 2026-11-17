@@ -100,3 +100,52 @@ def test_filter_renders_a_1080x1920_frame(tmp_path):
     info = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=width,height", "-of", "csv=p=0", str(out)],
                           capture_output=True, text=True).stdout.strip()
     assert info == "1080,1920"
+
+
+# ------------------------------------------------------------------------------------ zoom onto the page content
+
+def _page_video(tmp_path, content, name="page.mp4"):
+    """1920x1080 'screen recording': white page, grey browser bar on top, a dark webcam box bottom-left, `content` drawboxes."""
+    v = tmp_path / name
+    boxes = ",".join(["drawbox=x=0:y=0:w=1920:h=110:color=gray:t=fill", "drawbox=x=0:y=760:w=480:h=320:color=black:t=fill"] + content)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=white:s=1920x1080:r=30:d=3", "-vf", boxes,
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", str(v)], check=True)
+    return v
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg missing")
+def test_content_zoom_finds_a_small_form_and_leaves_the_webcam_out(tmp_path):
+    form = ["drawbox=x=700:y=250:w=500:h=60:color=blue:t=fill", "drawbox=x=700:y=350:w=500:h=60:color=blue:t=fill",
+            "drawbox=x=700:y=450:w=500:h=60:color=blue:t=fill", "drawbox=x=700:y=550:w=500:h=60:color=blue:t=fill"]
+    v = _page_video(tmp_path, form)
+    cam = sc.window_from_box((0.0, 0.70, 0.25, 0.30), 1080, 640)
+    zoom = sc.content_zoom(str(v), 0, 3, cam)
+    assert zoom and zoom.startswith("crop=")
+    import re
+    m = re.fullmatch(r"crop=w=iw\*([\d.]+):h=ih\*([\d.]+):x=iw\*([\d.]+):y=ih\*([\d.]+)", zoom)
+    w, h, x, y = [float(g) for g in m.groups()]
+    assert w < 0.7 and h < 0.7                                   # a real zoom, not the whole screen
+    assert x <= 700 / 1920 and x + w >= 1200 / 1920              # the form is inside the window
+    assert y <= 250 / 1080 and y + h >= 610 / 1080
+    assert x > 0.25 or y < 0.70                                  # and the webcam box is not what the window is built around
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg missing")
+def test_content_zoom_is_none_when_content_fills_the_screen_or_is_missing(tmp_path):
+    full = _page_video(tmp_path, ["drawbox=x=20:y=130:w=1880:h=700:color=blue:t=fill"], "full.mp4")
+    assert sc.content_zoom(str(full), 0, 3, None) is None
+    empty = _page_video(tmp_path, [], "empty.mp4")
+    cam = sc.window_from_box((0.0, 0.70, 0.25, 0.30), 1080, 640)
+    assert sc.content_zoom(str(empty), 0, 3, cam) is None        # only the webcam box differs from the page
+    assert sc.content_zoom("missing.mp4", 0, 3, None) is None
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg missing")
+def test_filter_with_a_content_zoom_renders(tmp_path):
+    v = _page_video(tmp_path, ["drawbox=x=700:y=250:w=500:h=300:color=blue:t=fill"])
+    cam = sc.window_from_box((0.0, 0.70, 0.25, 0.30), 1080, 640)
+    vf = sc.generate_filter(1080, 1920, cam, sc.content_zoom(str(v), 0, 3, cam))
+    out = tmp_path / "o.png"
+    res = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1", "-i", str(v), "-vf", vf, "-frames:v", "1", str(out)],
+                         capture_output=True, text=True)
+    assert res.returncode == 0, res.stderr

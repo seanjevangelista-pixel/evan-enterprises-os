@@ -66,7 +66,7 @@ index 71eea5a..ed832ee 100644
      if getattr(args, "clean_audio", False) and extracted_files:
          from engine.audio_clean import clean_clips
 diff --git a/engine/video_gen.py b/engine/video_gen.py
-index 9676800..3bb8ffe 100644
+index 9676800..046da24 100644
 --- a/engine/video_gen.py
 +++ b/engine/video_gen.py
 @@ -2784,7 +2784,7 @@ def write_segment_key(path, key):
@@ -78,17 +78,13 @@ index 9676800..3bb8ffe 100644
      """Parallel extraction of segments using direct FFmpeg for performance."""
      if not os.path.exists(transcript_path):
          print(f"[Warning] Transcript not found at {transcript_path}. Subtitles will be skipped.")
-@@ -2827,6 +2827,9 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
- 
-     if layout == "fit" and mode == "shorts":
-         subtitle_y_pos = fit_caption_y(subtitle_y_pos)       # captions below the centred picture
-+    if layout == "screen_cam" and mode == "shorts":
-+        from engine import screen_cam as _screen_cam
-+        subtitle_y_pos = _screen_cam.CAPTION_Y if subtitle_y_pos in (None, 1150) else subtitle_y_pos   # the gap under the webcam
+@@ -2830,18 +2830,26 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
  
      # clips cut with the plain one-person crop (smart or centre): their animated captions may move off a close-up face
      single_crop_clips = set()
-@@ -2835,7 +2838,7 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
++    screen_cam_clips = set()    # clips cut as webcam-on-top + screen: their captions go in the gap under the webcam
+     fit_clips = set()           # clips the auto layout cut as "whole picture over a blurred copy" (no face on screen)
+ 
      seg_keys = {}
      for i, hi in enumerate(highlights):
          target = os.path.join(output_dir, "temp_segments", f"seg_{i}.mp4")
@@ -97,7 +93,20 @@ index 9676800..3bb8ffe 100644
                                    letterbox=letterbox_crop, filler=bool(filler_path), enhance=enhance, enhance_strength=enhance_strength)
          if use_cache and segment_is_cached(target, seg_keys[i]):
              if mode == "shorts" and layout == "single" and not filler_path:
-@@ -2880,6 +2883,17 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
+                 single_crop_clips.add(i)
+             elif mode == "shorts" and layout == "auto" and not filler_path and no_face_clip(source_path, hi['start'], hi['end']):
+                 fit_clips.add(i)         # the cached cut was made as a fit: its animated captions go below the picture too
++            if mode == "shorts" and layout == "screen_cam":
++                from engine import screen_cam as _sc_cached
++                _c = _sc_cached.detect_cam(source_path, hi['start'], hi['end'], cam_box, w, _sc_cached._even(round(h * _sc_cached.CAM_FRAC)))
++                if isinstance(_c, tuple):
++                    screen_cam_clips.add(i)
++                elif _c == "talking_head":
++                    single_crop_clips.add(i)
+             print(f"[Log] Segment {i} already exists at {target}. Skipping extraction.")
+             continue
+             
+@@ -2880,6 +2888,17 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
                  fit_clips.add(i)
                  print(f"[Log] Clip {i+1}: no face on screen (slides / screen recording?), fitting the whole picture instead of cropping it. (auto layout: fit)")
  
@@ -115,24 +124,54 @@ index 9676800..3bb8ffe 100644
          if mode == "shorts":
              if filler_path:
                  # chain for the clip half only; the full graph is assembled below once colour grades are prepended
-@@ -2889,7 +2903,16 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
+@@ -2889,7 +2908,20 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
                  vf_filter = build_active_speaker_filter(active_shots, w, h)
              elif layout == "split":
                  vf_filter = generate_ffmpeg_split_screen_filter(w, h)
 -            elif layout == "fit" or auto_fit:
 +            elif clip_layout == "screen_cam":
-+                sc_zoom, window = None, None
++                screen_cam_clips.add(i)
++                sc_zoom, window, page_zoom = None, None, False
 +                if not letterbox_crop:
-+                    from engine.screen_region import active_region as _active_region, crop_filter as _zoom_filter
-+                    window = _active_region(source_path, hi['start'], hi['end'])
-+                    if window:
-+                        sc_zoom = _zoom_filter(window)
++                    sc_zoom = _sc.content_zoom(source_path, hi['start'], hi['end'], sc_cam, w, h)
++                    page_zoom = bool(sc_zoom)
++                    if not sc_zoom:
++                        from engine.screen_region import active_region as _active_region, crop_filter as _zoom_filter
++                        window = _active_region(source_path, hi['start'], hi['end'])
++                        if window:
++                            sc_zoom = _zoom_filter(window)
 +                vf_filter = _sc.generate_filter(w, h, sc_cam, sc_zoom, letterbox_crop=letterbox_crop)
-+                print(f"[Log] Clip {i+1}: screen_cam layout (webcam on top, screen below" + (f", zoomed {1 / window[0]:.2f}x" if sc_zoom else "") + ").")
++                print(f"[Log] Clip {i+1}: screen_cam layout (webcam on top, screen below" + (", zoomed in on the page content" if page_zoom else (f", zoomed {1 / window[0]:.2f}x" if sc_zoom else "")) + ").")
 +            elif clip_layout == "fit" or auto_fit:
                  zoom = None
                  if auto_fit and not letterbox_crop:        # a screen recording / slide deck: zoom in on the part that changes
                      from engine.screen_region import active_region, crop_filter
+@@ -3128,6 +3160,9 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
+                     except Exception as e:
+                         print(f"[Warning] Could not tighten Short {i+1} ({e}); rendering it untightened.")
+                 clip_caption_y = fit_caption_y(subtitle_y_pos) if i in fit_clips else subtitle_y_pos   # below the centred picture
++                if i in screen_cam_clips and subtitle_y_pos in (None, 1150):
++                    from engine import screen_cam as _sc_y
++                    clip_caption_y = _sc_y.CAPTION_Y        # the gap under the webcam
+                 if i in single_crop_clips and subtitle_y_pos == 1150:
+                     try:   # close-up talking head: the default caption height would sit on the mouth, use the lower third
+                         from engine.caption_layout import face_safe_y
+@@ -3215,12 +3250,13 @@ def extract_segments(source_path, highlights, transcript_path, output_dir, mode=
+                 sub = apply_handheld_jitter(sub)
+             
+             # Caption selection based on style
++            plain_y = 700 if (i in screen_cam_clips and subtitle_y_pos in (None, 1150)) else subtitle_y_pos   # 700 = gap under the webcam
+             if "stylish" in styles:
+                 print(f"[Log] Applying STYLISH Captions (Word-level highlights + Pop)")
+-                subs = apply_stylish_captions(cap_data, cap_start, cap_end, size=(w, h), y_pos=_aspect.scale_y(plain_caption_y(subtitle_y_pos), h))
++                subs = apply_stylish_captions(cap_data, cap_start, cap_end, size=(w, h), y_pos=_aspect.scale_y(plain_caption_y(plain_y), h))
+             else:
+                 # Simple word overlays (Default)
+-                subs = apply_influencer_subtitles(sub, cap_data, cap_start, cap_end, size=(w, h), y_pos=_aspect.scale_y(plain_caption_y(subtitle_y_pos), h))
++                subs = apply_influencer_subtitles(sub, cap_data, cap_start, cap_end, size=(w, h), y_pos=_aspect.scale_y(plain_caption_y(plain_y), h))
+             
+             overlays = subs
+             
 diff --git a/remotion-video/src/ShortFlow.tsx b/remotion-video/src/ShortFlow.tsx
 index fc038bd..5bd5841 100644
 --- a/remotion-video/src/ShortFlow.tsx

@@ -129,6 +129,76 @@ def detect_cam(video, start, end, cam_box=None, top_w=1080, top_h=640, face_trac
     return window_from_face((mid(0), mid(1), mid(2)))
 
 
+PAGE_TOP = 0.14          # the top of a screen recording is browser chrome (tabs, address bar, bookmarks), not the page
+MIN_WIDTH = 0.34         # the zoom window is never narrower than this share of the frame width (at most ~3x)
+MIN_HEIGHT = 0.20        # ... nor shorter than this share of the frame height
+PAD_CONTENT = 0.16       # margin around the content, as a share of its size (a faint card border or a button edge must stay in)
+EDGE_IGNORE = 0.02       # share of each frame edge ignored when looking for content
+CAM_MARGIN = 1.3         # exclusion around the webcam window, as a multiple of its size
+MAX_AREA = 0.70          # a window covering more of the screen than this is not worth a zoom
+
+
+def content_zoom(video, start, end, cam=None, target_w=1080, target_h=1920, cam_frac=CAM_FRAC, samples=3):
+    """An FFmpeg crop filter that zooms the screen picture onto the page content, or None.
+    The content is whatever differs from the page background below the browser bar and outside the webcam (so a small form
+    in the middle of an empty page gets magnified to a readable size). None when the content already fills the screen, is not
+    found, or the zoom would not pay off: the caller then shows the whole screen."""
+    try:
+        import cv2
+        import numpy as np
+        from engine.screen_region import changed_box
+        top_h = _even(round(target_h * cam_frac))
+        cap = cv2.VideoCapture(video)
+        iw, ih = cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        if not iw or not ih:
+            cap.release()
+            return None
+        boxes = []
+        for n in range(samples):
+            cap.set(cv2.CAP_PROP_POS_MSEC, (start + (end - start) * (n + 1) / (samples + 1)) * 1000.0)
+            ok, frame = cap.read()
+            if not ok:
+                continue
+            small = cv2.resize(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), (480, max(2, int(480 * ih / iw))))
+            sh, sw = small.shape
+            keep = np.ones_like(small, dtype=bool)
+            keep[: int(PAGE_TOP * sh), :] = False
+            ex, ey = max(1, int(EDGE_IGNORE * sw)), max(1, int(EDGE_IGNORE * sh))      # window borders / encoder edges are not content
+            keep[:, :ex] = False
+            keep[:, sw - ex:] = False
+            keep[sh - ey:, :] = False
+            if isinstance(cam, tuple):
+                cx, cy, wh = cam
+                ww = wh * (target_w / top_h) * ih / iw         # the webcam window is wh of the height, in the top aspect
+                ww, wh = ww * CAM_MARGIN, wh * CAM_MARGIN      # the real inset is a bit bigger than the window: keep its edges out
+                x0, x1 = int(max(0, (cx - ww / 2)) * sw), int(min(1, (cx + ww / 2)) * sw) + 1
+                y0, y1 = int(max(0, (cy - wh / 2)) * sh), int(min(1, (cy + wh / 2)) * sh) + 1
+                keep[y0:y1, x0:x1] = False
+            if keep.sum() < 100:
+                continue
+            bg = float(np.median(small[keep]))
+            mask = ((np.abs(small.astype(np.float32) - bg) > 20) & keep).astype(np.uint8)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (15, 7)))
+            box = changed_box(mask)
+            if box:
+                boxes.append(box)
+        cap.release()
+        if not boxes:
+            return None
+        x0, y0 = min(b[0] for b in boxes), min(b[1] for b in boxes)
+        x1, y1 = max(b[2] for b in boxes), max(b[3] for b in boxes)
+        ww = max(MIN_WIDTH, (x1 - x0) * (1 + 2 * PAD_CONTENT))
+        wh = max(MIN_HEIGHT, (y1 - y0) * (1 + 2 * PAD_CONTENT))
+        if ww * wh > MAX_AREA or ww > 0.95:
+            return None                                          # the content already fills the screen: show all of it
+        wx = min(max((x0 + x1) / 2 - ww / 2, 0.0), 1 - ww)
+        wy = min(max((y0 + y1) / 2 - wh / 2, 0.0), 1 - wh)
+        return f"crop=w=iw*{ww:.4f}:h=ih*{wh:.4f}:x=iw*{wx:.4f}:y=ih*{wy:.4f}"
+    except Exception as e:
+        print(f"[Warning] screen_cam: could not find the page content ({str(e)[:100]}); showing the whole screen.")
+        return None
+
+
 def generate_filter(target_w=1080, target_h=1920, cam=None, zoom=None, cam_frac=CAM_FRAC, letterbox_crop=None):
     """FFmpeg filter chain for the layout: webcam on top, the whole screen (optionally zoomed with `zoom`, an ffmpeg crop
     filter) centred in the lower part over a blurred copy of itself. `cam` is (cx, cy, wh) from detect_cam."""

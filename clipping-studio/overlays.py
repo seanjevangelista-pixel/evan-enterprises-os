@@ -89,6 +89,17 @@ CONCEPTS = {
     "college": "graduation cap", "university": "graduation cap", "baby": "baby bottle", "gift": "wrapped gift box",
 }
 
+# Business words: email, meetings, calls, leads, results. These have drawings built in (engine.overlay_art).
+CONCEPTS.update({w: "envelope with a notification badge" for w in
+                 "email emails inbox outreach campaign campaigns reply replies newsletter".split()})
+CONCEPTS.update({w: "calendar page with a checkmark" for w in
+                 "meeting meetings calendar booked booking appointment appointments schedule".split()})
+CONCEPTS.update({w: "smartphone" for w in "call calls dial dialing".split()})
+CONCEPTS.update({w: "sales funnel" for w in "lead leads pipeline funnel prospect prospects conversion".split()})
+CONCEPTS.update({w: "rising stock chart arrow" for w in
+                 "results increase increased scaling scaled doubled tripled record metrics stats".split()})
+CONCEPTS.update({w: "stack of cash bills" for w in "million millions billion billions".split()})
+
 # Anything in the B-roll lexicon (concrete nouns) also gets a graphic, using its stock query as the subject.
 _STOP = {"it", "the", "a", "an", "and", "or", "but", "so", "to", "of", "in", "on", "at", "for", "is", "are", "was"}
 
@@ -274,6 +285,34 @@ def generate_openai(subject, out_path, api_key=None, base_url=None, model=None, 
         return None
 
 
+def _builtin_art(subject, cache_dir):
+    """A drawing from engine.overlay_art for this subject (a prepared PNG, or a folder of frames for an animated one), or None."""
+    from engine import overlay_art
+    name = overlay_art.art_for_subject(subject)
+    if not name:
+        return None
+    try:
+        if overlay_art.is_animated(name):
+            folder = os.path.join(cache_dir, f"builtin-{name}")
+            if not os.path.isfile(os.path.join(folder, "f_000.png")):
+                overlay_art.make(name, folder)
+            return folder
+        path = os.path.join(cache_dir, f"builtin-{name}.png")
+        if not os.path.isfile(path):
+            raw = path + ".raw.png"
+            os.makedirs(cache_dir, exist_ok=True)
+            overlay_art.make(name, raw)
+            try:
+                prepare_png(raw, path)
+            finally:
+                if os.path.exists(raw):
+                    os.remove(raw)
+        return path
+    except Exception as e:
+        print(f"[Warning] Built-in graphic {name} not drawn: {e}")
+        return None
+
+
 def resolve_asset(keyword, subject, library_dir=LIBRARY_DIR, cache_dir=CACHE_DIR, generate=generate_openai,
                   text_fallback=False):
     """A prepared transparent PNG for this word, or None. Order: your library (by keyword or subject), the cache,
@@ -286,6 +325,9 @@ def resolve_asset(keyword, subject, library_dir=LIBRARY_DIR, cache_dir=CACHE_DIR
     cached = os.path.join(cache_dir, f"{slug(subject)}.png")
     if os.path.isfile(cached):
         return cached
+    art = _builtin_art(subject, cache_dir)
+    if art:
+        return art
     if generate:
         os.makedirs(cache_dir, exist_ok=True)
         raw = generate(subject, cached + ".raw.png")
@@ -407,9 +449,14 @@ def build_overlay_command(ffmpeg, video, items, frame, output, fps=30, position=
         cx = it.get("cx", width / 2 + dx_share * width)       # face-aware placement sets cx, cy, w per graphic
         cy = it.get("cy", cy_share * height)
         base = it.get("w", size_frac * width)
-        cmd += ["-loop", "1", "-framerate", str(fps), "-t", f"{length:.3f}", "-i", it["asset"]]
+        if os.path.isdir(it["asset"]):                      # animated: PNG frames, the last one held
+            cmd += ["-framerate", str(fps), "-i", os.path.join(it["asset"], "f_%03d.png")]
+            head = f"[{n}:v]tpad=stop_mode=clone:stop_duration={length + 1:.2f},trim=duration={length:.3f},setpts=PTS-STARTPTS,format=rgba,"
+        else:
+            cmd += ["-loop", "1", "-framerate", str(fps), "-t", f"{length:.3f}", "-i", it["asset"]]
+            head = f"[{n}:v]format=rgba,"
         chain.append(
-            f"[{n}:v]format=rgba,"
+            f"{head}"
             f"scale=w='max(8,trunc({base:.1f}*max(0.02,{_pop()})*(1+0.025*sin(2*PI*0.8*t))/2)*2)':h=-2:eval=frame,"
             f"fade=t=in:st=0:d=0.08:alpha=1,fade=t=out:st={max(0.0, length - FADE_OUT):.3f}:d={FADE_OUT}:alpha=1,"
             f"setpts=PTS+{it['start']:.3f}/TB[g{n}]")
@@ -445,6 +492,8 @@ def _aspect(path):
     """Height / width of a graphic (1.0 when it cannot be read)."""
     try:
         from PIL import Image
+        if os.path.isdir(path):
+            path = os.path.join(path, "f_000.png")
         with Image.open(path) as im:
             return im.height / max(1, im.width)
     except Exception:

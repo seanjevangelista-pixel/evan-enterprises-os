@@ -86,10 +86,10 @@ def test_resolve_prefers_library_then_cache_then_generator(tmp_path):
         calls.append(subject)
         _opaque_white_heart(out)
         return out
-    p = overlays.resolve_asset("time", "vintage alarm clock", str(lib), str(cache), fake_gen)
-    assert p and os.path.isfile(p) and calls == ["vintage alarm clock"]
-    overlays.resolve_asset("time", "vintage alarm clock", str(lib), str(cache), fake_gen)
-    assert calls == ["vintage alarm clock"]                 # second time comes from the cache
+    p = overlays.resolve_asset("pizza", "whole pizza", str(lib), str(cache), fake_gen)
+    assert p and os.path.isfile(p) and calls == ["whole pizza"]
+    overlays.resolve_asset("pizza", "whole pizza", str(lib), str(cache), fake_gen)
+    assert calls == ["whole pizza"]                         # second time comes from the cache
     assert overlays.resolve_asset("zzz", "unknown thing", str(lib), str(cache), None) is None
 
 

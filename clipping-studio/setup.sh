@@ -44,7 +44,7 @@ NODE_MAJOR="$(node -p 'process.versions.node.split(".")[0]')"
 [ "$NODE_MAJOR" -ge 18 ] || fail "Node.js 18+ is needed (found $(node -v))."
 echo "git, ffmpeg, $($PY --version), node $(node -v): OK"
 
-for f in overlays.py test_overlays.py screen_cam.py test_screen_cam.py overlays_integration.patch; do
+for f in overlays.py test_overlays.py overlay_art.py test_overlay_art.py screen_cam.py test_screen_cam.py overlays_integration.patch; do
   [ -f "$HERE/$f" ] || fail "$f is missing next to setup.sh. Keep the whole clipping-studio folder together."
 done
 
@@ -67,6 +67,8 @@ fi
 say "Adding the overlay graphics feature"
 cp "$HERE/overlays.py" engine/overlays.py
 cp "$HERE/test_overlays.py" tests/test_overlays.py
+cp "$HERE/overlay_art.py" engine/overlay_art.py
+cp "$HERE/test_overlay_art.py" tests/test_overlay_art.py
 cp "$HERE/screen_cam.py" engine/screen_cam.py
 cp "$HERE/test_screen_cam.py" tests/test_screen_cam.py
 if git apply --reverse --check "$HERE/overlays_integration.patch" >/dev/null 2>&1; then
@@ -140,7 +142,7 @@ chmod +x "$DEST/clip-screen"
 
 # 7. Checks -------------------------------------------------------------------------------------------------------------
 say "Running checks"
-"$DEST/venv/bin/python" -m pytest tests/test_overlays.py tests/test_screen_cam.py tests/test_broll.py -q -p no:cacheprovider
+"$DEST/venv/bin/python" -m pytest tests/test_overlays.py tests/test_overlay_art.py tests/test_screen_cam.py tests/test_broll.py -q -p no:cacheprovider
 "$DEST/venv/bin/shortsflow" doctor || true
 
 cat <<EOF

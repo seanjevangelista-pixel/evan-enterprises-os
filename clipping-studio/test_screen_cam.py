@@ -149,3 +149,26 @@ def test_filter_with_a_content_zoom_renders(tmp_path):
     res = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1", "-i", str(v), "-vf", vf, "-frames:v", "1", str(out)],
                          capture_output=True, text=True)
     assert res.returncode == 0, res.stderr
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg missing")
+@pytest.mark.parametrize("box", [
+    "drawbox=x=800:y=140:w=300:h=920:color=blue:t=fill",            # tall and narrow: used to give a window taller than the screen
+    "drawbox=x=500:y=300:w=900:h=700:color=blue:t=fill",
+    "drawbox=x=100:y=150:w=1700:h=120:color=blue:t=fill",           # wide and short
+    "drawbox=x=1500:y=900:w=380:h=170:color=blue:t=fill",           # in a corner
+])
+def test_content_zoom_never_returns_a_window_outside_the_frame(tmp_path, box):
+    import re
+    v = _page_video(tmp_path, [box])
+    cam = sc.window_from_box((0.0, 0.70, 0.25, 0.30), 1080, 640)
+    zoom = sc.content_zoom(str(v), 0, 3, cam)
+    if zoom is None:
+        return
+    w, h, x, y = [float(g) for g in re.fullmatch(r"crop=w=iw\*([\d.]+):h=ih\*([\d.]+):x=iw\*([\d.]+):y=ih\*([\d.]+)", zoom).groups()]
+    assert 0 < w <= 1 and 0 < h <= 1 and x >= 0 and y >= 0 and x + w <= 1.0001 and y + h <= 1.0001, zoom
+    out = tmp_path / "o.png"                                        # and FFmpeg accepts it
+    vf = sc.generate_filter(1080, 1920, cam, zoom)
+    res = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1", "-i", str(v), "-vf", vf, "-frames:v", "1", str(out)],
+                         capture_output=True, text=True)
+    assert res.returncode == 0, res.stderr

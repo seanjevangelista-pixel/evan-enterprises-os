@@ -189,10 +189,12 @@ def content_zoom(video, start, end, cam=None, target_w=1080, target_h=1920, cam_
         x1, y1 = max(b[2] for b in boxes), max(b[3] for b in boxes)
         ww = max(MIN_WIDTH, (x1 - x0) * (1 + 2 * PAD_CONTENT))
         wh = max(MIN_HEIGHT, (y1 - y0) * (1 + 2 * PAD_CONTENT))
-        if ww * wh > MAX_AREA or ww > 0.95:
+        if ww * wh > MAX_AREA or ww > 0.95 or wh > 0.95:
             return None                                          # the content already fills the screen: show all of it
         wx = min(max((x0 + x1) / 2 - ww / 2, 0.0), 1 - ww)
         wy = min(max((y0 + y1) / 2 - wh / 2, 0.0), 1 - wh)
+        if not (0 <= wx and 0 <= wy and wx + ww <= 1.0001 and wy + wh <= 1.0001):
+            return None                                          # never hand FFmpeg a window outside the frame
         return f"crop=w=iw*{ww:.4f}:h=ih*{wh:.4f}:x=iw*{wx:.4f}:y=ih*{wy:.4f}"
     except Exception as e:
         print(f"[Warning] screen_cam: could not find the page content ({str(e)[:100]}); showing the whole screen.")

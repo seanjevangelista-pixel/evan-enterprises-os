@@ -44,7 +44,7 @@ NODE_MAJOR="$(node -p 'process.versions.node.split(".")[0]')"
 [ "$NODE_MAJOR" -ge 18 ] || fail "Node.js 18+ is needed (found $(node -v))."
 echo "git, ffmpeg, $($PY --version), node $(node -v): OK"
 
-for f in overlays.py test_overlays.py overlays_integration.patch; do
+for f in overlays.py test_overlays.py overlay_art.py test_overlay_art.py screen_cam.py test_screen_cam.py overlays_integration.patch; do
   [ -f "$HERE/$f" ] || fail "$f is missing next to setup.sh. Keep the whole clipping-studio folder together."
 done
 
@@ -67,13 +67,22 @@ fi
 say "Adding the overlay graphics feature"
 cp "$HERE/overlays.py" engine/overlays.py
 cp "$HERE/test_overlays.py" tests/test_overlays.py
+cp "$HERE/overlay_art.py" engine/overlay_art.py
+cp "$HERE/test_overlay_art.py" tests/test_overlay_art.py
+cp "$HERE/screen_cam.py" engine/screen_cam.py
+cp "$HERE/test_screen_cam.py" tests/test_screen_cam.py
 if git apply --reverse --check "$HERE/overlays_integration.patch" >/dev/null 2>&1; then
   echo "Already applied."
 elif git apply --check "$HERE/overlays_integration.patch" >/dev/null 2>&1; then
   git apply "$HERE/overlays_integration.patch"
   echo "Applied."
 else
-  fail "The overlay patch does not fit this ShortsFlow checkout. Run: cd $APP && git status"
+  echo "Updating the overlay patch from an older version..."
+  git checkout --quiet "$PIN" -- engine/modes/clip_extract.py shortsflow/_main.py engine/video_gen.py remotion-video/src/ShortFlow.tsx
+  git apply --check "$HERE/overlays_integration.patch" >/dev/null 2>&1 \
+    || fail "The overlay patch does not fit this ShortsFlow checkout. Run: cd $APP && git status"
+  git apply "$HERE/overlays_integration.patch"
+  echo "Applied."
 fi
 mkdir -p assets/overlays      # drop your own transparent PNGs here (love.png, lego.png, ...)
 
@@ -97,6 +106,10 @@ EOF
   chmod 600 .env
 fi
 
+# 5b. Ready-made clip plans
+mkdir -p "$DEST/plans"
+cp "$HERE"/plans/*.txt "$DEST/plans/" 2>/dev/null || true
+
 # 6. Launcher ---------------------------------------------------------------------------------------------------------
 cat > "$DEST/clip" <<EOF
 #!/usr/bin/env bash
@@ -106,13 +119,30 @@ cat > "$DEST/clip" <<EOF
 SRC="\$1"; shift
 cd "$APP"
 exec "$DEST/venv/bin/python" main.py --source_video "\$SRC" --extract_mode shorts --smart_crop --tighten \\
-  --remove_fillers --use_remotion --caption_style HORMOZI --auto_zoom --overlays --overlay_text_fallback "\$@"
+  --remove_fillers --use_remotion --caption_style HORMOZI --caption_color "#A855F7" --auto_zoom --overlays --overlay_text_fallback "\$@"
 EOF
 chmod +x "$DEST/clip"
 
+cat > "$DEST/clip-screen" <<EOF
+#!/usr/bin/env bash
+# For screen recordings with a small webcam: webcam on the top third, the screen below it, zoomed on what changes.
+# Usage: ./clip-screen VIDEO [PLAN_FILE] [options]
+#   PLAN_FILE (optional) = a text file of the moments to cut, one "start-end title" per line (examples: $DEST/plans).
+# Add  --cam_box x,y,w,h  (shares of the frame, e.g. 0.01,0.65,0.29,0.31) if the webcam is not found by itself.
+[ \$# -ge 1 ] || { echo "Usage: \$0 VIDEO [PLAN_FILE] [options]"; exit 2; }
+SRC="\$1"; shift
+PLAN=""
+if [ \$# -ge 1 ] && [ -f "\$1" ] && [[ "\$1" == *.txt || "\$1" == *.json ]]; then PLAN="\$1"; shift; fi
+cd "$APP"
+if [ -n "\$PLAN" ]; then set -- --clip_plan "\$PLAN" "\$@"; fi
+exec "$DEST/venv/bin/python" main.py --source_video "\$SRC" --extract_mode shorts --layout screen_cam --tighten \\
+  --remove_fillers --use_remotion --caption_style HORMOZI --caption_color "#A855F7" --auto_zoom --overlays --overlay_text_fallback "\$@"
+EOF
+chmod +x "$DEST/clip-screen"
+
 # 7. Checks -------------------------------------------------------------------------------------------------------------
 say "Running checks"
-"$DEST/venv/bin/python" -m pytest tests/test_overlays.py tests/test_broll.py -q -p no:cacheprovider
+"$DEST/venv/bin/python" -m pytest tests/test_overlays.py tests/test_overlay_art.py tests/test_screen_cam.py tests/test_broll.py -q -p no:cacheprovider
 "$DEST/venv/bin/shortsflow" doctor || true
 
 cat <<EOF
@@ -120,7 +150,8 @@ cat <<EOF
 Done. Installed in: $DEST
 
 Try it:
-  $DEST/clip ~/Videos/my_video.mp4
+  $DEST/clip ~/Videos/my_video.mp4                                               (talking-head videos)
+  $DEST/clip-screen ~/Videos/my_video.mp4 $DEST/plans/inboxrev_book-calls.txt    (screen recording + webcam, exact moments)
 
 Notes:
   * First run downloads the Whisper speech model (needs internet), then works offline.

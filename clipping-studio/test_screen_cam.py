@@ -1,0 +1,174 @@
+import json
+import shutil
+import subprocess
+
+import pytest
+
+from engine import screen_cam as sc
+
+
+def test_parse_time_accepts_minutes_hours_and_seconds():
+    assert sc.parse_time("4:12") == 252
+    assert sc.parse_time("1:02:03") == 3723
+    assert sc.parse_time("252") == 252
+    assert sc.parse_time("7:33.5") == pytest.approx(453.5)
+    with pytest.raises(ValueError):
+        sc.parse_time("1:2:3:4")
+
+
+def test_clip_plan_text_lines_titles_and_comments(tmp_path):
+    p = tmp_path / "plan.txt"
+    p.write_text("# first video\n7:33-7:57  Do not go direct offer\n\n4:12 - 4:41 - Claude objections -> close rate\n0:03 to 0:39\n",
+                 encoding="utf-8")
+    items = sc.parse_clip_plan(str(p))
+    assert [(i["start"], i["end"]) for i in items] == [(3, 39), (252, 281), (453, 477)]     # sorted by start
+    assert items[1]["title"] == "Claude objections -> close rate"
+    assert items[2]["title"] == "Do not go direct offer"
+    assert items[0]["title"] == ""
+
+
+def test_clip_plan_json_and_errors(tmp_path):
+    p = tmp_path / "plan.json"
+    p.write_text(json.dumps([{"start": "4:12", "end": 281, "title": "A"}]), encoding="utf-8")
+    assert sc.parse_clip_plan(str(p)) == [{"start": 252, "end": 281, "title": "A"}]
+    bad = tmp_path / "bad.txt"
+    bad.write_text("not a clip line\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        sc.parse_clip_plan(str(bad))
+    backwards = tmp_path / "back.txt"
+    backwards.write_text("5:00-4:00 oops\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        sc.parse_clip_plan(str(backwards))
+    long = tmp_path / "long.txt"
+    long.write_text("0:00-3:00 too long\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        sc.parse_clip_plan(str(long))
+
+
+def test_plan_to_highlights_has_what_the_pipeline_reads():
+    h = sc.plan_to_highlights([{"start": 252, "end": 281, "title": "Claude objections"}])[0]
+    assert h["start"] == 252 and h["end"] == 281 and h["hook_text"] == "Claude objections" and h["final_score"] > 0
+
+
+def test_cam_box_parsing():
+    assert sc.parse_cam_box("0.02,0.6,0.3,0.36") == (0.02, 0.6, 0.3, 0.36)
+    for bad in ("1,2,3", "a,b,c,d", "0.1,0.1,0,0.3", "1.5,0.1,0.2,0.2"):
+        with pytest.raises(ValueError):
+            sc.parse_cam_box(bad)
+
+
+def test_windows_stay_inside_the_frame():
+    for face in [(0.1, 0.9, 0.12), (0.9, 0.05, 0.3), (0.5, 0.5, 0.01)]:
+        cx, cy, wh = sc.window_from_face(face)
+        assert sc.MIN_WINDOW <= wh <= sc.MAX_WINDOW
+        assert wh / 2 <= cy <= 1 - wh / 2
+    cx, cy, wh = sc.window_from_box((0.0, 0.65, 0.3, 0.35))
+    assert wh >= 0.35 and wh / 2 <= cy <= 1 - wh / 2
+
+
+def test_detect_cam_uses_box_then_faces_then_gives_up():
+    box = (0.01, 0.65, 0.29, 0.31)
+    assert sc.detect_cam("x.mp4", 0, 5, cam_box=box) == sc.window_from_box(box)
+    small_face = lambda video, **kw: [(0.1, 0.8, 0.12), None, (0.11, 0.8, 0.12)]
+    cam = sc.detect_cam("x.mp4", 0, 5, face_track=small_face)
+    assert isinstance(cam, tuple) and len(cam) == 3
+    big_face = lambda video, **kw: [(0.5, 0.5, 0.45)] * 4
+    assert sc.detect_cam("x.mp4", 0, 5, face_track=big_face) == "talking_head"      # full-screen webcam: no screen to show
+    assert sc.detect_cam("x.mp4", 0, 5, face_track=lambda video, **kw: [None, None]) is None
+    def boom(video, **kw):
+        raise RuntimeError("no detector")
+    assert sc.detect_cam("x.mp4", 0, 5, face_track=boom) is None
+
+
+def test_filter_has_both_halves_and_even_sizes():
+    vf = sc.generate_filter(1080, 1920, (0.15, 0.8, 0.3), zoom="crop=iw*0.8:ih*0.8:iw*0.1:ih*0.1")
+    assert "vstack=inputs=2" in vf and "scale=1080:640" in vf and "scale=1080:1280" in vf
+    assert "crop=iw*0.8" in vf                                  # the zoom applies to the screen half only
+    assert vf.index("crop=iw*0.8") > vf.index("[scscr]")
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg missing")
+def test_filter_renders_a_1080x1920_frame(tmp_path):
+    src = tmp_path / "src.mp4"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc2=size=1920x1080:rate=30:duration=2",
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", str(src)], check=True)
+    out = tmp_path / "out.png"
+    vf = sc.generate_filter(1080, 1920, sc.window_from_box((0.01, 0.65, 0.29, 0.31)))
+    res = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1", "-i", str(src), "-vf", vf, "-frames:v", "1", str(out)],
+                         capture_output=True, text=True)
+    assert res.returncode == 0, res.stderr
+    info = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=width,height", "-of", "csv=p=0", str(out)],
+                          capture_output=True, text=True).stdout.strip()
+    assert info == "1080,1920"
+
+
+# ------------------------------------------------------------------------------------ zoom onto the page content
+
+def _page_video(tmp_path, content, name="page.mp4"):
+    """1920x1080 'screen recording': white page, grey browser bar on top, a dark webcam box bottom-left, `content` drawboxes."""
+    v = tmp_path / name
+    boxes = ",".join(["drawbox=x=0:y=0:w=1920:h=110:color=gray:t=fill", "drawbox=x=0:y=760:w=480:h=320:color=black:t=fill"] + content)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=white:s=1920x1080:r=30:d=3", "-vf", boxes,
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", str(v)], check=True)
+    return v
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg missing")
+def test_content_zoom_finds_a_small_form_and_leaves_the_webcam_out(tmp_path):
+    form = ["drawbox=x=700:y=250:w=500:h=60:color=blue:t=fill", "drawbox=x=700:y=350:w=500:h=60:color=blue:t=fill",
+            "drawbox=x=700:y=450:w=500:h=60:color=blue:t=fill", "drawbox=x=700:y=550:w=500:h=60:color=blue:t=fill"]
+    v = _page_video(tmp_path, form)
+    cam = sc.window_from_box((0.0, 0.70, 0.25, 0.30), 1080, 640)
+    zoom = sc.content_zoom(str(v), 0, 3, cam)
+    assert zoom and zoom.startswith("crop=")
+    import re
+    m = re.fullmatch(r"crop=w=iw\*([\d.]+):h=ih\*([\d.]+):x=iw\*([\d.]+):y=ih\*([\d.]+)", zoom)
+    w, h, x, y = [float(g) for g in m.groups()]
+    assert w < 0.7 and h < 0.7                                   # a real zoom, not the whole screen
+    assert x <= 700 / 1920 and x + w >= 1200 / 1920              # the form is inside the window
+    assert y <= 250 / 1080 and y + h >= 610 / 1080
+    assert x > 0.25 or y < 0.70                                  # and the webcam box is not what the window is built around
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg missing")
+def test_content_zoom_is_none_when_content_fills_the_screen_or_is_missing(tmp_path):
+    full = _page_video(tmp_path, ["drawbox=x=20:y=130:w=1880:h=700:color=blue:t=fill"], "full.mp4")
+    assert sc.content_zoom(str(full), 0, 3, None) is None
+    empty = _page_video(tmp_path, [], "empty.mp4")
+    cam = sc.window_from_box((0.0, 0.70, 0.25, 0.30), 1080, 640)
+    assert sc.content_zoom(str(empty), 0, 3, cam) is None        # only the webcam box differs from the page
+    assert sc.content_zoom("missing.mp4", 0, 3, None) is None
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg missing")
+def test_filter_with_a_content_zoom_renders(tmp_path):
+    v = _page_video(tmp_path, ["drawbox=x=700:y=250:w=500:h=300:color=blue:t=fill"])
+    cam = sc.window_from_box((0.0, 0.70, 0.25, 0.30), 1080, 640)
+    vf = sc.generate_filter(1080, 1920, cam, sc.content_zoom(str(v), 0, 3, cam))
+    out = tmp_path / "o.png"
+    res = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1", "-i", str(v), "-vf", vf, "-frames:v", "1", str(out)],
+                         capture_output=True, text=True)
+    assert res.returncode == 0, res.stderr
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg missing")
+@pytest.mark.parametrize("box", [
+    "drawbox=x=800:y=140:w=300:h=920:color=blue:t=fill",            # tall and narrow: used to give a window taller than the screen
+    "drawbox=x=500:y=300:w=900:h=700:color=blue:t=fill",
+    "drawbox=x=100:y=150:w=1700:h=120:color=blue:t=fill",           # wide and short
+    "drawbox=x=1500:y=900:w=380:h=170:color=blue:t=fill",           # in a corner
+])
+def test_content_zoom_never_returns_a_window_outside_the_frame(tmp_path, box):
+    import re
+    v = _page_video(tmp_path, [box])
+    cam = sc.window_from_box((0.0, 0.70, 0.25, 0.30), 1080, 640)
+    zoom = sc.content_zoom(str(v), 0, 3, cam)
+    if zoom is None:
+        return
+    w, h, x, y = [float(g) for g in re.fullmatch(r"crop=w=iw\*([\d.]+):h=ih\*([\d.]+):x=iw\*([\d.]+):y=ih\*([\d.]+)", zoom).groups()]
+    assert 0 < w <= 1 and 0 < h <= 1 and x >= 0 and y >= 0 and x + w <= 1.0001 and y + h <= 1.0001, zoom
+    out = tmp_path / "o.png"                                        # and FFmpeg accepts it
+    vf = sc.generate_filter(1080, 1920, cam, zoom)
+    res = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1", "-i", str(v), "-vf", vf, "-frames:v", "1", str(out)],
+                         capture_output=True, text=True)
+    assert res.returncode == 0, res.stderr

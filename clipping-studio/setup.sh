@@ -44,7 +44,7 @@ NODE_MAJOR="$(node -p 'process.versions.node.split(".")[0]')"
 [ "$NODE_MAJOR" -ge 18 ] || fail "Node.js 18+ is needed (found $(node -v))."
 echo "git, ffmpeg, $($PY --version), node $(node -v): OK"
 
-for f in overlays.py test_overlays.py overlays_integration.patch; do
+for f in overlays.py test_overlays.py overlays_integration.patch post-clips.mjs; do
   [ -f "$HERE/$f" ] || fail "$f is missing next to setup.sh. Keep the whole clipping-studio folder together."
 done
 
@@ -110,7 +110,39 @@ exec "$DEST/venv/bin/python" main.py --source_video "\$SRC" --extract_mode short
 EOF
 chmod +x "$DEST/clip"
 
-# 7. Checks -------------------------------------------------------------------------------------------------------------
+# 7. Posting to Buffer ----------------------------------------------------------------------------------------------
+say "Setting up posting to Buffer"
+cp "$HERE/post-clips.mjs" "$DEST/post-clips.mjs"
+if [ ! -f "$DEST/.social.env" ]; then
+  cat > "$DEST/.social.env" <<'SOCIALENV'
+# Used by clip-post. INTERNAL_API_KEY is the same value as in your Vercel environment variables.
+INTERNAL_API_KEY=
+SITE_URL=https://evan-enterprises-os.vercel.app
+SOCIALENV
+  chmod 600 "$DEST/.social.env"
+fi
+cat > "$DEST/clip-post" <<EOF
+#!/usr/bin/env bash
+# Usage: ./clip-post my_video.mp4 [--send] [--start 2026-12-01T10:00 --every 180] [--dry-run]
+# Clips the video, then sends every clip to Buffer for Instagram, Facebook, TikTok, YouTube Shorts and LinkedIn.
+# Without --send the clips land as DRAFTS in Buffer, so nothing goes live until you approve it there.
+[ \$# -ge 1 ] || { echo "Usage: \$0 VIDEO_OR_URL [--send] [--start ISO --every MINUTES] [--dry-run]"; exit 2; }
+SRC="\$1"; shift
+POST_ARGS=(); CLIP_ARGS=()
+while [ \$# -gt 0 ]; do
+  case "\$1" in
+    --send|--dry-run|--force) POST_ARGS+=("\$1"); shift ;;
+    --start|--every|--only)   POST_ARGS+=("\$1" "\${2:?\$1 needs a value}"); shift 2 ;;
+    *) CLIP_ARGS+=("\$1"); shift ;;
+  esac
+done
+SESSION="$APP/sessions/post_\$(date +%s)"
+"$DEST/clip" "\$SRC" --session_dir "\$SESSION" "\${CLIP_ARGS[@]}" || exit \$?
+exec node "$DEST/post-clips.mjs" "\$SESSION" "\${POST_ARGS[@]}"
+EOF
+chmod +x "$DEST/clip-post"
+
+# 8. Checks -------------------------------------------------------------------------------------------------------------
 say "Running checks"
 "$DEST/venv/bin/python" -m pytest tests/test_overlays.py tests/test_broll.py -q -p no:cacheprovider
 "$DEST/venv/bin/shortsflow" doctor || true
@@ -120,7 +152,10 @@ cat <<EOF
 Done. Installed in: $DEST
 
 Try it:
-  $DEST/clip ~/Videos/my_video.mp4
+  $DEST/clip ~/Videos/my_video.mp4              # clips only, nothing is posted
+  $DEST/clip-post ~/Videos/my_video.mp4         # clips, then sends DRAFTS to Buffer (add --send to queue them)
+
+Before clip-post works, put your INTERNAL_API_KEY in $DEST/.social.env.
 
 Notes:
   * First run downloads the Whisper speech model (needs internet), then works offline.

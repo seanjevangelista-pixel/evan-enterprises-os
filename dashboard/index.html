@@ -1095,6 +1095,9 @@ async function loadCallLeads() {
       <button class="nav-item" data-tab="traffic">
         <span class="nav-icon">📈</span> Traffic
       </button>
+      <button class="nav-item" data-tab="social">
+        <span class="nav-icon">▶</span> Social
+      </button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-pill">
@@ -1671,6 +1674,57 @@ async function loadCallLeads() {
           <div id="outreach-queue"><div class="empty" style="padding:32px 24px">No prospects added yet.</div></div>
         </div>
 
+      </div>
+    </section>
+
+    <section class="tab-section" data-section="social">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Social</div>
+          <div class="page-sub">Clips posted through Buffer to Instagram, Facebook, TikTok, YouTube Shorts and LinkedIn, with their numbers</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select class="form-control" id="so-days" style="width:150px">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+          </select>
+          <button class="btn btn-secondary" id="so-sync" title="Pull the latest numbers from Buffer (Buffer refreshes them about once a day)">↻ Sync from Buffer</button>
+        </div>
+      </div>
+      <div class="page-content">
+        <div id="so-note" style="font-size:12.5px;opacity:.7;margin-bottom:12px">Numbers sync from Buffer every morning. Buffer itself only refreshes them about once a day.</div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Posts</div><div class="stat-value" id="so-posts">—</div><div class="stat-sub">Sent in this period</div></div>
+          <div class="stat-card"><div class="stat-label">Views</div><div class="stat-value blue" id="so-views">—</div><div class="stat-sub">Video views, all networks</div></div>
+          <div class="stat-card"><div class="stat-label">Reactions</div><div class="stat-value green" id="so-react">—</div><div class="stat-sub">Likes and reactions</div></div>
+          <div class="stat-card"><div class="stat-label">Comments</div><div class="stat-value" id="so-comm">—</div><div class="stat-sub">Replies on your posts</div></div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><div class="card-title">By network</div></div>
+          <div class="card-body" id="so-services"><div style="opacity:.6;font-size:13px">No data yet</div></div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><div class="card-title">Top posts</div></div>
+          <div class="card-body" id="so-top"><div style="opacity:.6;font-size:13px">No data yet</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Post a clip to all channels</div></div>
+          <div class="card-body">
+            <div style="display:grid;gap:10px;max-width:640px">
+              <input class="form-control" id="so-url" placeholder="Public https link to the finished clip (.mp4)">
+              <input class="form-control" id="so-title" placeholder="YouTube title (optional, defaults to the first line of the caption)" maxlength="100">
+              <textarea class="form-control" id="so-caption" rows="4" placeholder="Caption"></textarea>
+              <input class="form-control" id="so-when" type="datetime-local" title="Leave empty to add it to each channel's Buffer queue">
+              <label style="font-size:13px"><input type="checkbox" id="so-draft" checked> Save as drafts in Buffer instead of scheduling</label>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-secondary" id="so-preview">Preview</button>
+                <button class="btn btn-primary" id="so-send">Send to Buffer</button>
+              </div>
+              <div id="so-result" style="font-size:13px"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -3595,6 +3649,50 @@ document.getElementById('tr-copy').addEventListener('click', async () => {
 document.getElementById('tr-days').addEventListener('change',loadTraffic);
 document.getElementById('tr-refresh').addEventListener('click',loadTraffic);
 
+// ── SOCIAL (Buffer) ──
+const SO_NAMES={instagram:'Instagram',facebook:'Facebook',tiktok:'TikTok',youtube:'YouTube Shorts',linkedin:'LinkedIn'};
+const soNum=n=>Number(n||0).toLocaleString();
+async function soCall(qs,opts){
+  const res=await fetch('/api/integrations?action=buffer&'+qs,opts);
+  const d=await res.json().catch(()=>({}));
+  if (!res.ok) throw new Error(d.error||('HTTP '+res.status));
+  return d;
+}
+async function loadSocial(){
+  const note=document.getElementById('so-note');
+  try {
+    const d=await soCall('sub=analytics&days='+encodeURIComponent(document.getElementById('so-days').value));
+    const t=k=>d.services.reduce((a,s)=>a+s[k],0);
+    document.getElementById('so-posts').textContent=soNum(d.total_posts);
+    document.getElementById('so-views').textContent=soNum(t('views'));
+    document.getElementById('so-react').textContent=soNum(t('reactions'));
+    document.getElementById('so-comm').textContent=soNum(t('comments'));
+    document.getElementById('so-services').innerHTML=d.services.length?'<table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead><tr style="text-align:left;opacity:.65;font-size:12px"><th style="padding:4px 8px 4px 0">Network</th><th>Posts</th><th>Views</th><th>Reach</th><th>Reactions</th><th>Comments</th><th>Shares</th><th>Saves</th><th>Avg engagement</th></tr></thead><tbody>'+d.services.map(s=>`<tr style="border-top:1px solid rgba(128,128,128,.15)"><td style="padding:6px 8px 6px 0;font-weight:600">${trEsc(SO_NAMES[s.service]||s.service)}</td><td>${s.posts}</td><td>${soNum(s.views)}</td><td>${soNum(s.reach)}</td><td>${soNum(s.reactions)}</td><td>${soNum(s.comments)}</td><td>${soNum(s.shares)}</td><td>${soNum(s.saves)}</td><td>${s.avg_engagement_rate==null?'—':s.avg_engagement_rate+'%'}</td></tr>`).join('')+'</tbody></table>':'<div style="opacity:.6;font-size:13px">No data yet. Press Sync from Buffer.</div>';
+    document.getElementById('so-top').innerHTML=d.top_posts.length?d.top_posts.map(p=>`<div style="display:flex;gap:12px;padding:8px 0;border-top:1px solid rgba(128,128,128,.15)"><div style="flex:1;min-width:0"><div style="font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${trEsc(p.text||'(no caption)')}</div><div style="font-size:12px;opacity:.6">${trEsc(SO_NAMES[p.service]||p.service)} · ${p.sent_at?new Date(p.sent_at).toLocaleDateString():''}${p.link?` · <a href="${trEsc(p.link)}" target="_blank" rel="noopener">open</a>`:''}</div></div><div style="font-weight:700;font-variant-numeric:tabular-nums">${soNum(p.views??p.impressions)}</div></div>`).join(''):'<div style="opacity:.6;font-size:13px">No data yet</div>';
+    note.style.color=''; note.textContent=d.last_sync?'Last synced '+new Date(d.last_sync).toLocaleString()+'. Buffer itself refreshes numbers about once a day.':'Not synced yet. Press Sync from Buffer.';
+  } catch (e) { note.style.color='#c0392b'; note.textContent='Could not load social numbers: '+e.message; }
+}
+document.getElementById('so-days').addEventListener('change',loadSocial);
+document.getElementById('so-sync').addEventListener('click',async()=>{
+  const b=document.getElementById('so-sync'); b.disabled=true; b.textContent='Syncing…';
+  try { const r=await soCall('sub=sync',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}); toast('Synced '+r.synced+' posts'); await loadSocial(); }
+  catch (e) { toast(e.message,'err'); }
+  b.disabled=false; b.textContent='↻ Sync from Buffer';
+});
+async function soPost(dry){
+  const out=document.getElementById('so-result');
+  const when=document.getElementById('so-when').value;
+  const body={ video_url:document.getElementById('so-url').value.trim(), caption:document.getElementById('so-caption').value.trim(), title:document.getElementById('so-title').value.trim()||undefined, dry_run:dry, draft:document.getElementById('so-draft').checked };
+  if (when) { body.mode='customScheduled'; body.due_at=new Date(when).toISOString(); }
+  out.style.color=''; out.textContent=dry?'Checking…':'Sending…';
+  try {
+    const d=await soCall('sub=publish-clip',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    out.innerHTML=dry?'Would post to: '+d.plan.map(p=>trEsc(p.channel)).join(', '):d.results.map(r=>`<div style="color:${r.ok?'inherit':'#c0392b'}">${r.ok?'✓':'✗'} ${trEsc(SO_NAMES[r.service]||r.service)} (${trEsc(r.channel)})${r.ok?'':' — '+trEsc(r.error)}</div>`).join('');
+  } catch (e) { out.style.color='#c0392b'; out.textContent=e.message; }
+}
+document.getElementById('so-preview').addEventListener('click',()=>soPost(true));
+document.getElementById('so-send').addEventListener('click',()=>soPost(false));
+
 // ── TABS ──
 let tabSwitching = false;
 document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
@@ -3623,6 +3721,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
       if (tab==='pipeline')   renderPipeline();
       if (tab==='clients')    renderClients();
       if (tab==='traffic')    loadTraffic();
+      if (tab==='social')     loadSocial();
       if (tab==='revenue')    renderVisits($('v-filter').value);
       if (tab==='monthly')    renderMonthly();
       if (tab==='payments')   initPaymentsTab();

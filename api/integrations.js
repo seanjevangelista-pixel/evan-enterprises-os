@@ -1275,8 +1275,9 @@ async function handle_buffer(req, res) {
         return res.status(200).json({ ok: true, dry_run: true, plan: plans.map(p => ({ channel: `${p.channel.service}:${p.channel.name}`, input: p.input })) });
       }
       const results = await Promise.all(plans.map(async p => {
-        try { return { channel: p.channel.name, service: p.channel.service, ...(await bufferCreatePost(p.input)) }; }
-        catch (e) { return { channel: p.channel.name, service: p.channel.service, ok: false, error: e.message }; }
+        const who = { channel: p.channel.name, channel_id: p.channel.id, service: p.channel.service };
+        try { return { ...who, ...(await bufferCreatePost(p.input)) }; }
+        catch (e) { return { ...who, ok: false, error: e.message }; }
       }));
       return res.status(200).json({ ok: results.every(r => r.ok), results });
     }

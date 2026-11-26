@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 760" width="1600" height="760" font-family="Instrument Sans, Inter, Helvetica, Arial, sans-serif">
+  <title>How Evan Enterprises turns one video into a month of content</title>
+  <desc>Five steps: you record, AI clips it, you approve, it posts to five platforms, and you see the numbers.</desc>
+  <rect width="1600" height="760" fill="#0B0D14"/>
+
+  <text x="80" y="92" font-size="40" font-weight="500" fill="#EEF0F5">One video in. A month of content out.</text>
+  <text x="80" y="132" font-size="20" fill="#A3A9B8">You record once. We handle the clipping, captions, posting and reporting.</text>
+
+  <!-- connectors -->
+  <g stroke="#2A5BD7" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M330 330 H380"/><path d="M630 330 H680"/><path d="M930 330 H980"/><path d="M1230 330 H1280"/>
+  </g>
+  <g fill="#2A5BD7">
+    <path d="M380 330 l-10 -6 v12z"/><path d="M680 330 l-10 -6 v12z"/><path d="M980 330 l-10 -6 v12z"/><path d="M1280 330 l-10 -6 v12z"/>
+  </g>
+
+  <!-- step cards -->
+  <g>
+    <rect x="80" y="210" width="250" height="240" rx="12" fill="#11141C" stroke="#1F2330"/>
+    <text x="104" y="250" font-size="16" fill="#6F95F5" font-family="IBM Plex Mono, monospace">Step 1</text>
+    <text x="104" y="286" font-size="24" font-weight="500" fill="#EEF0F5">You record</text>
+    <text x="104" y="324" font-size="16" fill="#A3A9B8">A podcast, a talk or</text>
+    <text x="104" y="348" font-size="16" fill="#A3A9B8">raw footage. Long is</text>
+    <text x="104" y="372" font-size="16" fill="#A3A9B8">fine. Send us the file.</text>
+
+    <rect x="380" y="210" width="250" height="240" rx="12" fill="#11141C" stroke="#1F2330"/>
+    <text x="404" y="250" font-size="16" fill="#6F95F5" font-family="IBM Plex Mono, monospace">Step 2</text>
+    <text x="404" y="286" font-size="24" font-weight="500" fill="#EEF0F5">AI clips it</text>
+    <text x="404" y="324" font-size="16" fill="#A3A9B8">Finds the strongest</text>
+    <text x="404" y="348" font-size="16" fill="#A3A9B8">moments, adds captions,</text>
+    <text x="404" y="372" font-size="16" fill="#A3A9B8">trims dead air, crops</text>
+    <text x="404" y="396" font-size="16" fill="#A3A9B8">to vertical.</text>
+
+    <rect x="680" y="210" width="250" height="240" rx="12" fill="#11141C" stroke="#1F2330"/>
+    <text x="704" y="250" font-size="16" fill="#6F95F5" font-family="IBM Plex Mono, monospace">Step 3</text>
+    <text x="704" y="286" font-size="24" font-weight="500" fill="#EEF0F5">You approve</text>
+    <text x="704" y="324" font-size="16" fill="#A3A9B8">Every clip lands as a</text>
+    <text x="704" y="348" font-size="16" fill="#A3A9B8">draft first. Nothing</text>
+    <text x="704" y="372" font-size="16" fill="#A3A9B8">goes live until you</text>
+    <text x="704" y="396" font-size="16" fill="#A3A9B8">say so.</text>
+
+    <rect x="980" y="210" width="250" height="240" rx="12" fill="#11141C" stroke="#2A5BD7" stroke-width="2"/>
+    <text x="1004" y="250" font-size="16" fill="#6F95F5" font-family="IBM Plex Mono, monospace">Step 4</text>
+    <text x="1004" y="286" font-size="24" font-weight="500" fill="#EEF0F5">We post it</text>
+    <text x="1004" y="324" font-size="16" fill="#A3A9B8">Scheduled on a steady</text>
+    <text x="1004" y="348" font-size="16" fill="#A3A9B8">rhythm to five</text>
+    <text x="1004" y="372" font-size="16" fill="#A3A9B8">platforms at once.</text>
+
+    <rect x="1280" y="210" width="250" height="240" rx="12" fill="#11141C" stroke="#1F2330"/>
+    <text x="1304" y="250" font-size="16" fill="#6F95F5" font-family="IBM Plex Mono, monospace">Step 5</text>
+    <text x="1304" y="286" font-size="24" font-weight="500" fill="#EEF0F5">You see results</text>
+    <text x="1304" y="324" font-size="16" fill="#A3A9B8">Views, reach, likes and</text>
+    <text x="1304" y="348" font-size="16" fill="#A3A9B8">comments per post and</text>
+    <text x="1304" y="372" font-size="16" fill="#A3A9B8">per platform, updated</text>
+    <text x="1304" y="396" font-size="16" fill="#A3A9B8">daily.</text>
+  </g>
+
+  <!-- platforms under step 4 -->
+  <path d="M1105 450 V490 M935 490 H1275 M935 490 V520 M1105 490 V520 M1275 490 V520 M1020 490 V580 M1200 490 V580" stroke="#2A5BD7" stroke-width="2" fill="none"/>
+  <g font-size="16" fill="#EEF0F5" text-anchor="middle">
+    <rect x="860" y="520" width="150" height="44" rx="22" fill="#1A1E28"/><text x="935" y="548">Instagram</text>
+    <rect x="1030" y="520" width="150" height="44" rx="22" fill="#1A1E28"/><text x="1105" y="548">Facebook</text>
+    <rect x="1200" y="520" width="150" height="44" rx="22" fill="#1A1E28"/><text x="1275" y="548">TikTok</text>
+    <rect x="935" y="580" width="170" height="44" rx="22" fill="#1A1E28"/><text x="1020" y="608">YouTube Shorts</text>
+    <rect x="1125" y="580" width="150" height="44" rx="22" fill="#1A1E28"/><text x="1200" y="608">LinkedIn</text>
+  </g>
+
+  <text x="80" y="520" font-size="20" font-weight="500" fill="#EEF0F5">What you get</text>
+  <text x="80" y="556" font-size="17" fill="#A3A9B8">A steady stream of short videos from content you already make.</text>
+  <text x="80" y="584" font-size="17" fill="#A3A9B8">Review before anything publishes. Reports without chasing us.</text>
+  <text x="80" y="700" font-size="14" fill="#7A8296" font-family="IBM Plex Mono, monospace">Source for the numbers: each platform, collected through Buffer. Platforms refresh them about once a day.</text>
+</svg>

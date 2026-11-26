@@ -1041,19 +1041,142 @@ async function handle_media(req, res) {
 }
 
 // ── BUFFER ──
+// Posting + analytics through Buffer's GraphQL API (https://developers.buffer.com).
+//   BUFFER_ACCESS_TOKEN  personal API key (Authorization: Bearer). Reading post metrics
+//                        requires a personal key — OAuth app clients can't read metrics.
+//   BUFFER_ORG_ID        optional; falls back to the org id below.
+// Every value that comes from a request goes in as a GraphQL variable, never into the query
+// text, so nothing a caller sends can change the shape of the query.
 const BUFFER_TOKEN = process.env.BUFFER_ACCESS_TOKEN;
-const BUFFER_ORG_ID = '6a52f6662ab024a3a8c01a78';
+const BUFFER_ORG_ID = process.env.BUFFER_ORG_ID || '6a52f6662ab024a3a8c01a78';
+
+// The five networks the clip pipeline publishes to.
+const CLIP_SERVICES = ['instagram', 'facebook', 'tiktok', 'youtube', 'linkedin'];
 
 async function bufferGQL(query, variables = {}) {
   const r = await fetch('https://api.buffer.com/graphql', {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${BUFFER_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { Authorization: `Bearer ${BUFFER_TOKEN}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ query, variables }),
+    signal: AbortSignal.timeout(25000),
   });
-  return r.json();
+  if (r.status === 429) {
+    const e = new Error('Buffer rate limit reached — try again later');
+    e.status = 429;
+    throw e;
+  }
+  let body;
+  try { body = await r.json(); } catch (e) { throw new Error(`Buffer returned HTTP ${r.status} with no JSON body`); }
+  if (body.errors?.length) {
+    const e = new Error(body.errors[0].message || 'Buffer API error');
+    e.status = 400;
+    throw e;
+  }
+  return body.data;
+}
+
+async function bufferChannels() {
+  const d = await bufferGQL(
+    `query($input: ChannelsInput!) { channels(input: $input) { id name displayName service type isDisconnected isLocked } }`,
+    { input: { organizationId: BUFFER_ORG_ID } }
+  );
+  return d?.channels || [];
+}
+
+// Network-specific settings for a short vertical clip.
+function clipMetadata(service, title) {
+  switch (service) {
+    case 'instagram': return { instagram: { type: 'reel', shouldShareToFeed: true } };
+    case 'facebook':  return { facebook: { type: 'reel' } };
+    case 'tiktok':    return { tiktok: {} };
+    case 'youtube':   return { youtube: { type: 'short', title: String(title).slice(0, 100), categoryId: '22' } };
+    case 'linkedin':  return { linkedin: {} };
+    default:          return undefined;
+  }
+}
+
+// Instagram personal profiles and Facebook groups can only send a reminder, not auto-publish.
+function schedulingTypeFor(channel) {
+  const personalIG = channel.service === 'instagram' && channel.type === 'profile';
+  const fbGroup    = channel.service === 'facebook' && channel.type === 'group';
+  return personalIG || fbGroup ? 'notification' : 'automatic';
+}
+
+async function bufferCreatePost(input) {
+  const d = await bufferGQL(
+    `mutation($input: CreatePostInput!) {
+       createPost(input: $input) {
+         ... on PostActionSuccess { post { id status dueAt channelId channelService } }
+         ... on MutationError { message }
+       }
+     }`,
+    { input }
+  );
+  const out = d?.createPost;
+  if (out?.post) return { ok: true, post: out.post };
+  return { ok: false, error: out?.message || 'Buffer did not return a post' };
+}
+
+const isHttpsUrl = (u) => { try { return new URL(u).protocol === 'https:'; } catch (e) { return false; } };
+
+// Pull one metric value out of Buffer's [{type, value, unit}] list.
+function metricValue(metrics, type) {
+  const m = (metrics || []).find(x => x.type === type);
+  return m ? Number(m.value) : null;
+}
+
+// Sent posts (with metrics) -> rows in public.social_posts. Run supabase/social-analytics.sql first.
+async function bufferSync(days) {
+  const since = new Date(Date.now() - days * 86400000).toISOString();
+  const rows = [];
+  let after = null, pages = 0, hasNext = true;
+  while (hasNext && pages++ < 10) {
+    const d = await bufferGQL(
+      `query($input: PostsInput!, $first: Int, $after: String) {
+         posts(first: $first, after: $after, input: $input) {
+           edges { node { id text channelId channelService status sentAt externalLink metricsUpdatedAt metrics { type value unit } } }
+           pageInfo { hasNextPage endCursor }
+         }
+       }`,
+      { first: 100, after, input: { organizationId: BUFFER_ORG_ID, filter: { status: ['sent'], startDate: since } } }
+    );
+    const conn = d?.posts;
+    for (const { node: p } of conn?.edges || []) {
+      rows.push({
+        buffer_post_id: p.id,
+        channel_id: p.channelId,
+        service: p.channelService,
+        text: (p.text || '').slice(0, 2000),
+        sent_at: p.sentAt,
+        external_link: p.externalLink,
+        views: metricValue(p.metrics, 'views'),
+        impressions: metricValue(p.metrics, 'impressions'),
+        reach: metricValue(p.metrics, 'reach'),
+        reactions: metricValue(p.metrics, 'reactions'),
+        comments: metricValue(p.metrics, 'comments'),
+        shares: metricValue(p.metrics, 'shares'),
+        saves: metricValue(p.metrics, 'saves'),
+        engagement_rate: metricValue(p.metrics, 'engagementRate'),
+        metrics: p.metrics || [],
+        metrics_updated_at: p.metricsUpdatedAt,
+        synced_at: new Date().toISOString(),
+      });
+    }
+    hasNext = !!conn?.pageInfo?.hasNextPage;
+    after = conn?.pageInfo?.endCursor || null;
+  }
+  if (rows.length) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/social_posts?on_conflict=buffer_post_id`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_SERVICE, Authorization: `Bearer ${SUPABASE_SERVICE}`,
+        'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify(rows),
+    });
+    if (!r.ok) throw new Error(`Supabase save failed (${r.status}): ${(await r.text()).slice(0, 300)}. Did you run supabase/social-analytics.sql?`);
+  }
+  return { synced: rows.length, pages, since };
 }
 
 async function handle_buffer(req, res) {
@@ -1061,129 +1184,160 @@ async function handle_buffer(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // Had no auth check — sub=post publishes to Sean's connected social
-  // channels and sub=delete removes scheduled posts, both with no auth.
-  // Same guard as the rest of this file.
-  if (!(await isAdmin(req))) {
+  const { sub } = req.query;
+
+  // Everything here either publishes to Sean's social accounts or reads their stats, so it is
+  // admin-only. The daily sync cron is the one exception: Vercel sends CRON_SECRET as a bearer.
+  const cronSecret = process.env.CRON_SECRET;
+  const cronOk = sub === 'sync' && !!cronSecret && req.headers.authorization === `Bearer ${cronSecret}`;
+  if (!cronOk && !(await isAdmin(req))) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  if (!BUFFER_TOKEN) return res.status(500).json({ error: 'BUFFER_ACCESS_TOKEN not set in Vercel env vars' });
-
-  const { sub } = req.query;
-
-  // GET ?action=buffer&sub=channels — list all connected channels
-  if (!sub || sub === 'channels') {
-    try {
-      const data = await bufferGQL(`{ channels(input: { organizationId: "${BUFFER_ORG_ID}" }) { id service name serviceId } }`);
-      if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
-      return res.status(200).json({ ok: true, channels: data.data?.channels || [] });
-    } catch (e) {
-      return res.status(500).json({ error: e.message });
+  try {
+    // GET ?action=buffer&sub=analytics&days=30 — rollups from the saved metrics (no Buffer call)
+    if (sub === 'analytics') {
+      const days = Math.min(Math.max(parseInt(req.query.days, 10) || 30, 1), 365);
+      const since = new Date(Date.now() - days * 86400000).toISOString();
+      const r = await fetch(
+        `${SUPABASE_URL}/rest/v1/social_posts?sent_at=gte.${encodeURIComponent(since)}&select=*&order=sent_at.desc&limit=1000`,
+        { headers: { apikey: SUPABASE_SERVICE, Authorization: `Bearer ${SUPABASE_SERVICE}` } }
+      );
+      const rows = await r.json();
+      if (!r.ok) return res.status(500).json({ error: rows?.message || 'Could not read social_posts. Did you run supabase/social-analytics.sql?' });
+      const byService = {};
+      for (const p of rows) {
+        const s = byService[p.service] ||= { service: p.service, posts: 0, views: 0, impressions: 0, reach: 0, reactions: 0, comments: 0, shares: 0, saves: 0, _er: 0, _erN: 0 };
+        s.posts++;
+        for (const k of ['views', 'impressions', 'reach', 'reactions', 'comments', 'shares', 'saves']) s[k] += Number(p[k]) || 0;
+        if (p.engagement_rate != null) { s._er += Number(p.engagement_rate); s._erN++; }
+      }
+      const services = Object.values(byService).map(({ _er, _erN, ...s }) => ({ ...s, avg_engagement_rate: _erN ? +(_er / _erN).toFixed(2) : null }));
+      // "views" is what video networks report; fall back to impressions where a network only has those.
+      const score = (p) => Number(p.views ?? p.impressions) || 0;
+      const top = [...rows].sort((a, b) => score(b) - score(a)).slice(0, 10)
+        .map(p => ({ id: p.buffer_post_id, service: p.service, text: p.text, sent_at: p.sent_at, link: p.external_link, views: p.views, impressions: p.impressions, reactions: p.reactions, comments: p.comments }));
+      const lastSync = rows.reduce((m, p) => (p.synced_at > m ? p.synced_at : m), '') || null;
+      return res.status(200).json({ ok: true, days, total_posts: rows.length, services, top_posts: top, last_sync: lastSync });
     }
-  }
 
-  // POST ?action=buffer&sub=post — create/schedule a post
-  // Body: { text, channel_ids: [], scheduled_at?: ISO string, media_urls?: string[] }
-  if (sub === 'post') {
-    if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
-    const { text, channel_ids, scheduled_at, media_urls } = req.body || {};
-    if (!text || !channel_ids?.length) return res.status(400).json({ error: 'text and channel_ids required' });
+    if (!BUFFER_TOKEN) return res.status(500).json({ error: 'BUFFER_ACCESS_TOKEN not set in Vercel env vars' });
 
-    try {
-      // channel_ids/scheduled_at/media_urls are dropped straight into this GraphQL
-      // string unescaped — a value containing a double-quote breaks out of its
-      // string literal and injects arbitrary fields into the mutation sent to
-      // Buffer's API. JSON.stringify produces a properly escaped GraphQL string
-      // literal (same fix already applied to `text` a few lines below).
-      const media = media_urls?.length
-        ? media_urls.map(url => `{ url: ${JSON.stringify(url)}, mediaType: IMAGE }`)
-        : [];
-      const scheduledAtArg = scheduled_at ? `, scheduledAt: ${JSON.stringify(scheduled_at)}` : '';
-      const mediaArg = media.length ? `, media: [${media.join(', ')}]` : '';
-      const channelIds = channel_ids.map(id => JSON.stringify(id)).join(', ');
-
-      const mutation = `
-        mutation {
-          createPost(input: {
-            organizationId: "${BUFFER_ORG_ID}",
-            channelIds: [${channelIds}],
-            text: ${JSON.stringify(text)}
-            ${scheduledAtArg}
-            ${mediaArg}
-          }) {
-            posts { id status scheduledAt channel { service name } }
-          }
-        }
-      `;
-      const data = await bufferGQL(mutation);
-      if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
-      return res.status(200).json({ ok: true, posts: data.data?.createPost?.posts || [] });
-    } catch (e) {
-      return res.status(500).json({ error: e.message });
+    // GET ?action=buffer&sub=channels — connected channels
+    if (!sub || sub === 'channels') {
+      const channels = await bufferChannels();
+      return res.status(200).json({ ok: true, channels });
     }
-  }
 
-  // GET ?action=buffer&sub=queue&channel_id=XXX — scheduled queue for a channel
-  if (sub === 'queue') {
-    const { channel_id } = req.query;
-    if (!channel_id) return res.status(400).json({ error: 'channel_id required' });
-    try {
-      // channel_id is a raw query param dropped into this GraphQL string unescaped
-      // — same injection risk as channel_ids/scheduled_at/media_urls above.
-      const data = await bufferGQL(`{
-        posts(input: { organizationId: "${BUFFER_ORG_ID}", channelIds: [${JSON.stringify(channel_id)}], status: [SCHEDULED] }) {
-          edges { node { id text status scheduledAt channel { service name } } }
-        }
-      }`);
-      if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
-      const posts = (data.data?.posts?.edges || []).map(e => e.node);
-      return res.status(200).json({ ok: true, posts });
-    } catch (e) {
-      return res.status(500).json({ error: e.message });
+    // POST ?action=buffer&sub=sync  Body/Query: { days? } — save sent posts + metrics to Supabase
+    if (sub === 'sync') {
+      const days = Math.min(Math.max(parseInt(req.query.days || req.body?.days, 10) || 90, 1), 365);
+      return res.status(200).json({ ok: true, ...(await bufferSync(days)) });
     }
-  }
 
-  // GET ?action=buffer&sub=sent&channel_id=XXX — sent posts for a channel
-  if (sub === 'sent') {
-    const { channel_id } = req.query;
-    if (!channel_id) return res.status(400).json({ error: 'channel_id required' });
-    try {
-      // channel_id is a raw query param dropped into this GraphQL string unescaped
-      // — same injection risk as channel_ids/scheduled_at/media_urls above.
-      const data = await bufferGQL(`{
-        posts(input: { organizationId: "${BUFFER_ORG_ID}", channelIds: [${JSON.stringify(channel_id)}], status: [SENT] }) {
-          edges { node { id text status scheduledAt channel { service name } } }
-        }
-      }`);
-      if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
-      const posts = (data.data?.posts?.edges || []).map(e => e.node);
-      return res.status(200).json({ ok: true, posts });
-    } catch (e) {
-      return res.status(500).json({ error: e.message });
+    // POST ?action=buffer&sub=publish-clip
+    // Body: { video_url (https), caption, title?, channel_ids?, mode?, due_at?, draft?, dry_run?,
+    //         thumbnail_offset_ms?, captions?: { instagram: '...', linkedin: '...' } }
+    // Sends the same clip to every connected Instagram/Facebook/TikTok/YouTube/LinkedIn channel
+    // (or just channel_ids), each with its own reel/short settings. One failure doesn't stop the rest.
+    if (sub === 'publish-clip') {
+      if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
+      const b = req.body || {};
+      if (!isHttpsUrl(b.video_url)) return res.status(400).json({ error: 'video_url must be a public https URL to an mp4' });
+      if (!b.caption) return res.status(400).json({ error: 'caption required' });
+      const mode = b.mode || 'addToQueue';
+      if (!['addToQueue', 'customScheduled', 'shareNext'].includes(mode)) {
+        return res.status(400).json({ error: 'mode must be addToQueue, customScheduled or shareNext' });
+      }
+      if (mode === 'customScheduled' && !(Date.parse(b.due_at) > Date.now())) {
+        return res.status(400).json({ error: 'due_at (future ISO 8601) required for customScheduled' });
+      }
+      const all = await bufferChannels();
+      let targets = all.filter(c => CLIP_SERVICES.includes(c.service) && !c.isDisconnected && !c.isLocked);
+      if (Array.isArray(b.channel_ids) && b.channel_ids.length) targets = targets.filter(c => b.channel_ids.includes(c.id));
+      if (!targets.length) return res.status(400).json({ error: 'No connected Instagram/Facebook/TikTok/YouTube/LinkedIn channels to post to' });
+
+      const title = b.title || String(b.caption).split('\n')[0];
+      const plans = targets.map(c => ({
+        channel: c,
+        input: {
+          channelId: c.id,
+          text: (b.captions && b.captions[c.service]) || b.caption,
+          schedulingType: schedulingTypeFor(c),
+          mode,
+          ...(mode === 'customScheduled' ? { dueAt: new Date(b.due_at).toISOString() } : {}),
+          ...(b.draft ? { saveToDraft: true } : {}),
+          assets: [{ video: { url: b.video_url, ...(Number.isInteger(b.thumbnail_offset_ms) ? { metadata: { thumbnailOffset: b.thumbnail_offset_ms } } : {}) } }],
+          metadata: clipMetadata(c.service, title),
+        },
+      }));
+      if (b.dry_run) {
+        return res.status(200).json({ ok: true, dry_run: true, plan: plans.map(p => ({ channel: `${p.channel.service}:${p.channel.name}`, input: p.input })) });
+      }
+      const results = await Promise.all(plans.map(async p => {
+        try { return { channel: p.channel.name, service: p.channel.service, ...(await bufferCreatePost(p.input)) }; }
+        catch (e) { return { channel: p.channel.name, service: p.channel.service, ok: false, error: e.message }; }
+      }));
+      return res.status(200).json({ ok: results.every(r => r.ok), results });
     }
-  }
 
-  // POST ?action=buffer&sub=delete — delete a scheduled post
-  // Body: { post_id }
-  if (sub === 'delete') {
-    if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
-    const { post_id } = req.body || {};
-    if (!post_id) return res.status(400).json({ error: 'post_id required' });
-    try {
-      // post_id is a raw request-body value dropped into this GraphQL string
-      // unescaped — same injection risk as channel_ids/scheduled_at/media_urls above.
-      const data = await bufferGQL(`
-        mutation { deletePost(input: { postId: ${JSON.stringify(post_id)} }) { postId } }
-      `);
-      if (data.errors) return res.status(400).json({ error: data.errors[0]?.message });
+    // POST ?action=buffer&sub=post — text/image post to chosen channels
+    // Body: { text, channel_ids: [], scheduled_at?: ISO string, media_urls?: string[] }
+    if (sub === 'post') {
+      if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
+      const { text, channel_ids, scheduled_at, media_urls } = req.body || {};
+      if (!text || !channel_ids?.length) return res.status(400).json({ error: 'text and channel_ids required' });
+      if (scheduled_at && !(Date.parse(scheduled_at) > Date.now())) return res.status(400).json({ error: 'scheduled_at must be a future ISO 8601 time' });
+      if ((media_urls || []).some(u => !isHttpsUrl(u))) return res.status(400).json({ error: 'media_urls must be https URLs' });
+      const byId = Object.fromEntries((await bufferChannels()).map(c => [c.id, c]));
+      const results = await Promise.all(channel_ids.map(async id => {
+        const c = byId[id];
+        if (!c) return { channel: id, ok: false, error: 'Unknown channel' };
+        try {
+          return { channel: c.name, service: c.service, ...(await bufferCreatePost({
+            channelId: id, text, schedulingType: schedulingTypeFor(c),
+            mode: scheduled_at ? 'customScheduled' : 'addToQueue',
+            ...(scheduled_at ? { dueAt: new Date(scheduled_at).toISOString() } : {}),
+            ...(media_urls?.length ? { assets: media_urls.map(url => ({ image: { url } })) } : {}),
+          })) };
+        } catch (e) { return { channel: c.name, service: c.service, ok: false, error: e.message }; }
+      }));
+      return res.status(200).json({ ok: results.every(r => r.ok), results });
+    }
+
+    // GET ?action=buffer&sub=queue|sent[&channel_id=XXX] — scheduled or sent posts
+    if (sub === 'queue' || sub === 'sent') {
+      const { channel_id } = req.query;
+      const d = await bufferGQL(
+        `query($input: PostsInput!) {
+           posts(first: 50, input: $input) {
+             edges { node { id text status dueAt sentAt channelId channelService externalLink } }
+           }
+         }`,
+        { input: { organizationId: BUFFER_ORG_ID, filter: { status: [sub === 'queue' ? 'scheduled' : 'sent'], ...(channel_id ? { channelIds: [channel_id] } : {}) } } }
+      );
+      return res.status(200).json({ ok: true, posts: (d?.posts?.edges || []).map(e => e.node) });
+    }
+
+    // POST ?action=buffer&sub=delete — delete a post. Body: { post_id }
+    if (sub === 'delete') {
+      if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
+      const { post_id } = req.body || {};
+      if (!post_id) return res.status(400).json({ error: 'post_id required' });
+      const d = await bufferGQL(
+        `mutation($input: DeletePostInput!) {
+           deletePost(input: $input) { __typename ... on VoidMutationError { message } }
+         }`,
+        { input: { id: post_id } }
+      );
+      if (d?.deletePost?.message) return res.status(400).json({ error: d.deletePost.message });
       return res.status(200).json({ ok: true });
-    } catch (e) {
-      return res.status(500).json({ error: e.message });
     }
-  }
 
-  return res.status(400).json({ error: 'Unknown sub-action. Use: channels, post, queue, sent, delete' });
+    return res.status(400).json({ error: 'Unknown sub-action. Use: channels, publish-clip, post, queue, sent, delete, sync, analytics' });
+  } catch (e) {
+    return res.status(e.status || 500).json({ error: e.message });
+  }
 }
 
 // ── SQUARE ──

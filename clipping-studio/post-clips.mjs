@@ -2,10 +2,16 @@
 // Sends finished clips from a ShortsFlow session to Buffer (Instagram, Facebook, TikTok,
 // YouTube Shorts, LinkedIn) through the Evan Enterprises OS API.
 //
+// Works on a ShortsFlow session folder OR any folder of finished videos (for example a Google Drive
+// folder synced to your Mac). Without a metadata.json it uses each file name as the title, and picks up
+// captions from an optional captions.json in the same folder: [{ "file": "a.mp4", "title": "...",
+// "description": "caption text", "tags": ["entrepreneur", "ecommerce"] }].
+//
 //   node post-clips.mjs SESSION_DIR            drafts in Buffer (nothing goes live)
 //   node post-clips.mjs SESSION_DIR --send     add every clip to each channel's Buffer queue
 //   node post-clips.mjs SESSION_DIR --send --start 2026-12-01T10:00 --every 180
 //                                              schedule clip 1 at 10:00, clip 2 at 13:00, ...
+//   --long      full-length videos: YouTube (regular video), Facebook and LinkedIn only
 //   --dry-run   show what would happen, send nothing      --only 1,3   just clips 1 and 3
 //   --force     post clips again that were already sent   (otherwise posted.json skips them)
 //
@@ -52,12 +58,13 @@ export function buildCaption(item) {
 }
 
 export function parseArgs(argv) {
-  const a = { target: null, send: false, dryRun: false, force: false, start: null, every: 180, only: null };
+  const a = { target: null, send: false, dryRun: false, force: false, long: false, start: null, every: 180, only: null };
   for (let i = 0; i < argv.length; i++) {
     const v = argv[i];
     if (v === '--send') a.send = true;
     else if (v === '--dry-run') a.dryRun = true;
     else if (v === '--force') a.force = true;
+    else if (v === '--long') a.long = true;
     else if (v === '--start') a.start = argv[++i];
     else if (v === '--every') a.every = parseInt(argv[++i], 10);
     else if (v === '--only') a.only = String(argv[++i]).split(',').map(n => parseInt(n, 10));
@@ -84,13 +91,36 @@ async function api(base, key, qs, body) {
 
 async function upload(base, key, file) {
   const filename = path.basename(file).replace(/[^\w.-]+/g, '_');
-  const sign = await api(base, key, 'action=media&sub=sign', { filename, contentType: 'video/mp4' });
+  const contentType = /\.(mov|qt)$/i.test(file) ? 'video/quicktime' : 'video/mp4';
+  const sign = await api(base, key, 'action=media&sub=sign', { filename, contentType });
   const fd = new FormData();
   fd.append('cacheControl', '3600');
-  fd.append('', new Blob([fs.readFileSync(file)], { type: 'video/mp4' }));
+  fd.append('', new Blob([fs.readFileSync(file)], { type: contentType }));
   const put = await fetch(sign.signedUrl, { method: 'PUT', body: fd });
   if (!put.ok) throw new Error(`Upload failed (HTTP ${put.status}): ${(await put.text()).slice(0, 200)}`);
   return sign.publicUrl;
+}
+
+// A ShortsFlow session has metadata.json. A plain folder of videos doesn't, so build the list from the
+// files and any captions.json beside them.
+export function loadItems(target) {
+  if (!fs.existsSync(target)) throw new Error(`Folder not found: ${target}`);
+  const isDir = fs.statSync(target).isDirectory();
+  const metaPath = isDir ? path.join(target, 'metadata.json') : target;
+  const dir = path.dirname(metaPath);
+  if (fs.existsSync(metaPath)) return { dir, items: JSON.parse(fs.readFileSync(metaPath, 'utf8')) };
+  if (!isDir) throw new Error(`Not found: ${target}`);
+  const capPath = path.join(dir, 'captions.json');
+  const caps = fs.existsSync(capPath) ? JSON.parse(fs.readFileSync(capPath, 'utf8')) : [];
+  const items = fs.readdirSync(dir)
+    .filter(f => /\.(mp4|mov|m4v)$/i.test(f) && !f.startsWith('.'))
+    .sort()
+    .map(f => {
+      const cap = caps.find(c => c.file === f) || {};
+      const nice = f.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim();
+      return { file: f, title: cap.title || nice, description: cap.description || cap.title || nice, tags: cap.tags || [] };
+    });
+  return { dir, items };
 }
 
 export async function main(argv) {
@@ -99,10 +129,8 @@ export async function main(argv) {
   const key = process.env.INTERNAL_API_KEY;
   if (!key && !a.dryRun) throw new Error('INTERNAL_API_KEY is not set. Put it in .social.env (see setup notes) or export it.');
 
-  const metaPath = fs.statSync(a.target).isDirectory() ? path.join(a.target, 'metadata.json') : a.target;
-  if (!fs.existsSync(metaPath)) throw new Error(`No metadata.json at ${metaPath}. Did the clipper finish?`);
-  const dir = path.dirname(metaPath);
-  const items = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+  const { dir, items } = loadItems(a.target);
+  if (!items.length) throw new Error(`No videos (.mp4 / .mov) found in ${dir}.`);
   const ledgerPath = path.join(dir, 'posted.json');
   const ledger = fs.existsSync(ledgerPath) ? JSON.parse(fs.readFileSync(ledgerPath, 'utf8')) : {};
   const mode = !a.send ? 'drafts in Buffer' : a.start ? 'scheduled' : 'added to the Buffer queue';
@@ -117,13 +145,14 @@ export async function main(argv) {
     const file = path.join(dir, item.file || '');
     if (!fs.existsSync(file)) { console.log(`${label}: file missing, skipped`); failed++; continue; }
     const size = fs.statSync(file).size;
-    if (size > MAX_BYTES) { console.log(`${label}: ${(size / 1048576).toFixed(0)} MB is over Instagram's 300 MB limit, skipped`); failed++; continue; }
+    if (!a.long && size > MAX_BYTES) { console.log(`${label}: ${(size / 1048576).toFixed(0)} MB is over Instagram's 300 MB limit, skipped`); failed++; continue; }
     if (ledger[item.file]?.ok && !a.force) { console.log(`${label}: already posted, skipped (use --force to post again)`); continue; }
 
     const due = a.start ? new Date(Date.parse(a.start) + i * a.every * 60000).toISOString() : null;
     const payload = {
       caption: buildCaption(item),
       title: (item.title || '').slice(0, 100) || undefined,
+      ...(a.long ? { kind: 'long' } : {}),
       ...(a.send ? {} : { draft: true }),
       ...(due ? { mode: 'customScheduled', due_at: due } : {}),
     };

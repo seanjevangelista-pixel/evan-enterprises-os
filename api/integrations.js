@@ -1052,6 +1052,9 @@ const BUFFER_ORG_ID = process.env.BUFFER_ORG_ID || '6a52f6662ab024a3a8c01a78';
 
 // The five networks the clip pipeline publishes to.
 const CLIP_SERVICES = ['instagram', 'facebook', 'tiktok', 'youtube', 'linkedin'];
+// Long-form (kind: 'long') goes to the networks that take full-length video; Reels, Shorts and
+// TikTok are short-vertical formats.
+const LONG_SERVICES = ['youtube', 'facebook', 'linkedin'];
 
 async function bufferGQL(query, variables = {}) {
   const r = await fetch('https://api.buffer.com/graphql', {
@@ -1084,7 +1087,15 @@ async function bufferChannels() {
 }
 
 // Network-specific settings for a short vertical clip.
-function clipMetadata(service, title) {
+function clipMetadata(service, title, kind = 'short') {
+  if (kind === 'long') {
+    switch (service) {
+      case 'youtube':  return { youtube: { type: 'regularVideo', title: String(title).slice(0, 100), categoryId: '22' } };
+      case 'facebook': return { facebook: { type: 'post' } };
+      case 'linkedin': return { linkedin: {} };
+      default:         return undefined;
+    }
+  }
   switch (service) {
     case 'instagram': return { instagram: { type: 'reel', shouldShareToFeed: true } };
     case 'facebook':  return { facebook: { type: 'reel' } };
@@ -1236,7 +1247,7 @@ async function handle_buffer(req, res) {
     }
 
     // POST ?action=buffer&sub=publish-clip
-    // Body: { video_url (https), caption, title?, channel_ids?, mode?, due_at?, draft?, dry_run?,
+    // Body: { video_url (https), caption, title?, kind? ('short' default | 'long'), channel_ids?, mode?, due_at?, draft?, dry_run?,
     //         thumbnail_offset_ms?, captions?: { instagram: '...', linkedin: '...' } }
     // Sends the same clip to every connected Instagram/Facebook/TikTok/YouTube/LinkedIn channel
     // (or just channel_ids), each with its own reel/short settings. One failure doesn't stop the rest.
@@ -1252,10 +1263,13 @@ async function handle_buffer(req, res) {
       if (mode === 'customScheduled' && !(Date.parse(b.due_at) > Date.now())) {
         return res.status(400).json({ error: 'due_at (future ISO 8601) required for customScheduled' });
       }
+      if (b.kind !== undefined && !['short', 'long'].includes(b.kind)) return res.status(400).json({ error: "kind must be 'short' or 'long'" });
+      const kind = b.kind === 'long' ? 'long' : 'short';
+      const services = kind === 'long' ? LONG_SERVICES : CLIP_SERVICES;
       const all = await bufferChannels();
-      let targets = all.filter(c => CLIP_SERVICES.includes(c.service) && !c.isDisconnected && !c.isLocked);
+      let targets = all.filter(c => services.includes(c.service) && !c.isDisconnected && !c.isLocked);
       if (Array.isArray(b.channel_ids) && b.channel_ids.length) targets = targets.filter(c => b.channel_ids.includes(c.id));
-      if (!targets.length) return res.status(400).json({ error: 'No connected Instagram/Facebook/TikTok/YouTube/LinkedIn channels to post to' });
+      if (!targets.length) return res.status(400).json({ error: `No connected ${services.join('/')} channels to post to` });
 
       const title = b.title || String(b.caption).split('\n')[0];
       const plans = targets.map(c => ({
@@ -1268,7 +1282,7 @@ async function handle_buffer(req, res) {
           ...(mode === 'customScheduled' ? { dueAt: new Date(b.due_at).toISOString() } : {}),
           ...(b.draft ? { saveToDraft: true } : {}),
           assets: [{ video: { url: b.video_url, ...(Number.isInteger(b.thumbnail_offset_ms) ? { metadata: { thumbnailOffset: b.thumbnail_offset_ms } } : {}) } }],
-          metadata: clipMetadata(c.service, title),
+          metadata: clipMetadata(c.service, title, kind),
         },
       }));
       if (b.dry_run) {

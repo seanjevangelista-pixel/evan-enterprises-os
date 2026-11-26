@@ -141,6 +141,15 @@ SESSION="$APP/sessions/post_\$(date +%s)"
 exec node "$DEST/post-clips.mjs" "\$SESSION" "\${POST_ARGS[@]}"
 EOF
 chmod +x "$DEST/clip-post"
+cat > "$DEST/post-folder" <<EOF
+#!/usr/bin/env bash
+# Usage: ./post-folder FOLDER [--send] [--long] [--start 2026-12-01T10:00 --every 180] [--dry-run]
+# Sends the finished videos in FOLDER (for example a synced Google Drive folder) to Buffer. Drafts unless --send.
+# --long is for full-length videos: YouTube, Facebook and LinkedIn only.
+[ \$# -ge 1 ] || { echo "Usage: \$0 FOLDER [--send] [--long] [--start ISO --every MINUTES] [--dry-run]"; exit 2; }
+exec node "$DEST/post-clips.mjs" "\$@"
+EOF
+chmod +x "$DEST/post-folder"
 
 # 8. Checks -------------------------------------------------------------------------------------------------------------
 say "Running checks"
@@ -154,6 +163,7 @@ Done. Installed in: $DEST
 Try it:
   $DEST/clip ~/Videos/my_video.mp4              # clips only, nothing is posted
   $DEST/clip-post ~/Videos/my_video.mp4         # clips, then sends DRAFTS to Buffer (add --send to queue them)
+  $DEST/post-folder ~/path/to/finished-videos   # already-edited videos from a folder -> DRAFTS in Buffer
 
 Before clip-post works, put your INTERNAL_API_KEY in $DEST/.social.env.
 
